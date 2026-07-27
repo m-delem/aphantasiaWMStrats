@@ -138,6 +138,81 @@ resolve_thanks_feedback <- function(entries) {
   return(base)
 }
 
+# vviq/osivq/nieq duplicates: matches aSD's gather_questionnaires()
+# (arrange by desc(is_complete), already_passed, startDate, then
+# fill(contains("data"), .direction = "downup") before taking the best
+# row). Adapted here to v3's item/value parallel-array shape (aSD's shape
+# is one named column per item, which fill() operates on directly; v3's
+# raw JSON instead nests item names and values as two parallel lists under
+# "{component}_data", so filling has to match by item name explicitly
+# rather than by column name). Confirmed against real duplicate data
+# (study_result_31785's OSIVQ: one 31-item incomplete attempt alongside
+# two complete 34-item ones) and a synthetic case with genuinely
+# complementary gaps across two incomplete attempts, to verify the fill
+# logic itself, since no real case in the current data actually needs it
+# (a complete attempt was always available when duplicates existed).
+resolve_questionnaire <- function(entries) {
+  if (length(entries) == 1) return(entries[[1]])
+
+  wrapper_key <- paste0(entries[[1]]$component_name, "_data")
+  wrappers <- purrr::map(entries, wrapper_key)
+
+  is_complete <- purrr::map_lgl(wrappers, ~ isTRUE(.x$is_complete))
+  already_passed <- purrr::map_lgl(wrappers, ~ isTRUE(.x$already_passed))
+
+  # Sort: most complete first, then already_passed, mirroring aSD's
+  # arrange(desc(is_complete), already_passed, startDate). startDate isn't
+  # a usable tiebreaker here since all entries within one study_result
+  # share the same study_result-level startDate (confirmed earlier this
+  # session: no per-comp-result date exists), so it's omitted rather than
+  # included as a no-op.
+  ord <- order(!is_complete, !already_passed)
+  entries_sorted <- entries[ord]
+  wrappers_sorted <- wrappers[ord]
+
+  best_wrapper <- wrappers_sorted[[1]]
+
+  if (!is.null(best_wrapper$item) && !is.null(best_wrapper$value)) {
+    best_items <- best_wrapper$item
+    best_values <- best_wrapper$value
+
+    for (i in seq_along(best_values)) {
+      if (is.null(best_values[[i]]) || is.na(best_values[[i]])) {
+        item_name <- best_items[[i]]
+        for (w in wrappers_sorted[-1]) {
+          if (is.null(w$item)) next
+          match_idx <- which(unlist(w$item) == item_name)
+          if (length(match_idx) == 1 &&
+              !is.null(w$value[[match_idx]]) &&
+              !is.na(w$value[[match_idx]])) {
+            best_values[[i]] <- w$value[[match_idx]]
+            break
+          }
+        }
+      }
+    }
+    best_wrapper$value <- best_values
+  }
+
+  best <- entries_sorted[[1]]
+  best[[wrapper_key]] <- best_wrapper
+  best
+}
+
+# welcome_consent_id duplicates don't have the item/value questionnaire
+# shape at all - they're a simple flat set of fields, and duplicates seen
+# in real data look like reload stubs (an early, near-empty capture before
+# the participant actually consented, alongside a real complete one), not
+# a fill-worthy case. Resolved by keeping whichever entry has more
+# non-null fields, which is a reasonable proxy for "the one that actually
+# completed" without needing a component-specific is_complete flag (none
+# exists for this component).
+resolve_welcome_consent_id <- function(entries) {
+  if (length(entries) == 1) return(entries[[1]])
+  n_populated <- purrr::map_int(entries, ~ sum(!purrr::map_lgl(.x, is.null)))
+  entries[[which.max(n_populated)]]
+}
+
 extract_study_result <- function(sr_dir) {
   study_result_id <- stringr::str_remove(basename(sr_dir), "^study_result_")
 
@@ -157,10 +232,33 @@ extract_study_result <- function(sr_dir) {
     parsed_relevant,
     purrr::map_chr(parsed_relevant, "component_name"))
 
+  # Capture incompleteness info here, before resolve_cfa_experiment()
+  # discards the detail entirely (it only keeps entries with exactly 73
+  # rows). This is the only point where the real trial count for a dropped
+  # participant is still available - reconstructing it later from
+  # all_results is impossible once resolve_cfa_experiment() has run, since
+  # a dropped participant's cfa_experiment is just gone by then.
+  cfa_experiment_entries <- by_component[["cfa_experiment"]]
+  incompleteness_record <- if (!is.null(cfa_experiment_entries)) {
+    n_trials <- purrr::map_int(cfa_experiment_entries, n_trials_completed)
+    if (all(n_trials < 73L)) {
+      list(study_result_id = study_result_id, n_trials = max(n_trials))
+    } else NULL
+  } else NULL
+
   resolved <- purrr::imap(by_component, function(entries, component) {
+    # cfa_experiment always needs the 73-row completeness check, even with
+    # only one entry - a lone incomplete attempt is the common case, not
+    # just a duplicate-resolution edge case. This must come before the
+    # length == 1 shortcut below, or single incomplete attempts silently
+    # pass through unfiltered (a real bug caught by testing against real
+    # data: a single-entry, 43-row cfa_experiment was passing through
+    # untouched before this fix).
+    if (component == "cfa_experiment") return(resolve_cfa_experiment(entries))
     if (length(entries) == 1) return(entries[[1]])
     if (component == "thanks_feedback") return(resolve_thanks_feedback(entries))
-    if (component == "cfa_experiment") return(resolve_cfa_experiment(entries))
+    if (component %in% c("vviq", "osivq", "nieq")) return(resolve_questionnaire(entries))
+    if (component == "welcome_consent_id") return(resolve_welcome_consent_id(entries))
     warning(
       "Unexpected duplicate component '", component, "' in study_result ",
       study_result_id, ": keeping the first entry."
@@ -172,7 +270,11 @@ extract_study_result <- function(sr_dir) {
   # incomplete - treat that the same as never having had the component.
   resolved <- purrr::compact(resolved)
 
-  list(study_result_id = study_result_id, components = resolved)
+  list(
+    study_result_id = study_result_id,
+    components = resolved,
+    incomplete_cfa_experiment = incompleteness_record
+  )
 }
 
 all_results <-
@@ -185,20 +287,58 @@ message(
   " study_result folders)."
 )
 
-# Flag, don't silently drop: participants missing cfa_experiment entirely
-# (e.g. dropped out before starting the task) are worth knowing about before
-# they disappear from anything downstream.
-missing_experiment <-
+# Two distinct populations end up with components$cfa_experiment == NULL,
+# worth keeping separate rather than conflating into one "missing" bucket:
+# never attempted cfa_experiment at all (no comp-result for it, ever), vs.
+# attempted it but every attempt fell short of 73 rows (caught above via
+# incomplete_cfa_experiment, which is only set when a cfa_experiment entry
+# existed in the first place).
+never_started <-
   all_results |>
-  purrr::keep(~ is.null(.x$components$cfa_experiment)) |>
+  purrr::keep(~ is.null(.x$components$cfa_experiment) && is.null(.x$incomplete_cfa_experiment)) |>
   purrr::map_chr("study_result_id")
 
-if (length(missing_experiment) > 0) {
+if (length(never_started) > 0) {
   message(
-    length(missing_experiment), " participant(s) have no cfa_experiment ",
-    "component at all and will be dropped in the next script: ",
-    paste(missing_experiment, collapse = ", ")
+    length(never_started), " participant(s) never attempted cfa_experiment ",
+    "at all (no comp-result found for it): ",
+    paste(never_started, collapse = ", ")
   )
 }
+
+# excluded_incomplete_v3.csv: everyone dropped for cfa_experiment reasons,
+# whether they never started it or started and fell short of 73 rows.
+# Written here, not in 03_create_package_data.R, because this is the only
+# point where the real trial count is still available -
+# resolve_cfa_experiment() discards it for anything short of 73 rows, so by
+# the time 03 runs, a dropped participant's cfa_experiment is just gone.
+incomplete_records <-
+  all_results |>
+  purrr::map("incomplete_cfa_experiment") |>
+  purrr::compact()
+
+never_started_records <-
+  purrr::map(never_started, ~ list(study_result_id = .x, n_trials = 0L))
+
+all_excluded_records <- c(incomplete_records, never_started_records)
+
+excluded_incomplete_v3 <-
+  purrr::map(all_excluded_records, function(rec) {
+    matching <-
+      purrr::keep(
+        all_results,
+        ~ .x$study_result_id == rec$study_result_id)
+    tibble::tibble(
+      id = rec$study_result_id,
+      n_trials = rec$n_trials
+    )
+  }) |>
+  purrr::list_rbind()
+
+fs::dir_create(here::here("data-raw/review"))
+readr::write_csv(
+  excluded_incomplete_v3,
+  here::here("data-raw/review/excluded_incomplete_v3.csv")
+)
 
 saveRDS(all_results, here::here("inst/extdata/cfa_v3_raw_extracted.rds"))
