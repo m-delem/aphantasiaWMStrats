@@ -1,0 +1,11 @@
+^renv$
+^renv\.lock$
+^aphantasiaWMStrats\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^data-raw$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+^LICENSE\.md$

@@ -1,0 +1,59 @@
+Package: aphantasiaWMStrats
+Title: Data Analysis for a Working Memory Strategies Study on Aphantasia
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Maël", "Delem", , "mael.delem@pm.me", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0005-8518-1991"))
+    )
+Description: This package contains the code (and, in due course, the data)
+    to reproduce the analyses associated with an online study on a
+    complex working memory span task investigating non-visual working
+    memory strategies in aphantasia.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1)
+Imports:
+    coda.plot,
+    correlation,
+    dplyr,
+    emmeans,
+    faux,
+    ggplot2,
+    glue,
+    here,
+    modelbased,
+    parameters,
+    patchwork,
+    performance,
+    rlang,
+    scales,
+    see,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect
+Suggests:
+    brms,
+    collapse,
+    Formula,
+    fs,
+    glmmTMB,
+    ggpubr,
+    knitr,
+    lme4,
+    lubridate,
+    merDeriv,
+    openxlsx,
+    ordinal,
+    rmarkdown,
+    sessioninfo,
+    showtext,
+    superb,
+    sysfonts,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+LazyData: true
+Config/roxygen2/version: 8.0.0
