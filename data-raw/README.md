@@ -114,10 +114,10 @@ trusting `all_data`.
 
 ```r
 # from the package root
-source(here::here(data-raw/01_import_v1v2_osf.R))   # needs OSF credentials
-source(here::here(data-raw/02_import_v3_raw.R))     # needs OSF credentials
-source(here::here(data-raw/03_create_package_data.R))
-source(here::here(data-raw/04_apply_manual_review.R))
+source(here::here("data-raw/01_import_v1v2_osf.R"))   # needs OSF credentials
+source(here::here("data-raw/02_import_v3_raw.R"))     # needs OSF credentials
+source(here::here("data-raw/03_create_package_data.R"))
+source(here::here("data-raw/04_apply_manual_review.R"))
 ```
 
 If you're only iterating on cleaning logic and already have
