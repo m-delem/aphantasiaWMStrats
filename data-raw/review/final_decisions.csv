@@ -1,0 +1,37 @@
+id,version,used_external_support,what_external_support,gave_false_info,what_false_info,met_issues,issues,default_decision,manual_decision,note,decided_date,final_decision,reviewed
+adxl926881385642729pvuw,v1,no,NA,yes,écriture des mots,no,NA,include,exclude,wrote the words,2026-07-28,exclude,TRUE
+akdu76317498757772sfnk,v1,no,NA,yes,"réponse au hasard quand je ne sais pas. C'est dommage que vous ne mettiez pas l'option ""je ne sais pas"" dans le dernier test.",no,NA,include,NA,NA,NA,include,FALSE
+aqcx646249376166603nhlj,v1,no,NA,yes,NA,no,NA,include,NA,NA,NA,include,FALSE
+asfk247713443631365niyi,v1,no,NA,no,NA,yes,Parfois il était difficile de faire bouger le rectangle avec la souris au moment de choisir l'angle et cela arrivait aussi avec la roue des couleurs. Ce n'était pas très fluide,include,NA,NA,NA,include,FALSE
+dixe3267056030334qnrv,v1,no,NA,no,NA,yes,"Parfois, l'orientation du rectangle était difficile, j'ai perdu certains éléments que je tentais de retenir, c'est arrivé 1 ou 2 fois",include,NA,NA,NA,include,FALSE
+fixq15661040087633vhdz,v2,no,NA,no,NA,yes,mon fils et mon conjoint m ont perturbé en parlant et me posant des questions durant une partie de l'expérience,include,NA,NA,NA,include,FALSE
+fmnd82061456135059qors,v1,no,NA,no,NA,yes,"fatiguée, il est tard",include,NA,NA,NA,include,FALSE
+gnei92939853989780ptzy,v1,no,NA,no,NA,yes,"les paires, impaires se passaient tout seuls, j'ai essayé de jouer le jeu quand meme en disant paire ou impaire mais ça passait très vite",include,NA,NA,NA,include,FALSE
+ihaz858939478377746sfyj,v1,no,NA,no,NA,yes,"Sur les mots, l'orientation, couleur : fin de journée, fatigue et distrait au milieu de l'expérience.",include,NA,NA,NA,include,FALSE
+irrj885749909444314nwbw,v1,no,NA,no,NA,yes,Je n’ai pas pu indiquer l’orientation des rectangles car je n’avais pas de souris,include,exclude,couldn't respond to orientation because they had no mouse,2026-07-28,exclude,TRUE
+ixgr16146752925574uboi,v2,no,NA,yes,Je me disais que aucune réponse m'allais donc j'ai mis ça en disant que c'est ma vérité a moi la plus plausible,yes,quelqu'un m'as parlé à la moitié de l'expérience ce qui m'a beaucoup déconcentré j'ai même perdu le fil,include,exclude,very distraught (in their own words),2026-07-28,exclude,TRUE
+jjfh582509807477278vcus,v1,no,NA,no,NA,yes,Parfois le rectangle ne tournais pas,include,NA,NA,NA,include,FALSE
+jtom15019521178woow,v1,yes,Au début je me suis aidée pour l'orientation (utilisation de stylos) puis j'ai arrêtée car le test serait faussé,no,NA,yes,"Téléphone qui sonne
+Un peu marre à la fin",exclude,NA,NA,NA,exclude,FALSE
+kfot838621949188388fkzf,v1,no,NA,yes,NA,yes,NA,include,NA,NA,NA,include,FALSE
+kpnc681472168634647fvob,v1,yes,J'ai retenu les 2 premiers ensembles (mot/couleur/orientation) et j'ai noté le troisième,no,NA,no,NA,exclude,NA,NA,NA,exclude,FALSE
+kxuc65858692499750bxjd,v1,no,NA,no,NA,yes,"au départ, il faut tourner le rectangle dans le sens des aiguilles d'une montre (ne fonctionne pas dans l'autre sens). C'est déroutant.",include,NA,NA,NA,include,FALSE
+mlfh90979292786519jfih,v1,yes,parfois notes,no,NA,no,NA,exclude,NA,NA,NA,exclude,FALSE
+ofiy5698974926737omff,v1,yes,papier,no,NA,yes,C'était long donc à force moins de concentration,exclude,NA,NA,NA,exclude,FALSE
+oizo741792780318263arii,v1,no,NA,no,NA,yes,"la roue des couleurs était décalé par rapport la position de ma souris, quelques bug avec le rectangle aussi",include,NA,NA,NA,include,FALSE
+qgor249980893451764zrvj,v2,no,NA,no,NA,yes,"Sur un des dernier essai, j'ai du aller chercher une souris car la flèche ne bougeait plus",include,NA,NA,NA,include,FALSE
+rtso32826498900967ogmg,v1,no,NA,no,NA,yes,J'ai été très frustrée de ma difficulté à retenir l'orientation. Aussi me rappeler des couleurs entrainait parfois un oubli des mots.,include,NA,NA,NA,include,FALSE
+rvnt23870835850638ootd,v1,no,NA,no,NA,yes,"pour choisir la couleur j'avais des difficultés à bouger dans le cercle
+
+J'ai l'impression que mes doigts pianotaient sur F et J parfois n'importe comment avec le stress de retenir les informations",include,NA,NA,NA,include,FALSE
+rxxk97031716860098cwhl,v1,yes,première lettre du mot et couleur,yes,"Pour les nuances de couleur , type bleu -vert , j'ai pu répondre au feeling !",no,NA,exclude,NA,NA,NA,exclude,FALSE
+sfmw260490897961789lpnb,v1,no,NA,no,NA,yes,bruit parasite,include,NA,NA,NA,include,FALSE
+tcmv93776695306270xllt,v1,no,NA,no,NA,yes,"premier exercice déroutant, je n'avais pas bien compris ce qui allait suivre",include,NA,NA,NA,include,FALSE
+ucoe76217798760768baco,v1,no,NA,no,NA,yes,quelqu'un a sonné à la porte lors d'un essai donc je n'ai rien répondu,include,NA,NA,NA,include,FALSE
+uooo85028480498115sqkt,v1,no,NA,no,NA,yes,problème de clavier lorseque je cliquais sur une lettre f ou J cela me déclenchait une recherche d'occurence sur la page... il m'a fallu chercher comment desactiver la fonction etc...,include,exclude,keyboard issues that opened browser options and prevented from doing parity and focusing on the experiment,2026-07-28,exclude,TRUE
+voaw11187923098409wvvm,v1,no,NA,no,NA,yes,Un peu long alors perte d'attention vers la fin,include,NA,NA,NA,include,FALSE
+ywlz790528392158277olyl,v1,no,NA,no,NA,yes,"L'envoi de mes données chargeait en vain à la fin de ma première passation, nécessitant un deuxième essai.",include,NA,NA,NA,include,FALSE
+mnva884126606547465mnou,v3,no,NA,no,NA,yes,"les deux scores les plus bas, j'ai été dérangée ou interompue  || les deux scores les plus bas, j'ai été interompue ou dérangée",include,NA,NA,NA,include,FALSE
+xfqf902531607900444jinw,v3,no,NA,no,NA,yes,"someone was talking to me briefly, some sound in the background",include,NA,NA,NA,include,FALSE
+lwxm990630428621870iaek,v3,no,NA,yes,NA,no,NA,include,NA,NA,NA,include,FALSE
+irdd704425254737314lsmd,v3,no,NA,no,NA,yes,My mouse didn't like moving the rectangle and sometimes refused to let go of colors when trying to lock them into place.,include,NA,NA,NA,include,FALSE

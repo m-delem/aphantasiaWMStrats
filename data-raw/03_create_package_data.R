@@ -179,6 +179,13 @@ readr::write_csv(
   here::here("data-raw/review/missing_flag_data_v1v2.csv")
 )
 
+# Persisted so 04_apply_manual_review.R can filter without re-running this
+# whole script (OSF-independent but still a costly join/nest/score pipeline).
+saveRDS(
+  df_v1v2_nested,
+  here::here("inst/extdata/df_v1v2_nested.rds")
+)
+
 # ---------------------------------------------------------------------------
 # Part B: v3
 # ---------------------------------------------------------------------------
@@ -278,7 +285,21 @@ flatten_v3_participant <- function(entry) {
       .before = 1
     )
 
-  nieq_scored <- if (!is.null(nieq)) score_nieq_v3(nieq) else NULL
+  nieq_scored <- if (!is.null(nieq)) {
+    score_nieq_v3(nieq) |>
+      dplyr::mutate(
+        nieq_freq_inner_voice = nieq$nieq_q_freq_inner_voice_data,
+        nieq_freq_mental_imagery = nieq$nieq_q_freq_mental_imagery_data,
+        nieq_freq_emotions = nieq$nieq_q_freq_emotions_data,
+        nieq_freq_sensory_focus = nieq$nieq_q_freq_sensory_focus_data,
+        nieq_freq_unsymbolised = nieq$nieq_q_freq_unsymbolised_data,
+        nieq_prop_inner_voice = nieq$nieq_q_proportion_inner_voice_data,
+        nieq_prop_mental_imagery = nieq$nieq_q_proportion_mental_imagery_data,
+        nieq_prop_emotions = nieq$nieq_q_proportion_emotions_data,
+        nieq_prop_sensory_focus = nieq$nieq_q_proportion_sensory_focus_data,
+        nieq_prop_unsymbolised = nieq$nieq_q_proportion_unsymbolised_data
+      )
+    } else NULL
 
   strategy_row <- if (!is.null(strat)) {
     dplyr::bind_cols(
@@ -399,7 +420,9 @@ df_v3_nested <-
       tidyselect::starts_with("osivq_q"),
       object_score, spatial_score, verbal_score, o_count, s_count, v_count
     ),
-    nieq_items = tidyselect::starts_with("nieq_q_"),
+    nieq_items = c(
+      tidyselect::starts_with("nieq_freq"),
+      tidyselect::starts_with("nieq_prop")),
     strategy_items = tidyselect::starts_with("strats_cfa"),
     extra_demographics = c(
       "country", "job", "education", "field", "where_from",
@@ -451,4 +474,9 @@ missing_flags_v3 <-
 readr::write_csv(
   missing_flags_v3,
   here::here("data-raw/review/missing_flag_data_v3.csv")
+)
+
+saveRDS(
+  df_v3_nested,
+  here::here("inst/extdata/df_v3_nested.rds")
 )
