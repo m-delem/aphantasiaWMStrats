@@ -295,7 +295,9 @@ message(
 # existed in the first place).
 never_started <-
   all_results |>
-  purrr::keep(~ is.null(.x$components$cfa_experiment) && is.null(.x$incomplete_cfa_experiment)) |>
+  purrr::keep(
+    ~ is.null(.x$components$cfa_experiment) &&
+      is.null(.x$incomplete_cfa_experiment)) |>
   purrr::map_chr("study_result_id")
 
 if (length(never_started) > 0) {

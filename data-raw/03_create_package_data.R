@@ -70,7 +70,7 @@ compute_nieq_scores <- function(df) {
     dplyr::ungroup()
 }
 
-# id ranges are the only reliable version signal for v1/v2 -- the JATOS
+# id ranges are the only reliable version signal for v1/v2 - the JATOS
 # batch field wasn't retained early on. Hardcoded, since v1/v2 are
 # discontinued and their id ranges are fixed and already confirmed.
 tag_version <- function(df) {
@@ -85,17 +85,15 @@ tag_version <- function(df) {
     )
 }
 
-df_v1v2_scored <-
+df_v1v2_nested <-
   expe_working_memory_data |>
   tag_version() |>
+  # Questionnaire scoring: VVIQ groups and OSIVQ/NIEQ sub-scale sums
   classify_vviq_groups() |>
-  compute_nieq_scores()
-
-# Nest raw items into list-columns: keeps them available without cluttering the
-# main frame. VVIQ items, OSIVQ items, NIEQ items (freq/prop), and strategy
-# report items each get their own nested column.
-df_v1v2_nested <-
-  df_v1v2_scored |>
+  compute_nieq_scores() |>
+  # Nest raw items into list-columns: keeps them available without cluttering the
+  # main frame. VVIQ items, OSIVQ items, NIEQ items (freq/prop), and strategy
+  # report items each get their own nested column.
   tidyr::nest(
     vviq_items = tidyselect::starts_with("vviq_q"),
     osivq_items = c(
@@ -110,14 +108,22 @@ df_v1v2_nested <-
       "country", "job", "education", "field", "where_from",
       "language_native", "language_usual"
     )
-  )
-
-# is_on_mobile is kept as a real filter for consistency with v3, even though
-# for the current v3 snapshot every is_on_mobile == TRUE row also has 0
-# completed trials (checked directly against the raw data) and would be
-# dropped by the completeness filter regardless. Not assumed to always be
-# redundant with completeness in future data.
-df_v1v2_filtered <- df_v1v2_nested |> dplyr::filter(!is_on_mobile, is_complete)
+  ) |>
+  # is_on_mobile is kept as a real filter for consistency with v3, even though
+  # for the current v3 snapshot every is_on_mobile == TRUE row also has 0
+  # completed trials (checked directly against the raw data) and would be
+  # dropped by the completeness filter regardless. Not assumed to always be
+  # redundant with completeness in future data.
+  dplyr::filter(!is_on_mobile, is_complete) |>
+  # Useless context columns to remove right away before merging them
+  dplyr::select(!c(
+    "fullscreen", "already_passed", "is_skipped", "component_name",
+    "session_id", "result_id", "startDate", "compo_duration", "compo_state",
+    "size", "viewport_width", "viewport_height", "browser_info",
+    "where_demographics"
+  )) |>
+  # Adding the response order manually, which was always fixed in v1/v2
+  dplyr::mutate(response_order = "word_angle_color")
 
 # ---------------------------------------------------------------------------
 # Exclusion review artifacts (v1/v2 side). We do a case-by-case judgment
@@ -130,7 +136,7 @@ df_v1v2_filtered <- df_v1v2_nested |> dplyr::filter(!is_on_mobile, is_complete)
 # ---------------------------------------------------------------------------
 
 flagged_v1v2 <-
-  df_v1v2_filtered |>
+  df_v1v2_nested |>
   dplyr::filter(
     used_external_support == "yes" |
       gave_false_info == "yes" |
@@ -161,7 +167,7 @@ readr::write_csv(
 # above (NA == "yes" evaluates to NA there, so these rows are already
 # correctly excluded from flagged_v1v2, just not visibly explained).
 missing_flags_v1v2 <-
-  df_v1v2_filtered |>
+  df_v1v2_nested |>
   dplyr::filter(
     is.na(used_external_support) | is.na(gave_false_info) | is.na(met_issues)
   ) |>
@@ -224,7 +230,7 @@ split_strategy_positions <- function(
 
 # Stimulus-level array fields to unnest from cfa_experiment. Includes
 # response_order, v3-only (one 3-element vector per stimulus, no v1/v2
-# equivalent) - stays a genuine list-column through unnest_longer(), not
+# equivalent) - stays a true list-column through unnest_longer(), not
 # flattened.
 stim_fields <- c(
   "trial_number", "item_number", "expe_phase",
@@ -266,7 +272,11 @@ flatten_v3_participant <- function(entry) {
     tidyr::hoist(data, !!!stats::setNames(as.list(stim_fields), stim_fields)) |>
     dplyr::select(!data) |>
     tidyr::unnest_longer(tidyselect::all_of(stim_fields)) |>
-    dplyr::mutate(id = comps$welcome_consent_id$subject_id_data, .before = 1)
+    dplyr::mutate(
+      id = comps$welcome_consent_id$subject_id_data,
+      language = comps$welcome_consent_id$language,
+      .before = 1
+    )
 
   nieq_scored <- if (!is.null(nieq)) score_nieq_v3(nieq) else NULL
 
@@ -376,16 +386,13 @@ flatten_v3_participant <- function(entry) {
   return(flat_df)
 }
 
-df_v3_flat <-
+df_v3_nested <-
   purrr::map(v3_raw, flatten_v3_participant) |>
   purrr::compact() |>
   purrr::list_rbind() |>
-  dplyr::mutate(version = "v3")
-
-df_v3_scored <- df_v3_flat |> classify_vviq_groups()
-
-df_v3_nested <-
-  df_v3_scored |>
+  dplyr::mutate(version = "v3") |>
+  classify_vviq_groups() |>
+  dplyr::filter(!is_on_mobile, is_complete) |>
   tidyr::nest(
     vviq_items = tidyselect::starts_with("vviq_q"),
     osivq_items = c(
@@ -400,8 +407,6 @@ df_v3_nested <-
     )
   )
 
-df_v3_filtered <- df_v3_nested |> dplyr::filter(!is_on_mobile, is_complete)
-
 # ---------------------------------------------------------------------------
 # Exclusion review artifacts (v3 side), mirroring Part A. what_external_support
 # and what_false_info are not collected as free text in v3's thanks_feedback
@@ -411,7 +416,7 @@ df_v3_filtered <- df_v3_nested |> dplyr::filter(!is_on_mobile, is_complete)
 # ---------------------------------------------------------------------------
 
 flagged_v3 <-
-  df_v3_filtered |>
+  df_v3_nested |>
   dplyr::filter(
     used_external_support == "yes" |
       gave_false_info == "yes" |
@@ -436,7 +441,7 @@ readr::write_csv(
 )
 
 missing_flags_v3 <-
-  df_v3_filtered |>
+  df_v3_nested |>
   dplyr::filter(
     is.na(used_external_support) | is.na(gave_false_info) | is.na(met_issues)
   ) |>
