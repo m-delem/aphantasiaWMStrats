@@ -1,18 +1,19 @@
 #' Get CFA-WM data, optionally filtered by version
 #'
-#' Convenience accessor for [all_data]. Returns the full combined dataset by
+#' Convenience accessor for [aphantasiaWMStrats::all_data]. Returns the full combined dataset by
 #' default, or a subset restricted to one or more study versions.
 #'
 #' @param version Character vector. One or more of `"v1"`, `"v2"`, `"v3"`,
 #'   or `"all"` (the default). `"all"` is equivalent to
 #'   `c("v1", "v2", "v3")` and cannot be combined with the others.
-#' @param data Internal. The data frame to filter; defaults to [all_data]
-#'   and is not meant to be set by end users. Exposed as an argument (rather
-#'   than referencing [all_data] directly in the function body) so the
+#' @param data Internal. The data frame to filter; defaults to
+#'   [aphantasiaWMStrats::all_data] and is not meant to be set by end users.
+#'   Exposed as an argument (rather than referencing
+#'   [aphantasiaWMStrats::all_data] directly in the function body) so the
 #'   filtering/validation logic can be tested against a small synthetic
 #'   stand-in without touching the real package data.
 #'
-#' @return A tibble with the same columns as [all_data], filtered to the
+#' @return A tibble with the same columns as [aphantasiaWMStrats::all_data], filtered to the
 #'   requested version(s).
 #'
 #' @examples
@@ -21,7 +22,10 @@
 #' get_data(version = c("v1", "v2"))
 #'
 #' @export
-get_data <- function(version = "all", data = all_data) {
+get_data <- function(
+    version = "all",
+    data = aphantasiaWMStrats::all_data
+) {
   valid_versions <- c("v1", "v2", "v3")
 
   if (!is.character(version) || length(version) == 0) {

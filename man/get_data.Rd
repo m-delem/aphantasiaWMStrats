@@ -4,12 +4,19 @@
 \alias{get_data}
 \title{Get CFA-WM data, optionally filtered by version}
 \usage{
-get_data(version = "all")
+get_data(version = "all", data = aphantasiaWMStrats::all_data)
 }
 \arguments{
 \item{version}{Character vector. One or more of \code{"v1"}, \code{"v2"}, \code{"v3"},
 or \code{"all"} (the default). \code{"all"} is equivalent to
 \code{c("v1", "v2", "v3")} and cannot be combined with the others.}
+
+\item{data}{Internal. The data frame to filter; defaults to
+\link{all_data} and is not meant to be set by end users.
+Exposed as an argument (rather than referencing
+\link{all_data} directly in the function body) so the
+filtering/validation logic can be tested against a small synthetic
+stand-in without touching the real package data.}
 }
 \value{
 A tibble with the same columns as \link{all_data}, filtered to the
