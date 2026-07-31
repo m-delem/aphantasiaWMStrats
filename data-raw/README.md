@@ -70,7 +70,21 @@ checked-in file - see below), resolves a final include/exclude call per
 flagged participant, applies it, combines `df_v1v2_nested` and
 `df_v3_nested` into one tibble, trims the columns that were only needed for
 cleaning, and saves the result as `all_data` via `usethis::use_data()`.
-This is the last step - its output is what the package actually ships.
+This is the package data build step: its output is what the package
+actually ships.
+
+### `05_export_datasets_to_osf.R`
+Not part of the package build (nothing here feeds back into `all_data` or
+anything under `R/`), but a one-way export step for sharing `all_data` outside
+the package. Produces two datasets, each as `.csv` and `.xlsx`:
+`all_data_one_line` (one row per participant - trial/stimulus-level columns
+dropped, nested item list-columns unnested wide by name) and
+`all_data_full` (`all_data` at full stimulus-level granularity, nested
+list-columns dropped rather than unnested, to avoid repeating
+participant-level questionnaire items across every stimulus row). Files
+are written locally to `data-raw/exports/` (gitignored) and then pushed to
+CFA-WM's OSF component (`3649s`), in a `v3 Data/Processed data` sub-folder.
+Requires OSF write credentials for that component, not just read.
 
 ## The review files, and why there are two kinds
 
