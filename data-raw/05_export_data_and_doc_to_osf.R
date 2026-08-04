@@ -36,6 +36,7 @@
 #   analytic benefit, that data belongs in all_data_surveys above).
 #   Otherwise all_data as shipped by the package, unmodified.
 # -----------------------------------------------------------------------
+devtools::load_all()
 
 trial_level_cols <- c(
   "expe_phase", "trial_number", "response_order", "item_number",
@@ -55,7 +56,7 @@ nested_cols <- c(
 )
 
 all_data_surveys <-
-  aphantasiaWMStrats::all_data |>
+  all_data |>
   dplyr::select(!tidyselect::all_of(trial_level_cols)) |>
   dplyr::distinct(id, version, .keep_all = TRUE) |>
   tidyr::unnest_wider(vviq_items) |>
@@ -66,11 +67,11 @@ all_data_surveys <-
 
 stopifnot(
   nrow(all_data_surveys) ==
-    nrow(dplyr::distinct(aphantasiaWMStrats::all_data, id, version))
+    nrow(dplyr::distinct(all_data, id, version))
 )
 
 all_data_full <-
-  aphantasiaWMStrats::all_data |>
+  all_data |>
   dplyr::select(!tidyselect::all_of(nested_cols))
 
 # -----------------------------------------------------------------------

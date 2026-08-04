@@ -9,6 +9,7 @@ library(osfr)
 # osf_auth("ThIsIsNoTaReAlPATbUtYoUgEtIt")
 
 v3_raw_dir <- here::here("inst/extdata/cfa_v3_raw")
+if (dir.exists(v3_raw_dir)) unlink(v3_raw_dir, recursive = TRUE)
 fs::dir_create(v3_raw_dir)
 
 osf_retrieve_node("3649s") |>

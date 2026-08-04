@@ -38,12 +38,12 @@ re-downloading every time.
 Downloads v3's raw JATOS zip from CFA-WM's own OSF component, unzips it,
 and resolves per-participant duplicate component entries (caused by page
 reloads during the experiment) using a different strategy per component
-type - completeness-based for the main task, "yes wins" + concatenation
+type; completeness-based for the main task, "yes wins" + concatenation
 for feedback flags/free text, fill-gaps-from-other-attempts for
 questionnaires, most-complete-wins for general data. Writes
 `inst/extdata/cfa_v3_raw_extracted.rds` (still raw/JSON-shaped, one list
 entry per participant) and `data-raw/review/excluded_incomplete_v3.csv`
-(participants who never reached, or didn't finish, the main task - has to
+(participants who never reached, or didn't finish, the main task; has to
 happen here, not later, since the raw trial counts aren't recoverable once
 script 3's completeness filter has run).
 
