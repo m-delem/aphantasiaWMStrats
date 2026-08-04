@@ -1,0 +1,27 @@
+url: https://m-delem.github.io/aphantasiaWMStrats/
+template:
+  bootstrap: 5
+  light-switch: yes
+  bslib:
+    base_font:
+      google: Montserrat
+    heading_font:
+      google: DM Sans
+reference:
+  - title: Data
+    desc: >
+      The pooled, stimulus-level CFA-WM working memory dataset (v1/v2/v3)
+      and its accessor.
+    contents:
+      - all_data
+      - get_data
+
+navbar:
+  left:
+    - text: "Extended Online Report"
+      menu:
+        - text: "Technical details"
+        - text: "Codebook"
+          href: articles/codebook.html
+    - text: "Reference"
+      href: reference/index.html

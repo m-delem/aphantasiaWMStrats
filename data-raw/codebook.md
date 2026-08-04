@@ -1,0 +1,227 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+# Codebook: CFA-WM working memory strategies data (v1/v2/v3), participant- and stimulus-level exports
+
+Data from the CFA-WM working memory task (word/orientation/colour recall under a parity-judgement distractor), pooled across three task versions (v1 original, v2 added a parity-error penalty, v3 added recall-order randomisation). Two datasets are described here: all_data_surveys (one row per participant: demographics, questionnaire scores, and raw questionnaire/strategy items) and all_data_full (one row per stimulus: trial structure, targets, responses, timing, and per-trial scores; no questionnaire item detail, see all_data_surveys for that).
+
+## Sources
+
+- CFA-WM v1/v2/v3, Mael Delem, EMC Lab, Universite Lumiere Lyon 2
+
+## Instrument references and copyright notice
+
+VVIQ, OSIVQ, and NIEQ item wording is copyrighted by the original scale authors and is not reproduced here. Item columns below are identified by their official item number/dimension; consult the source publications above for exact wording.
+
+- VVIQ item text: Marks, D. F. (1973). Visual imagery differences in the recall of pictures. British Journal of Psychology, 64(1), 17-24. https://doi.org/10.1111/j.2044-8295.1973.tb01322.x
+- OSIVQ item text: Blazhenkova, O., & Kozhevnikov, M. (2009). The new object-spatial-verbal cognitive style model: Theory and measurement. Applied Cognitive Psychology, 23(5), 638-663. https://doi.org/10.1002/acp.1473
+- NIEQ item text: Heavey, C. L., Moynihan, S. A., Brouwers, V. P., Lapping-Carr, L., Krumm, A. E., Kelsey, J. M., Turner, D. K., & Hurlburt, R. T. (2019). Measuring the frequency of inner-experience characteristics by self-report: The Nevada Inner Experience Questionnaire. Frontiers in Psychology, 9, 2615. https://doi.org/10.3389/fpsyg.2018.02615
+
+# Dataset 1: `all_data_surveys` (one row per participant)
+
+## Core variables
+
+| Variable | Description | Type | Range | Levels / notes |
+|---|---|---|---|---|
+| `id` | Participant identifier, unique within a version. | string |  |  |
+| `version` | CFA-WM task version. | string |  | `v1` = Original task version; `v2` = Added a parity-error penalty to recall scoring; `v3` = Added recall-order randomisation; independent front-end infrastructure |
+| `language` | UI language of the experiment in the browser. | string |  | `en` = English; `fr` = French |
+| `age` | Participant age in years, self-reported. | integer | 18-71 years |  |
+| `gender` | Gender, as freely typed by the participant. | string |  | Free text, not a controlled vocabulary; values include both short codes ("f", "m") and longer self-descriptions in French and English (e.g. "Non-binaire", "female/agender"). Left as-is rather than collapsed into fixed categories, since collapsing would lose information some participants specifically chose to add. No missing values in the current data. |
+| `vviq_total_score` | Total score on the Vividness of Visual Imagery Questionnaire (VVIQ; Marks, 1973), summed across all 16 items (see vviq_q01- vviq_q16 below). Lower scores indicate weaker/absent visual imagery. | integer | 16-80 | Missing for 2 participants (of 116). |
+| `vviq_group_2` | Categorical VVIQ group with 2 levels, based on standard VVIQ cutoff. | string |  | `aphantasia` = VVIQ <= 32 (aphantasia and hypophantasia collapsed); `typical` = VVIQ > 32 (typical and hyperphantasia collapsed) |
+| `vviq_group_4` | Categorical VVIQ group with 4 levels, based on standard VVIQ cutoffs. | string |  | `aphantasia` = VVIQ = 16 (complete absence of visual imagery); `hypophantasia` = VVIQ 17-32 (reduced visual imagery); `typical` = VVIQ 33-74 (typical visual imagery); `hyperphantasia` = VVIQ 75-80 (extremely vivid visual imagery) |
+| `nieq_mental_imagery` | Nevada Inner Experience Questionnaire (NIEQ; Heavey et al., 2019) mental imagery dimension score: mean of the frequency and proportion items for this dimension (see nieq_freq_mental_imagery / nieq_prop_mental_imagery in the nested item columns). | float | 0-100 | No missing values. |
+| `nieq_inner_voice` | NIEQ inner voice/speaking dimension score (mean of frequency and proportion items). | float | 0-100 | No missing values. |
+| `nieq_emotions` | NIEQ feelings/emotions dimension score (mean of frequency and proportion items). | float | 0-100 | No missing values. |
+| `nieq_sensory_focus` | NIEQ sensory awareness dimension score (mean of frequency and proportion items). | float | 0-100 | No missing values. |
+| `nieq_unsymbolised` | NIEQ unsymbolized thinking dimension score (mean of frequency and proportion items). | float | 0-100 | No missing values. |
+| `object_mean` | OSIVQ (Blazhenkova & Kozhevnikov, 2009) object-imagery subscale mean. | float | 1-4.64 | Missing for 2 participants (same 2 as vviq_total_score). |
+| `spatial_mean` | OSIVQ spatial-imagery subscale mean. | float | 1-5 | Missing for 2 participants (same 2 as vviq_total_score). |
+| `verbal_mean` | OSIVQ verbal cognitive-style subscale mean. | float | 1-5 | Missing for 2 participants (same 2 as vviq_total_score). |
+| `total_score_word` | Participant's total word-recall score, summed across all trials. | float | 6-70.5 |  |
+| `total_score_angle` | Participant's total orientation-recall score, summed across all trials. | float | 0-64.5 |  |
+| `total_score_color` | Participant's total colour-recall score, summed across all trials. | float | 5-64 |  |
+| `total_score` | Participant's combined total recall score across all modalities and trials. | float | 11.5-195.5 |  |
+| `prognosis` | Self-reported aphantasia status/prognosis, where collected. | string |  | `no` = No; `yes` = Yes |
+| `neuro_trouble` | Self-reported neurological condition, freely typed. | string |  | Free text (French), not a controlled vocabulary, e.g. "TDAH", "TSA", "depression suite a un burnout". NA throughout for v3 (not asked in that version's demographics form); collected for v1/v2 only. |
+| `treatment` | Self-reported relevant treatment. | string |  | `no` = No; `yes` = Yes -- NA throughout for v3 (not asked in that version's demographics form); collected for v1/v2 only. |
+
+## VVIQ item-level responses (`vviq_q01`-`vviq_q16`)
+
+The VVIQ has no subscales; its 16 items are grouped into 4 scenes of 4 items each, each rated 1 (perfectly clear and vivid) to 5 (no image at all). Item wording is not reproduced here for copyright reasons -- see Marks (1973).
+
+| Variable | Description | Type | Range | Notes |
+|---|---|---|---|---|
+| `vviq_q01` | VVIQ item 1 of 16, from the scene "a relative or friend you often see" (items 1-4 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q02` | VVIQ item 2 of 16, from the scene "a relative or friend you often see" (items 1-4 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q03` | VVIQ item 3 of 16, from the scene "a relative or friend you often see" (items 1-4 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q04` | VVIQ item 4 of 16, from the scene "a relative or friend you often see" (items 1-4 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q05` | VVIQ item 5 of 16, from the scene "the rising sun" (items 5-8 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q06` | VVIQ item 6 of 16, from the scene "the rising sun" (items 5-8 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q07` | VVIQ item 7 of 16, from the scene "the rising sun" (items 5-8 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q08` | VVIQ item 8 of 16, from the scene "the rising sun" (items 5-8 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q09` | VVIQ item 9 of 16, from the scene "the front of a familiar shop" (items 9-12 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q10` | VVIQ item 10 of 16, from the scene "the front of a familiar shop" (items 9-12 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q11` | VVIQ item 11 of 16, from the scene "the front of a familiar shop" (items 9-12 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q12` | VVIQ item 12 of 16, from the scene "the front of a familiar shop" (items 9-12 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q13` | VVIQ item 13 of 16, from the scene "a country scene with trees, mountains, and a lake" (items 13-16 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q14` | VVIQ item 14 of 16, from the scene "a country scene with trees, mountains, and a lake" (items 13-16 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q15` | VVIQ item 15 of 16, from the scene "a country scene with trees, mountains, and a lake" (items 13-16 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+| `vviq_q16` | VVIQ item 16 of 16, from the scene "a country scene with trees, mountains, and a lake" (items 13-16 share this scene). Item wording not reproduced; see Marks (1973). | integer | 1-5 | 1 = perfectly clear and as vivid as normal vision; 5 = no image at all. Missing for 2 participants overall. |
+
+## OSIVQ item-level responses
+
+34 items rated 1 (totally disagree) to 5 (totally agree), across three scales (Object, Spatial, Verbal). Item order in the raw front-end data differs between v1/v2 and v3; the columns here are named consistently across both after unnesting by name (not position). Item wording is not reproduced here for copyright reasons -- see Blazhenkova & Kozhevnikov (2009).
+
+| Variable | Description | Type | Range | Notes |
+|---|---|---|---|---|
+| `osivq_q01s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q02v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q04v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q05s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q06o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q07s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q08v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q09v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q11o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q12o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q13o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q14s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q16v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q17s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q18o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q20o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q23o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q26o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q27s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q29o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q30s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q31s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q32s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q33o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q34o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q35v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q37v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q39v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q40o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q41v` | OSIVQ item, Verbal scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q42s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q43o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q44s` | OSIVQ item, Spatial scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+| `osivq_q45o` | OSIVQ item, Object scale. Item wording not reproduced; see Blazhenkova & Kozhevnikov (2009). | integer | 1-5 | 1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. |
+
+### OSIVQ subscale sums and item-completion counts
+
+| Variable | Description | Type | Range | Notes |
+|---|---|---|---|---|
+| `object_score` | OSIVQ object-imagery subscale sum (raw item sum; object_mean above is its mean). | integer | 14-65 | Missing for 2 participants overall. |
+| `spatial_score` | OSIVQ spatial-imagery subscale sum (raw item sum; spatial_mean above is its mean). | integer | 11-55 | Missing for 2 participants overall. |
+| `verbal_score` | OSIVQ verbal cognitive-style subscale sum (raw item sum; verbal_mean above is its mean). | integer | 12-45 | Missing for 2 participants overall. |
+| `o_count` | Number of object-scale items answered (out of 11). | integer |  | Diagnostic/completion count, not a score. |
+| `s_count` | Number of spatial-scale items answered (out of 11). | integer |  | Diagnostic/completion count, not a score. |
+| `v_count` | Number of verbal-scale items answered (out of 12). | integer |  | Diagnostic/completion count, not a score. |
+
+## NIEQ item-level responses
+
+5 dimensions (mental imagery, inner voice/speaking, feelings/emotions, sensory awareness, unsymbolized thinking), each with 2 raw items (frequency, proportion), both 0-100 sliders. Item wording is not reproduced here for copyright reasons -- see Heavey et al. (2019).
+
+| Variable | Description | Type | Range | Notes |
+|---|---|---|---|---|
+| `nieq_freq_mental_imagery` | NIEQ Mental imagery dimension, frequency item (how often this type of inner experience occurs). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_prop_mental_imagery` | NIEQ Mental imagery dimension, proportion item (what proportion of inner experience this type makes up). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_freq_inner_voice` | NIEQ Inner voice/speaking dimension, frequency item (how often this type of inner experience occurs). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_prop_inner_voice` | NIEQ Inner voice/speaking dimension, proportion item (what proportion of inner experience this type makes up). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_freq_emotions` | NIEQ Feelings/emotions dimension, frequency item (how often this type of inner experience occurs). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_prop_emotions` | NIEQ Feelings/emotions dimension, proportion item (what proportion of inner experience this type makes up). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_freq_sensory_focus` | NIEQ Sensory awareness dimension, frequency item (how often this type of inner experience occurs). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_prop_sensory_focus` | NIEQ Sensory awareness dimension, proportion item (what proportion of inner experience this type makes up). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_freq_unsymbolised` | NIEQ Unsymbolized thinking dimension, frequency item (how often this type of inner experience occurs). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+| `nieq_prop_unsymbolised` | NIEQ Unsymbolized thinking dimension, proportion item (what proportion of inner experience this type makes up). Item wording not reproduced; see Heavey et al. (2019). | integer | 0-100 | 0-100 slider. No missing values. |
+
+## Strategy report, free text (`strats_cfa_q01`-`q03`)
+
+Free-text self-reported memorisation strategies, mostly in French, collected in v1/v2 only. Not a controlled vocabulary -- no level list is given, as one wouldn't meaningfully summarise free text.
+
+| Variable | Description | Type | Range | Notes |
+|---|---|---|---|---|
+| `strats_cfa_q01_colors_1` | Free-text (mostly French) self-reported strategy for remembering colours, first mention. | string |  | Free text, not a controlled vocabulary - collected in v1/v2 only. See strats_cfa_q04_scoring_strat_* below for v3's coded strategy report. |
+| `strats_cfa_q01_colors_2` | Free-text self-reported strategy for remembering colours, second mention (optional follow-up). | string |  | Free text. Collected in v1/v2 only. Mostly missing (optional field). |
+| `strats_cfa_q01_colors_3` | Free-text self-reported strategy for remembering colours, third mention (optional follow-up). | string |  | Free text. Collected in v1/v2 only. Mostly missing (optional field). |
+| `strats_cfa_q02_orientations_1` | Free-text self-reported strategy for remembering orientations, first mention. | string |  | Free text, not a controlled vocabulary - collected in v1/v2 only. |
+| `strats_cfa_q02_orientations_2` | Free-text self-reported strategy for remembering orientations, second mention (optional follow-up). | string |  | Free text. Collected in v1/v2 only. Mostly missing (optional field). |
+| `strats_cfa_q02_orientations_3` | Free-text self-reported strategy for remembering orientations, third mention (optional follow-up). | string |  | Free text. Collected in v1/v2 only. Mostly missing (optional field). |
+| `strats_cfa_q03_words_1` | Free-text self-reported strategy for remembering words, first mention. | string |  | Free text, not a controlled vocabulary - collected in v1/v2 only. |
+| `strats_cfa_q03_words_2` | Free-text self-reported strategy for remembering words, second mention (optional follow-up). | string |  | Free text. Collected in v1/v2 only. Mostly missing (optional field). |
+| `strats_cfa_q03_words_3` | Free-text self-reported strategy for remembering words, third mention (optional follow-up). | string |  | Free text. Collected in v1/v2 only. Mostly missing (optional field). |
+
+## Strategy report, coded (`strats_cfa_q04_scoring_strat_*`)
+
+Controlled vocabulary, collected primarily in v3 (`strats_cfa_q04_scoring_strat_1`/`_2`); v1/v2 has an equivalent field with a different naming convention (`_1_1`/`_2_1`/`_3_1`).
+
+| Variable | Description | Type | Range | Levels / notes |
+|---|---|---|---|---|
+| `strats_cfa_q04_scoring_strat_1` | Coded self-reported memorisation strategy, first choice. | string |  | `repetition` = Repeated the stimulus (aloud or mentally); `semantic` = Formed a semantic association or link; `none` = No particular strategy used; `spatial_body` = Used body movement/position as a memory aid; `spatial_cardinal` = Used a cardinal/directional spatial strategy; `words` = Focused on the word component; `colours` = Focused on the colour component; `orientations` = Focused on the orientation component; `mental_image` = Formed a mental image -- Collected in v3 only (as strats_cfa_q04_scoring_strat_1; the _1_1 column below is a v1/v2 field with a different naming convention, not the same question re-asked). |
+| `strats_cfa_q04_scoring_strat_2` | Coded self-reported memorisation strategy, second choice. | string |  | `repetition` = Repeated the stimulus (aloud or mentally); `semantic` = Formed a semantic association or link; `none` = No particular strategy used; `spatial_body` = Used body movement/position as a memory aid; `spatial_cardinal` = Used a cardinal/directional spatial strategy; `words` = Focused on the word component; `colours` = Focused on the colour component; `orientations` = Focused on the orientation component; `mental_image` = Formed a mental image -- Collected in v3 only. |
+| `strats_cfa_q04_scoring_strat_1_1` | Coded self-reported memorisation strategy, v1/v2's equivalent first-choice field. | string |  | `repetition` = Repeated the stimulus (aloud or mentally); `semantic` = Formed a semantic association or link; `none` = No particular strategy used; `spatial_body` = Used body movement/position as a memory aid; `spatial_cardinal` = Used a cardinal/directional spatial strategy; `words` = Focused on the word component; `colours` = Focused on the colour component; `orientations` = Focused on the orientation component; `mental_image` = Formed a mental image -- Collected in v1/v2 only (NA for all v3 rows). |
+| `strats_cfa_q04_scoring_strat_2_1` | Coded self-reported memorisation strategy, v1/v2's equivalent second-choice field. | string |  | `repetition` = Repeated the stimulus (aloud or mentally); `semantic` = Formed a semantic association or link; `none` = No particular strategy used; `spatial_body` = Used body movement/position as a memory aid; `spatial_cardinal` = Used a cardinal/directional spatial strategy; `words` = Focused on the word component; `colours` = Focused on the colour component; `orientations` = Focused on the orientation component; `mental_image` = Formed a mental image -- Collected in v1/v2 only (NA for all v3 rows). Sparsely populated even within v1/v2 (optional field). |
+| `strats_cfa_q04_scoring_strat_3_1` | Coded self-reported memorisation strategy, v1/v2's equivalent third-choice field. | string |  | `repetition` = Repeated the stimulus (aloud or mentally); `semantic` = Formed a semantic association or link; `none` = No particular strategy used; `spatial_body` = Used body movement/position as a memory aid; `spatial_cardinal` = Used a cardinal/directional spatial strategy; `words` = Focused on the word component; `colours` = Focused on the colour component; `orientations` = Focused on the orientation component; `mental_image` = Formed a mental image -- Collected in v1/v2 only; v3 has no third slot for this field (NA for all v3 rows - this is a real structural difference, not missing data). Rarely populated even within v1/v2: non-missing for only 7 of 88 v1 participants and 0 of 9 v2 participants. |
+
+## Additional demographics
+
+| Variable | Description | Type | Range | Notes |
+|---|---|---|---|---|
+| `country` | Self-reported country of residence (free text/country code, not standardised). | string |  |  |
+| `job` | Self-reported occupation, using the ESEG occupational classification codes where applicable. | string |  |  |
+| `education` | Self-reported education level, using ISCED classification codes where applicable. | string |  |  |
+| `field` | Self-reported field of study or work, free text. | string |  |  |
+| `where_from` | Self-reported source of how the participant heard about the study. | string |  |  |
+| `language_native` | Participant's self-reported native language. | string |  |  |
+| `language_usual` | Participant's self-reported language of everyday use, where different from native language. | string |  |  |
+
+# Dataset 2: `all_data_full` (one row per stimulus)
+
+id, version, language, age, gender, vviq_total_score, vviq_group_2, vviq_group_4, nieq_mental_imagery, nieq_inner_voice, nieq_emotions, nieq_sensory_focus, nieq_unsymbolised, object_mean, spatial_mean, and verbal_mean are the same participant-level columns described in all_data_surveys above, repeated on every stimulus row for this participant. See all_data_surveys for their descriptions, ranges, and missingness.
+
+| Variable | Description | Type | Range | Levels / notes |
+|---|---|---|---|---|
+| `expe_phase` | Task phase this stimulus belongs to. | string |  | `tutorial` = Single practice trial with feedback; `training` = Practice trials, no feedback; `expe_block_1` = Test block 1; `expe_block_2` = Test block 2; `expe_block_3` = Test block 3 |
+| `trial_number` | Trial index (1 tutorial + 3 training + 21 test trials per participant). | integer |  |  |
+| `response_order` | Order in which the three response modalities (word/angle/colour) were collected for this trial. | string |  | `word_angle_color` = Word, then angle, then colour; `word_color_angle` = Word, then colour, then angle; `angle_word_color` = Angle, then word, then colour; `angle_color_word` = Angle, then colour, then word; `color_word_angle` = Colour, then word, then angle; `color_angle_word` = Colour, then angle, then word -- Fixed at word_angle_color in v1/v2 (always that order); randomised per trial in v3, so all 6 permutations appear. |
+| `item_number` | Stimulus index within the trial (1-3: word, orientation, colour). | integer |  |  |
+| `target_word` | The to-be-remembered word for this stimulus. | string |  |  |
+| `target_angle` | The to-be-remembered rectangle orientation, in degrees. | integer |  |  |
+| `target_color_angle` | The to-be-remembered colour, as an angle on the colour wheel used for continuous colour report. | float |  |  |
+| `target_color` | The to-be-remembered colour, as its nearest named colour. | string |  |  |
+| `response_word` | Participant's recalled word. | string |  |  |
+| `response_angle` | Participant's recalled rectangle orientation, in degrees. | float |  |  |
+| `response_color_angle` | Participant's recalled colour, as an angle on the colour wheel. | integer |  |  |
+| `response_color` | Participant's recalled colour, as its nearest named colour. | string |  |  |
+| `diff_word` | Word recall error (string-distance based; 0 = exact match). | float |  |  |
+| `diff_angle` | Angular error between target and response orientation, in degrees. | float |  |  |
+| `diff_color` | Angular error between target and response colour on the colour wheel. | float |  |  |
+| `rt_word` | Response time for the word recall response. | integer |  |  |
+| `rt_angle` | Response time for the orientation recall response. | float |  |  |
+| `rt_color` | Response time for the colour recall response. | float |  |  |
+| `score_word` | Per-modality recall score for the word response, derived from diff_word. | float |  |  |
+| `score_angle` | Per-modality recall score for the orientation response, derived from diff_angle. | float |  |  |
+| `score_color` | Per-modality recall score for the colour response, derived from diff_color. | float |  |  |
+| `trial_score` | Combined recall score for this stimulus's trial, across all three modalities. | float |  |  |
+| `parity_1_stim` | First of the two parity-judgement distractor digits embedded in this trial. | integer |  |  |
+| `parity_1_resp` | Participant's parity judgement (odd/even) for parity_1_stim. | string |  |  |
+| `parity_1_acc` | Accuracy of the first parity judgement (1 = correct, 0 = incorrect). | integer |  |  |
+| `parity_1_rt` | Response time for the first parity judgement. | integer |  |  |
+| `parity_2_stim` | Second of the two parity-judgement distractor digits embedded in this trial. | integer |  |  |
+| `parity_2_resp` | Participant's parity judgement (odd/even) for parity_2_stim. | string |  |  |
+| `parity_2_acc` | Accuracy of the second parity judgement (1 = correct, 0 = incorrect). | integer |  |  |
+| `parity_2_rt` | Response time for the second parity judgement. | integer |  |  |
+| `total_score_word` | Participant's total word-recall score, summed across all trials. | float |  |  |
+| `total_score_angle` | Participant's total orientation-recall score, summed across all trials. | float |  |  |
+| `total_score_color` | Participant's total colour-recall score, summed across all trials. | float |  |  |
+| `total_score` | Participant's combined total recall score across all modalities and trials. | float |  |  |
+| `prognosis` | Self-reported aphantasia status/prognosis, where collected. | string |  | `no` = No; `yes` = Yes |
+| `neuro_trouble` | Self-reported neurological condition, freely typed. | string |  | Free text (French), not a controlled vocabulary. NA throughout for v3. |
+| `treatment` | Self-reported relevant treatment. | string |  | `no` = No; `yes` = Yes -- NA throughout for v3. |
+

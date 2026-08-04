@@ -1,0 +1,276 @@
+---
+title: "Codebook"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Codebook}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+#| include: false
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r setup}
+library(aphantasiaWMStrats)
+```
+
+This page documents every column in `all_data`, the pooled, stimulus-level
+dataset from the CFA-WM working memory task (word/orientation/colour recall
+under a parity-judgement distractor), combining all three study versions
+(v1 original, v2 added a parity-error penalty, v3 added recall-order
+randomisation).
+
+The tables below are computed directly from `all_data` rather than typed out
+by hand, so they cannot drift out of sync with the data itself. `all_data`
+has one row per stimulus (three per trial), so a given participant's
+demographic and questionnaire-score values repeat across their rows; the
+counts and ranges below reflect that (`N missing` counts stimulus rows, not
+participants).
+
+The five nested list-columns holding raw questionnaire items are described
+only briefly here (see the last section below). For full item-level detail 
+(every raw VVIQ/OSIVQ/NIEQ/strategy-report column, computed the same way)
+see the codebook that ships alongside `all_data_surveys` and
+`all_data_full` on [OSF](https://osf.io/3649s/files/osfstorage), the two flat 
+exports built for sharing this data outside the package.
+
+## Identifiers and version
+
+```{r core-summary-fn}
+summarise_column <- function(data, colname) {
+  x <- data[[colname]]
+  n_missing <- sum(is.na(x))
+
+  if (is.numeric(x)) {
+    range_txt <- paste0(
+      round(min(x, na.rm = TRUE), 2), "-", round(max(x, na.rm = TRUE), 2)
+    )
+    type_txt <- if (is.integer(x)) "integer" else "float"
+  } else {
+    lvls <- if (colname != "id") sort(unique(x[!is.na(x)])) else "[free text]"
+    range_txt <- paste(lvls, collapse = ", ")
+    type_txt <- "string"
+  }
+
+  tibble::tibble(
+    Variable = colname,
+    Type = type_txt,
+    `Range / levels` = range_txt,
+    `N missing` = n_missing
+  )
+}
+```
+
+```{r identifiers}
+identifier_variables <- tibble::tribble(
+  ~Variable,  ~Description,
+  "id",       "Participant identifier, unique within a version.",
+  "version",  "CFA-WM task version: v1 (original), v2 (added a parity-error penalty), v3 (added recall-order randomisation, independent front-end infrastructure).",
+  "language", "UI language of the experiment in the browser."
+)
+
+identifier_summary <- purrr::map_dfr(
+  identifier_variables$Variable, \(v) summarise_column(all_data, v)
+)
+
+identifier_variables |>
+  dplyr::left_join(identifier_summary, by = "Variable") |>
+  dplyr::select(Variable, Description, Type, `Range / levels`, `N missing`) |>
+  knitr::kable()
+```
+
+## Trial and stimulus structure
+
+```{r trial-structure}
+trial_structure_variables <- tibble::tribble(
+  ~Variable,        ~Description,
+  "trial_number",   "Trial index (1 tutorial + 3 training + 21 test trials per participant).",
+  "response_order", "Order in which the three response modalities were collected for this trial. Fixed in v1/v2 (always word/angle/colour); randomised per trial in v3.",
+  "item_number",    "Stimulus index within the trial (1-3: word, orientation, colour).",
+  "expe_phase",     "Task phase: tutorial, training, or one of the three test blocks."
+)
+
+trial_structure_summary <- purrr::map_dfr(
+  trial_structure_variables$Variable, \(v) summarise_column(all_data, v)
+)
+
+trial_structure_variables |>
+  dplyr::left_join(trial_structure_summary, by = "Variable") |>
+  dplyr::select(Variable, Description, Type, `Range / levels`, `N missing`) |>
+  knitr::kable()
+```
+
+## Stimulus content and response
+
+```{r stimulus-content}
+stimulus_variables <- tibble::tribble(
+  ~Variable,               ~Description,
+  "target_word",           "The to-be-remembered word.",
+  "target_angle",          "The to-be-remembered rectangle orientation, in degrees.",
+  "target_color_angle",    "The to-be-remembered colour, as an angle on the colour wheel.",
+  "target_color",          "The to-be-remembered colour, as its nearest named colour.",
+  "response_word",         "Participant's recalled word.",
+  "response_angle",        "Participant's recalled orientation, in degrees.",
+  "response_color_angle",  "Participant's recalled colour, as an angle on the colour wheel.",
+  "response_color",        "Participant's recalled colour, as its nearest named colour.",
+  "diff_word",             "Word recall error (string-distance based).",
+  "diff_angle",            "Angular error between target and response orientation.",
+  "diff_color",            "Angular error between target and response colour.",
+  "rt_word",               "Response time for the word recall response (ms).",
+  "rt_angle",              "Response time for the orientation recall response (ms).",
+  "rt_color",              "Response time for the colour recall response (ms).",
+  "score_word",            "Per-modality recall score for the word response.",
+  "score_angle",           "Per-modality recall score for the orientation response.",
+  "score_color",           "Per-modality recall score for the colour response.",
+  "trial_score",           "Combined recall score for this stimulus's trial, across all three modalities.",
+  "parity_1_stim",         "First parity-judgement distractor digit embedded in this trial.",
+  "parity_1_resp",         "Participant's parity judgement for parity_1_stim.",
+  "parity_1_acc",          "Accuracy of the first parity judgement (1 = correct).",
+  "parity_1_rt",           "Response time for the first parity judgement (ms).",
+  "parity_2_stim",         "Second parity-judgement distractor digit embedded in this trial.",
+  "parity_2_resp",         "Participant's parity judgement for parity_2_stim.",
+  "parity_2_acc",          "Accuracy of the second parity judgement (1 = correct).",
+  "parity_2_rt",           "Response time for the second parity judgement (ms)."
+)
+
+stimulus_summary <- purrr::map_dfr(
+  stimulus_variables$Variable, \(v) summarise_column(all_data, v)
+)
+
+stimulus_variables |>
+  dplyr::left_join(stimulus_summary, by = "Variable") |>
+  dplyr::select(Variable, Description, Type, `Range / levels`, `N missing`) |>
+  knitr::kable()
+```
+
+v2/v3 carry a real parity-error penalty in the task design; the parity
+columns exist for v1 too, but the penalty was not applied at recall.
+
+## Questionnaire scores
+
+Raw questionnaire items are in the nested list-columns described at the end
+of this page, not here: these are the derived, cross-version-comparable
+scores.
+
+```{r questionnaire-scores}
+score_variables <- tibble::tribble(
+  ~Variable,             ~Description,
+  "vviq_total_score",    "Total score on the Vividness of Visual Imagery Questionnaire [@marksVisualImageryDifferences1973], summed across all 16 items. Lower scores indicate weaker/absent visual imagery.",
+  "vviq_group_2",        "VVIQ group, 2 levels: aphantasia (<= 32), typical (> 32).",
+  "vviq_group_4",        "VVIQ group, 4 levels: aphantasia (= 16), hypophantasia (17-32), typical (33-74), hyperphantasia (>= 75).",
+  "nieq_mental_imagery", "NIEQ [@heaveyMeasuringFrequencyInnerExperience2019] mental imagery dimension score (mean of frequency and proportion items).",
+  "nieq_inner_voice",    "NIEQ inner voice/speaking dimension score.",
+  "nieq_emotions",       "NIEQ feelings/emotions dimension score.",
+  "nieq_sensory_focus",  "NIEQ sensory awareness dimension score.",
+  "nieq_unsymbolised",   "NIEQ unsymbolized thinking dimension score.",
+  "object_mean",         "OSIVQ [@blazhenkovaNewObjectSpatialVerbal2009] object-imagery subscale mean.",
+  "spatial_mean",        "OSIVQ spatial-imagery subscale mean.",
+  "verbal_mean",         "OSIVQ verbal cognitive-style subscale mean.",
+  "total_score_word",    "Participant's total word-recall score, summed across all trials.",
+  "total_score_angle",   "Participant's total orientation-recall score, summed across all trials.",
+  "total_score_color",   "Participant's total colour-recall score, summed across all trials.",
+  "total_score",         "Participant's combined total recall score across all modalities and trials."
+)
+
+score_summary <- purrr::map_dfr(
+  score_variables$Variable, \(v) summarise_column(all_data, v)
+)
+
+score_variables |>
+  dplyr::left_join(score_summary, by = "Variable") |>
+  dplyr::select(Variable, Description, Type, `Range / levels`, `N missing`) |>
+  knitr::kable()
+```
+
+**Item wording is not reproduced here**, as the VVIQ, OSIVQ, and NIEQ
+item text is copyrighted by their respective authors - see
+@marksVisualImageryDifferences1973, @blazhenkovaNewObjectSpatialVerbal2009,
+and @heaveyMeasuringFrequencyInnerExperience2019 for the original items.
+
+## Demographics
+
+```{r demographics}
+demographic_variables <- tibble::tribble(
+  ~Variable,       ~Description,
+  "age",           "Participant age in years, self-reported.",
+  "gender",        "Gender, as freely typed by the participant.",
+  "country",       "Self-reported country of residence.",
+  "job",           "Self-reported occupation.",
+  "education",     "Self-reported education level.",
+  "field",         "Self-reported field of study or work.",
+  "where_from",    "Self-reported source of how the participant heard about the study.",
+  "prognosis",     "Self-reported aphantasia status/prognosis, where collected.",
+  "treatment",     "Self-reported relevant treatment. NA throughout for v3 (not asked in that version's demographics form).",
+  "neuro_trouble", "Self-reported neurological condition, freely typed. NA throughout for v3 (not asked in that version's demographics form)."
+)
+
+# country/job/education/field/where_from live in the extra_demographics
+# nested column rather than top-level - unnest just those to summarise them.
+demographics_unnested <- all_data |>
+  tidyr::unnest_wider(extra_demographics, names_repair = "minimal")
+
+demographic_summary <- purrr::map_dfr(
+  demographic_variables$Variable, \(v) summarise_column(demographics_unnested, v)
+)
+
+demographic_variables |>
+  dplyr::left_join(demographic_summary, by = "Variable") |>
+  dplyr::select(Variable, Description, Type, `Range / levels`, `N missing`) |>
+  knitr::kable()
+```
+
+`gender` and `neuro_trouble` are free text (French and English mixed for
+`gender`; French for `neuro_trouble`), not a controlled vocabulary - the
+table above lists the observed values as-is rather than collapsing them
+into fixed categories.
+
+## Nested item list-columns
+
+Five list-columns hold the raw questionnaire and strategy-report items,
+kept nested rather than forced into a common wide schema, because v1/v2 and
+v3 don't ask exactly the same raw items (different front-end versions).
+Unnest with `tidyr::unnest_wider()` to get the raw items as regular
+columns.
+
+```{r nested-columns}
+nested_variables <- tibble::tribble(
+  ~`List-column`,        ~Description,
+  "vviq_items",          "Raw VVIQ item responses (vviq_q01-vviq_q16), 1-5 each. Same names in v1/v2 and v3.",
+  "osivq_items",         "Raw OSIVQ item responses (34 items, 1-5 each), plus the object/spatial/verbal subscale sums and item-completion counts. Item order differs between v1/v2 and v3 in the raw front-end data; unnesting by name (not position) keeps the same item in the same column across versions.",
+  "nieq_items",          "Raw NIEQ item responses: 2 items per dimension (frequency, proportion), both 0-100 sliders. Same names in v1/v2 and v3.",
+  "strategy_items",      "Raw strategy-report answers. Mixed shape: v1/v2's colour/orientation/word strategy fields are free text (mostly French); a separate scoring-strategy field uses a small coded vocabulary, asked slightly differently in v1/v2 (3 legacy slots) vs v3 (2 slots).",
+  "extra_demographics",  "Additional demographic items not promoted to top-level columns: country, job, education, field, where_from, language_native, language_usual."
+)
+
+knitr::kable(nested_variables)
+```
+
+For the full per-item breakdown - every raw column name, its exact range,
+missingness, and (where applicable) coded vocabulary - see the codebook
+that ships with `all_data_surveys` on 
+[OSF](https://osf.io/3649s/files/osfstorage): a
+participant-level export where these list-columns are unnested wide,
+alongside `dataset_description.json`
+([Psych-DS](https://psych-ds.github.io/)-compliant) and a PDF version of
+the same information.
+
+---
+
+**Continuing through the Extended Online Report:** this page is a technical
+reference, meant to be partially independent from the rest of the
+vignettes. Get back to the [home page](https://m-delem.github.io/aphantasiaWMStrats/index.html).
+
+---
+
+## References

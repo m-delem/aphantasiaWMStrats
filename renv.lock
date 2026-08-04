@@ -721,6 +721,23 @@
       ],
       "Hash": "6994d1c3ea954f29de6aeca5da95c99d"
     },
+    "openxlsx": {
+      "Package": "openxlsx",
+      "Version": "4.2.8.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "grDevices",
+        "methods",
+        "stats",
+        "stringi",
+        "utils",
+        "zip"
+      ],
+      "Hash": "a1565bd9ee11620aeea591cc037b3aa1"
+    },
     "osfr": {
       "Package": "osfr",
       "Version": "0.2.9",

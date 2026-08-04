@@ -73,18 +73,36 @@ cleaning, and saves the result as `all_data` via `usethis::use_data()`.
 This is the package data build step: its output is what the package
 actually ships.
 
-### `05_export_datasets_to_osf.R`
+### `05_export_data_and_doc_to_osf.R`
 Not part of the package build (nothing here feeds back into `all_data` or
-anything under `R/`), but a one-way export step for sharing `all_data` outside
-the package. Produces two datasets, each as `.csv` and `.xlsx`:
-`all_data_one_line` (one row per participant - trial/stimulus-level columns
-dropped, nested item list-columns unnested wide by name) and
-`all_data_full` (`all_data` at full stimulus-level granularity, nested
-list-columns dropped rather than unnested, to avoid repeating
-participant-level questionnaire items across every stimulus row). Files
-are written locally to `data-raw/exports/` (gitignored) and then pushed to
-CFA-WM's OSF component (`3649s`), in a `v3 Data/Processed data` sub-folder.
-Requires OSF write credentials for that component, not just read.
+anything under `R/`), but a one-way export step for sharing `all_data`
+outside the package. Two things happen here:
+
+- **Data export.** Produces two datasets, each as `.csv` and `.xlsx`:
+  `all_data_surveys` (one row per participant - trial/stimulus-level
+  columns dropped, nested item list-columns unnested wide by name) and
+  `all_data_full` (`all_data` at full stimulus-level granularity, nested
+  list-columns dropped rather than unnested, to avoid repeating
+  participant-level questionnaire items across every stimulus row).
+- **Codebook generation.** Documents both of the datasets above - not
+  `all_data` itself, since that's the package's internal object and isn't
+  something an OSF visitor without the package can use directly (`all_data`
+  gets its own, lighter documentation in `vignettes/articles/codebook.Rmd`
+  on the EOR instead). Produces `codebook.md` (human-readable, every
+  variable's description/type/range/levels, computed live from the actual
+  data rather than typed by hand) and `dataset_description.json`
+  ([Psych-DS](https://psych-ds.github.io/)-compliant, machine-readable).
+
+`codebook.md` is **not** rendered to PDF by this script; it is meant to be
+rendered and then upload the resulting `codebook.pdf` to OSF manually; it isn't 
+part of the automated push below.
+
+Files are written locally to `data-raw/exports/` (gitignored) and then
+pushed to CFA-WM's OSF component (`3649s`), in a `v3 Data/Processed data`
+sub-folder: the four data files plus `dataset_description.json`, five
+files total. `codebook.pdf` is uploaded separately, by hand, once
+rendered. Requires OSF write credentials for that component, not just
+read.
 
 ## The review files, and why there are two kinds
 
@@ -138,3 +156,16 @@ If you're only iterating on cleaning logic and already have
 `inst/extdata/*.rda`/`.rds` from a previous run, you can skip 01/02 and
 start from 03. `manual_decisions.csv` is untouched by any of this, so
 re-running the whole thing from scratch does not lose review history.
+
+Script 5 (`05_export_data_and_doc_to_osf.R`) is separate from the core
+pipeline above - it doesn't touch `all_data` or anything the package
+ships, it only reads the already-built `all_data` to produce OSF-facing
+exports and their codebook. Run it on its own, after 01-04, whenever you
+want to refresh what's shared on OSF:
+
+```r
+source(here::here("data-raw/05_export_data_and_doc_to_osf.R"))  # needs OSF write credentials
+```
+
+Note this needs *write* access to the CFA-WM OSF component, not just the
+read access 01/02 use.
