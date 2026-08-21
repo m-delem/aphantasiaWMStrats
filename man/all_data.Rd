@@ -94,7 +94,15 @@ all of a participant's rows within a version.}
 unnest with \code{\link[tidyr:unnest]{tidyr::unnest()}} to get raw items - see Details)
 \describe{
 \item{vviq_items}{Raw VVIQ item responses.}
-\item{osivq_items}{Raw OSIVQ item responses.}
+\item{osivq_items}{Raw OSIVQ item responses. \strong{Reverse-keyed items
+are stored inconsistently across versions}: v1 and v2 store
+\code{osivq_q02v}, \code{osivq_q09v}, \code{osivq_q41v} and \code{osivq_q42s}
+\emph{unreversed}, while v3 stores them already reversed. The
+\code{object_mean}/\code{spatial_mean}/\code{verbal_mean} columns are correct in
+both cases; only these nested items differ. Recomputing subscale
+scores or reliabilities from these items without reversing them for
+v1/v2 gives wrong answers - Cronbach's alpha for the verbal
+subscale comes out at 0.25 rather than 0.84.}
 \item{nieq_items}{Raw NIEQ item responses (frequency and proportion
 items per dimension).}
 \item{strategy_items}{Raw free-text/categorical strategy-report

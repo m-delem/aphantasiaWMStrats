@@ -1,0 +1,200 @@
+---
+title: "Task engagement: two ways participants withdrew"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Task engagement}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+theme_set(theme_minimal(base_size = 16))
+fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
+pct <- function(x) sprintf("%.1f%%", 100 * x)
+```
+
+Participants could withdraw effort from the WM-FTT in two places: the
+parity-judgement distractor between encoding and recall, and the recall
+responses themselves. This page establishes that these are **separate
+behaviours** rather than one underlying disengagement, describes each, and
+sets out why neither can be treated as a nuisance to control away.
+
+It is descriptive groundwork. The models that build on it live elsewhere;
+what is settled here is what the variables are and how they relate.
+
+```{r data}
+block_trials <- all_data |>
+  dplyr::filter(grepl("^expe_block", expe_phase), version == "v1")
+
+# Per participant: parity accuracy across both judgements per trial, and
+# non-response rate per recall feature.
+by_participant <- block_trials |>
+  dplyr::summarise(
+    parity_accuracy = mean(c(parity_1_acc, parity_2_acc), na.rm = TRUE),
+    non_response_word = 1 - mean(responded_word),
+    non_response_orientation = 1 - mean(responded_angle),
+    non_response_colour = 1 - mean(responded_color),
+    vviq = dplyr::first(vviq_total_score),
+    imagery_group = dplyr::first(vviq_group_2),
+    .by = id
+  )
+```
+
+## 1. The parity task had no consequence in v1
+
+The scoring design was meant to make the distractor cost something: an
+incorrect parity judgement deducts from the trial score. That penalty was
+added in v2. **In v1 it is absent**, and since v1 is the primary analysis
+sample, the distractor there was free.
+
+```{r parity-penalty}
+block_trials |>
+  dplyr::summarise(
+    feature_scores_summed = sum(feedback_score_word) + sum(feedback_score_angle) +
+      sum(feedback_score_color),
+    trial_score_shown = dplyr::first(feedback_trial_score),
+    .by = c(id, expe_phase, trial_number)
+  ) |>
+  dplyr::summarise(
+    trials = dplyr::n(),
+    trials_where_they_match = sum(abs(feature_scores_summed - trial_score_shown) < 1e-9)
+  ) |>
+  knitr::kable(caption = "v1: the trial score is exactly the sum of the three feature scores")
+```
+
+Every trial. No deduction was ever applied, so a participant who worked out
+that parity did not count lost nothing by ignoring it.
+
+```{r parity-distribution}
+ggplot(by_participant, aes(parity_accuracy)) +
+  geom_histogram(binwidth = 0.05, boundary = 0) +
+  geom_vline(xintercept = 0.5, linetype = "dashed") +
+  labs(x = "Parity judgement accuracy", y = "Participants",
+       title = "Parity accuracy in v1, with chance marked")
+```
+
+```{r parity-summary}
+by_participant |>
+  dplyr::summarise(
+    participants = dplyr::n(),
+    median_accuracy = stats::median(parity_accuracy, na.rm = TRUE),
+    at_or_below_chance = sum(parity_accuracy <= 0.5, na.rm = TRUE),
+    above_ninety = sum(parity_accuracy > 0.9, na.rm = TRUE)
+  ) |>
+  knitr::kable(digits = 3, caption = "Parity engagement, v1")
+```
+
+The distribution is not unimodal noise around a competence level. It
+separates people who did the task from people who did not, which is what
+makes a binary split tempting and also what makes "accuracy" the wrong word
+for it. In v1 this measures **compliance with a task that did not matter**,
+not concurrent memory load.
+
+## 2. Parity engagement is not independent of imagery
+
+This is the finding that stops parity accuracy being usable as a nuisance
+covariate.
+
+```{r parity-vviq}
+parity_vviq <- by_participant |>
+  dplyr::filter(!is.na(parity_accuracy), !is.na(vviq))
+
+tibble::tibble(
+  n = nrow(parity_vviq),
+  rho = stats::cor(parity_vviq$parity_accuracy, parity_vviq$vviq,
+                   method = "spearman"),
+  p = suppressWarnings(stats::cor.test(parity_vviq$parity_accuracy,
+                                       parity_vviq$vviq,
+                                       method = "spearman")$p.value)
+) |>
+  knitr::kable(digits = 4, caption = "Parity accuracy against VVIQ, v1")
+```
+
+Lower imagery vividness goes with *higher* parity accuracy. A covariate
+that correlates with the grouping variable is not a nuisance: adjusting for
+it removes part of the effect under study. Any model that includes parity
+accuracy as a control needs to say what it thinks it is controlling for.
+
+Why the correlation runs in that direction is not established here. A
+resource-allocation account would predict it (effort not spent on imagery
+is available for the distractor), but so would several duller explanations.
+
+## 3. The second signal: declining to report a feature
+
+Between `r pct(min(c(mean(1 - block_trials$responded_word), mean(1 - block_trials$responded_angle), mean(1 - block_trials$responded_color))))`
+and `r pct(max(c(mean(1 - block_trials$responded_word), mean(1 - block_trials$responded_angle), mean(1 - block_trials$responded_color))))`
+of v1 recall trials receive no response at all. The task encodes these with
+sentinels rather than missing values, and the
+[Scoring](scoring.html) page covers how they are handled.
+
+```{r nonresponse-distribution}
+by_participant |>
+  tidyr::pivot_longer(tidyselect::starts_with("non_response_"),
+                      names_to = "feature", values_to = "rate",
+                      names_prefix = "non_response_") |>
+  dplyr::mutate(feature = stringr::str_to_title(feature)) |>
+  ggplot(aes(rate)) +
+  geom_histogram(binwidth = 0.05, boundary = 0) +
+  facet_wrap(~feature) +
+  labs(x = "Non-response rate", y = "Participants",
+       title = "Most participants answer nearly everything; a few answer almost nothing")
+```
+
+## 4. The two are not the same behaviour
+
+The natural assumption is that both are effort withdrawal, in which case
+one variable would do. They are not.
+
+```{r independence}
+by_participant |>
+  tidyr::pivot_longer(tidyselect::starts_with("non_response_"),
+                      names_to = "feature", values_to = "non_response",
+                      names_prefix = "non_response_") |>
+  dplyr::filter(!is.na(parity_accuracy)) |>
+  dplyr::summarise(
+    rho = stats::cor(non_response, parity_accuracy, method = "spearman"),
+    p = suppressWarnings(stats::cor.test(non_response, parity_accuracy,
+                                         method = "spearman")$p.value),
+    .by = feature
+  ) |>
+  dplyr::mutate(feature = stringr::str_to_title(feature)) |>
+  knitr::kable(digits = 3,
+               caption = "Feature non-response against parity accuracy, v1")
+```
+
+The correlations are weak, mostly non-significant, and **positive**:
+participants who engaged more with the parity task declined *more* recall
+responses, which is the opposite of what a shared-disengagement account
+predicts. Two behaviours, not one.
+
+That has a practical consequence. A single "engagement" covariate would
+average two things that point in different directions, and would control
+for neither properly.
+
+## 5. What this means downstream
+
+Neither variable is a nuisance to be partialled out, and both correlate
+with the grouping variable of interest.
+
+- **Parity accuracy** in v1 measures compliance with a consequence-free
+  task, and correlates with VVIQ at
+  `r fmt(stats::cor(parity_vviq$parity_accuracy, parity_vviq$vviq, method = "spearman"), 3)`.
+  Using it as a control silently adjusts away part of the imagery effect.
+- **Non-response** is folded into the recall scores as zeros, which means
+  any analysis of accuracy that ignores the `responded_*` flags is
+  measuring a blend of accuracy and willingness to answer. The
+  [Scoring](scoring.html) page quantifies how much difference that makes.
+
+The honest framing is that participants had two independent ways of not
+doing the task, both are measurable, and both carry information about the
+people doing them. Treating either as measurement error discards that.
+
+## References

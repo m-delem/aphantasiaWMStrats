@@ -1,0 +1,233 @@
+---
+title: "Psychometrics: how the questionnaires behave in this sample"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Psychometrics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+theme_set(theme_minimal(base_size = 16))
+fmt <- function(x, digits = 2) formatC(x, format = "f", digits = digits)
+```
+
+Three questionnaires accompany the WM-FTT: the VVIQ [@marksVisualImageryDifferences1973],
+the OSIVQ [@blazhenkovaNewObjectSpatialVerbal2009] and the NIEQ
+[@heaveyMeasuringFrequencyInnerExperience2019]. All three feed downstream
+analyses, and two of them turned out to need caveats. This page reports how
+each behaves in this sample rather than citing the reliabilities from their
+manuals, because one of them does not reproduce.
+
+The task's own reliabilities are on the [Scoring](scoring.html) page, where
+the split-half machinery lives. Everything below is computed when this page
+is built.
+
+```{r data}
+participants <- get_data("v1") |> dplyr::distinct(id, .keep_all = TRUE)
+
+# Cronbach's alpha from raw items. Written out rather than pulled from a
+# package so the formula is visible: k/(k-1) * (1 - sum(item variances) /
+# variance of the total).
+cronbach_alpha <- function(items) {
+  items <- items[stats::complete.cases(items), , drop = FALSE]
+  n_items <- ncol(items)
+  n_items / (n_items - 1) *
+    (1 - sum(apply(items, 2, stats::var)) / stats::var(rowSums(items)))
+}
+
+# Corrected item-total correlation: each item against the sum of the others.
+item_total <- function(items) {
+  items <- items[stats::complete.cases(items), , drop = FALSE]
+  total <- rowSums(items)
+  purrr::map_dbl(names(items), \(item) stats::cor(items[[item]], total - items[[item]]))
+}
+```
+
+## 1. VVIQ
+
+Sixteen items, no reverse-keyed items, single dimension.
+
+```{r vviq}
+vviq_items <- purrr::list_rbind(participants$vviq_items)
+
+tibble::tibble(
+  instrument = "VVIQ",
+  items = ncol(vviq_items),
+  alpha = cronbach_alpha(vviq_items),
+  min_item_total = min(item_total(vviq_items)),
+  negative_item_totals = sum(item_total(vviq_items) < 0)
+) |>
+  knitr::kable(digits = 3, caption = "VVIQ internal consistency, v1")
+```
+
+Nothing to report, which is the useful result: alpha is high, every item
+correlates positively with the rest, and the weakest item still exceeds
+0.75. The VVIQ is doing its job here.
+
+The distribution is another matter, and matters more for modelling than
+the reliability does:
+
+```{r vviq-distribution}
+participants |>
+  dplyr::filter(!is.na(vviq_total_score)) |>
+  ggplot(aes(vviq_total_score)) +
+  geom_histogram(binwidth = 4, boundary = 16) +
+  labs(x = "VVIQ total score", y = "Participants",
+       title = "VVIQ is close to bimodal in v1")
+```
+
+```{r vviq-floor}
+participants |>
+  dplyr::filter(!is.na(vviq_total_score)) |>
+  dplyr::count(band = cut(vviq_total_score, c(15, 16, 25, 40, 60, 80),
+                          include.lowest = TRUE)) |>
+  knitr::kable(caption = "VVIQ distribution: a floor spike and a sparse middle")
+```
+
+Roughly a quarter of the sample sits at exactly 16, the scale minimum, and
+the middle of the range is nearly empty. That is why VVIQ is not treated as
+a plain continuous predictor everywhere downstream; see the floor-group
+model in the planning documentation.
+
+## 2. OSIVQ, and a scoring inconsistency worth knowing about
+
+Three subscales: object, spatial, verbal. **Four items are reverse-keyed,
+and they are stored inconsistently across task versions.** v1 and v2 store
+`osivq_q02v`, `osivq_q09v`, `osivq_q41v` and `osivq_q42s` unreversed; v3
+stores them already reversed. The `object_mean`, `spatial_mean` and
+`verbal_mean` columns are correct in both cases. Only the raw items in
+`osivq_items` differ.
+
+The consequence is silent, so it is worth showing:
+
+```{r osivq-reversal}
+reverse_keyed <- c("osivq_q02v", "osivq_q09v", "osivq_q41v", "osivq_q42s")
+osivq_raw <- purrr::list_rbind(participants$osivq_items)
+osivq_fixed <- osivq_raw
+for (item in reverse_keyed) osivq_fixed[[item]] <- 6 - osivq_fixed[[item]]
+
+subscale_items <- function(items, suffix) {
+  items[, grepl(paste0(suffix, "$"), names(items)), drop = FALSE]
+}
+
+tibble::tibble(
+  subscale = c("object", "spatial", "verbal"),
+  suffix = c("o", "s", "v")
+) |>
+  dplyr::mutate(
+    items = purrr::map_int(suffix, \(s) ncol(subscale_items(osivq_raw, s))),
+    alpha_as_stored = purrr::map_dbl(suffix, \(s) cronbach_alpha(subscale_items(osivq_raw, s))),
+    alpha_corrected = purrr::map_dbl(suffix, \(s) cronbach_alpha(subscale_items(osivq_fixed, s)))
+  ) |>
+  dplyr::select(-suffix) |>
+  knitr::kable(digits = 3,
+               caption = "OSIVQ alpha in v1, before and after reversing the reverse-keyed items")
+```
+
+Computed naively from the stored items, the verbal subscale looks broken.
+Corrected, all three are healthy. The three items driving it are visible in
+their item-total correlations:
+
+```{r osivq-item-total}
+verbal_raw <- subscale_items(osivq_raw, "v")
+tibble::tibble(item = names(verbal_raw),
+               item_total_as_stored = item_total(verbal_raw)) |>
+  dplyr::arrange(item_total_as_stored) |>
+  knitr::kable(digits = 2,
+               caption = "OSIVQ verbal items: negative correlations mark the unreversed ones")
+```
+
+Anyone recomputing OSIVQ scores from the item columns needs to reverse
+those four for v1 and v2, and not for v3. The subscale mean columns already
+handle it.
+
+## 3. NIEQ
+
+Ten items: five dimensions, each measured by a "frequently" item and a
+"generally" item, scored as the pair's mean.
+
+**A total across all ten items is meaningless**, since the dimensions are
+not facets of one construct. Someone with frequent inner speech need not
+have frequent imagery. So Cronbach's alpha over the full instrument is not
+the right statistic, and computing it would produce a number that looks
+like a defect but is not one. The right check is whether each pair agrees.
+
+```{r nieq}
+nieq_items <- purrr::list_rbind(participants$nieq_items)
+
+# Two-item reliability is the Spearman-Brown correction of the pair's
+# correlation, not alpha.
+spearman_brown <- function(r) 2 * r / (1 + r)
+
+nieq_pairs <- tibble::tibble(
+  dimension = c("Mental imagery", "Inner voice", "Emotions",
+                "Sensory focus", "Unsymbolised thinking"),
+  stem = c("mental_imagery", "inner_voice", "emotions",
+           "sensory_focus", "unsymbolised")
+) |>
+  dplyr::mutate(
+    pair_r = purrr::map_dbl(stem, \(s) stats::cor(
+      nieq_items[[paste0("nieq_freq_", s)]],
+      nieq_items[[paste0("nieq_prop_", s)]],
+      use = "complete.obs")),
+    reliability = spearman_brown(pair_r)
+  ) |>
+  dplyr::select(-stem)
+
+knitr::kable(nieq_pairs, digits = 3,
+             caption = "NIEQ two-item subscale reliability, v1")
+```
+
+```{r nieq-values, include = FALSE}
+reliability_of <- function(d) nieq_pairs$reliability[nieq_pairs$dimension == d]
+```
+
+Four of the five dimensions are adequate. **Sensory focus is not**, at
+`r fmt(reliability_of("Sensory focus"))`, well below the conventional 0.70
+floor: its two items barely agree, so the subscale mean is not measuring
+one thing. That is consistent with sensory awareness being the weakest
+dimension in the instrument's own validation, and it means sensory focus
+should not carry the same weight as the others wherever NIEQ subscales are
+used as inputs.
+
+Unsymbolised thinking, at `r fmt(reliability_of("Unsymbolised thinking"))`,
+is adequate. That matters more than it might appear: it is the dimension
+with the clearest theoretical stake in this project, and a two-item
+subscale is exactly the kind of measure that can quietly fail to support
+the weight placed on it.
+
+## 4. Summary
+
+```{r summary}
+dplyr::bind_rows(
+  tibble::tibble(instrument = "VVIQ", scale = "total",
+                 reliability = cronbach_alpha(vviq_items), method = "alpha, 16 items"),
+  tibble::tibble(
+    instrument = "OSIVQ",
+    scale = c("object", "spatial", "verbal"),
+    reliability = purrr::map_dbl(c("o", "s", "v"),
+                                 \(s) cronbach_alpha(subscale_items(osivq_fixed, s))),
+    method = "alpha, reverse-keyed items corrected"),
+  nieq_pairs |>
+    dplyr::transmute(instrument = "NIEQ", scale = dimension,
+                     reliability, method = "Spearman-Brown, 2 items")
+) |>
+  dplyr::mutate(adequate = dplyr::if_else(reliability >= 0.70, "yes", "NO")) |>
+  knitr::kable(digits = 3, caption = "All questionnaire scales, v1")
+```
+
+One scale of nine falls below the threshold. The OSIVQ reverse-coding
+inconsistency does not affect any stored score, but does affect anyone
+recomputing from items. Neither problem is visible without checking, which
+is the argument for this page existing.
+
+## References

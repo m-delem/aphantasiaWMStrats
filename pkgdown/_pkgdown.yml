@@ -15,15 +15,29 @@ reference:
     contents:
       - all_data
       - get_data
+  - title: Data preparation
+    desc: >
+      Functions used once to compute the final scores used for later analyses.
+    contents:
+      - compute_scores
+      - score_angular
+      - score_word
+      - normalise_word
+      - damerau_levenshtein
 
 navbar:
   left:
     - text: "Extended Online Report"
       menu:
+        - text: "Paradigm characteristics"
+        - text: "Psychometrics"
+          href: articles/psychometrics.html
+        - text: "Task engagement"
+          href: articles/engagement.html
+        - text: "Scoring"
+          href: articles/scoring.html
         - text: "Technical details"
         - text: "Codebook"
           href: articles/codebook.html
-        - text: "Scoring"
-          href: articles/scoring.html
     - text: "Reference"
       href: reference/index.html

@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Codebook: WM-FTT working memory strategies data (v1/v2/v3), participant- and stimulus-level exports
 
 Data from the Working Memory Feature Trade-off Task (WM-FTT): word, orientation and colour recall under a parity-judgement distractor, pooled across three task versions (v1 original, v2 added a parity-error penalty, v3 added recall-order randomisation). Two datasets are described here: all_data_surveys (one row per participant: demographics, questionnaire scores, and raw questionnaire/strategy items) and all_data_full (one row per stimulus: trial structure, targets, responses, timing, and per-feature recall scores; no questionnaire item detail, see all_data_surveys for that). NAMING NOTE: the task was called CFA-WM during data collection, and column names, OSF component names and the front-end code still use that prefix (for example strats_cfa_q01_colors_1). Those identifiers are deliberately unchanged so that this export remains byte-comparable with earlier ones and with the raw JATOS data. WM-FTT and CFA-WM refer to the same task.

@@ -8,6 +8,14 @@
 \description{
 This package contains the code (and, in due course, the data) to reproduce the analyses associated with an online study on a complex working memory span task investigating non-visual working memory strategies in aphantasia.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://m-delem.github.io/aphantasiaWMStrats}
+  \item \url{https://github.com/m-delem/aphantasiaWMStrats}
+}
+
+}
 \author{
 \strong{Maintainer}: Maël Delem \email{mael.delem@pm.me} (\href{https://orcid.org/0009-0005-8518-1991}{ORCID})
 
