@@ -348,10 +348,15 @@ enter the inferential analyses.
 
 ```{r versions}
 block_trials |>
-  dplyr::distinct(participant, version, vviq_group_2) |>
-  dplyr::count(version, vviq_group_2) |>
-  tidyr::pivot_wider(names_from = vviq_group_2, values_from = n,
-                     values_fill = 0) |>
+  dplyr::distinct(participant, version, vviq_group_4) |>
+  dplyr::count(version, vviq_group_4) |>
+  tidyr::pivot_wider(
+    names_from = vviq_group_4, 
+    values_from = n,
+    values_fill = 0) |>
+  dplyr::relocate(
+    c("aphantasia", "hypophantasia", "typical", "hyperphantasia"),
+    .after = "version") |> 
   knitr::kable(caption = "Participants per version and imagery group")
 ```
 
@@ -696,3 +701,14 @@ Three changes would address what this analysis could not:
   respond to incentive and representational absence should not.
 
 ## References
+
+<div id="refs"></div>
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

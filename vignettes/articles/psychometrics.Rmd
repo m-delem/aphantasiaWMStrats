@@ -231,3 +231,14 @@ recomputing from items. Neither problem is visible without checking, which
 is the argument for this page existing.
 
 ## References
+
+<div id="refs"></div>
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

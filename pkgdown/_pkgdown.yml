@@ -30,12 +30,15 @@ navbar:
     - text: "Extended Online Report"
       menu:
         - text: "Paradigm characteristics"
+        - text: "Task design"
+          href: articles/task-design.html
         - text: "Psychometrics"
           href: articles/psychometrics.html
         - text: "Task engagement"
           href: articles/engagement.html
         - text: "Scoring"
           href: articles/scoring.html
+        - text: "----"
         - text: "Technical details"
         - text: "Codebook"
           href: articles/codebook.html

@@ -198,3 +198,14 @@ doing the task, both are measurable, and both carry information about the
 people doing them. Treating either as measurement error discards that.
 
 ## References
+
+<div id="refs"></div>
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

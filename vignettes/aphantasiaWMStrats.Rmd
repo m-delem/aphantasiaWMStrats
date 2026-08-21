@@ -1,0 +1,142 @@
+---
+title: "Get started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+This page is a short, practical introduction to `aphantasiaWMStrats`: how to
+load it, what the data looks like, and how the scores are produced. It is not
+where the findings are; for those, start with the
+[task design](task-design.html) page and continue through the Extended Online
+Report. This page is about *using the package*.
+
+```{r setup}
+library(aphantasiaWMStrats)
+```
+
+## The data
+
+One built-in dataset, `all_data`, holds every version of the task in one
+stimulus-level table: one row per presented stimulus, so three rows per trial.
+
+```{r glimpse}
+dplyr::glimpse(all_data[, 1:12])
+```
+
+Columns worth knowing about before anything else.
+
+**`version`** is v1, v2 or v3. These are not interchangeable: the parity
+distractor carries a scoring penalty in v2 and v3 but not v1, and recall order
+is fixed in v1/v2 and randomised in v3. **v1 (N = 88) is the primary analysis
+sample**; v2 (N = 9) and v3 (N = 21) are described but do not carry the
+inferential analyses. The [task design](task-design.html) page explains why.
+
+**`expe_phase`** separates `tutorial`, `training` and the three
+`expe_block_*` phases. Tutorial rows carry placeholder values in the task's own
+feedback columns and should always be filtered out.
+
+**`score_word`, `score_angle`, `score_color`** are the recall scores, on [0, 1]
+with 1 as a perfect match. Their `_z` counterparts are the same values z-scored
+within version.
+
+**`responded_word`, `responded_angle`, `responded_color`** say whether the
+participant answered at all. These matter more than they look: the task encodes
+non-response with sentinel values rather than missing values, and non-responses
+are scored 0. An analysis of *accuracy* should filter on these flags; one that
+does not is measuring a blend of accuracy and willingness to answer.
+
+**`live_diff_*` and `feedback_*`** are the scores the task computed in the
+browser to show participants feedback. They are kept for provenance and should
+never be analysed. One of them is derived from a defective edit-distance
+implementation, which the [scoring](scoring.html) page demonstrates.
+
+## A first look
+
+Experimental trials only, answered trials only:
+
+```{r first-look}
+all_data |>
+  dplyr::filter(grepl("^expe_block", expe_phase), version == "v1") |>
+  dplyr::summarise(
+    trials = dplyr::n(),
+    answered = sum(responded_word),
+    mean_score_when_answered = mean(score_word[responded_word]),
+    .by = expe_phase
+  ) |>
+  knitr::kable(digits = 3, caption = "Word recall by block, v1")
+```
+
+## The scoring functions
+
+The score columns are not read from the raw data; they are computed from raw
+target and response values by `compute_scores()`, which is exported so the
+pipeline can be re-run or inspected.
+
+```{r scoring-functions}
+# Word recall: edit-distance scoring, 1 = exact match.
+score_word(c("fenetre", "fenetre", "fenetre"), c("fenetre", "fenrete", "table"))
+
+# Angular features: cosine of the error, on the right period for each.
+# Colour is a 360-degree hue wheel; orientation is 180-degree symmetric.
+score_angular(target = c(0, 0, 0), response = c(0, 45, 90), period = 180)
+```
+
+The period argument is not decoration. A rectangle tilted 90 degrees from
+target is as wrong as an orientation can be, and only the 180-degree period
+scores that 0.
+
+`compute_scores()` takes a stimulus-level frame and appends the score columns,
+their standardised counterparts, and the response flags:
+
+```{r compute-scores}
+all_data |>
+  dplyr::filter(version == "v1") |>
+  head(3) |>
+  compute_scores() |>
+  dplyr::select(
+    target_word, response_word, score_word,
+    responded_word, responded_angle, responded_color
+  ) |>
+  knitr::kable(digits = 3)
+```
+
+Two lower-level functions are exported for the same reason,
+`normalise_word()` and `damerau_levenshtein()`. The second is a local
+implementation rather than a dependency, partly so it could be tested against
+known values: the task's own edit distance was wrong for three versions
+precisely because nothing tested it.
+
+```{r distance}
+damerau_levenshtein("chien", "chein")  # one adjacent transposition
+normalise_word("  Fen\u00eatre ")      # lowercase, strip spaces and accents
+```
+
+## Where to go next
+
+- [**Task design**](task-design.html) for what participants did and why the
+  task changed twice.
+- [**Scoring**](scoring.html) for how these numbers are made and what they
+  support.
+- [**Codebook**](codebook.html) for every column in `all_data`.
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

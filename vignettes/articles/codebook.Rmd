@@ -352,3 +352,14 @@ vignettes. Get back to the [home page](https://m-delem.github.io/aphantasiaWMStr
 ---
 
 ## References
+
+<div id="refs"></div>
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```
