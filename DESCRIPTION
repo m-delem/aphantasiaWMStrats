@@ -19,6 +19,8 @@ Imports:
     dplyr,
     glue,
     rlang,
+    stats,
+    stringi,
     stringr
 Suggests:
     brms,

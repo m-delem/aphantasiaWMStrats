@@ -25,6 +25,10 @@
 # 1. Load inputs
 # ---------------------------------------------------------------------
 
+# compute_scores() lives in R/, so the package must be loaded here. Matches
+# the pattern already used at the top of 05_export_data_and_doc_to_osf.R.
+devtools::load_all()
+
 df_v1v2_nested <- readRDS(here::here("inst/extdata/df_v1v2_nested.rds"))
 df_v3_nested   <- readRDS(here::here("inst/extdata/df_v3_nested.rds"))
 
@@ -67,7 +71,7 @@ resolve_decisions <- function(flagged_df) {
     dplyr::left_join(
       manual_decisions |>
         dplyr::select(id, version, manual_decision = decision, note,
-                       decided_date),
+                      decided_date),
       by = c("id", "version")
     ) |>
     dplyr::mutate(
@@ -141,7 +145,25 @@ all_data <- dplyr::bind_rows(df_v1v2_final, df_v3_final) |>
     .after = "vviq_total_score"
   ) |>
   dplyr::relocate(c("version", "language"), .after = "id") |>
-  dplyr::relocate("response_order", .after = "trial_number")
+  dplyr::relocate("response_order", .after = "trial_number") |>
+  # Scores are computed HERE, not in 03, because per-version standardisation
+  # must not see excluded participants: 03 runs before the manual review is
+  # applied, so its moments would be drawn from a sample that includes people
+  # we then remove. Computing after bind_rows also gives one call site rather
+  # than one per version path.
+  compute_scores() |>
+  # Analytical scores sit before the display-only block, which in turn sits
+  # before the nested list-columns.
+  dplyr::relocate(tidyselect::starts_with("responded_"), .before = "vviq_items") |>
+  dplyr::relocate(tidyselect::starts_with("score_"), .before = "vviq_items") |>
+  # Live-feedback columns last among the atomic columns, so they read as
+  # visibly secondary rather than sitting among the analytical ones. Ordered
+  # live_diff_* then feedback_*, matching the front end's computation order
+  # (the diffs are the intermediates the display scores are thresholded from).
+  # Placed .before the nested list-columns so that block stays contiguous at
+  # the very end as supplementary material.
+  dplyr::relocate(tidyselect::starts_with("live_diff_"), .before = "vviq_items") |>
+  dplyr::relocate(tidyselect::starts_with("feedback_"), .before = "vviq_items")
 
 # ---------------------------------------------------------------------
 # 4. Save as package data

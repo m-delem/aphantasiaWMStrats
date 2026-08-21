@@ -2,6 +2,37 @@ load(here::here("inst/extdata/expe_working_memory_data.rda"))
 load(here::here("inst/extdata/common_survey_data_full.rda"))
 
 # ---------------------------------------------------------------------------
+# Live-feedback columns: rename on arrival
+# ---------------------------------------------------------------------------
+# The eight score_*/total_score* columns and the three diff_* columns are all
+# computed in the front end for the in-task feedback screen. None of them is
+# an analytical variable. They keep names here that read as if they were
+# (`score_word`, `total_score`), so they're prefixed on arrival: `feedback_`
+# for the display scores, `live_diff_` for the front-end intermediate
+# dissimilarities they're derived from. See R/data.R for the full warning,
+# and note the direction flip: live_diff_* are DISSIMILARITIES (0 =
+# identical), the opposite of the score_* columns compute_scores() adds.
+#
+# Renamed here rather than downstream because expe_working_memory_data.rda is
+# a frozen export from the archived aphantasiaStudiesData package and must not
+# be edited. The v3 path is renamed at its own two sites below.
+expe_working_memory_data <-
+  expe_working_memory_data |>
+  dplyr::rename(
+    feedback_score_word        = score_word,
+    feedback_score_angle       = score_angle,
+    feedback_score_color       = score_color,
+    feedback_trial_score       = trial_score,
+    feedback_total_score_word  = total_score_word,
+    feedback_total_score_angle = total_score_angle,
+    feedback_total_score_color = total_score_color,
+    feedback_total_score       = total_score,
+    live_diff_word             = diff_word,
+    live_diff_angle            = diff_angle,
+    live_diff_color            = diff_color
+  )
+
+# ---------------------------------------------------------------------------
 # Part A: v1/v2
 # ---------------------------------------------------------------------------
 # working_memory_data is already stimulus-level (one row per stimulus, not
@@ -279,6 +310,18 @@ flatten_v3_participant <- function(entry) {
     tidyr::hoist(data, !!!stats::setNames(as.list(stim_fields), stim_fields)) |>
     dplyr::select(!data) |>
     tidyr::unnest_longer(tidyselect::all_of(stim_fields)) |>
+    # stim_fields above must keep the raw jsPsych field names, since those are
+    # the keys the front end actually emits. The live-feedback rename (see top
+    # of file) is therefore applied here, once the fields are columns.
+    dplyr::rename(
+      feedback_score_word  = score_word,
+      feedback_score_angle = score_angle,
+      feedback_score_color = score_color,
+      feedback_trial_score = trial_score,
+      live_diff_word       = diff_word,
+      live_diff_angle      = diff_angle,
+      live_diff_color      = diff_color
+    ) |>
     dplyr::mutate(
       id = comps$welcome_consent_id$subject_id_data,
       language = comps$welcome_consent_id$language,
@@ -299,7 +342,7 @@ flatten_v3_participant <- function(entry) {
         nieq_prop_sensory_focus = nieq$nieq_q_proportion_sensory_focus_data,
         nieq_prop_unsymbolised = nieq$nieq_q_proportion_unsymbolised_data
       )
-    } else NULL
+  } else NULL
 
   strategy_row <- if (!is.null(strat)) {
     dplyr::bind_cols(
@@ -331,10 +374,12 @@ flatten_v3_participant <- function(entry) {
   } else NULL
 
   participant_level <- tibble::tibble(
-    total_score_word = expe$total_score_word %||% NA,
-    total_score_angle = expe$total_score_angle %||% NA,
-    total_score_color = expe$total_score_color %||% NA,
-    total_score = expe$total_score %||% NA,
+    # Live-feedback totals, renamed per the block at the top of this file.
+    # RHS keeps the raw jsPsych names, LHS carries the feedback_ prefix.
+    feedback_total_score_word = expe$total_score_word %||% NA,
+    feedback_total_score_angle = expe$total_score_angle %||% NA,
+    feedback_total_score_color = expe$total_score_color %||% NA,
+    feedback_total_score = expe$total_score %||% NA,
     is_complete = expe$is_complete %||% NA,
     is_on_mobile = expe$is_on_mobile %||% NA,
     age = demo$age_data %||% NA,

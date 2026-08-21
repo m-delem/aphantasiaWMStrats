@@ -1,0 +1,698 @@
+---
+title: "Scoring the WM-FTT: what the numbers are, and what they support"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Scoring the WM-FTT}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+theme_set(theme_minimal(base_size = 16))
+set.seed(20260820)
+
+n_splits <- 1000
+trials_per_feature <- 63L
+
+as_pct <- function(x, digits = 1) sprintf(paste0("%.", digits, "f%%"), 100 * x)
+fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
+```
+
+The Working Memory Feature Trade-off Task asks participants to hold three
+features of each stimulus (a word, the orientation of the rectangle
+containing it, and its colour) and to report all three at recall. Scoring
+it is less obvious than it looks. This page documents how the scores in
+`all_data` are computed, what the distributions look like, how reliable
+they are, and which claims they will and will not support.
+
+Every number below is computed from `all_data` when this page is built,
+not transcribed from an analysis run elsewhere.
+
+## The data this page works from
+
+`all_data` is stimulus-level: one row per presented stimulus, with all
+three recalled features side by side in separate columns. Almost every
+question below is about *features*, so the first step is to reshape to one
+row per stimulus per feature. Three frames are built once here and reused
+throughout.
+
+```{r data}
+# 1. Experimental-block rows only. Tutorial rows carry placeholder values,
+#    and training rows precede the blocks by design.
+block_trials <- all_data |>
+  dplyr::filter(grepl("^expe_block", expe_phase)) |>
+  dplyr::mutate(
+    participant = paste(id, version, sep = "_"),  # one id spans two versions
+    trial_id = paste(expe_phase, trial_number, sep = "_"),
+    position_in_trial = (item_number - 1L) %% 3L + 1L
+  )
+
+# 2. One row per stimulus per feature: score, whether it was answered.
+trials_by_feature <- block_trials |>
+  dplyr::select(
+    id, participant, version, trial_id, position_in_trial,
+    vviq = vviq_total_score,
+    score_word, score_angle, score_color,
+    responded_word, responded_angle, responded_color
+  ) |>
+  tidyr::pivot_longer(
+    cols = c(tidyselect::starts_with("score_"),
+             tidyselect::starts_with("responded_")),
+    names_to = c(".value", "feature"),
+    names_pattern = "(score|responded)_(word|angle|color)"
+  ) |>
+  dplyr::mutate(
+    feature = factor(feature, levels = c("word", "angle", "color"),
+                     labels = c("Word", "Orientation", "Colour"))
+  )
+
+# 3. v1 alone is the primary analysis sample; see section 4.
+v1_trials <- dplyr::filter(trials_by_feature, version == "v1")
+
+# 4. One mean per participant per feature, over answered trials only.
+v1_participant_means <- v1_trials |>
+  dplyr::filter(responded) |>
+  dplyr::summarise(
+    mean_score = mean(score),
+    n_answered = dplyr::n(),
+    vviq = dplyr::first(vviq),
+    .by = c(id, feature)
+  )
+
+dplyr::slice_head(trials_by_feature, n = 6) |>
+  knitr::kable(digits = 3, caption = "trials_by_feature: first six rows")
+```
+
+## 1. Why the task's own scores are not the analysis scores
+
+WM-FTT computes scores in the browser, to display feedback between trials.
+Those columns survive in `all_data` under a `feedback_` prefix, alongside
+the intermediate dissimilarities they derive from under `live_diff_`.
+Neither should be analysed. The reason is not that in-task feedback is
+coarse, though it is. It is that one of the three metrics is wrong.
+
+```{r utils-bug, eval = FALSE}
+# js/jspsych/utils.js, lines 20-22
+for (let i = 0; (i = 0); i--) {
+  dp[i][0] = i;
+}
+```
+
+The loop *condition* is an assignment. `i = 0` evaluates to `0`, which is
+falsy, so the body never runs and the first column of the
+dynamic-programming matrix is never initialised. It keeps its `fill(0)`
+value, which makes deleting any prefix of the target free. The function is
+named `levenshteinDistance` and does not compute Levenshtein distance; it
+returns something closer to an approximate-substring distance,
+systematically smaller and never larger. The paired loop initialising the
+first *row* is correct, so only one boundary is broken. That is why exact
+matches still score 0, and why the error survived three versions of the
+task undetected.
+
+The claim is testable. Below is a faithful R port of the broken function,
+dead loop included, compared against the correct distance.
+
+```{r bug-repro}
+broken_levenshtein <- function(target, response) {
+  n_target <- nchar(target)
+  n_response <- nchar(response)
+  if (n_target == 0 || n_response == 0) return(0)
+
+  distances <- matrix(0L, n_target + 1L, n_response + 1L)
+  distances[1L, seq_len(n_response) + 1L] <- seq_len(n_response)
+  # The first column is never initialised: this is the bug.
+
+  target_chars <- strsplit(target, "")[[1]]
+  response_chars <- strsplit(response, "")[[1]]
+  for (i in seq_len(n_target)) for (j in seq_len(n_response)) {
+    distances[i + 1L, j + 1L] <-
+      if (target_chars[i] == response_chars[j]) distances[i, j] else
+        min(distances[i, j + 1L], distances[i + 1L, j], distances[i, j]) + 1L
+  }
+  1 - distances[n_target + 1L, n_response + 1L] / max(n_target, n_response)
+}
+
+# JavaScript's Math.round() rounds half away from zero; R's round() does not.
+js_round_2dp <- function(x) floor(x * 100 + 0.5) / 100
+
+word_reproduction <- all_data |>
+  dplyr::filter(expe_phase != "tutorial") |>
+  dplyr::transmute(
+    stored_value = live_diff_word,
+    target = normalise_word(target_word),
+    response = normalise_word(response_word),
+    both_present = nzchar(target) & nzchar(response),
+    from_broken_code = js_round_2dp(
+      1 - purrr::map2_dbl(target, response, \(tgt, rsp)
+        if (nzchar(tgt) && nzchar(rsp)) broken_levenshtein(tgt, rsp) else 0)
+    ),
+    from_correct_code = js_round_2dp(dplyr::if_else(
+      both_present,
+      purrr::map2_int(target, response, \(tgt, rsp) as.integer(utils::adist(tgt, rsp))) /
+        pmax(nchar(target), nchar(response)),
+      1
+    ))
+  )
+
+reproduction_summary <- word_reproduction |>
+  dplyr::summarise(
+    trials = dplyr::n(),
+    matched_by_broken_code = sum(from_broken_code == stored_value),
+    matched_by_correct_code = sum(from_correct_code == stored_value)
+  )
+
+knitr::kable(reproduction_summary,
+             caption = "Which implementation reproduces the stored column")
+```
+
+The broken port reproduces the stored column for every one of the
+`r reproduction_summary$trials` trials. Correct Levenshtein reproduces
+`r reproduction_summary$matched_by_correct_code`. A worked example:
+
+```{r bug-example}
+tibble::tibble(
+  target = "cadeau",
+  response = "tout",
+  correct_distance = as.integer(utils::adist(target, response)),
+  broken_distance = round(
+    (1 - broken_levenshtein(target, response)) * nchar(target)),
+  stored_live_diff_word = all_data |>
+    dplyr::filter(target_word == "cadeau", response_word == "tout") |>
+    dplyr::pull(live_diff_word) |>
+    dplyr::first()
+) |>
+  knitr::kable(caption = "One trial, scored three ways")
+```
+
+The practical consequence is small: in-task feedback was more generous on
+word recall than intended. The methodological one is not. It is why every
+score in this package is computed from raw target and response values in R
+rather than transformed from the front end's output.
+
+## 2. The three metrics
+
+**Word** uses the edit-distance scoring of @gonthierEasyWayImprove2022:
+Damerau-Levenshtein distance, capped at the target's length, subtracted
+from that length and divided by it. Bounded on [0, 1] and floored at 0 by
+construction.
+
+Decomposing that formula against a naive normalised distance, one design
+choice at a time:
+
+```{r decompose}
+word_score_variants <- block_trials |>
+  dplyr::filter(version == "v1", responded_word) |>
+  dplyr::transmute(
+    target = normalise_word(target_word),
+    response = normalise_word(response_word),
+    target_length = nchar(target),
+    longer_length = pmax(nchar(target), nchar(response)),
+    damerau = purrr::map2_dbl(target, response, damerau_levenshtein),
+    levenshtein = purrr::map2_dbl(target, response,
+                                  \(tgt, rsp) as.integer(utils::adist(tgt, rsp)))
+  ) |>
+  dplyr::mutate(
+    as_adopted = (target_length - pmin(damerau, target_length)) / target_length,
+    with_plain_metric = (target_length - pmin(levenshtein, target_length)) / target_length,
+    with_longer_denominator = (target_length - pmin(damerau, target_length)) / longer_length,
+    without_the_cap = (target_length - damerau) / target_length
+  )
+
+word_formula_decomposition <- tibble::tribble(
+  ~design_choice,                                    ~column,
+  "Metric: Damerau-Levenshtein vs plain Levenshtein", "with_plain_metric",
+  "Denominator: target length vs longer string",      "with_longer_denominator",
+  "The cap that floors the score at 0",               "without_the_cap"
+) |>
+  dplyr::mutate(
+    trials_changed = purrr::map_int(column, \(variant)
+      sum(abs(word_score_variants$as_adopted - word_score_variants[[variant]]) > 1e-9)),
+    of_trials = nrow(word_score_variants)
+  ) |>
+  dplyr::select(design_choice, trials_changed, of_trials)
+
+knitr::kable(word_formula_decomposition,
+             caption = "Trials whose score changes if one choice is reversed")
+```
+
+```{r decompose-values, include = FALSE}
+changed_by <- function(choice) {
+  word_formula_decomposition$trials_changed[
+    grepl(choice, word_formula_decomposition$design_choice)]
+}
+```
+
+The transposition rule that gives the metric its name changes
+`r changed_by("Metric")` trials; the denominator changes
+`r changed_by("Denominator")`; the cap changes `r changed_by("cap")`, and
+without it scores fall as low as
+`r fmt(min(word_score_variants$without_the_cap), 2)`. The least famous of
+the three decisions does the most work.
+
+**Colour and orientation** both use a cosine of the angular error, with
+**different periods**. Colour is a hue wheel: period 360. Orientation is
+the tilt of a plain rectangle, which has 180° rotational symmetry. A
+rectangle at +80° and one at −80° differ by 160° arithmetically but are
+20° apart as orientations, and both look near-horizontal. The response
+widget clamps to [−90, 90], exactly one period.
+
+```{r period}
+orientation_period_comparison <- block_trials |>
+  dplyr::filter(version == "v1") |>
+  dplyr::mutate(with_period_360 = dplyr::if_else(
+    responded_angle,
+    score_angular(target_angle, response_angle, period = 360),
+    0
+  )) |>
+  dplyr::summarise(
+    with_period_180 = mean(score_angle),
+    with_period_360 = mean(with_period_360),
+    .by = participant
+  ) |>
+  dplyr::mutate(rank_shift = abs(rank(with_period_180) - rank(with_period_360)))
+
+orientation_period_comparison |>
+  dplyr::summarise(participants = dplyr::n(),
+                   largest_rank_shift = max(rank_shift)) |>
+  knitr::kable(caption = "How far participants move between the two periods")
+```
+
+Using 360 for orientation would score a perpendicular error, the most
+wrong an orientation can be, as 0.5 rather than 0, and no response could
+score 0 at all. The choice is structural rather than empirical, but it is
+not cosmetic: participant rankings move by up to
+`r max(orientation_period_comparison$rank_shift)` places out of
+`r nrow(orientation_period_comparison)` between the two conventions.
+
+## 3. What counts as a response
+
+The task encodes non-response with sentinels rather than missing values: an
+empty word box, a colour wheel never touched (999, rendered grey), and an
+orientation widget left at its starting vertical position (90°).
+
+```{r nonresponse}
+non_response_rates <- v1_trials |>
+  dplyr::summarise(non_response_rate = 1 - mean(responded), .by = feature)
+
+knitr::kable(non_response_rates, digits = 3,
+             caption = "Share of v1 trials with no response, by feature")
+```
+
+Between `r as_pct(min(non_response_rates$non_response_rate))` and
+`r as_pct(max(non_response_rates$non_response_rate))` of v1 trials are
+non-responses. These are scored 0 and flagged, rather than set to `NA`.
+
+`NA` would be the more cautious-looking choice and is the worse one.
+Non-response here is unlikely to be missing-at-random, so listwise
+deletion would silently drop a non-random subset. Scoring 0 produces a
+visible distortion in the distribution instead of an invisible one in the
+inference. The `responded_*` flags then let any analysis separate the two
+quantities the score column combines: whether a participant reported a
+feature at all, and how accurately they did so given that they tried.
+
+```{r circularity}
+vviq_association <- v1_trials |>
+  dplyr::summarise(
+    counting_non_responses_as_zero = mean(score),
+    responded_trials_only = mean(score[responded]),
+    vviq = dplyr::first(vviq),
+    .by = c(id, feature)
+  ) |>
+  dplyr::summarise(
+    dplyr::across(c(counting_non_responses_as_zero, responded_trials_only),
+                  \(x) cor(x, vviq, method = "spearman", use = "complete.obs")),
+    .by = feature
+  )
+
+knitr::kable(vviq_association, digits = 3,
+             caption = "Spearman correlation with VVIQ, scored two ways")
+```
+
+The gap between those two columns is why the distinction matters:
+including non-responses as zeros inflates the apparent association between
+score and imagery vividness. Every analysis downstream states which of the
+two quantities it means.
+
+## 4. Which sample
+
+v1 is the primary analysis sample. v2 and v3 are described here but do not
+enter the inferential analyses.
+
+```{r versions}
+block_trials |>
+  dplyr::distinct(participant, version, vviq_group_2) |>
+  dplyr::count(version, vviq_group_2) |>
+  tidyr::pivot_wider(names_from = vviq_group_2, values_from = n,
+                     values_fill = 0) |>
+  knitr::kable(caption = "Participants per version and imagery group")
+```
+
+v1 is the only version with a usable group split. More importantly,
+pooling the three actively created a false result: an apparent association
+between non-response and imagery vividness dissolves within version,
+because v3 is simultaneously aphantasia-heavy and the version with by far
+the highest non-response.
+
+```{r pooling-trap}
+non_response_per_participant <- trials_by_feature |>
+  dplyr::filter(feature != "Word") |>
+  dplyr::summarise(non_response_rate = 1 - mean(responded),
+                   vviq = dplyr::first(vviq),
+                   .by = c(participant, version, feature))
+
+dplyr::bind_rows(
+  dplyr::mutate(non_response_per_participant, sample = "All versions pooled"),
+  non_response_per_participant |>
+    dplyr::filter(version == "v1") |>
+    dplyr::mutate(sample = "v1 alone")
+) |>
+  dplyr::summarise(
+    rho = cor(non_response_rate, vviq, method = "spearman",
+              use = "complete.obs"),
+    .by = c(sample, feature)
+  ) |>
+  tidyr::pivot_wider(names_from = feature, values_from = rho) |>
+  knitr::kable(digits = 3,
+               caption = "Non-response against VVIQ, pooled versus within v1")
+```
+
+v3 retains one job it uniquely enables. v1 has *fixed* recall order (word,
+then orientation, then colour), so feature differences are confounded with
+output position. v3 randomised the order and can estimate that effect.
+
+Two costs are worth stating. v1 carries no parity penalty, so the parity
+distractor had no scoring consequence there; and v1 has the lowest
+non-response of the three versions.
+
+## 5. Distributions
+
+```{r distributions}
+v1_trials |>
+  dplyr::filter(responded) |>
+  ggplot(aes(score)) +
+  geom_histogram(bins = 40) +
+  facet_wrap(~feature, scales = "free_y") +
+  labs(x = "Similarity score, responded trials", y = "Trials")
+```
+
+```{r boundaries}
+boundary_mass <- v1_trials |>
+  dplyr::filter(responded) |>
+  dplyr::summarise(share_at_zero = mean(score == 0),
+                   share_at_one = mean(score == 1),
+                   .by = feature)
+
+knitr::kable(boundary_mass, digits = 3,
+             caption = "Mass at the boundaries, responded trials only")
+```
+
+Conditional on responding, orientation and colour are well spread with no
+mass at either boundary. Word is not:
+`r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])` of
+responded word trials are exact matches.
+
+All the mass at zero in the unfiltered columns is non-response; the mass
+at one is genuine ceiling. Since those are different generative processes,
+a zero-one-inflated model would be the wrong shape. The performance model
+uses a hurdle instead, gating on whether a response occurred before
+modelling its accuracy.
+
+## 6. Reliability
+
+Splits are drawn over trials rather than items, because items within a
+trial share an encoding episode and there is a within-trial primacy
+effect:
+
+```{r primacy}
+v1_trials |>
+  dplyr::filter(responded) |>
+  dplyr::summarise(mean_score = mean(score),
+                   .by = c(feature, position_in_trial)) |>
+  tidyr::pivot_wider(names_from = position_in_trial, values_from = mean_score,
+                     names_prefix = "position_") |>
+  dplyr::mutate(primacy_drop = position_1 - position_3) |>
+  knitr::kable(digits = 3,
+               caption = "Mean score by serial position within the trial")
+```
+
+Each trial's three items therefore stay together, and the split is
+repeated `r n_splits` times rather than relying on one arbitrary odd/even
+partition.
+
+The engagement threshold is derived rather than chosen: a participant
+contributes to a feature only if their mean has a standard error of at
+most half the between-person SD.
+
+```{r thresholds}
+engagement_thresholds <- v1_trials |>
+  dplyr::filter(responded) |>
+  dplyr::summarise(participant_mean = mean(score),
+                   sd_within_participant = sd(score),
+                   .by = c(feature, id)) |>
+  dplyr::summarise(
+    sd_within_participant = median(sd_within_participant, na.rm = TRUE),
+    sd_between_participants = sd(participant_mean),
+    .by = feature
+  ) |>
+  dplyr::mutate(
+    trials_needed = ceiling(
+      (sd_within_participant / (0.5 * sd_between_participants))^2),
+    trials_available = trials_per_feature,
+    # Fall back to half the trials where the target is unreachable.
+    threshold_used = pmin(trials_needed, 32L)
+  )
+
+knitr::kable(engagement_thresholds, digits = 3,
+             caption = "Trials needed for a participant mean worth comparing")
+```
+
+```{r threshold-values, include = FALSE}
+word_row <- dplyr::filter(engagement_thresholds, feature == "Word")
+```
+
+**Word's requirement cannot be met.** It asks for
+`r word_row$trials_needed` trials of the `r trials_per_feature` that exist,
+because its between-person SD among responders
+(`r fmt(word_row$sd_between_participants)`) is small relative to
+within-person trial noise (`r fmt(word_row$sd_within_participant)`). A
+floor of 32 trials is used instead, recorded as a data-sufficiency rule
+and not a precision guarantee.
+
+```{r reliability}
+eligible_participants <- v1_participant_means |>
+  dplyr::left_join(dplyr::select(engagement_thresholds, feature, threshold_used),
+                   by = "feature") |>
+  dplyr::filter(n_answered >= threshold_used) |>
+  dplyr::select(id, feature)
+
+trial_ids <- unique(v1_trials$trial_id)
+half_size <- length(trial_ids) %/% 2
+
+# Mean score per participant per feature, over one half of the trials.
+mean_scores_over <- function(chosen_trials) {
+  v1_trials |>
+    dplyr::filter(responded, trial_id %in% chosen_trials) |>
+    dplyr::semi_join(eligible_participants, by = c("id", "feature")) |>
+    dplyr::summarise(mean_score = mean(score), .by = c(feature, id))
+}
+
+correlate_one_split <- function(...) {
+  first_half <- sample(trial_ids, half_size)
+  dplyr::inner_join(
+    mean_scores_over(first_half),
+    mean_scores_over(setdiff(trial_ids, first_half)),
+    by = c("feature", "id"), suffix = c("_first", "_second")
+  ) |>
+    dplyr::summarise(r = cor(mean_score_first, mean_score_second), .by = feature)
+}
+
+# Corrects a half-length test's correlation up to full-test reliability.
+spearman_brown <- function(r) 2 * r / (1 + r)
+
+split_half_reliability <- purrr::map(seq_len(n_splits), correlate_one_split) |>
+  purrr::list_rbind() |>
+  dplyr::summarise(
+    reliability = spearman_brown(median(r)),
+    lower_95 = spearman_brown(quantile(r, 0.025)),
+    upper_95 = spearman_brown(quantile(r, 0.975)),
+    .by = feature
+  ) |>
+  dplyr::left_join(dplyr::count(eligible_participants, feature,
+                                name = "participants"),
+                   by = "feature") |>
+  dplyr::select(feature, participants, reliability, lower_95, upper_95)
+
+knitr::kable(split_half_reliability, digits = 3,
+             caption = "Split-half reliability, Spearman-Brown corrected")
+```
+
+```{r reliability-values, include = FALSE}
+reliability_of <- function(which_feature) {
+  split_half_reliability$reliability[
+    split_half_reliability$feature == which_feature]
+}
+```
+
+Orientation (`r fmt(reliability_of("Orientation"), 2)`) and colour
+(`r fmt(reliability_of("Colour"), 2)`) clear the conventional 0.80 mark
+for individual-level interpretation. Word
+(`r fmt(reliability_of("Word"), 2)`) does not clear the 0.70 floor for
+group-level use. That is the same fact as the threshold failure, seen from
+the other side.
+
+**Word does not function as an individual-differences measure in this
+sample.** The metric is not at fault; Gonthier's formula works exactly as
+designed. Single-word recall at this exposure is simply too easy to
+discriminate between people. No downstream model should make an
+individual-differences claim about word, whatever its coefficients say.
+
+```{r composition-stability}
+ids_clearing_all_features <- eligible_participants |>
+  dplyr::count(id) |>
+  dplyr::filter(n == 3) |>
+  dplyr::pull(id)
+
+# Isometric log-ratio coordinates, computed from one half of the trials.
+ilr_coordinates_over <- function(chosen_trials) {
+  v1_trials |>
+    dplyr::filter(responded, id %in% ids_clearing_all_features,
+                  trial_id %in% chosen_trials) |>
+    dplyr::summarise(mean_score = mean(score), .by = c(id, feature)) |>
+    tidyr::pivot_wider(names_from = feature, values_from = mean_score) |>
+    tidyr::drop_na() |>
+    dplyr::mutate(
+      total = Word + Orientation + Colour,
+      ilr1 = sqrt(2 / 3) * log((Word / total) /
+                                 sqrt((Colour / total) * (Orientation / total))),
+      ilr2 = sqrt(1 / 2) * log((Colour / total) / (Orientation / total))
+    ) |>
+    dplyr::select(id, ilr1, ilr2)
+}
+
+composition_stability <- purrr::map(seq_len(n_splits), \(iteration) {
+  first_half <- sample(trial_ids, half_size)
+  dplyr::inner_join(
+    ilr_coordinates_over(first_half),
+    ilr_coordinates_over(setdiff(trial_ids, first_half)),
+    by = "id", suffix = c("_first", "_second")
+  ) |>
+    dplyr::summarise(ilr1 = cor(ilr1_first, ilr1_second),
+                     ilr2 = cor(ilr2_first, ilr2_second))
+}) |>
+  purrr::list_rbind() |>
+  dplyr::summarise(dplyr::across(
+    c(ilr1, ilr2), \(x) spearman_brown(median(x, na.rm = TRUE)))) |>
+  tidyr::pivot_longer(everything(), names_to = "coordinate",
+                      values_to = "stability") |>
+  dplyr::mutate(contrast = c("Word vs (colour and orientation)",
+                             "Colour vs orientation"))
+
+knitr::kable(composition_stability, digits = 3,
+             caption = "Split-half stability of the compositional profile")
+```
+
+The compositional profile fares better than its parts would suggest, on
+the `r length(ids_clearing_all_features)` participants clearing all three
+thresholds. A ratio can carry information a level does not, though the
+first coordinate rests partly on word, and its interpretation should not
+lean on word as a well-measured quantity.
+
+## 7. What this supports
+
+Orientation and colour scores support individual-differences analysis.
+Word scores do not, and should be reported with the measurement caveat
+attached. The compositional profile is stable enough to interpret, with
+the same caveat on its verbal coordinate.
+
+Self-reported strategy and behavioural allocation are not the same
+construct:
+
+```{r self-report}
+self_reported_priority <- block_trials |>
+  dplyr::filter(version == "v1") |>
+  dplyr::distinct(id, .keep_all = TRUE) |>
+  dplyr::select(id, strategy_items) |>
+  tidyr::unnest(strategy_items) |>
+  dplyr::select(id, tidyselect::contains("scoring_strat")) |>
+  tidyr::pivot_longer(-id, values_to = "named_feature",
+                      values_transform = as.character) |>
+  dplyr::filter(named_feature %in% c("words", "colours", "orientations")) |>
+  dplyr::summarise(
+    priority = dplyr::if_else(dplyr::n() > 1, "multiple",
+                              dplyr::first(named_feature)),
+    .by = id
+  )
+
+v1_compositions <- v1_participant_means |>
+  dplyr::filter(id %in% ids_clearing_all_features) |>
+  dplyr::mutate(proportion = mean_score / sum(mean_score), .by = id) |>
+  dplyr::select(id, feature, proportion) |>
+  tidyr::pivot_wider(names_from = feature, values_from = proportion)
+
+v1_compositions |>
+  dplyr::left_join(self_reported_priority, by = "id") |>
+  tidyr::replace_na(list(priority = "none/other")) |>
+  dplyr::summarise(dplyr::across(c(Word, Orientation, Colour), mean),
+                   participants = dplyr::n(),
+                   .by = priority) |>
+  knitr::kable(digits = 3,
+               caption = "Behavioural composition by self-reported priority")
+```
+
+Behavioural compositions barely differ between participants who named
+different priorities. This is a dissociation to report, not a validity
+failure. But "preference" language should not be used as though the two
+measures were interchangeable.
+
+## 8. For a future version of the task
+
+The task was designed to force a three-way trade-off. It achieves a
+two-way one, because word is cheap enough that participants can max it and
+then divide effort between colour and orientation:
+
+```{r tradeoff}
+v1_scores_wide <- v1_participant_means |>
+  dplyr::select(id, feature, mean_score) |>
+  tidyr::pivot_wider(names_from = feature, values_from = mean_score) |>
+  tidyr::drop_na()
+
+# Residualise each feature on overall level, then correlate the residuals.
+v1_scores_wide |>
+  dplyr::mutate(overall_level = (Word + Orientation + Colour) / 3) |>
+  dplyr::mutate(dplyr::across(
+    c(Word, Orientation, Colour),
+    \(feature_score) residuals(lm(feature_score ~ overall_level)))) |>
+  dplyr::select(Word, Orientation, Colour) |>
+  cor(method = "spearman") |>
+  knitr::kable(digits = 3,
+               caption = "Feature correlations after removing overall level")
+```
+
+Controlling overall level, orientation and colour trade off against each
+other more strongly than either does against word. (Residualising three
+variables on their own mean induces negative correlation of roughly −0.5
+by construction, so read these relative to that baseline rather than as
+raw evidence of a trade-off.)
+
+Three changes would address what this analysis could not:
+
+- **Make word harder**, with longer words, more items per trial, or
+  shorter exposure, so the verbal feature enters the trade-off and
+  discriminates.
+- **Distinguish abstention from a default**, via an explicit "I don't know"
+  control, separate from an untouched widget, and a confidence rating.
+  Abstention is currently far faster than responding, which rules out
+  effortful-but-failed search but cannot separate "nothing to report" from
+  "not worth the effort".
+- **Vary the points per feature**, since strategic abstention should
+  respond to incentive and representational absence should not.
+
+## References

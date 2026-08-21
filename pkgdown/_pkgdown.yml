@@ -23,5 +23,7 @@ navbar:
         - text: "Technical details"
         - text: "Codebook"
           href: articles/codebook.html
+        - text: "Scoring"
+          href: articles/scoring.html
     - text: "Reference"
       href: reference/index.html

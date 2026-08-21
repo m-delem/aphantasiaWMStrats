@@ -41,11 +41,7 @@
 #'     The to-be-remembered stimulus for this item.}
 #'   \item{response_word, response_angle, response_color_angle,
 #'     response_color}{Participant's recall response.}
-#'   \item{diff_word, diff_angle, diff_color}{Error/distance between target
-#'     and response.}
 #'   \item{rt_word, rt_angle, rt_color}{Response times.}
-#'   \item{score_word, score_angle, score_color, trial_score}{Per-modality
-#'     and combined trial scores.}
 #'   \item{parity_1_stim, parity_1_resp, parity_1_acc, parity_1_rt,
 #'     parity_2_stim, parity_2_resp, parity_2_acc, parity_2_rt}{The two
 #'     parity-judgement distractor trials embedded in this trial: stimulus
@@ -80,11 +76,42 @@
 #'     throughout for v3 (not asked in that version's demographics form).}
 #' }
 #'
+#' **Live feedback from the task display - NOT analytical variables**
+#' (see Details for why, and what to use instead)
+#' \describe{
+#'   \item{live_diff_word, live_diff_angle, live_diff_color}{Front-end
+#'     dissimilarity between target and response, **0 = identical, 1 =
+#'     maximally different**. Note this is the opposite direction from the
+#'     `score_*` columns, which are similarities. Stimulus-level, rounded to
+#'     2 decimals in the front end. `live_diff_word` is **not a valid edit
+#'     distance** - see Details.}
+#'   \item{feedback_score_word, feedback_score_angle,
+#'     feedback_score_color}{Per-modality points shown on the feedback
+#'     screen, thresholded from the corresponding `live_diff_*` value.
+#'     Stimulus-level. Take values 0, 0.5, 1.}
+#'   \item{feedback_trial_score}{Points shown for the whole trial: the sum of
+#'     the three per-modality scores, minus 0.5 per incorrect parity
+#'     judgement, floored at 0. Trial-level, i.e. constant across the three
+#'     stimulus rows of a trial. The parity penalty is applied in v2/v3 only.}
+#'   \item{feedback_total_score_word, feedback_total_score_angle,
+#'     feedback_total_score_color, feedback_total_score}{Cumulative points
+#'     shown at the end of the task. Participant-level, i.e. constant across
+#'     all of a participant's rows within a version.}
+#' }
+#'
 #' **Nested item list-columns** (one list-column per participant/row-group;
 #' unnest with [tidyr::unnest()] to get raw items - see Details)
 #' \describe{
 #'   \item{vviq_items}{Raw VVIQ item responses.}
-#'   \item{osivq_items}{Raw OSIVQ item responses.}
+#'   \item{osivq_items}{Raw OSIVQ item responses. **Reverse-keyed items
+#'     are stored inconsistently across versions**: v1 and v2 store
+#'     `osivq_q02v`, `osivq_q09v`, `osivq_q41v` and `osivq_q42s`
+#'     *unreversed*, while v3 stores them already reversed. The
+#'     `object_mean`/`spatial_mean`/`verbal_mean` columns are correct in
+#'     both cases; only these nested items differ. Recomputing subscale
+#'     scores or reliabilities from these items without reversing them for
+#'     v1/v2 gives wrong answers - Cronbach's alpha for the verbal
+#'     subscale comes out at 0.25 rather than 0.84.}
 #'   \item{nieq_items}{Raw NIEQ item responses (frequency and proportion
 #'     items per dimension).}
 #'   \item{strategy_items}{Raw free-text/categorical strategy-report
@@ -102,6 +129,35 @@
 #' (`vviq_total_score`, `nieq_*`, `object_mean`/`spatial_mean`/
 #' `verbal_mean`, etc.) are computed the same way across all three versions
 #' and are directly comparable.
+#'
+#' The `live_diff_*` and `feedback_*` columns exist only to drive the
+#' in-task feedback screen participants saw between trials. They are kept for
+#' provenance and reproducibility, not for analysis, and are placed last
+#' among the atomic columns to make that visible. Three reasons not to use
+#' them:
+#'
+#' 1. **`live_diff_word` is not an edit distance.** The front end's
+#'    `levenshteinDistance()` (`js/jspsych/utils.js`) contains a defective
+#'    loop - `for (let i = 0; (i = 0); i--)`, whose condition is an
+#'    assignment and therefore always falsy - so the first column of its
+#'    dynamic-programming matrix is never initialised. Deleting a prefix of
+#'    the target costs nothing, and the function returns a value that is
+#'    systematically lower than the true Levenshtein distance (in 313 of 8496
+#'    non-tutorial rows it differs; it is never higher). `feedback_score_word`
+#'    inherits this, since it is thresholded from `live_diff_word`.
+#' 2. **They mix three granularities** under one prefix: stimulus, trial and
+#'    participant, as noted per column above.
+#' 3. **Tutorial rows carry placeholders, not computed values.** For every
+#'    `expe_phase == "tutorial"` row all three `live_diff_*` are exactly 1
+#'    and all `feedback_score_*` are exactly 0, regardless of what the
+#'    participant actually did - the front end hardcodes these because
+#'    tutorial performance is not scored.
+#'
+#' Non-responses are also sentinel-encoded rather than `NA`: an empty
+#' `response_word`, a `response_color_angle` of 999 (with `response_color`
+#' `"#AAAAAA"`), and a `response_angle` of exactly 90, which is the
+#' orientation widget's untouched starting position rather than an explicit
+#' marker. The `live_diff_*` values treat all three as ordinary responses.
 #'
 #' A few columns used only for cleaning and exclusion review
 #' (`is_complete`, `is_on_mobile`, `met_issues`, `issues`,

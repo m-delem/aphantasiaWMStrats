@@ -32,11 +32,7 @@ orientation, colour).}
 The to-be-remembered stimulus for this item.}
 \item{response_word, response_angle, response_color_angle,
 response_color}{Participant's recall response.}
-\item{diff_word, diff_angle, diff_color}{Error/distance between target
-and response.}
 \item{rt_word, rt_angle, rt_color}{Response times.}
-\item{score_word, score_angle, score_color, trial_score}{Per-modality
-and combined trial scores.}
 \item{parity_1_stim, parity_1_resp, parity_1_acc, parity_1_rt,
 parity_2_stim, parity_2_resp, parity_2_acc, parity_2_rt}{The two
 parity-judgement distractor trials embedded in this trial: stimulus
@@ -69,6 +65,29 @@ collected.}
 v3 (not asked in that version's demographics form).}
 \item{neuro_trouble}{Self-reported neurological condition. \code{NA}
 throughout for v3 (not asked in that version's demographics form).}
+}
+
+\strong{Live feedback from the task display - NOT analytical variables}
+(see Details for why, and what to use instead)
+\describe{
+\item{live_diff_word, live_diff_angle, live_diff_color}{Front-end
+dissimilarity between target and response, \strong{0 = identical, 1 =
+maximally different}. Note this is the opposite direction from the
+\verb{score_*} columns, which are similarities. Stimulus-level, rounded to
+2 decimals in the front end. \code{live_diff_word} is \strong{not a valid edit
+distance} - see Details.}
+\item{feedback_score_word, feedback_score_angle,
+feedback_score_color}{Per-modality points shown on the feedback
+screen, thresholded from the corresponding \verb{live_diff_*} value.
+Stimulus-level. Take values 0, 0.5, 1.}
+\item{feedback_trial_score}{Points shown for the whole trial: the sum of
+the three per-modality scores, minus 0.5 per incorrect parity
+judgement, floored at 0. Trial-level, i.e. constant across the three
+stimulus rows of a trial. The parity penalty is applied in v2/v3 only.}
+\item{feedback_total_score_word, feedback_total_score_angle,
+feedback_total_score_color, feedback_total_score}{Cumulative points
+shown at the end of the task. Participant-level, i.e. constant across
+all of a participant's rows within a version.}
 }
 
 \strong{Nested item list-columns} (one list-column per participant/row-group;
@@ -116,6 +135,36 @@ common wide schema. The \emph{scored} columns above the nested section
 (\code{vviq_total_score}, \verb{nieq_*}, \code{object_mean}/\code{spatial_mean}/
 \code{verbal_mean}, etc.) are computed the same way across all three versions
 and are directly comparable.
+
+The \verb{live_diff_*} and \verb{feedback_*} columns exist only to drive the
+in-task feedback screen participants saw between trials. They are kept for
+provenance and reproducibility, not for analysis, and are placed last
+among the atomic columns to make that visible. Three reasons not to use
+them:
+\enumerate{
+\item \strong{\code{live_diff_word} is not an edit distance.} The front end's
+\code{levenshteinDistance()} (\code{js/jspsych/utils.js}) contains a defective
+loop - \verb{for (let i = 0; (i = 0); i--)}, whose condition is an
+assignment and therefore always falsy - so the first column of its
+dynamic-programming matrix is never initialised. Deleting a prefix of
+the target costs nothing, and the function returns a value that is
+systematically lower than the true Levenshtein distance (in 313 of 8496
+non-tutorial rows it differs; it is never higher). \code{feedback_score_word}
+inherits this, since it is thresholded from \code{live_diff_word}.
+\item \strong{They mix three granularities} under one prefix: stimulus, trial and
+participant, as noted per column above.
+\item \strong{Tutorial rows carry placeholders, not computed values.} For every
+\code{expe_phase == "tutorial"} row all three \verb{live_diff_*} are exactly 1
+and all \verb{feedback_score_*} are exactly 0, regardless of what the
+participant actually did - the front end hardcodes these because
+tutorial performance is not scored.
+}
+
+Non-responses are also sentinel-encoded rather than \code{NA}: an empty
+\code{response_word}, a \code{response_color_angle} of 999 (with \code{response_color}
+\code{"#AAAAAA"}), and a \code{response_angle} of exactly 90, which is the
+orientation widget's untouched starting position rather than an explicit
+marker. The \verb{live_diff_*} values treat all three as ordinary responses.
 
 A few columns used only for cleaning and exclusion review
 (\code{is_complete}, \code{is_on_mobile}, \code{met_issues}, \code{issues},

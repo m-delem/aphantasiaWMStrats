@@ -1,11 +1,11 @@
 {
   "@context": "https://schema.org/",
   "@type": "Dataset",
-  "name": "CFA-WM working memory strategies data (v1/v2/v3), participant- and stimulus-level exports",
-  "description": "Data from the CFA-WM working memory task (word/orientation/colour recall under a parity-judgement distractor), pooled across three task versions (v1 original, v2 added a parity-error penalty, v3 added recall-order randomisation). Two datasets are described here: all_data_surveys (one row per participant: demographics, questionnaire scores, and raw questionnaire/strategy items) and all_data_full (one row per stimulus: trial structure, targets, responses, timing, and per-trial scores; no questionnaire item detail, see all_data_surveys for that).",
+  "name": "WM-FTT working memory strategies data (v1/v2/v3), participant- and stimulus-level exports",
+  "description": "Data from the Working Memory Feature Trade-off Task (WM-FTT): word, orientation and colour recall under a parity-judgement distractor, pooled across three task versions (v1 original, v2 added a parity-error penalty, v3 added recall-order randomisation). Two datasets are described here: all_data_surveys (one row per participant: demographics, questionnaire scores, and raw questionnaire/strategy items) and all_data_full (one row per stimulus: trial structure, targets, responses, timing, and per-feature recall scores; no questionnaire item detail, see all_data_surveys for that). NAMING NOTE: the task was called CFA-WM during data collection, and column names, OSF component names and the front-end code still use that prefix (for example strats_cfa_q01_colors_1). Those identifiers are deliberately unchanged so that this export remains byte-comparable with earlier ones and with the raw JATOS data. WM-FTT and CFA-WM refer to the same task.",
   "schemaVersion": "Psych-DS 0.4.0",
   "citation": [
-    "CFA-WM v1/v2/v3, Mael Delem, EMC Lab, Universite Lumiere Lyon 2"
+    "WM-FTT (formerly CFA-WM) v1/v2/v3, Mael Delem, EMC Lab, Universite Lumiere Lyon 2"
   ],
   "creditText": [
     "VVIQ item text: Marks, D. F. (1973). Visual imagery differences in the recall of pictures. British Journal of Psychology, 64(1), 17-24. https://doi.org/10.1111/j.2044-8295.1973.tb01322.x",
@@ -28,7 +28,7 @@
         {
           "@type": "PropertyValue",
           "name": "version",
-          "description": "CFA-WM task version.",
+          "description": "WM-FTT task version.",
           "dataType": "string",
           "levels": {
             "v1": "Original task version",
@@ -171,32 +171,32 @@
         },
         {
           "@type": "PropertyValue",
-          "name": "total_score_word",
-          "description": "Participant's total word-recall score, summed across all trials.",
+          "name": "feedback_total_score_word",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Cumulative word points shown to the participant at the end of the task, summed across trials. Derived from the front end's defective edit distance; see live_diff_word. For analysis use score_word, aggregated as the question requires.",
           "dataType": "float",
           "minValue": 6,
           "maxValue": 70.5
         },
         {
           "@type": "PropertyValue",
-          "name": "total_score_angle",
-          "description": "Participant's total orientation-recall score, summed across all trials.",
+          "name": "feedback_total_score_angle",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Cumulative orientation points shown at the end of the task. For analysis use score_angle.",
           "dataType": "float",
           "minValue": 0,
           "maxValue": 64.5
         },
         {
           "@type": "PropertyValue",
-          "name": "total_score_color",
-          "description": "Participant's total colour-recall score, summed across all trials.",
+          "name": "feedback_total_score_color",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Cumulative colour points shown at the end of the task. For analysis use score_color.",
           "dataType": "float",
           "minValue": 5,
           "maxValue": 64
         },
         {
           "@type": "PropertyValue",
-          "name": "total_score",
-          "description": "Participant's combined total recall score across all modalities and trials.",
+          "name": "feedback_total_score",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Combined total points shown to the participant, across all three features and all trials, including the parity penalty in v2 and v3. This is the number participants were told to maximise, so it is meaningful as an account of what they were optimising, but it is not a performance measure.",
           "dataType": "float",
           "minValue": 11.5,
           "maxValue": 195.5
@@ -382,7 +382,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -391,7 +391,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -400,7 +400,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -409,7 +409,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -418,7 +418,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -427,7 +427,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -436,7 +436,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -445,7 +445,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -454,7 +454,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -463,7 +463,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -472,7 +472,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -481,7 +481,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -490,7 +490,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -499,7 +499,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -508,7 +508,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -517,7 +517,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -526,7 +526,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -535,7 +535,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -544,7 +544,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -553,7 +553,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -562,7 +562,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -571,7 +571,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -580,7 +580,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -589,7 +589,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -598,7 +598,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -607,7 +607,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -616,7 +616,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -625,7 +625,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -634,7 +634,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -643,7 +643,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -652,7 +652,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -661,7 +661,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -670,7 +670,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -679,7 +679,7 @@
           "dataType": "integer",
           "minValue": 1,
           "maxValue": 5,
-          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall."
+          "notes": "1 = totally disagree; 5 = totally agree. Missing for 2 participants overall. IMPORTANT: reverse-keyed items are stored inconsistently across versions. v1 and v2 store osivq_q02v, osivq_q09v, osivq_q41v and osivq_q42s UNREVERSED; v3 stores them already reversed. The object_mean / spatial_mean / verbal_mean subscale scores are correct in both cases; only these raw item columns differ. Recomputing subscale scores or reliabilities from the items, without reversing them for v1/v2, gives wrong answers: Cronbach's alpha for the verbal subscale comes out at 0.25 instead of 0.84."
         },
         {
           "@type": "PropertyValue",
@@ -1118,20 +1118,80 @@
         },
         {
           "@type": "PropertyValue",
-          "name": "diff_word",
-          "description": "Word recall error (string-distance based; 0 = exact match).",
+          "name": "score_word",
+          "description": "Word recall similarity, 1 = exact match. Edit-distance scoring (Gonthier, 2022): Damerau-Levenshtein distance capped at the target's length, subtracted from it, divided by it. Computed in R from the raw target and response, not from the task's own feedback columns. WARNING: word recall is near ceiling in this task and its split-half reliability is 0.45, below the conventional floor; it does not support individual-differences claims. See the Scoring page of the package documentation.",
+          "dataType": "float",
+          "minValue": 0,
+          "maxValue": 1
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "score_angle",
+          "description": "Orientation recall similarity, 1 = exact match. Cosine of the angular error on a 180-degree period, since a rectangle's tilt is symmetric under 180-degree rotation. Split-half reliability 0.82.",
+          "dataType": "float",
+          "minValue": 0,
+          "maxValue": 1
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "score_color",
+          "description": "Colour recall similarity, 1 = exact match. Cosine of the angular error on the 360-degree hue wheel. Split-half reliability 0.83.",
+          "dataType": "float",
+          "minValue": 0,
+          "maxValue": 1
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "score_word_z",
+          "description": "score_word, z-scored within task version using experimental-block rows only. Retained alongside the raw score: raw for absolute performance, standardised for cross-feature comparison.",
           "dataType": "float"
         },
         {
           "@type": "PropertyValue",
-          "name": "diff_angle",
-          "description": "Angular error between target and response orientation, in degrees.",
+          "name": "score_angle_z",
+          "description": "score_angle, z-scored within task version. See score_word_z.",
           "dataType": "float"
         },
         {
           "@type": "PropertyValue",
-          "name": "diff_color",
-          "description": "Angular error between target and response colour on the colour wheel.",
+          "name": "score_color_z",
+          "description": "score_color, z-scored within task version. See score_word_z.",
+          "dataType": "float"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "responded_word",
+          "description": "Whether the participant entered a word at all. IMPORTANT: the task encodes non-response with sentinels rather than missing values, and non-responses are scored 0 in score_word. Analyses of recall accuracy should filter on this flag; analyses that leave it out are combining accuracy with willingness to respond, which are different quantities. See the Scoring page of the package documentation.",
+          "dataType": "boolean"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "responded_angle",
+          "description": "Whether the participant moved the orientation widget. NOTE: unlike the other two features this is an inference, not an observation. The widget starts at 90 degrees and returns that value if untouched, so a deliberate 90-degree response is indistinguishable from no response. No block target lies within 20 degrees of 90, so such a response can never be near-correct. See responded_word.",
+          "dataType": "boolean"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "responded_color",
+          "description": "Whether the participant moved the colour wheel. Non-response is marked in the raw data by response_color_angle == 999 and response_color '#AAAAAA'. See responded_word.",
+          "dataType": "boolean"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "live_diff_word",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Word recall dissimilarity as computed by the task's front end to drive its feedback screen, 0 = exact match. Note this runs opposite to score_word. WARNING: the front end's edit distance is defective (a loop whose condition is an assignment leaves the distance matrix half-initialised), so this is not a valid edit distance. Retained for provenance only. See the Scoring page.",
+          "dataType": "float"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "live_diff_angle",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Absolute orientation error divided by 180, as computed by the front end, 0 = exact match. Linear rather than cosine, and with no handling of the rectangle's 180-degree symmetry. Use score_angle instead.",
+          "dataType": "float"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "live_diff_color",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Circular colour error divided by 180, as computed by the front end, 0 = exact match. Non-responses are mapped to 1 by an explicit guard. Use score_color instead.",
           "dataType": "float"
         },
         {
@@ -1157,26 +1217,26 @@
         },
         {
           "@type": "PropertyValue",
-          "name": "score_word",
-          "description": "Per-modality recall score for the word response, derived from diff_word.",
+          "name": "feedback_score_word",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Points shown on the feedback screen for the word response (0, 0.5 or 1), thresholded from live_diff_word and therefore inheriting its defective edit distance. Use score_word.",
           "dataType": "float"
         },
         {
           "@type": "PropertyValue",
-          "name": "score_angle",
-          "description": "Per-modality recall score for the orientation response, derived from diff_angle.",
+          "name": "feedback_score_angle",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Points shown for the orientation response (0, 0.5 or 1). Use score_angle.",
           "dataType": "float"
         },
         {
           "@type": "PropertyValue",
-          "name": "score_color",
-          "description": "Per-modality recall score for the colour response, derived from diff_color.",
+          "name": "feedback_score_color",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Points shown for the colour response (0, 0.5 or 1). Use score_color.",
           "dataType": "float"
         },
         {
           "@type": "PropertyValue",
-          "name": "trial_score",
-          "description": "Combined recall score for this stimulus's trial, across all three modalities.",
+          "name": "feedback_trial_score",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Points shown for the whole trial: the sum of the three per-feature feedback scores, minus 0.5 per incorrect parity judgement, floored at 0. Trial-level, so constant across the three stimulus rows of a trial. The parity penalty applies in v2 and v3 only.",
           "dataType": "float"
         },
         {
@@ -1231,26 +1291,26 @@
         },
         {
           "@type": "PropertyValue",
-          "name": "total_score_word",
-          "description": "Participant's total word-recall score, summed across all trials.",
+          "name": "feedback_total_score_word",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Cumulative word points shown to the participant at the end of the task. Derived from the front end's defective edit distance; see live_diff_word. Use score_word.",
           "dataType": "float"
         },
         {
           "@type": "PropertyValue",
-          "name": "total_score_angle",
-          "description": "Participant's total orientation-recall score, summed across all trials.",
+          "name": "feedback_total_score_angle",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Cumulative orientation points shown at the end of the task. Use score_angle.",
           "dataType": "float"
         },
         {
           "@type": "PropertyValue",
-          "name": "total_score_color",
-          "description": "Participant's total colour-recall score, summed across all trials.",
+          "name": "feedback_total_score_color",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Cumulative colour points shown at the end of the task. Use score_color.",
           "dataType": "float"
         },
         {
           "@type": "PropertyValue",
-          "name": "total_score",
-          "description": "Participant's combined total recall score across all modalities and trials.",
+          "name": "feedback_total_score",
+          "description": "DISPLAY ONLY, NOT FOR ANALYSIS. Combined total points shown to the participant, including the parity penalty in v2 and v3. This is the number participants were told to maximise, so it is meaningful as an account of what they were optimising, but it is not a performance measure.",
           "dataType": "float"
         },
         {

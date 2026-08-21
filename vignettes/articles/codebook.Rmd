@@ -26,10 +26,16 @@ library(aphantasiaWMStrats)
 ```
 
 This page documents every column in `all_data`, the pooled, stimulus-level
-dataset from the CFA-WM working memory task (word/orientation/colour recall
-under a parity-judgement distractor), combining all three study versions
-(v1 original, v2 added a parity-error penalty, v3 added recall-order
-randomisation).
+dataset from the Working Memory Feature Trade-off Task (WM-FTT):
+word, orientation and colour recall under a parity-judgement distractor,
+combining all three study versions (v1 original, v2 added a parity-error
+penalty, v3 added recall-order randomisation).
+
+The task was called CFA-WM during data collection, and column names, OSF
+component names and the front-end code still use that prefix, for example
+`strats_cfa_q01_colors_1`. Those identifiers are deliberately unchanged so
+that exports stay comparable with earlier ones and with the raw JATOS
+data. WM-FTT and CFA-WM refer to the same task.
 
 The tables below are computed directly from `all_data` rather than typed out
 by hand, so they cannot drift out of sync with the data itself. `all_data`
@@ -76,7 +82,7 @@ summarise_column <- function(data, colname) {
 identifier_variables <- tibble::tribble(
   ~Variable,  ~Description,
   "id",       "Participant identifier, unique within a version.",
-  "version",  "CFA-WM task version: v1 (original), v2 (added a parity-error penalty), v3 (added recall-order randomisation, independent front-end infrastructure).",
+  "version",  "WM-FTT task version: v1 (original), v2 (added a parity-error penalty), v3 (added recall-order randomisation, independent front-end infrastructure).",
   "language", "UI language of the experiment in the browser."
 )
 
@@ -124,16 +130,9 @@ stimulus_variables <- tibble::tribble(
   "response_angle",        "Participant's recalled orientation, in degrees.",
   "response_color_angle",  "Participant's recalled colour, as an angle on the colour wheel.",
   "response_color",        "Participant's recalled colour, as its nearest named colour.",
-  "diff_word",             "Word recall error (string-distance based).",
-  "diff_angle",            "Angular error between target and response orientation.",
-  "diff_color",            "Angular error between target and response colour.",
   "rt_word",               "Response time for the word recall response (ms).",
   "rt_angle",              "Response time for the orientation recall response (ms).",
   "rt_color",              "Response time for the colour recall response (ms).",
-  "score_word",            "Per-modality recall score for the word response.",
-  "score_angle",           "Per-modality recall score for the orientation response.",
-  "score_color",           "Per-modality recall score for the colour response.",
-  "trial_score",           "Combined recall score for this stimulus's trial, across all three modalities.",
   "parity_1_stim",         "First parity-judgement distractor digit embedded in this trial.",
   "parity_1_resp",         "Participant's parity judgement for parity_1_stim.",
   "parity_1_acc",          "Accuracy of the first parity judgement (1 = correct).",
@@ -157,6 +156,89 @@ stimulus_variables |>
 v2/v3 carry a real parity-error penalty in the task design; the parity
 columns exist for v1 too, but the penalty was not applied at recall.
 
+## Recall scores
+
+These are the analysis variables. They are computed in R from the raw
+target and response values by `compute_scores()`, not derived from the
+task's own feedback columns, for reasons set out on the
+[Scoring](scoring.html) page.
+
+Two things to know before using them. Non-responses are scored 0 and
+flagged by the `responded_*` columns, so any analysis of recall *accuracy*
+should filter on those flags; leaving them out combines accuracy with
+willingness to respond, which are different quantities. And word recall is
+near ceiling in this task, with a split-half reliability of 0.45 against
+0.82 for orientation and 0.83 for colour, so it does not support
+individual-differences claims.
+
+```{r recall-scores}
+recall_score_variables <- tibble::tribble(
+  ~Variable,          ~Description,
+  "score_word",       "Word recall similarity, 1 = exact match. Edit-distance scoring [@gonthierEasyWayImprove2022]: Damerau-Levenshtein distance capped at the target's length, subtracted from it and divided by it. Reliability 0.45; see the caveat above.",
+  "score_angle",      "Orientation recall similarity, 1 = exact match. Cosine of the angular error on a 180-degree period, since a rectangle's tilt is symmetric under 180-degree rotation. Reliability 0.82.",
+  "score_color",      "Colour recall similarity, 1 = exact match. Cosine of the angular error on the 360-degree hue wheel. Reliability 0.83.",
+  "score_word_z",     "`score_word`, z-scored within task version using experimental-block rows only. Raw and standardised are both kept: raw for absolute performance, standardised for cross-feature comparison.",
+  "score_angle_z",    "`score_angle`, z-scored within task version.",
+  "score_color_z",    "`score_color`, z-scored within task version.",
+  "responded_word",   "Whether the participant entered a word at all.",
+  "responded_angle",  "Whether the participant moved the orientation widget. Unlike the other two flags this is an *inference* rather than an observation: the widget starts at 90 degrees and returns that value if untouched, so a deliberate 90-degree response cannot be distinguished from no response. No experimental-block target lies within 20 degrees of 90, so such a response can never be near-correct.",
+  "responded_color",  "Whether the participant moved the colour wheel. Non-response appears in the raw data as `response_color_angle == 999`."
+)
+
+recall_score_summary <- purrr::map_dfr(
+  recall_score_variables$Variable, \(v) summarise_column(all_data, v)
+)
+
+recall_score_variables |>
+  dplyr::left_join(recall_score_summary, by = "Variable") |>
+  dplyr::select(Variable, Description, Type, `Range / levels`, `N missing`) |>
+  knitr::kable()
+```
+
+## Live feedback from the task display
+
+**Not analysis variables.** These drove the feedback screen participants
+saw between trials, and are kept for provenance and reproducibility only.
+Note that `live_diff_*` are *dissimilarities* (0 = exact match), the
+opposite direction from the `score_*` columns above.
+
+`live_diff_word`, and therefore `feedback_score_word` and the word totals
+derived from it, rest on a defective edit-distance implementation in the
+task's front end: a loop whose condition is an assignment leaves the
+distance matrix half-initialised, so the function does not compute the
+distance its name claims. The [Scoring](scoring.html) page demonstrates
+this against the data. Use `score_word` instead.
+
+```{r feedback-columns}
+feedback_variables <- tibble::tribble(
+  ~Variable,                     ~Description,
+  "live_diff_word",              "Front-end word dissimilarity, 0 = exact match. Not a valid edit distance; see above.",
+  "live_diff_angle",             "Front-end orientation error, absolute difference divided by 180. Linear rather than cosine, with no handling of the rectangle's 180-degree symmetry.",
+  "live_diff_color",            "Front-end colour error, circular difference divided by 180. Non-responses are mapped to 1 by an explicit guard.",
+  "feedback_score_word",         "Points shown for the word response (0, 0.5 or 1), thresholded from `live_diff_word`.",
+  "feedback_score_angle",        "Points shown for the orientation response (0, 0.5 or 1).",
+  "feedback_score_color",        "Points shown for the colour response (0, 0.5 or 1).",
+  "feedback_trial_score",        "Points shown for the whole trial: the three per-feature scores summed, minus 0.5 per incorrect parity judgement, floored at 0. Trial-level, so constant across a trial's three stimulus rows.",
+  "feedback_total_score_word",   "Cumulative word points shown at the end of the task.",
+  "feedback_total_score_angle",  "Cumulative orientation points shown at the end of the task.",
+  "feedback_total_score_color",  "Cumulative colour points shown at the end of the task.",
+  "feedback_total_score",        "Combined total points shown to the participant. This is the number they were told to maximise, so it describes what they were optimising, but it is not a performance measure."
+)
+
+feedback_summary <- purrr::map_dfr(
+  feedback_variables$Variable, \(v) summarise_column(all_data, v)
+)
+
+feedback_variables |>
+  dplyr::left_join(feedback_summary, by = "Variable") |>
+  dplyr::select(Variable, Description, Type, `Range / levels`, `N missing`) |>
+  knitr::kable()
+```
+
+Tutorial rows carry placeholder values in these columns: every
+`live_diff_*` is exactly 1 and every `feedback_score_*` exactly 0,
+regardless of what the participant did.
+
 ## Questionnaire scores
 
 Raw questionnaire items are in the nested list-columns described at the end
@@ -177,10 +259,6 @@ score_variables <- tibble::tribble(
   "object_mean",         "OSIVQ [@blazhenkovaNewObjectSpatialVerbal2009] object-imagery subscale mean.",
   "spatial_mean",        "OSIVQ spatial-imagery subscale mean.",
   "verbal_mean",         "OSIVQ verbal cognitive-style subscale mean.",
-  "total_score_word",    "Participant's total word-recall score, summed across all trials.",
-  "total_score_angle",   "Participant's total orientation-recall score, summed across all trials.",
-  "total_score_color",   "Participant's total colour-recall score, summed across all trials.",
-  "total_score",         "Participant's combined total recall score across all modalities and trials."
 )
 
 score_summary <- purrr::map_dfr(
@@ -247,7 +325,7 @@ columns.
 nested_variables <- tibble::tribble(
   ~`List-column`,        ~Description,
   "vviq_items",          "Raw VVIQ item responses (vviq_q01-vviq_q16), 1-5 each. Same names in v1/v2 and v3.",
-  "osivq_items",         "Raw OSIVQ item responses (34 items, 1-5 each), plus the object/spatial/verbal subscale sums and item-completion counts. Item order differs between v1/v2 and v3 in the raw front-end data; unnesting by name (not position) keeps the same item in the same column across versions.",
+  "osivq_items", "Raw OSIVQ item responses. **Reverse-keyed items are stored inconsistently across versions:** v1 and v2 store `osivq_q02v`, `osivq_q09v`, `osivq_q41v` and `osivq_q42s` *unreversed*, while v3 stores them already reversed. The `object_mean`/`spatial_mean`/`verbal_mean` columns are correct in both; only these nested items differ. Recomputing subscale scores or reliabilities from the items without reversing them for v1/v2 gives wrong answers (verbal alpha comes out at 0.25 rather than 0.84).",
   "nieq_items",          "Raw NIEQ item responses: 2 items per dimension (frequency, proportion), both 0-100 sliders. Same names in v1/v2 and v3.",
   "strategy_items",      "Raw strategy-report answers. Mixed shape: v1/v2's colour/orientation/word strategy fields are free text (mostly French); a separate scoring-strategy field uses a small coded vocabulary, asked slightly differently in v1/v2 (3 legacy slots) vs v3 (2 slots).",
   "extra_demographics",  "Additional demographic items not promoted to top-level columns: country, job, education, field, where_from, language_native, language_usual."
