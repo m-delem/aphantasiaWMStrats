@@ -24,6 +24,8 @@
 #
 # Figures are written to inst/scripts/figures/ at base_size = 16 for reuse
 # in the scoring vignette.
+#
+# Doc references below are to the planning set in `inst/planning/`.
 # -----------------------------------------------------------------------
 
 devtools::load_all()

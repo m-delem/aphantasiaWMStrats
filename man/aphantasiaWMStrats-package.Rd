@@ -6,7 +6,7 @@
 \alias{aphantasiaWMStrats-package}
 \title{aphantasiaWMStrats: Data Analysis for a Working Memory Strategies Study on Aphantasia}
 \description{
-This package contains the code (and, in due course, the data) to reproduce the analyses associated with an online study on a complex working memory span task investigating non-visual working memory strategies in aphantasia.
+This package contains the data and code to reproduce the analyses associated with an online study on a complex working memory task investigating non-visual working memory strategies in aphantasia.
 }
 \seealso{
 Useful links:

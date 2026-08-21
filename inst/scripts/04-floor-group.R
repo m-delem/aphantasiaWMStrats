@@ -10,6 +10,8 @@
 # model needs both a floor group and a populated above-floor continuum to
 # fit a line through; v2 (8 aphantasia to 1 typical) and v3 (17 to 4)
 # cannot supply the second.
+#
+# Doc references below are to the planning set in `inst/planning/`.
 # -----------------------------------------------------------------------
 
 devtools::load_all()

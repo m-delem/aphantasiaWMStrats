@@ -21,6 +21,8 @@
 # Split-half procedure: splits are drawn at the TRIAL level, not the item
 # level, and repeated. 03 §5 flagged that a naive odd/even split should not
 # be assumed appropriate; §1 below is that check.
+#
+# Doc references below are to the planning set in `inst/planning/`.
 # -----------------------------------------------------------------------
 
 devtools::load_all()

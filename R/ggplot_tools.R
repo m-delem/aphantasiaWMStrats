@@ -195,9 +195,10 @@ save_ggplot <- function(
 #'
 #' @description
 #' Ported from `aphantasiaEmotions`. The four-level mapping is kept even
-#' though v1 only supports the two-group split (`02-pooling-strategy.md`
-#' §3.5: hyperphantasia n = 3), so that the same scale serves `vviq_group_2`
-#' and `vviq_group_4` and colours stay identical across both packages.
+#' though v1 of this study only supports the two-group split (it has three
+#' hyperphantasic participants), so that the same scale serves
+#' `vviq_group_2` and `vviq_group_4` and colours stay identical across both
+#' packages.
 #'
 #' @param name Name of the x-axis.
 #' @param mult Multiplier for [ggplot2::expansion()].

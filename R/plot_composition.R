@@ -2,9 +2,10 @@
 #'
 #' @description
 #' Visualises the raw composition, which is a different representation from
-#' the ILR coordinates the models are fitted on, not a competing one
-#' (`06-compositional-analysis.md` §1). The ternary plot is the intuitive
-#' three-way picture; the inference happens on log-ratios.
+#' the ILR coordinates the models are fitted on, not a competing one. The
+#' ternary plot is the intuitive three-way picture; the inference happens on
+#' log-ratios, because a three-part composition has only two degrees of
+#' freedom and correlating raw proportions is invalid.
 #'
 #' Built from `coda.plot`'s primitives (`ternary_frame()`, `ternary_plot()`,
 #' `ternary_coords()`) rather than from `coda.plot::ternary_diagram()`. The

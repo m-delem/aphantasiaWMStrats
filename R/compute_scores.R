@@ -1,4 +1,4 @@
-# Scoring for the WM-FTT recall task. See 01-score-computation.md for the
+# Scoring for the WM-FTT recall task. See inst/planning/01-score-computation.md for the
 # design rationale; the roxygen below records what was implemented and why.
 
 #' Normalise a string for edit-distance comparison
@@ -26,7 +26,7 @@ normalise_word <- function(x) {
 #' with this project's preference for self-contained code with the
 #' reasoning attached. Also unit-testable against known values, which
 #' matters here: the front end's own edit distance turned out to be broken
-#' (see [all_data] and `01-score-computation.md` §1.5), and the failure was
+#' (see [all_data]), and the failure was
 #' invisible precisely because nothing tested it.
 #'
 #' This is the *restricted* variant (optimal string alignment): adjacent
@@ -77,8 +77,8 @@ damerau_levenshtein <- function(a, b) {
 #' the cap on `DL` before subtraction prevents a negative score when the
 #' response is longer than the target.
 #'
-#' Two deliberate departures from the task's live feedback, both recorded
-#' in `01-score-computation.md` §2: the denominator is `nchar(target)`
+#' Two deliberate departures from the task's live feedback: the
+#' denominator is `nchar(target)`
 #' alone rather than `max(nchar(target), nchar(response))`, and the metric
 #' is Damerau-Levenshtein rather than plain Levenshtein. Note that the
 #' live-feedback column `live_diff_word` is not a valid edit distance at
@@ -117,8 +117,8 @@ score_word <- function(target, response) {
 #' maximally wrong answer, using the full \[0, 1\] range.
 #'
 #' @section Choice of period:
-#' The two angular features have **different periods**, which
-#' `01-score-computation.md` §2 originally treated as one case:
+#' The two angular features have **different periods**, and were initially
+#' treated as one case:
 #'
 #' * **Colour** is a hue wheel: `period = 360`. Red at 5° and red at 355°
 #'   are 10° apart, not 350°.
@@ -160,9 +160,10 @@ score_angular <- function(target, response, period) {
 #'   \[0, 1\], higher is better. Note the direction is **opposite** to the
 #'   `live_diff_*` columns, which are dissimilarities.
 #' * `score_word_z`, `score_angle_z`, `score_color_z` — the above,
-#'   z-scored within `version`. Both are kept, per
-#'   `01-score-computation.md` §3/§4: raw for anything needing absolute
-#'   performance, standardised for cross-feature comparison and clustering.
+#'   z-scored within `version`. Both are kept: raw for anything needing
+#'   absolute performance, standardised for cross-feature comparison and
+#'   clustering. Note that standardised scores cannot be used for any
+#'   log-ratio transform, since roughly half of them are negative.
 #' * `responded_word`, `responded_angle`, `responded_color` — logical.
 #'
 #' @section Non-responses:
@@ -175,7 +176,7 @@ score_angular <- function(target, response, period) {
 #' reporting the absence of a colour representation, and `NA` would let
 #' listwise deletion silently drop exactly those observations. Scoring 0
 #' produces a visible distortion in the distribution instead of an
-#' invisible one in the inference. See `01-score-computation.md` §2.5.2.
+#' invisible one in the inference.
 #'
 #' `responded_angle` is an **inference** (`response_angle != 90`), not an
 #' observation, unlike the other two. Max `target_angle` is 61°, and no

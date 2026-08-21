@@ -16,6 +16,8 @@
 # non-responses as zeros and once on responded trials only. Reporting only
 # the first would roughly double the apparent association, because the
 # score-0 convention folds reporting propensity into the score.
+#
+# Doc references below are to the planning set in `inst/planning/`.
 # -----------------------------------------------------------------------
 
 devtools::load_all()
