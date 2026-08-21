@@ -22,7 +22,7 @@ plan (`00-analytical-philosophy.md` §5) — deliberately ignores
 researcher-defined groups (VVIQ category) and instead looks for latent
 structure across the most relevant subjective and objective variables,
 letting cognitive profiles emerge rather than assuming VVIQ group is the
-right lens. Directly continuous with Maël's own prior published work
+right lens. Directly continuous with the author's own prior published work
 (clustering paper) and Reeder et al.'s non-visual-strategy line of
 research, both already cited as direct inspiration (per
 `00-analytical-philosophy.md` §4).
@@ -31,12 +31,12 @@ research, both already cited as direct inspiration (per
 
 ## 0. The actual scientific lineage this analysis belongs to — stated directly, for the record
 
-This context was given directly by Maël during planning and is recorded
+This context was given directly by the author during planning and is recorded
 here because it changes what WM-FTT's clustering strand is actually for,
 not just how it should be run. First time this reasoning has been written
 down anywhere. **Corrected once already during this same planning
 session** — the first version of this section characterised study 1's
-design as circular; Maël corrected this directly, and the distinction
+design as circular; the author corrected this directly, and the distinction
 matters enough to preserve both the correction and the reasoning behind
 it, not just the final version.
 
@@ -55,22 +55,18 @@ genuine held-out validation attempt, in the same spirit as what study 2
 and this WM-FTT analysis are doing, and that attempt simply didn't find
 an effect at the time.
 
-**Where the real problem was, per Maël's own direct account**: not the
-design, but the **published framing** — under pressure from co-authors
-toward an optimistic, "sellable" framing, the manuscript text used
-language like "predictive" and "explanatory" that oversold what a
-descriptive clustering result plus a null held-out-validation result
-actually supports. As lead author, Maël pushed back on this framing where
-possible in favour of straightforward cluster description, but
-describes this kind of rhetorical overreach as close to unavoidable
-under senior-co-author pressure at that career stage — "p-hacking in
-spirit," his own phrase, applied to language/framing choices rather than
-to the statistical analysis itself. **Study 1's honest epistemic
-status: genuine hypothesis-generation via clustering, plus a real but
-null attempt at held-out validation** — not confirmed, not disconfirmed
-in a strong sense (a null result on two specific held-out measures
-doesn't rule out the broader hypothesis), simply not yet supported by
-that particular test.
+**Where the problem was**: not the design, but the **published framing**.
+The manuscript text used language like "predictive" and "explanatory",
+which claims more than a descriptive clustering result plus a null
+held-out validation supports. The distinction matters here because it
+is easy to repeat: the pressure on any clustering write-up is toward
+language that makes an exploratory structure sound confirmed, and the
+failure mode is rhetorical rather than statistical. **Study 1's honest
+epistemic status: genuine hypothesis-generation via clustering, plus a
+real but null attempt at held-out validation** — not confirmed, not
+disconfirmed in a strong sense (a null result on two specific held-out
+measures doesn't rule out the broader hypothesis), simply not yet
+supported by that particular test.
 
 **Study 2 as the point where a held-out validation attempt succeeded**:
 study 2 clustered on **subjective variables only** (OSIVQ subscales,
@@ -109,8 +105,8 @@ affected study 1's published text.
 ## 1. The central risk, stated first because it should govern everything else
 
 **Note added after §6:** this section's caution was written from general
-literature alone, before Maël's own prior clustering work had been
-reviewed directly. §6.1–6.2 found that Maël's own two prior studies, at a
+literature alone, before the author's own prior clustering work had been
+reviewed directly. §6.1–6.2 found that the author's own two prior studies, at a
 sample size comparable to WM-FTT's, produced a cluster structure that
 replicated across two independent samples and two different methods —
 real, specific evidence that meaningfully offsets the general-literature
@@ -120,7 +116,8 @@ choices do), but it should be read alongside §6's positive track record,
 not as an unanswered alarm.
 
 Literature search surfaced a specific, well-documented failure mode that
-maps precisely onto Maël's own stated worry ("am I full of shit or not"):
+maps precisely onto the doc's central worry, whether a clustering result
+is real or merely produced:
 unsupervised clustering in cognitive/psychological data is **prone to
 finding clusters that don't exist**. The mechanism is specific, not vague
 methodological pessimism: cognitive-science data typically combines
@@ -165,7 +162,7 @@ support a 3–4 cluster solution under this guidance (roughly 30-39 per
 cluster if evenly split, though real subgroups are unlikely to be evenly
 sized). This is a real, load-bearing constraint on how many clusters
 should even be considered as plausible outcomes, not an afterthought —
-and it interacts directly with `04-pooling-strategy.md`'s open v2
+and it interacts directly with `02-pooling-strategy.md`'s open v2
 question: clustering is a place where v2's small N (9) genuinely can't
 carry independent weight, reinforcing that doc's existing framing rather
 than reopening it.
@@ -191,15 +188,15 @@ direction, not a final choice:** a model-based/mixture approach (e.g.
 latent profile analysis, or a Kamila-style method if the final variable
 set is genuinely mixed continuous/categorical) is the better-supported
 starting point over hard partitioning methods like k-means, pending the
-variable-set decision in §4 and pending comparison against Maël's own
+variable-set decision in §4 and pending comparison against the author's own
 prior published method (§6).
 
 ## 4. Candidate variables — OSIVQ correctly relocated here
 
-Per direct correction from Maël: OSIVQ subscales (`object_mean`,
+Per direct correction from the author: OSIVQ subscales (`object_mean`,
 `spatial_mean`, `verbal_mean` — already present in `all_data` per the
 original handoff §5.2) belong here as **candidate clustering variables**,
-used continuously, the way they were used in Maël's own prior published
+used continuously, the way they were used in the author's own prior published
 clustering work — **not** as a categorical cognitive-style label via a
 discrete classification rule. The earlier framing considered and
 explicitly dropped: a competing-rules discrete classification
@@ -258,18 +255,18 @@ circularity (§0).
     WM-FTT's own sensory-awareness item correlations against this
     published baseline before treating it as an equally solid input
     alongside the other four dimensions.
-  - **Frequency/proportion item-pair consistency** — Maël's own planned
+  - **Frequency/proportion item-pair consistency** — the author's own planned
     check (are the two items per dimension, "how frequently" and "what
     proportion," measuring the same thing) — should run before NIEQ
     scores are used in clustering, not just as a side curiosity. This is
     the same "reliability before inference" logic already established in
-    `02-validity-checks.md` for WM-FTT's own scores, applied here to a
+    `03-validity-checks.md` for WM-FTT's own scores, applied here to a
     second instrument. Source-paper precedent: Table 3 in Heavey et al.
     reports pair-wise item correlations for all five dimensions in their
     N=260 sample — useful as a comparison baseline once WM-FTT's own
     pair correlations are computed, not as a substitute for computing
     them.
-  - Maël's UT-aphantasia hypothesis (aphantasics scoring higher on
+  - the author's UT-aphantasia hypothesis (aphantasics scoring higher on
     unsymbolised thinking) is a genuine, testable, well-motivated
     question this data can speak to — flagged as a real analytical
     target, not just a variable-inclusion detail, worth surfacing
@@ -358,7 +355,7 @@ heavy free-text/NLP-scale data:
   proportions (`01-score-computation.md`).
 - **Note on an earlier error in this planning process**: a different
   set of Likert-style (`rating`) strategy items exist in the same source
-  file, but belong to the DLC-Reasoning task (`aphantasiaReasoningViie`),
+  file, but belong to the reasoning study's task (`aphantasiaReasoningViie`),
   not WM-FTT — the two studies' front-end code shares a file, which
   caused an initial misreading during this session. WM-FTT's own
   strategy questions are checkbox-only, no Likert items.
@@ -390,7 +387,7 @@ mutually exclusive:**
   distinction clusters could reveal).
 - **Scoring-priority as a third preference measure**: directly extends
   the self-report-vs-behaviour convergent-validity question already
-  flagged in `00-analytical-philosophy.md` §6 and `02-validity-checks.md`
+  flagged in `00-analytical-philosophy.md` §6 and `03-validity-checks.md`
   §2.3 — now three comparable signals exist (self-reported priority,
   self-reported per-feature strategy, behavioural compositional
   allocation), checkable pairwise or jointly against cluster membership.
@@ -400,11 +397,11 @@ mutually exclusive:**
   pattern-matching, done as a documented, principled step rather than
   inline plotting logic) is the pragmatic near-term approach. Full
   NLP/embeddings-based analysis is a legitimate but separate future-work
-  angle — Maël explicitly designed this field with future NLP-literate
+  angle — the author explicitly designed this field with future NLP-literate
   researchers in mind — flagged here as an acknowledged limitation/
   opportunity for the writeup, not attempted under the current deadline.
 
-## 5. Validation, not just fitting — directly answering "am I full of shit"
+## 5. Validation, not just fitting — directly answering whether the clusters are real
 
 Given §1's central risk, **fitting a clustering model and reporting the
 result is not sufficient**. A specific validation plan is needed, treated
@@ -413,7 +410,7 @@ as equally important as the model-fitting itself, not an optional add-on:
 - **Stability check**: does the cluster solution replicate under
   resampling (bootstrap, or split-half if sample size allows) rather than
   being an artifact of the specific sample fitted? Directly analogous in
-  spirit to `02-validity-checks.md`'s split-half approach for the
+  spirit to `03-validity-checks.md`'s split-half approach for the
   compositional profile — the same "is this a stable trait-like signal or
   noise reshuffled" logic applies here.
 - **Null/permutation comparison**: given §1's simulation finding (spurious
@@ -449,7 +446,7 @@ as equally important as the model-fitting itself, not an optional add-on:
   design in §6.7.
   designed analyses, not just a shared-variable convenience.
 
-## 6. Direct comparison to Maël's own prior published methods — now done
+## 6. Direct comparison to the author's own prior published methods — now done
 
 Both prior R packages were provided directly and read in full
 (`aphantasiaCognitiveClustering` — the original clustering study;
@@ -513,7 +510,7 @@ general literature alone: **two independent samples, at a scale
 comparable to WM-FTT's N=118, using two different methods, produced
 convergent structure.** This directly and substantially updates the
 earlier, more cautious framing in §1/§2 — the abstract risk of spurious
-clustering at this sample size is real in general, but Maël's own track
+clustering at this sample size is real in general, but the author's own track
 record at this scale is a specific, relevant counter-data-point that
 should be weighted accordingly, not overridden by the general literature.
 
@@ -546,7 +543,7 @@ analysis and recommendation for WM-FTT in §6.5.
 
 ### 6.4 Full a priori review of `diceR`'s 12 base algorithms
 
-Per Maël's request: not limited to hierarchical methods, and not
+Per the author's request: not limited to hierarchical methods, and not
 selected by trial-and-error against WM-FTT's data. `consensus_cluster()`
 offers 12 algorithms; the package's own documentation groups them by
 underlying model family, which is used here as the organising structure,
@@ -571,7 +568,7 @@ logic on why algorithm diversity itself has value), but their known
 shape-sensitivity is a real, citable, general reason (not a
 WM-FTT-specific post-hoc exclusion) to weight them lightly relative to
 model-based alternatives if consensus results disagree. This directly
-answers Maël's own prior instinct (hierarchical families gave
+answers the author's own prior instinct (hierarchical families gave
 "uninformative" results before) with an actual mechanism, rather than
 leaving that as an unexplained empirical observation to potentially
 repeat without understanding why.
@@ -652,14 +649,14 @@ close to, but not identical to, study 2's own selection
 explicitly considered and rejected `ap`, `hdbscan`, `nmf`, `sc`, `som`,
 `block` on stated mechanical/structural grounds rather than leaving them
 unconsidered, and explicitly discusses (rather than silently omits)
-`hc`/`diana`. Worth Maël confirming this reasoning holds rather than
+`hc`/`diana`. Worth the author confirming this reasoning holds rather than
 accepting it uncritically — this is exactly the kind of judgment call
 the doc's opening standard ("genuinely convinced, not reassured") applies
 to.
 
 ### 6.5 Resampling (`p.item`, `reps`) — full analysis, not a default port
 
-Per Maël's request to look at what subsample size to bootstrap on,
+Per the author's request to look at what subsample size to bootstrap on,
 rather than default to study 2's `p.item = 1` or to the package's
 `p.item = 0.8` default without reasoning through it:
 
@@ -751,7 +748,7 @@ on genuine structural-mismatch grounds, no comparably strong a priori
 reason was found to exclude any of the 5 consensus functions for this
 data — they're all standard, established methods without a clear
 structural mismatch to WM-FTT's data shape. Where §6.4 argues for
-principled narrowing, this is closer to Maël's original "why not use as
+principled narrowing, this is closer to the author's original "why not use as
 many as possible" instinct being the right call, precisely because nothing
 comparable to hierarchical clustering's shape-sensitivity or NMF's
 non-negativity requirement was found among the consensus functions.
@@ -777,7 +774,7 @@ not a single choice.** Study 2 fixed `nk = 3` on theoretical grounds: both
 prior studies found the 3-cluster structure meaningful and revealing of
 what OSIVQ specifically can tell us about cognitive style — a real,
 stated prior, not an arbitrary default. Rather than choosing between
-"honour the prior" and "let the data decide," Maël proposed running both
+"honour the prior" and "let the data decide," the author proposed running both
 in parallel and comparing their solidity, which is adopted here as the
 design:
 
@@ -834,7 +831,7 @@ family choice, follow the same logic).
 **What would actually justify reduction, stated as a testable condition
 rather than a general worry**: not "9 is a large number," but specific,
 substantively-expected redundancy between particular variables — e.g.
-VVIQ and OSIVQ-Object are already expected (per Maël's own stated prior,
+VVIQ and OSIVQ-Object are already expected (per the author's own stated prior,
 in the original discussion of NIEQ) to correlate heavily, since both are
 visual-imagery measures. If two or more of the 9 variables are strongly
 correlated on grounds like this, treating them as independent dimensions
@@ -869,7 +866,7 @@ not dimensionality for its own sake.
    directly** — closer to study 2's approach, and a genuinely defensible,
    clean outcome in its own right, not a fallback to be avoided.
 
-**The "ethically clean" ordering constraint — Maël's own framing, adopted
+**The "ethically clean" ordering constraint — the author's own framing, adopted
 directly**: the correlation-based reduction decision (steps 1–2) must be
 made **before looking at how any candidate reduction affects the
 resulting clustering solution** — decide which variables are redundant
@@ -893,9 +890,9 @@ a more interpretable or expected cluster result* (which would not be
 defensible). Worth stating this distinction explicitly in the eventual
 methods writeup, not just applying it silently — the doc's standard of
 "genuinely convinced, not reassured" (§0's opening framing) applies to
-Maël's own reasoning here as much as to any external technique.
+the author's own reasoning here as much as to any external technique.
 
-**Note for other researchers, stated directly per Maël's own framing**:
+**Note for other researchers, stated directly per the author's own framing**:
 this reduction decision, once made, is WM-FTT's own committed choice —
 not a claim that it's the only defensible variable set. Other
 researchers working with this data are free to try different reductions
@@ -924,8 +921,8 @@ specific, principled choice, not an assertion of uniqueness.
 |---|---|---|
 | Central risk to design against | Spurious clusters from correlated, non-orthogonal indicators at modest N | Identified, governs rest of doc |
 | Minimum viable subgroup size | N=20–30 per expected cluster (literature guidance) | Adopted as planning constraint |
-| v2 role | Excluded from carrying independent weight, consistent with `04-pooling-strategy.md` | Settled (inherited, not re-decided) |
-| Comparison against Maël's own prior published/pre-print methods | **Done** — both prior R packages read directly (§6.1) | Settled |
+| v2 role | Excluded from carrying independent weight, consistent with `02-pooling-strategy.md` | Settled (inherited, not re-decided) |
+| Comparison against the author's own prior published/pre-print methods | **Done** — both prior R packages read directly (§6.1) | Settled |
 | Prior-method finding | Model-based (GMM) clustering at N≈96–104 produced a result that replicated across two independent samples and two methods | Strong positive evidence, revises earlier general-literature caution upward (§6.2) |
 | Base clustering algorithms | `gmm`, `pam`, `km`, `cmeans` primary; `hc`/`diana` included but down-weighted; `ap`/`hdbscan`/`nmf`/`sc`/`som`/`block` excluded on a priori structural grounds | Settled (§6.4) |
 | Resampling (`p.item`) | 0.8 (package default), not study 2's 1 | Settled (§6.5) |
@@ -957,7 +954,7 @@ specific, principled choice, not an assertion of uniqueness.
   isn't yet written as executable steps.
 - Whether version should be a clustering input, a stratification variable,
   or excluded entirely — not addressed in this draft, worth raising
-  explicitly given `04-pooling-strategy.md`'s general stance on version
+  explicitly given `02-pooling-strategy.md`'s general stance on version
   as structural rather than nuisance.
 - Concrete operationalisation choice(s) among §4.1's several options for
   self-report strategy validation use — several were listed as
@@ -974,5 +971,5 @@ specific, principled choice, not an assertion of uniqueness.
 - Design the full validation pipeline (§5) as concrete, implementable
   steps, incorporating §6.5's resampling specification directly.
 - Implement `01-score-computation.md`'s pipeline (shared dependency).
-- Revisit v2/version questions here only if `04-pooling-strategy.md`'s
+- Revisit v2/version questions here only if `02-pooling-strategy.md`'s
   general resolution changes.

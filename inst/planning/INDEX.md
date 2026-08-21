@@ -1,11 +1,13 @@
-# WM-FTT analysis pipeline — index and handoff for implementation sessions
+# WM-FTT analysis pipeline: index and handoff for implementation sessions
+
+*This is the entry point to `inst/planning/`. Read this file first.*
 
 **What this document is.** Ten planning docs (`00` through `09`) define
 the full WM-FTT analysis plan: philosophy, scoring, pooling strategy,
 validity checks, parity engagement, performance modelling, compositional
 analysis, clustering, response propensity, and the floor-group model. They were produced over an extended planning
-conversation between Maël Delem and Claude, with heavy use of literature
-search, direct review of Maël's own prior published/pre-print work, and
+conversation between the author Delem and Claude, with heavy use of literature
+search, direct review of the author's own prior published/pre-print work, and
 sustained pushback rather than agreement-by-default. This document is
 the map: what each doc contains, what depends on what, what's still
 genuinely open, and a starting prompt for a session picking up any one
@@ -90,7 +92,7 @@ well-defined.
 
 ## 2. What each doc contains, one paragraph each
 
-- **`00-analytical-philosophy.md`** — Resolves the core PI disagreement
+- **`00-analytical-philosophy.md`** — Resolves the core framing disagreement
   (performance framing vs. compositional/preference framing) as
   complementary, not competing; establishes performance/compositional/
   clustering as three distinct strands with different epistemic jobs;
@@ -152,7 +154,7 @@ well-defined.
   is required for valid inference on the three-feature composition, not
   naive proportions. **The sequential binary partition (SBP) choice — which
   feature gets contrasted against the other two first — is not decided**
-  and needs Maël's direct input; three candidate partitions are laid out
+  and needs the author's direct input; three candidate partitions are laid out
   with their theoretical implications. `multilevelcoda` (a `brms`-native
   package) is the recommended implementation path. **Two changes
   2026-08-20**: §7's input choice is **reversed** to raw scores, because
@@ -163,7 +165,7 @@ well-defined.
   **not** as grounds to switch.
 - **`07-clustering-analysis.md`** — The most heavily developed doc, and
   explicitly framed (§0) as a **third attempt at a consistent held-out
-  validation logic** across three of Maël's studies, not a fresh
+  validation logic** across three of the author's studies, not a fresh
   exploratory exercise — read §0 before anything else in this doc, it
   changes what a null result would mean. Clustering inputs are 9 raw
   subjective variables (VVIQ, OSIVQ ×3, NIEQ ×5); behavioural/
@@ -172,7 +174,7 @@ well-defined.
   variables instead — this exclusion is the single most consequential
   methodological choice in the doc. Full a priori analysis of `diceR`'s
   algorithm/consensus-function/resampling/k-selection free variables is
-  included (§6). This is thesis-only, not poster material (per Maël's
+  included (§6). This is thesis-only, not poster material (per the author's
   own decision during planning). **Amended 2026-08-20** (§4.0): the
   held-out behavioural validation must use responded-only scores, since
   the raw score columns partly encode who declined to answer. Note also
@@ -233,30 +235,37 @@ planning and got settled later; don't rediscover and re-litigate.
 - **Whether VVIQ enters models continuously or with a floor term** —
   owned by `09-floor-group.md` §4. On current data the continuous term
   does no work once the floor term is present, except for colour
-  propensity where it survives.
+  propensity where it survives. **`06` resolved this for its own strand
+  on 2026-08-21** (`06` §13.6): floor-group additive as the pre-declared
+  primary, with a LOO comparison of the alternatives reported whatever it
+  shows. `05` still has to decide for itself.
 - **Word as an individual-differences measure** — `03` §2.1 gives its
   split-half reliability as 0.45, and the precision criterion asks for 93
   trials of the 63 that exist. `05` §3.4 treats this as settled (report
   with a caveat, exclude from individual-differences inference), but
   `06`'s first ILR coordinate still rests partly on word, so the tension
   is live rather than resolved.
-- **SBP/partition choice for compositional analysis** (`06` §2) — needs
-  Maël's direct input, not a default to pick. Now carries extra weight:
-  the theoretically motivated partition is the low-variance one, and its
-  verbal arm rests on the least reliable feature. Neither is grounds to
-  switch on statistical convenience, which is the failure mode `06` §2
-  was written to prevent.
-- **Legacy plotting code disposition** (`plot_wm_results()`,
-  `plot_wm_composition()`, `plot_strategies()`, etc., in the legacy aWMS
-  codebase) — mentioned early in planning, **never actually resolved in
-  any doc**. If your task involves visualisation, this is a real gap —
-  raise it rather than silently deciding to rebuild from scratch or
-  reuse as-is.
+- ~~**SBP/partition choice for compositional analysis**~~ **RESOLVED
+  2026-08-21** (`06` §13.5): word vs (colour + orientation), on
+  substantive grounds. Two things closed it. Any two-coordinate ILR basis
+  is a rotation of the same geometry, so the omnibus test and total
+  variance do not depend on the choice; and the variance asymmetry that
+  made the choice look expensive was computed on a superseded sample and
+  largely dissolves on the analysis sample (`06` §13.2).
+- ~~**Legacy plotting code disposition**~~ **RESOLVED 2026-08-21.** None
+  of it is in the package, only in the waiting-room archive, and
+  `plot_wm_composition()` drives `coda.plot` by reaching into
+  `p$layers[[i]]$geom$default_aes`, which breaks on ggplot2 updates. The
+  package now has its own plotting layer in `R/ggplot_tools.R` and
+  `R/plot_composition.R`, ported from `aphantasiaEmotions` so both
+  packages share one visual identity. Figures in `inst/scripts` are vector
+  PDFs at printed size; figures for the pkgdown site use
+  `theme_pdf(base_size = 16)`.
 - **Poster and thesis chapter scoping** — see §5, not resolved anywhere.
 
 ## 4. House rules — apply regardless of which doc you're implementing
 
-These are established, consistent practice with Maël across this entire
+These are established, consistent practice with the author across this entire
 planning process, not stated once and possibly forgotten:
 
 - **Verify against real data/files, never assert from memory.** Several
@@ -268,8 +277,8 @@ planning process, not stated once and possibly forgotten:
 - **Targeted edits over full-file regeneration**, for quick fixes.
   **Confirm the plan before building anything complex** (multi-file work,
   extended analysis code) — don't just start generating.
-- **Push back, flag uncertainty, don't validate by default.** Maël has
-  explicitly and repeatedly asked for this. Where a design choice has
+- **Push back, flag uncertainty, don't validate by default.** This has been
+  asked for explicitly and repeatedly. Where a design choice has
   real trade-offs, say so, don't pick one silently and present it as
   obviously correct.
 - **Decisions get documented with their reasoning, not just their
@@ -282,11 +291,11 @@ planning process, not stated once and possibly forgotten:
   result is seen, not adjusted afterward toward a cleaner-looking answer.
   If you find yourself wanting to try several versions of something and
   pick the one that "looks right," stop and flag it instead.
-- **Once-closed scope questions stay closed** — e.g. DLC-Reason
+- **Once-closed scope questions stay closed** — e.g. the reasoning study's
   post-submission participants (explicitly out of scope), the OSIVQ
   Gazzo/max discrete classification rule (explicitly dropped, replaced by
   continuous subscale use in clustering). Don't re-raise these.
-- **Language**: respond in English always, even if Maël writes in French.
+- **Language**: these docs and all code comments are in English.
 - **Style**: NO em-dashes, strictly forbidden.
 - **Output real files**, don't hold substantial content only in the
   conversation.
@@ -353,15 +362,10 @@ docs, which carry their results inline, and the scripts listed in §6.5.
 > state explicitly whether the model analyses recall accuracy or
 > willingness to respond. Sample is v1 only (`02` §3.5).
 
-**Compositional analysis (`06`):**
-
-> Implement the compositional analysis in `06-compositional-analysis.md`.
-> The SBP choice in §2 is **not** yours to default: it needs Maël's
-> direct input, and §2's amendment explains why the obvious statistical
-> tiebreaker is exactly the wrong criterion. Inputs are **raw**
-> responders-only participant means, not standardised scores (§7,
-> reversed 2026-08-20). The strand has already cleared its stability gate
-> (`03` §2.2), so this is a build task rather than a feasibility check.
+**Compositional analysis (`06`): DONE**, 2026-08-21, except for the
+Bayesian fits themselves. Read `06` §13 rather than re-deriving anything;
+the script is `inst/scripts/05-compositional-analysis.R`. What remains is
+running it, starting with `TEST_RUN <- TRUE`.
 
 **Response propensity (`08`):**
 
@@ -384,7 +388,7 @@ docs, which carry their results inline, and the scripts listed in §6.5.
 
 > Read `07-clustering-analysis.md` §0 first, in full, before anything
 > else — it establishes that this analysis is a third attempt at a
-> specific held-out-validation logic across Maël's own prior work, which
+> specific held-out-validation logic across the author's own prior work, which
 > changes how a null result should be framed. Clustering inputs are the
 > 9 raw subjective variables only (§4) — behavioural/compositional scores
 > and self-report strategy are validation-only, never clustering inputs
@@ -394,7 +398,7 @@ docs, which carry their results inline, and the scripts listed in §6.5.
 > reduction choice before looking at any clustering output. This is
 > thesis-only work, not poster material.
 
-## 6.5 What the implementation session actually produced
+## 6.5 What the implementation sessions actually produced
 
 For anyone reconstructing what changed on 2026-08-20:
 
@@ -418,6 +422,29 @@ when it was (`08` §3.1). And a pattern was read into seven participants
 that a base-rate check showed was noise. Both were caught by looking
 within strata rather than at the aggregate; that is the habit to carry
 forward.
+
+And what changed on 2026-08-21:
+
+| Artifact | Where |
+| --- | --- |
+| `compose_features()`, `ilr_coords()`, `engaged_ids()`, `wm_thresholds()` | `R/composition.R` |
+| `theme_pdf()`, `save_ggplot()`, the group/feature scales, ported from `aphantasiaEmotions` | `R/ggplot_tools.R` |
+| `plot_composition_ternary()`, `plot_composition_biplot()` | `R/plot_composition.R` |
+| `fit_brms_model()`, `report_rope()` | `R/modelling_tools.R` |
+| Sample construction, composition descriptives, the SBP table, five candidate models, the trial-level multilevel model | `inst/scripts/05-compositional-analysis.R` |
+| Figures moved from screen-size PNG to vector PDF at printed size | `inst/scripts/01`, `02`, `03`, figures in `inst/scripts/figures/` |
+| These planning docs, moved into the package | `inst/planning/` |
+
+Three doc-versus-data mismatches from that session are worth carrying
+forward, because all three have the same shape. `06` §2's variance table,
+`06` §8.5's partial correlations, and by extension the "the task achieved
+a two-way trade-off" reading were all computed on a pooled, unfiltered
+sample that `02` §3.5 had already retired, and all three change or
+dissolve on the analysis sample (`06` §13.2, §13.3). Six low-engagement
+participants carried roughly three quarters of the compositional
+variance. The habit from 2026-08-20, look within strata rather than at
+the aggregate, generalises: **check which sample a recorded number was
+computed on before building on it.**
 
 ## 7. If something in these docs seems wrong or outdated
 

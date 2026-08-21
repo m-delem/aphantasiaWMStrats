@@ -43,7 +43,7 @@ since that is what `utils.js` and the raw JATOS export still call them.**
 incorrectly stated that no intermediate metric columns exist in the
 pipeline.** That was wrong — checked directly against the front-end
 source (`js/jspsych/plugin-colored-rotated-label-feedback.js` and
-`js/jspsych/utils.js` in the v3 front-end code) after Maël pointed out
+`js/jspsych/utils.js` in the v3 front-end code) after the author pointed out
 the miss. The intermediate values do exist, under a `diff_` prefix that
 an earlier search for "levenshtein"/"distance"/"angle_diff" failed to
 catch. Documented precisely here so this doesn't need re-discovering:
@@ -672,9 +672,9 @@ something to gloss over.
 | Direction convention (`score_*` vs `live_diff_*`) | Both kept, names carry the direction, nothing inverted (§1.5) | Settled 2026-08-20 |
 | Live-feedback columns renamed `feedback_*` / `live_diff_*` | Done, with rationale in `R/data.R` | Implemented (session step 1) |
 | Tutorial rows                     | Excluded — values are hardcoded placeholders (§2.5.1)                                     | Settled 2026-08-20                    |
-| Training rows                     | Score them, filter at analysis time (recommended)                                         | **Open — needs Maël's call**          |
-| Non-response handling             | Score 0 + companion `responded_*` logicals (recommended, §2.5.2)                          | **Open — needs Maël's call**          |
-| Participant present in v1 and v3  | Four options weighed (§3)                                                                 | **Open — needs Maël's call**          |
+| Training rows                     | Score them, filter at analysis time (recommended)                                         | **Open — needs the author's call**          |
+| Non-response handling             | Score 0 + companion `responded_*` logicals (recommended, §2.5.2)                          | **Open — needs the author's call**          |
+| Participant present in v1 and v3  | Four options weighed (§3)                                                                 | **Open — needs the author's call**          |
 | Standardisation grouping          | Per version (v1/v2/v3)                                                                    | Settled, with small-N caution flagged |
 | Keep raw similarity columns       | Yes, alongside standardised                                                               | Settled                               |
 | Mixture-model precision (bmm)     | Parked as future/parallel track                                                           | Not adopted this pass                 |

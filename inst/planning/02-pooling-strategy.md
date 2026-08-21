@@ -123,7 +123,7 @@ Proposed as a checklist to apply per-analysis, not a single formula:
    pooled result** — a pooled effect size or estimate without the
    underlying version breakdown visible next to it invites exactly the
    "is this actually one effect or an artifact of unequal version mixing"
-   question a reviewer (or the PI) would reasonably ask.
+   question a reviewer would reasonably ask.
 
    **Extended 2026-08-20: report per-version non-response rates too, not
    just group composition.** Versions differ sharply in how often

@@ -165,7 +165,7 @@ different costs and different justificatory burdens:
   split is worth building even though the continuous variable handles the
   covariate case.
 
-**Where this connects to `02-validity-checks.md`:** the engaged/disengaged
+**Where this connects to `03-validity-checks.md`:** the engaged/disengaged
 moderation finding is arguably as much a validity question (does the task
 work as intended, for whom) as it is a performance-modelling question.
 Worth deciding at write-up time whether it's presented primarily as a

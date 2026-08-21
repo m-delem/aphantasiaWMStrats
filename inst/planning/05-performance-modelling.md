@@ -4,7 +4,7 @@
 response-family question is resolved against real distributions (hurdle,
 not ZOIB), §3.3 raises a new problem for Option C, and §5's Option D is
 constrained. The random-effects structure remains deferred as designed. Depends on scoring
-(`01-score-computation.md`), pooling strategy (`04-pooling-strategy.md` —
+(`01-score-computation.md`), pooling strategy (`02-pooling-strategy.md` —
 renumbering pending, referred to here by content not final filename), and
 directly implements the standard set by the philosophy discussion
 (`00-analytical-philosophy.md` §3, §6) that performance modelling must
@@ -13,7 +13,7 @@ unrelated outcomes.
 
 **Context:** this is the "performance" strand of the three-strand analytical
 plan (performance / compositional / clustering — see
-`00-analytical-philosophy.md` §5 for how the three relate). The PI's
+`00-analytical-philosophy.md` §5 for how the three relate). The performance framing's
 preferred framing (are aphantasic participants simply better/worse at one
 feature) lives here, but per the philosophy discussion, this strand is not
 exempt from respecting the task's forced-trade-off structure — three
@@ -48,7 +48,7 @@ as an accessible/poster-friendly secondary result (§6).
 
 Four options were laid out; one (B) is being dropped from the active plan
 but kept on record rather than silently discarded, since understanding why
-it was rejected is itself useful and may be asked about later (by the PI,
+it was rejected is itself useful and may be asked about later (by a collaborator,
 a reviewer, or a future returning-to-this session).
 
 ### Option A — three independent univariate models
@@ -94,7 +94,7 @@ orientation.
 ### Option C — long-format multilevel model, feature as within-participant factor — **primary model**
 
 Reshape to one row per participant × feature (× trial, where trial-level
-granularity is being retained, consistent with `02-validity-checks.md`'s
+granularity is being retained, consistent with `03-validity-checks.md`'s
 need for trial-level data):
 
 ```
@@ -252,7 +252,7 @@ harder, not easier.
 
 ## 4. Making C's dependency structure explicit and interpretable — scoped as real build work
 
-Directly per Maël's framing: the complexity of C is justified by the
+Directly per the author's framing: the complexity of C is justified by the
 quality of the idea, and that justification is realised specifically
 through building tooling that makes the correlation structure legible,
 not just technically present in a `summary()` output nobody reads
@@ -298,7 +298,7 @@ the compositional strand's job per the discussion that led here).
 **Structure:** total score (sum or mean across the three features, per
 trial or per participant — exact aggregation TBD at implementation)
 as outcome; `group`/VVIQ and plausibly parity engagement
-(`03-parity-engagement.md`, continuous covariate per that doc's Decision
+(`04-parity-engagement.md`, continuous covariate per that doc's Decision
 1) as predictors; standard multilevel structure, not required to carry
 C's complexity budget.
 
@@ -356,7 +356,7 @@ becomes live again if later versions are ever pooled.
 
 ### 6.1 Original version/pooling reasoning, now superseded
 
-Per `04-pooling-strategy.md`'s decision procedure (that doc's §3), this
+Per `02-pooling-strategy.md`'s decision procedure (that doc's §3), this
 doc's models fall under "needs pooling for power" (step 3 there) — v2=9
 and v3=21 alone are almost certainly underpowered for C's full structure
 independently.
@@ -372,8 +372,8 @@ whether the model can actually support a version layer alongside the
 feature layer needs checking once real data is in hand, not decided by
 principle alone. If it can't be supported jointly, the fallback (not yet
 decided in detail) is likely either: analyse v1 alone as primary (per
-`04-pooling-strategy.md` §3c) with pooled v1+v2+v3 as secondary, or drop
-the version varying effect and rely on `04-pooling-strategy.md`'s
+`02-pooling-strategy.md` §3c) with pooled v1+v2+v3 as secondary, or drop
+the version varying effect and rely on `02-pooling-strategy.md`'s
 version-composition-reporting requirement (that doc's §3, step 4) to keep
 the pooling assumption visible rather than hidden.
 
