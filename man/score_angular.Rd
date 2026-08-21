@@ -22,8 +22,8 @@ maximally wrong answer, using the full [0, 1] range.
 }
 \section{Choice of period}{
 
-The two angular features have \strong{different periods}, which
-\code{01-score-computation.md} §2 originally treated as one case:
+The two angular features have \strong{different periods}, and were initially
+treated as one case:
 \itemize{
 \item \strong{Colour} is a hue wheel: \code{period = 360}. Red at 5° and red at 355°
 are 10° apart, not 350°.

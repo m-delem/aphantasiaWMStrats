@@ -609,24 +609,41 @@ so it is not imported. It is tested.
 smaller:** intercept only, two-group split, linear VVIQ, floor-group
 additive, and floor-group without the parity covariate. Compared by LOO.
 
-Three of aphEmo's six candidates are unavailable or ill-conditioned here.
+Two of aphEmo's six candidates are unavailable or ill-conditioned here.
 The four-group categorical is out by `02` §3.5 (hyperphantasia n = 3). A
-GAM would be smoothing a spike at one x value plus a sparse tail. And a
-segmented model needs an identifiable knot: aphEmo's landed near 20 to 24,
-and in this sample only **6 of 79** participants lie between VVIQ 17 and
-25, so there is almost nothing in the region a knot would occupy. The
-script runs `earth::earth()` first as a cheap identifiability check and
-does not fit the segmented model if no interior knot appears, which is
-`aphantasiaEmotions`' own idiom used as a gate rather than a regression
-test.
+GAM would be smoothing a spike at one x value plus a sparse tail.
 
-**Predicted in advance, and recorded here so it cannot be spun later:** at
-n = 79 with an outcome whose total variance is 0.018, the elpd differences
-will almost certainly sit inside their standard errors and the comparison
-will not separate the candidates. That is a real answer and it pre-empts
-the reviewer point that produced aphEmo's model-comparison page. The
-floor-group form stays primary because it was pre-declared, not because it
-won.
+**The segmented model is in, after a correction.** The MARS pre-check was
+written to skip it if no interior knot appeared, on the reasoning that
+only 6 of 79 participants lie between VVIQ 17 and 25, so there might be
+nothing in the region a knot would occupy. The check as first written read
+`earth::earth()$cuts` whole, which carries the candidate terms the
+backward pass discards as well as the ones it keeps, and reported five
+knots where the fitted model has one. Read off the pruned model instead:
+
+| Coordinate | Terms retained | Knots | RSq | GRSq |
+|---|---|---|---|---|
+| ilr1 | 2 of 7 | **25** | 0.116 | 0.068 |
+| ilr2 | 1 of 7 | none | 0.000 | 0.000 |
+
+A single interior knot at VVIQ 25, close to aphEmo's MARS seed of 24 and
+to its estimated knot of 19.5. The segmented model is therefore fitted,
+seeded from that value, and the gate is left in the script so that a
+future change in the data fails loudly rather than silently.
+
+**The comparison runs on ilr1 only, and the correction is why.** MARS
+reduces ilr2 to an intercept: there is no shape there to choose a
+functional form for, and fitting four nonlinear parameters to it would be
+fitting noise. Univariate elpd values are comparable within the
+comparison table; they are not comparable with the multivariate fits used
+for inference, and the two tables are kept apart for that reason. The
+multivariate floor-group model, with `rescor` estimated, remains the
+model the compositional claims rest on.
+
+That MARS explains 11.6% of ilr1's variance and 0% of ilr2's is itself
+worth noting, cautiously: it is a flexible fit on 79 points with no
+uncertainty attached, but it points at the verbal/non-verbal coordinate
+rather than at colour versus orientation.
 
 ### 13.7 Departures, flags and what has not been run
 
@@ -647,6 +664,23 @@ be inspected. `04-parity-engagement.md` should decide the form properly.
 
 **Flag: two of the 87 units have no VVIQ**, so the modelling sample is 79
 rather than 81.
+
+**Two bugs found when the script was first run, both worth recording
+because both produced plausible-looking output rather than an error.** The
+MARS pre-check read the wrong field and reported five knots instead of one
+(§13.6); had nobody looked, the conclusion drawn would have been that no
+single breakpoint exists, which is the opposite of what the fit says. And
+the prior was specified as `class = "b"` with no `resp`, which matches no
+parameter in a multivariate model: older brms versions silently accept it
+as a global default, recent ones reject it outright. The fix is one prior
+per response.
+
+A third surfaced on the first run that reached the comparison:
+`loo_compare()` dispatches on its first argument, so handing it a list of
+fits sends it to loo's default method, which wants loo objects. Attach the
+criterion to each fit and compare the extracted loo objects instead, which
+is what brms does internally. None of the three was a modelling error;
+all three were interface errors in code that had never been executed.
 
 **Resolved in passing:** `INDEX` §3's legacy-plotting-code question and
 `06` §9's deferred ternary design. There is no `plot_wm_composition()` in

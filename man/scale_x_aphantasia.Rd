@@ -20,7 +20,8 @@ A ggplot2 scale object for the x-axis.
 }
 \description{
 Ported from \code{aphantasiaEmotions}. The four-level mapping is kept even
-though v1 only supports the two-group split (\code{02-pooling-strategy.md}
-§3.5: hyperphantasia n = 3), so that the same scale serves \code{vviq_group_2}
-and \code{vviq_group_4} and colours stay identical across both packages.
+though v1 of this study only supports the two-group split (it has three
+hyperphantasic participants), so that the same scale serves
+\code{vviq_group_2} and \code{vviq_group_4} and colours stay identical across both
+packages.
 }

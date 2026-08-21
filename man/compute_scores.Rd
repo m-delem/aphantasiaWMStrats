@@ -41,9 +41,10 @@ are display-only and, for the word feature, not a valid edit distance
 [0, 1], higher is better. Note the direction is \strong{opposite} to the
 \verb{live_diff_*} columns, which are dissimilarities.
 \item \code{score_word_z}, \code{score_angle_z}, \code{score_color_z} — the above,
-z-scored within \code{version}. Both are kept, per
-\code{01-score-computation.md} §3/§4: raw for anything needing absolute
-performance, standardised for cross-feature comparison and clustering.
+z-scored within \code{version}. Both are kept: raw for anything needing
+absolute performance, standardised for cross-feature comparison and
+clustering. Note that standardised scores cannot be used for any
+log-ratio transform, since roughly half of them are negative.
 \item \code{responded_word}, \code{responded_angle}, \code{responded_color} — logical.
 }
 }
@@ -59,7 +60,7 @@ missing-at-random — a participant who skips colour is plausibly
 reporting the absence of a colour representation, and \code{NA} would let
 listwise deletion silently drop exactly those observations. Scoring 0
 produces a visible distortion in the distribution instead of an
-invisible one in the inference. See \code{01-score-computation.md} §2.5.2.
+invisible one in the inference.
 
 \code{responded_angle} is an \strong{inference} (\code{response_angle != 90}), not an
 observation, unlike the other two. Max \code{target_angle} is 61°, and no

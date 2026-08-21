@@ -41,9 +41,10 @@ A ggplot object.
 }
 \description{
 Visualises the raw composition, which is a different representation from
-the ILR coordinates the models are fitted on, not a competing one
-(\code{06-compositional-analysis.md} §1). The ternary plot is the intuitive
-three-way picture; the inference happens on log-ratios.
+the ILR coordinates the models are fitted on, not a competing one. The
+ternary plot is the intuitive three-way picture; the inference happens on
+log-ratios, because a three-part composition has only two degrees of
+freedom and correlating raw proportions is invalid.
 
 Built from \code{coda.plot}'s primitives (\code{ternary_frame()}, \code{ternary_plot()},
 \code{ternary_coords()}) rather than from \code{coda.plot::ternary_diagram()}. The

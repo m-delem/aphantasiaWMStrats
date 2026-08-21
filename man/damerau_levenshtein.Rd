@@ -17,7 +17,7 @@ Local implementation rather than a \code{stringdist} dependency, consistent
 with this project's preference for self-contained code with the
 reasoning attached. Also unit-testable against known values, which
 matters here: the front end's own edit distance turned out to be broken
-(see \link{all_data} and \code{01-score-computation.md} §1.5), and the failure was
+(see \link{all_data}), and the failure was
 invisible precisely because nothing tested it.
 }
 \details{

@@ -20,8 +20,8 @@ the cap on \code{DL} before subtraction prevents a negative score when the
 response is longer than the target.
 }
 \details{
-Two deliberate departures from the task's live feedback, both recorded
-in \code{01-score-computation.md} §2: the denominator is \code{nchar(target)}
+Two deliberate departures from the task's live feedback: the
+denominator is \code{nchar(target)}
 alone rather than \code{max(nchar(target), nchar(response))}, and the metric
 is Damerau-Levenshtein rather than plain Levenshtein. Note that the
 live-feedback column \code{live_diff_word} is not a valid edit distance at

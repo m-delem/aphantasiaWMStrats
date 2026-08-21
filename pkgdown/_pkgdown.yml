@@ -24,6 +24,35 @@ reference:
       - score_word
       - normalise_word
       - damerau_levenshtein
+  - title: Compositional analysis
+    desc: >
+      Building the three-part relative-allocation composition and moving it
+      off the simplex into ILR coordinates.
+    contents:
+      - compose_features
+      - ilr_coords
+      - engaged_ids
+      - wm_thresholds
+  - title: Modelling
+    desc: >
+      Shared Bayesian fitting defaults and posterior reporting, matching the
+      `aphantasiaEmotions` package.
+    contents:
+      - fit_brms_model
+      - report_rope
+  - title: Figures
+    desc: >
+      The plotting identity shared with `aphantasiaEmotions`, plus the
+      composition-specific figures.
+    contents:
+      - theme_pdf
+      - save_ggplot
+      - scale_x_vviq
+      - scale_x_aphantasia
+      - scale_discrete_aphantasia
+      - scale_shape_aphantasia
+      - plot_composition_ternary
+      - plot_composition_biplot
 
 navbar:
   left:
