@@ -21,7 +21,7 @@
 devtools::load_all()
 library(ggplot2)
 
-theme_set(theme_minimal(base_size = 16))
+theme_set(theme_pdf())
 rule <- function(text) cat("\n", strrep("-", 70), "\n", text, "\n", sep = "")
 
 engagement_thresholds <- c(Word = 32L, Orientation = 22L, Colour = 29L)
@@ -125,8 +125,8 @@ p_vviq <- v1_participants |>
   facet_wrap(~feature, scales = "free_y") +
   labs(x = "VVIQ total score", y = "Mean score, responded trials only",
        title = "Recall accuracy against imagery vividness (v1)")
-ggsave(here::here("inst/scripts/figures/v1-vviq-accuracy.png"), p_vviq,
-       width = 10, height = 4.5, dpi = 150, bg = "white")
+save_ggplot("inst/scripts/figures/v1-vviq-accuracy.pdf", p_vviq,
+            ncol = 2, height = 70)
 
 # -----------------------------------------------------------------------
 # §2.5  Reporting propensity as an outcome
@@ -212,8 +212,8 @@ p_propensity <- v1_participants |>
   facet_wrap(~feature) +
   labs(x = "VVIQ total score", y = "Non-response rate",
        title = "Reporting propensity against imagery vividness (v1)")
-ggsave(here::here("inst/scripts/figures/v1-propensity-vviq.png"), p_propensity,
-       width = 10, height = 4.5, dpi = 150, bg = "white")
+save_ggplot("inst/scripts/figures/v1-propensity-vviq.pdf", p_propensity,
+            ncol = 2, height = 70)
 
 rule("Done. Figures written to inst/scripts/figures/")
 

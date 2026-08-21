@@ -32,12 +32,16 @@ library(ggplot2)
 
 fig_dir <- here::here("inst/scripts/figures")
 fs::dir_create(fig_dir)
-theme_set(theme_minimal(base_size = 16))
+# Vector PDFs at printed size, not screen-size PNGs: these figures are for
+# the poster and the thesis chapter, not for the pkgdown site (which uses
+# theme_pdf(base_size = 16) instead).
+theme_set(theme_pdf())
 
-save_fig <- function(plot, name, width = 9, height = 5.5) {
-  ggsave(fs::path(fig_dir, paste0(name, ".png")), plot,
-         width = width, height = height, dpi = 150, bg = "white")
-  invisible(plot)
+save_fig <- function(plot, name, ncol = 2, height = 75) {
+  save_ggplot(
+    fs::path("inst/scripts/figures", paste0(name, ".pdf")),
+    plot, ncol = ncol, height = height
+  )
 }
 
 rule <- function(txt) cat("\n", strrep("-", 70), "\n", txt, "\n", sep = "")

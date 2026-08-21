@@ -31,7 +31,7 @@ N_SPLITS <- 1000
 
 fig_dir <- here::here("inst/scripts/figures")
 fs::dir_create(fig_dir)
-theme_set(theme_minimal(base_size = 16))
+theme_set(theme_pdf())
 rule <- function(txt) cat("\n", strrep("-", 70), "\n", txt, "\n", sep = "")
 
 features <- c("word", "angle", "color")
@@ -170,11 +170,12 @@ p_rel <- data.frame(
   geom_histogram(bins = 40, show.legend = FALSE) +
   geom_vline(xintercept = 0.7, linetype = "dashed") +
   facet_wrap(~feature) +
+  scale_discrete_feature(aesthetics = "fill") +
   labs(x = "Split-half reliability (Spearman-Brown corrected)",
        y = paste("Count of", N_SPLITS, "splits"),
        title = "Per-feature reliability, v1, responders only")
-ggsave(fs::path(fig_dir, "r1-split-half-reliability.png"), p_rel,
-       width = 10, height = 4.5, dpi = 150, bg = "white")
+save_ggplot("inst/scripts/figures/r1-split-half-reliability.pdf", p_rel,
+            ncol = 2, height = 70)
 
 # -----------------------------------------------------------------------
 # 4. §2.2 — stability of the compositional profile

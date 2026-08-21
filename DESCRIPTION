@@ -17,26 +17,32 @@ Depends:
 Imports:
     crayon,
     dplyr,
+    ggplot2,
     glue,
+    grid,
     rlang,
     stats,
     stringi,
-    stringr
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect
 Suggests:
     brms,
     coda.plot,
     correlation,
     collapse,
+    earth,
     emmeans,
     faux,
     Formula,
     fs,
     here,
-    ggplot2,
     glmmTMB,
     ggpubr,
     knitr,
     lme4,
+    loo,
     lubridate,
     merDeriv,
     modelbased,
@@ -55,9 +61,6 @@ Suggests:
     showtext,
     superb,
     sysfonts,
-    tibble,
-    tidyr,
-    tidyselect,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
