@@ -67,6 +67,24 @@ test_that("compose_features groups by whatever it is given", {
   expect_true(all(c("id", "trial_uid") %in% names(by_trial)))
 })
 
+test_that("compose_features ignores lookalike score columns", {
+  # `score_color_raw` is a real column in the performance script, which
+  # keeps the untransformed colour scores next to the squeezed ones. An
+  # unanchored selector matched it as a second source for colour and
+  # collapsed every colour mean to NA, silently.
+  with_raw <- fake_items
+  with_raw$score_color_raw <- 0.1
+  with_raw$score_word_extra <- 0.1
+  expect_equal(
+    compose_features(with_raw, id)$mean_color,
+    compose_features(fake_items, id)$mean_color
+  )
+  expect_equal(
+    compose_features(with_raw, id)$part_word,
+    compose_features(fake_items, id)$part_word
+  )
+})
+
 test_that("compose_features ignores the standardised score columns", {
   # The z-scored columns are roughly half negative and must never reach a
   # log-ratio transform. Selecting them here would be silent and fatal.

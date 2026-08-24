@@ -334,34 +334,91 @@ rule("4. Functional form of the VVIQ relationship")
 cat("\nRun on orientation alone, mirroring 06 §13.6's decision to compare\n")
 cat("forms where the signal is. Orientation is the best-measured feature\n")
 cat("(split-half 0.822) and 03 §2.4 already associates it with VVIQ.\n")
+cat("\nThe target was fixed on those grounds before the pre-check ran, and\n")
+cat("is not revised in light of it. If colour turns out to carry the knot\n")
+cat("and orientation does not, that is worth recording and is not a reason\n")
+cat("to switch the comparison onto colour after the fact.\n")
 
-# Read knots off the PRUNED model, not off `$cuts`, which also carries the
-# candidate terms the backward pass discarded. This is the bug recorded in
-# 06 §13.6.
-mars_knots <- function(response) {
-  responded <- model_data[[paste0("responded_", sub("^score_", "", response))]]
-  fit <- earth::earth(
-    stats::as.formula(paste(response, "~ vviq")),
-    data = model_data[responded, ]
-  )
+# The MARS pre-check, on PARTICIPANT MEANS rather than items.
+#
+# Two things it has to get right. Knots come off the PRUNED model
+# (`selected.terms`), not off `$cuts`, which also carries the candidate
+# terms the backward pass discarded; that was the bug in 06 §13.6. And it
+# runs on one row per participant, because the question is the shape of a
+# BETWEEN-person relationship. Run on items, each participant contributes
+# about 63 rows carrying the same VVIQ value, which inflates n by a factor
+# of 63 and lets MARS place knots in trial-level noise while the
+# cross-validated fit stays near zero.
+#
+# A hinge that marks the floor group has to sit low on the VVIQ scale.
+# The aphantasia cutoff is 32, above-floor median VVIQ is 57, and only 11
+# of 79 participants sit below 40, so 40 is the ceiling of the region
+# where a floor-related knot could plausibly live. Knots above it are
+# MARS flexing in the dense part of the scale, which is a different claim
+# and not one this model is for.
+FLOOR_REGION <- 40
+
+participant_means <-
+  model_data |>
+  compose_features(id) |>
+  dplyr::left_join(participant_info, by = "id")
+
+mars_knots <- function(feature) {
+  column <- paste0("mean_", feature)
+  # A participant with no responded trials on a feature has an NA mean,
+  # and earth() defaults to na.fail. That happens whenever TEST_RUN thins
+  # the trials, and it can happen on the full data under SAMPLE = "all",
+  # so the rows are dropped here and the count is reported rather than
+  # the failure being deferred to the caller.
+  usable <- participant_means[
+    !is.na(participant_means[[column]]) & !is.na(participant_means$vviq), ,
+    drop = FALSE
+  ]
+  fit <- earth::earth(stats::as.formula(paste(column, "~ vviq")),
+                      data = usable)
   cuts <- fit$cuts[fit$selected.terms, , drop = FALSE]
   list(knots = sort(unique(cuts[cuts != 0])),
        n_terms = length(fit$selected.terms),
+       n = nrow(usable),
        rsq = fit$rsq, grsq = fit$grsq)
 }
 
 if (requireNamespace("earth", quietly = TRUE)) {
+  if (TEST_RUN) {
+    cat("\nTEST_RUN thins the trials, so the participant means below are\n")
+    cat("computed from a fraction of the data. Do not read this pre-check\n")
+    cat("from a test pass.\n")
+  }
   for (f in features) {
-    m <- mars_knots(paste0("score_", f))
+    m <- mars_knots(f)
     cat(sprintf(
-      "\n  %-11s: %d term(s) | knots: %-12s | RSq %.3f | GRSq %.3f",
-      labels[[f]], m$n_terms,
+      "\n  %-11s: n %2d | %d term(s) | knots: %-20s | RSq %.3f | GRSq %.3f",
+      labels[[f]], m$n, m$n_terms,
       if (length(m$knots)) paste(m$knots, collapse = ", ") else "none",
       m$rsq, m$grsq))
   }
   cat("\n\n")
-  orientation_knots <- mars_knots("score_angle")$knots
-  SEED_KNOT <- if (length(orientation_knots) == 1) orientation_knots else NA
+
+  cat("MARS silence means no HINGE worth keeping under GCV pruning, not\n")
+  cat("that VVIQ is unrelated to the feature: 03 §2.4 reports rho = +0.229\n")
+  cat("for orientation. Pruning at n = 79 is conservative and will drop a\n")
+  cat("weak linear term. The LOO comparison below is what tests that.\n")
+
+  orientation <- mars_knots("angle")
+  candidate_knots <- orientation$knots[orientation$knots <= FLOOR_REGION]
+
+  # The criterion is about WHERE a knot sits, not how many there are. Two
+  # knots below 40 would be fine and the lower one would seed the model,
+  # since the segmented form has a single k and the lower hinge is the one
+  # that could mark the floor. What disqualifies the model is no knot in
+  # the region at all, or a cross-validated fit of nothing.
+  SEED_KNOT <- if (length(candidate_knots)) min(candidate_knots) else NA
+  if (!is.na(SEED_KNOT) && orientation$grsq <= 0) {
+    cat("MARS has a knot at", SEED_KNOT, "but a GRSq of",
+        round(orientation$grsq, 3), ", so the fit does not generalise.\n")
+    cat("No segmented model.\n")
+    SEED_KNOT <- NA
+  }
 } else {
   cat("\n`earth` not installed, skipping the pre-check.\n")
   SEED_KNOT <- NA
@@ -411,7 +468,11 @@ if (!is.na(SEED_KNOT)) {
   )
   candidates[["Segmented"]] <- f_segmented
 } else {
-  cat("No single interior knot on orientation, so no segmented model.\n")
+  cat("No knot below VVIQ", FLOOR_REGION,
+      "on orientation, so no segmented model.\n")
+  cat("Knots higher up the scale describe curvature among typical imagers,\n")
+  cat("which is a different question from whether the floor group sits\n")
+  cat("off the line.\n")
 }
 
 # `loo_compare()` dispatches on its first argument, so a list of fits goes
@@ -431,9 +492,15 @@ cat("(05 §11.5), not because it wins here. Check the N < 100 diagnostic\n")
 cat("flag before reading anything into the differences: 06 §13.6 hit it,\n")
 cat("and it means loo's standard errors are themselves unreliable.\n")
 
+# recent loo versions return a `model` column already; older ones put the
+# names in the row names
+form_table <- as.data.frame(form_comparison)
+if (!"model" %in% names(form_table)) {
+  form_table <- tibble::rownames_to_column(form_table, "model")
+}
+
 p_form <-
-  as.data.frame(form_comparison) |>
-  tibble::rownames_to_column("model") |>
+  form_table |>
   dplyr::mutate(model = stats::reorder(.data$model, .data$elpd_diff)) |>
   ggplot(aes(x = .data$elpd_diff, y = .data$model)) +
   geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.2) +
@@ -443,9 +510,9 @@ p_form <-
     size = 0.2
   ) +
   labs(
-    x = "elpd difference from the best model, with one standard error",
+    x = "elpd difference from the best model,\nwith one standard error",
     y = NULL,
-    title = "How VVIQ enters, compared on orientation",
+    title = "How VVIQ enters,\ncompared on orientation",
     caption = "Intervals overlapping zero mean the data do not separate the forms."
   ) +
   theme_pdf()
@@ -537,10 +604,12 @@ print(as.data.frame(correlation_summary), row.names = FALSE, digits = 3)
 saveRDS(correlation_summary,
         fs::path(result_dir, paste0(fit_config$prefix, "perf-correlations.rds")))
 
-cat("\nRead these against 06 §13.3, which found the raw partial\n")
-cat("correlations sit near the -0.5 that closure induces on its own. These\n")
-cat("are not closed, so a negative correlation here is a trade-off rather\n")
-cat("than an artifact of the parts summing to a constant.\n")
+cat("\nRead these against 06 §13.3, whose raw partial correlations sit near\n")
+cat("the -0.5 that closure induces on its own. These are not closed, so\n")
+cat("the sign carries information: negative would be a genuine trade-off,\n")
+cat("positive means participants good at one feature tend to be good at\n")
+cat("the other, and the trade-off the task imposes is a within-trial\n")
+cat("constraint rather than a between-person one.\n")
 
 # Item 2 of §4: one readable plot per pair, zero marked.
 p_correlations <-
@@ -557,9 +626,9 @@ p_correlations <-
   labs(
     x = "Participant-level correlation between features",
     y = NULL,
-    title = "Does doing well on one feature cost you on another?",
+    title = "Does doing well on one feature\ncost you on another?",
     caption = paste(
-      "Random-intercept correlations from the multivariate model, with",
+      "Random-intercept correlations from the multivariate model,\nwith",
       "95% credible intervals."
     )
   ) +
@@ -577,25 +646,33 @@ observed_means <-
                       names_to = "feature", values_to = "observed",
                       names_prefix = "mean_")
 
-random_effects <- brms::ranef(m_c_prime)$id
-
+# Model-implied means come from posterior_epred(), NOT from
+# plogis(intercept + random effect). Two reasons, both of which broke the
+# first version of this figure:
+#
+#   - for word the linear predictor is ZOIB's `mu`, the mean of the Beta
+#     component conditional on the score being strictly inside (0, 1). The
+#     ZOIB mean is zoi * coi + (1 - zoi) * mu, and with 91% of word trials
+#     at exactly 1 those are wildly different: plogis(-0.78) = 0.31 against
+#     an observed mean near 0.93.
+#   - the intercept sits at vviq = 0, which is 16 to 80 units outside the
+#     data, so even the plain-Beta features came out displaced.
+#
+# posterior_epred() handles the response scale, the inflation components
+# and each participant's own covariate values in one go.
 fitted_means <-
   purrr::map(
     features,
     function(f) {
-      parameter <- paste0(responses[[f]], "_Intercept")
-      if (!parameter %in% dimnames(random_effects)[[3]]) {
-        stop("Parameter not found: ", parameter, "\nAvailable: ",
-             paste(dimnames(random_effects)[[3]], collapse = ", "))
-      }
-      random <- random_effects[, "Estimate", parameter]
-      fixed <- brms::fixef(m_c_prime)[parameter, "Estimate"]
+      responded <- model_data[[paste0("responded_", f)]]
+      epred <- brms::posterior_epred(m_c_prime, resp = responses[[f]])
       tibble::tibble(
-        id = names(random),
+        id = model_data$id[responded],
         feature = f,
-        # the model is on the logit scale, the raw means are not
-        modelled = stats::plogis(fixed + random)
-      )
+        modelled = apply(epred, 2, mean)
+      ) |>
+        dplyr::summarise(modelled = mean(.data$modelled),
+                         .by = c("id", "feature"))
     }
   ) |>
   purrr::list_rbind()
@@ -637,20 +714,23 @@ contrast_data <-
     purrr::imap(
       option_a,
       \(fit, feature) {
-        estimate <- brms::fixef(fit)["complete_aphantfloor", ]
+        # NOT named `estimate`: tibble() exposes each column to the
+        # expressions after it, so a column called `estimate` would shadow
+        # this vector and the next line would index into a length-1 double
+        values <- brms::fixef(fit)["complete_aphantfloor", ]
         tibble::tibble(feature = feature, model = "A: independent",
-                       estimate = estimate[["Estimate"]],
-                       lower = estimate[["Q2.5"]], upper = estimate[["Q97.5"]])
+                       estimate = values[["Estimate"]],
+                       lower = values[["Q2.5"]], upper = values[["Q97.5"]])
       }
     ) |> purrr::list_rbind(),
     purrr::map(
       features,
       function(f) {
         row <- paste0(responses[[f]], "_complete_aphantfloor")
-        estimate <- brms::fixef(m_c_prime)[row, ]
+        values <- brms::fixef(m_c_prime)[row, ]
         tibble::tibble(feature = labels[[f]], model = "C-prime: correlated",
-                       estimate = estimate[["Estimate"]],
-                       lower = estimate[["Q2.5"]], upper = estimate[["Q97.5"]])
+                       estimate = values[["Estimate"]],
+                       lower = values[["Q2.5"]], upper = values[["Q97.5"]])
       }
     ) |> purrr::list_rbind()
   ) |>
@@ -668,9 +748,9 @@ p_contrast <-
   labs(
     x = "Floor-group offset, log-odds",
     y = NULL,
-    title = "What respecting the dependency structure changes",
+    title = "What respecting the dependency\nstructure changes",
     caption = paste(
-      "Same quantity, estimated by three independent models and by one",
+      "Same quantity, estimated by three independent models\nand by one",
       "model with correlated participant effects."
     )
   ) +
@@ -752,7 +832,7 @@ p_joint <-
   geom_density(fill = unname(palette.colors()[4]), colour = NA, alpha = 0.7) +
   scale_x_continuous(limits = c(-1, 1)) +
   labs(
-    x = "Correlation between propensity to respond and accuracy when responding",
+    x = "Correlation between propensity to respond\nand accuracy when responding",
     y = "Posterior density",
     title = "Was analysing responders only legitimate?",
     caption = "Dotted lines mark the region of practical equivalence."

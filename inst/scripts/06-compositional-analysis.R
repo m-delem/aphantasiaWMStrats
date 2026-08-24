@@ -514,9 +514,15 @@ saveRDS(rope_table, fs::path(result_dir,
                              paste0(fit_config$prefix, "comp-rope.rds")))
 
 # Figure 3: model comparison ----
+# recent loo versions return a `model` column already; older ones put the
+# names in the row names
+loo_table <- as.data.frame(comparison)
+if (!"model" %in% names(loo_table)) {
+  loo_table <- tibble::rownames_to_column(loo_table, "model")
+}
+
 p_loo <-
-  as.data.frame(comparison) |>
-  tibble::rownames_to_column("model") |>
+  loo_table |>
   dplyr::mutate(model = stats::reorder(.data$model, .data$elpd_diff)) |>
   ggplot(aes(x = .data$elpd_diff, y = .data$model)) +
   geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.2) +

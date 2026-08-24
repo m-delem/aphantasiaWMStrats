@@ -79,19 +79,21 @@ compose_features <- function(
 ) {
   groups <- rlang::enquos(...)
 
+  # Anchored, and built from `features` rather than from a prefix. An
+  # unanchored `starts_with("score_")` also picks up columns like
+  # `score_color_raw` or `score_word_z`, and an unanchored pattern then
+  # matches them to a feature, so that feature silently receives two
+  # source columns and its mean collapses to NA for every unit.
+  selector <- paste0(
+    "^(score|responded)_(", paste(features, collapse = "|"), ")$"
+  )
+
   data |>
-    dplyr::select(
-      !!!groups,
-      tidyselect::starts_with("score_") & !tidyselect::ends_with("_z"),
-      tidyselect::starts_with("responded_")
-    ) |>
+    dplyr::select(!!!groups, tidyselect::matches(selector)) |>
     tidyr::pivot_longer(
-      c(
-        tidyselect::starts_with("score_"),
-        tidyselect::starts_with("responded_")
-      ),
+      tidyselect::matches(selector),
       names_to = c(".value", "feature"),
-      names_pattern = "(score|responded)_(word|angle|color)"
+      names_pattern = selector
     ) |>
     dplyr::summarise(
       n    = sum(.data$responded),
