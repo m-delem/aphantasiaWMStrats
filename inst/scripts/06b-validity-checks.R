@@ -1,14 +1,14 @@
 # ------------------------------------------------------------------------- #
-# 03b-validity-checks.R ----
+# 06b-validity-checks.R ----
 #
-# Implements the two remaining checks of 03-validity-checks.md:
+# Implements the two remaining checks of 06-task-validity.md:
 #   §2.4  VVIQ / imagery-group sensitivity of the per-feature scores
 #   §2.5  Reporting propensity as an outcome in its own right
 #
 # §2.1 (reliability), §2.2 (compositional stability) and §2.3 (self-report
-# convergence) are in 03a-reliability.R.
+# convergence) are in 06a-reliability.R.
 #
-# Sample: v1 only (N=88), per 02-pooling-strategy.md §3.5. Section 2.5 also
+# Sample: v1 only (N=88), per 05-version-scope.md §3.5. Section 2.5 also
 # reports the across-version comparison, because that is where the apparent
 # propensity effect turned out to live.
 #
@@ -90,7 +90,7 @@ vviq_continuous <- v1_participants |>
 cat("\nSpearman correlation with continuous VVIQ:\n\n")
 print(as.data.frame(vviq_continuous), row.names = FALSE, digits = 3)
 
-cat("\nThe gap between the two scorings is the artifact 03 §2.4 warns about.\n")
+cat("\nThe gap between the two scorings is the artifact 06 §2.4 warns about.\n")
 cat("Reporting only the first row of each pair would overstate the result.\n")
 
 group_comparison <- v1_participants |>
@@ -133,7 +133,7 @@ save_ggplot("inst/scripts/figures/v1-vviq-accuracy.pdf", p_vviq,
 # ------------------------------------------------------------------------- #
 # §2.5  Reporting propensity as an outcome ----
 # ------------------------------------------------------------------------- #
-rule("2.5  Reporting propensity as an outcome (08-response-propensity.md)")
+rule("2.5  Reporting propensity as an outcome (04-response-propensity.md)")
 
 cat("\nNon-response rates by version and feature:\n\n")
 trials_by_feature |>

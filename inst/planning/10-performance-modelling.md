@@ -11,15 +11,15 @@ Earlier status, retained: structure and narrative arc settled. Amended
 2026-08-20: §3's response-family question is resolved against real
 distributions (hurdle, not ZOIB), §3.3 raises a new problem for Option C,
 and §5's Option D is constrained. Depends on scoring
-(`01-score-computation.md`), pooling strategy (`02-pooling-strategy.md`), and
+(`02-score-computation.md`), pooling strategy (`05-version-scope.md`), and
 directly implements the standard set by the philosophy discussion
-(`00-analytical-philosophy.md` §3, §6) that performance modelling must
+(`00-framing.md` §3, §6) that performance modelling must
 respect feature non-independence rather than treat the three features as
 unrelated outcomes.
 
 **Context:** this is the "performance" strand of the three-strand analytical
 plan (performance / compositional / clustering — see
-`00-analytical-philosophy.md` §5 for how the three relate). The performance framing's
+`00-framing.md` §5 for how the three relate). The performance framing's
 preferred framing (are aphantasic participants simply better/worse at one
 feature) lives here, but per the philosophy discussion, this strand is not
 exempt from respecting the task's forced-trade-off structure — three
@@ -41,7 +41,7 @@ building it on autopilot:
    not just "we chose something more complex," but the specific mechanism
    (features aren't independent by task design; a naive per-feature model
    can't distinguish "worse at X" from "chose to prioritise Y over X" —
-   directly recalling `00-analytical-philosophy.md` §1).
+   directly recalling `00-framing.md` §1).
 3. Fit the correct model (§3, Option C below), same data, and show the
    contrast directly — ideally the vignette shows both fits' output next
    to each other, not just describes the difference.
@@ -84,7 +84,7 @@ orientation.
 - **Why dropped:** `rescor` is only available for Gaussian/Student-t
   response families (confirmed against `brms` documentation directly, not
   assumed). If scores end up bounded [0,1] (plausible, per
-  `01-score-computation.md`'s similarity-score design) and especially if
+  `02-score-computation.md`'s similarity-score design) and especially if
   floor/ceiling effects put real mass near the boundaries (realistic for a
   WM task, not hypothetical), forcing a Gaussian family to get `rescor`
   "for free" is a real distributional mismatch, particularly damaging near
@@ -100,7 +100,7 @@ orientation.
 ### Option C — long-format multilevel model, feature as within-participant factor — **primary model**
 
 Reshape to one row per participant × feature (× trial, where trial-level
-granularity is being retained, consistent with `03-validity-checks.md`'s
+granularity is being retained, consistent with `06-task-validity.md`'s
 need for trial-level data):
 
 ```
@@ -165,7 +165,7 @@ only:
 
 Once non-responders are removed, orientation and colour have **no mass at
 either boundary**. Every zero was a non-response, scored 0 by
-`01-score-computation.md` §2.5.2. The mass at 1, by contrast, is genuine
+`02-score-computation.md` §2.5.2. The mass at 1, by contrast, is genuine
 ceiling performance and survives.
 
 **Decided: a hurdle structure, not a ZOIB.** A Bernoulli (or
@@ -174,23 +174,23 @@ bounded component for accuracy conditional on responding. The zeros belong
 to the first component and the ceiling to the second. This is not a
 complication added to the model — it *is* this section's answer, and it
 implements the separation of reporting propensity from conditional
-accuracy set out in `08-response-propensity.md` §1.
+accuracy set out in `04-response-propensity.md` §1.
 
-**Sequencing, per `08` §5:** fit the propensity component separately
-first, in `08`'s own analysis, and treat the joint hurdle as this doc's
+**Sequencing, per `04` §5:** fit the propensity component separately
+first, in `04`'s own analysis, and treat the joint hurdle as this doc's
 problem informed by those results. A convergence failure in a joint model
 should not take the propensity findings down with it.
 
-### 3.2 The `bmm` connection is closer than `01` §5 records
+### 3.2 The `bmm` connection is closer than `02` §5 records
 
-`01-score-computation.md` §5 parks mixture modelling as an unrelated
+`02-score-computation.md` §5 parks mixture modelling as an unrelated
 future track. That framing is now wrong in one respect worth correcting:
 `bmm`'s continuous-report models decompose a response into target recall,
 guessing and swap errors, but every one of those states **is a response**,
 with an angular error to attribute. Abstention is a fourth state the
 mixture cannot represent. A hurdle gate is the natural place for it, and
 it **composes** with a mixture rather than competing — gate on responding,
-then decompose the responses that exist. The obstacle `01` §5 parked it on
+then decompose the responses that exist. The obstacle `02` §5 parked it on
 was per-participant trial counts, which the gate does not change, so the
 parking decision stands; the stated reason for it should not say the two
 are unrelated.
@@ -233,7 +233,7 @@ of at most half the between-person SD needs **93 trials of the 63 that
 exist** — between-person SD is 0.046 against a within-person trial SD of
 0.219. Correspondingly, split-half reliability is **0.445** [0.251,
 0.605], against 0.822 for orientation and 0.832 for colour
-(`03-validity-checks.md` §2.1). **No individual-differences claim about
+(`06-task-validity.md` §2.1). **No individual-differences claim about
 word is supported by the measurement, whatever a model's coefficients
 say.** That resolves the open question below in one direction: word is
 reported with an explicit measurement caveat and excluded from
@@ -241,7 +241,7 @@ individual-differences inference, not merely caveated.
 
 Consequences beyond the family question: word contributes little
 between-participant variance to any model, and
-`06-compositional-analysis.md` §8.5 shows the same ceiling means the task
+`11-compositional-analysis.md` §8.5 shows the same ceiling means the task
 achieves a two-way trade-off (colour versus orientation) rather than the
 three-way one it was designed for. Whether word is retained as a full
 outcome, demoted to a control or anchor, or reported with an explicit
@@ -294,7 +294,7 @@ forward).
 ## 5. Option D: total-performance model — separate section, own purpose
 
 **Purpose, distinct from A/B/C:** closes a real, currently-unaddressed gap
-flagged directly in `00-analytical-philosophy.md` §6 — the compositional
+flagged directly in `00-framing.md` §6 — the compositional
 strand (by design) discards overall performance level in favour of
 relative allocation, and nothing in the current plan otherwise looks at
 "how good was this person overall." D exists specifically to fill that
@@ -304,13 +304,13 @@ the compositional strand's job per the discussion that led here).
 **Structure:** total score (sum or mean across the three features, per
 trial or per participant — exact aggregation TBD at implementation)
 as outcome; `group`/VVIQ and plausibly parity engagement
-(`04-parity-engagement.md`, continuous covariate per that doc's Decision
+(`03-parity-engagement.md`, continuous covariate per that doc's Decision
 1) as predictors; standard multilevel structure, not required to carry
 C's complexity budget.
 
 **Amendment 2026-08-20: a total score built from non-responses scored 0
 conflates "attempted and failed" with "declined", and the conflation is
-imagery-correlated.** Per `08-response-propensity.md` §3.2, roughly half
+imagery-correlated.** Per `04-response-propensity.md` §3.2, roughly half
 the between-participant variance in the score columns is reporting
 propensity rather than accuracy (SD ratio responders-only to all-rows:
 0.57 word, 0.49 orientation, 0.57 colour), and the association between
@@ -320,7 +320,7 @@ score and VVIQ drops from +0.394 to +0.191 for orientation and from
 how often the participant declined.
 
 **Decided: D's total is computed from responded trials only**, with
-reporting propensity handled as its own outcome in `08`. If a
+reporting propensity handled as its own outcome in `04`. If a
 non-response-inclusive total is also of interest — as a measure of "points
 actually accumulated", which is what participants were told to maximise —
 it should be run and reported as a **separate, explicitly labelled
@@ -329,7 +329,7 @@ different questions and the difference is large.
 
 **Input scores — decided as a sensitivity check, not a single choice:**
 run D with **both raw and per-version-standardised** scores from
-`01-score-computation.md`, rather than committing to one. Rationale
+`02-score-computation.md`, rather than committing to one. Rationale
 carried over from that doc's own logic (§4 there: different downstream
 uses need different things from "comparable") — raw natural-unit scores
 are the more face-valid choice for "how good overall" in an absolute
@@ -342,7 +342,7 @@ standardisation choice.
 
 ## 6. Version/pooling integration — resolved, v1 only
 
-**Resolved 2026-08-20 (`02-pooling-strategy.md` §3.5): v1 (N=88) is the
+**Resolved 2026-08-20 (`05-version-scope.md` §3.5): v1 (N=88) is the
 primary analysis sample, so this section's version layer is moot.** No
 `(1 | version)` term, no nesting of participant within version, and none
 of the estimability worry below about carrying a version layer on top of
@@ -353,7 +353,7 @@ single design.
 
 Two things this does not remove. v1 has **fixed** recall order, so feature
 effects are confounded with output position; v3 is used separately to
-estimate that order effect (`02` §3.5). And v1 carries **no parity
+estimate that order effect (`05` §3.5). And v1 carries **no parity
 penalty**, so parity accuracy as a covariate here measures motivation on a
 consequence-free task rather than working-memory load.
 
@@ -362,7 +362,7 @@ becomes live again if later versions are ever pooled.
 
 ### 6.1 Original version/pooling reasoning, now superseded
 
-Per `02-pooling-strategy.md`'s decision procedure (that doc's §3), this
+Per `05-version-scope.md`'s decision procedure (that doc's §3), this
 doc's models fall under "needs pooling for power" (step 3 there) — v2=9
 and v3=21 alone are almost certainly underpowered for C's full structure
 independently.
@@ -378,8 +378,8 @@ whether the model can actually support a version layer alongside the
 feature layer needs checking once real data is in hand, not decided by
 principle alone. If it can't be supported jointly, the fallback (not yet
 decided in detail) is likely either: analyse v1 alone as primary (per
-`02-pooling-strategy.md` §3c) with pooled v1+v2+v3 as secondary, or drop
-the version varying effect and rely on `02-pooling-strategy.md`'s
+`05-version-scope.md` §3c) with pooled v1+v2+v3 as secondary, or drop
+the version varying effect and rely on `05-version-scope.md`'s
 version-composition-reporting requirement (that doc's §3, step 4) to keep
 the pooling assumption visible rather than hidden.
 
@@ -417,7 +417,7 @@ the pooling assumption visible rather than hidden.
 
 - How to handle word's ceiling alongside orientation and colour (§3.3,
   §3.4) — per-feature families, a separate word model, or a measurement-
-  level fix. Interacts with `06`'s SBP interpretation.
+  level fix. Interacts with `11`'s SBP interpretation.
 - Whether `(1+feature|participant)` is estimable at all with current N,
   and whether adding `(1|version)` on top is feasible (§6) — resolve
   empirically, likely via a first fit-and-diagnose pass rather than
@@ -427,7 +427,7 @@ the pooling assumption visible rather than hidden.
 
 ## 10. Next steps (not this doc)
 
-- Implement `01-score-computation.md`'s scoring pipeline — both this doc's
+- Implement `02-score-computation.md`'s scoring pipeline — both this doc's
   primary model (C) and Option D depend on it.
 - Once real score distributions are available: resolve response family
   (§3), attempt the full C structure, check estimability, decide on the
@@ -441,10 +441,10 @@ the pooling assumption visible rather than hidden.
 
 ## 11. Implementation plan, 2026-08-21
 
-Written before any code, in the shape of `06-compositional-analysis.md`
+Written before any code, in the shape of `11-compositional-analysis.md`
 §13. Resolves §9's first open question, changes the primary structure in
 §8's table, and defers §3.1's hurdle by §3.1's own sequencing rule.
-Implemented as `inst/scripts/05-performance-modelling.R`.
+Implemented as `inst/scripts/10-performance-modelling.R`.
 
 ### 11.1 What the v1 distributions force
 
@@ -490,7 +490,7 @@ symmetric by construction, so there is no reference level to be relative
 to. Estimability is better than long-format random slopes, being three
 intercepts across 79 participants with about 63 trials each. And it is
 the structure already built and debugged in
-`06-compositional-analysis.md` §13, so the machinery is tested.
+`11-compositional-analysis.md` §13, so the machinery is tested.
 
 **What it costs, stated plainly.** No single `rescor` parameter, and
 `mvbind()` is unavailable because the families differ. Neither matters,
@@ -546,7 +546,7 @@ Retained rather than dropped because deleting an outcome for being noisy
 is itself a bias, and because the model is a claim about how three
 features relate; removing one would answer a different question.
 
-**This sits deliberately alongside `06`, and the two must be read
+**This sits deliberately alongside `11`, and the two must be read
 together or they look inconsistent.** Word is unusable as a *level* for
 individual differences (reliability 0.445) and stable as part of a
 *ratio* (ilr1 stability 0.771). Both statements are true, they are about
@@ -555,20 +555,20 @@ leaving a reader to reconcile them.
 
 ### 11.5 VVIQ enters as the floor-group form
 
-Pre-declared primary, mirroring `06` §13.6 and `09`. A MARS pre-check
+Pre-declared primary, mirroring `11` §13.6 and `08`. A MARS pre-check
 runs first, reading knots off the **pruned** model (`selected.terms`),
-not off `$cuts`, per the bug recorded in `06` §13.6. The LOO comparison
+not off `$cuts`, per the bug recorded in `11` §13.6. The LOO comparison
 of functional forms runs on **orientation**, which is the best-measured
-feature (split-half 0.822) and the one `03` §2.4 already associates with
-VVIQ. Candidates as in `06`: intercept only, two-group, linear,
+feature (split-half 0.822) and the one `06` §2.4 already associates with
+VVIQ. Candidates as in `11`: intercept only, two-group, linear,
 floor-group additive, segmented if a knot is identifiable.
 
 ### 11.6 The hurdle, staged
 
 §3.1 decided a hurdle and its own sequencing rule says fit propensity
-separately first, in `08`. `08`'s Bayesian model does not exist yet.
+separately first, in `04`. `04`'s Bayesian model does not exist yet.
 
-**Decided: `05` models accuracy conditional on responding, as `06` did,
+**Decided: `10` models accuracy conditional on responding, as `11` did,
 and the joint model is fitted afterwards with a specific and narrow
 job.** That job is not "the fuller picture". It is **the test of whether
 separating the two quantities was legitimate at all.**
@@ -582,7 +582,7 @@ one quantity neither separate model gives: the person-level correlation
 between response propensity and conditional accuracy.
 
 The argument that the two are near-duplicates does not survive the
-existing evidence. `09` §2 examined both on colour: propensity keeps a
+existing evidence. `08` §2 examined both on colour: propensity keeps a
 continuous above-floor VVIQ slope (p = .002) with no floor offset, while
 conditional accuracy shows a floor offset (p = .054) with no continuous
 slope. Same feature, opposite structure.
@@ -598,12 +598,12 @@ bf(score | subset(responded) ~ vviq + complete_aphant + (1 | p | id), family = B
 and the cleanest Beta, so it is where the problem would surface first.
 Not all three features jointly at the outset: six responses sharing a
 random-effect matrix is a large model, and a convergence failure there
-teaches nothing, which is the failure `08` §5's rule exists to prevent.
+teaches nothing, which is the failure `04` §5's rule exists to prevent.
 
 **What the result decides.** A correlation near zero vindicates the
-separation, and `05` keeps accuracy while `08` keeps propensity. A
+separation, and `10` keeps accuracy while `04` keeps propensity. A
 credibly non-zero correlation makes the joint model primary for
-orientation and colour, and **`06` inherits an explicit caveat**, since
+orientation and colour, and **`11` inherits an explicit caveat**, since
 its entire compositional analysis is responders-only. The stakes are
 wider than this doc.
 
@@ -619,6 +619,28 @@ wider than this doc.
   A-versus-C contrast display) is built alongside the model, per §10.
 - **Option A** is still fitted first as the narrative's deliberate wrong
   baseline (§1), and is cheap.
+
+### 11.9 The parity covariate was the wrong quantity, 2026-08-24
+
+Every fit in §11 carries `parity` as a covariate, computed as a
+participant mean of `parity_*_acc`. That column scores an unanswered probe
+as 0, and 92% of its v1 zeros are unanswered rather than wrong, so the
+covariate correlates 0.989 with the proportion of probes answered and
+0.215 with accuracy among those answered. It is a response-rate variable
+under an accuracy name (`03` §11.1).
+
+Nothing here needs refitting for correctness: the parity coefficients were
+near zero throughout, and §11's floor offsets are unchanged when it is
+dropped. But the covariate must be renamed and recomputed from
+`responded_parity_*` before any of this is written up, and the writeup
+must not describe it as accuracy.
+
+**The confound this raises was tested and does not exist.** Parity
+response rate is 0.505 at the VVIQ floor against 0.495 above it,
+p = 0.925, so imagery does not predict compliance and there is nothing for
+parity to mediate. Tested on all three features including word, which
+carries the one floor offset that clears zero here. Numbers in `03` §11.5,
+and they belong in the writeup, because a reader will ask.
 
 ### 11.8 Changes to §8's decision table
 

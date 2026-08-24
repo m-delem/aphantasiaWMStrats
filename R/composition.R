@@ -130,7 +130,7 @@ compose_features <- function(
 #' in. It is therefore an explicit argument with a default matching the
 #' study's own decision, rather than a hidden constant.
 #'
-#' Convention, identical to the one used in `inst/scripts/03a-reliability.R`,
+#' Convention, identical to the one used in `inst/scripts/06a-reliability.R`,
 #' so that the split-half stability estimates computed there apply to these
 #' coordinates unchanged:
 #'

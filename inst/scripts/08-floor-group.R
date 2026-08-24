@@ -1,8 +1,8 @@
 # ------------------------------------------------------------------------- #
-# 09-floor-group.R ----
+# 08-floor-group.R ----
 #
-# The floor-group model, per 09-floor-group.md. Moved out of
-# 03b-validity-checks.R: this asks a substantive question about complete
+# The floor-group model, per 08-predictor-form.md. Moved out of
+# 06b-validity-checks.R: this asks a substantive question about complete
 # aphantasia rather than about whether the instrument works, so it is
 # analysis, not a validity check.
 #

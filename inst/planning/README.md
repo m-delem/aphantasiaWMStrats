@@ -15,11 +15,11 @@ found. This folder is the public account of how the analysis was decided,
 which is a different and usually invisible thing. Several decisions here
 were made, tested against real data, and reversed: the compositional
 input scores were specified as standardised and then found to be roughly
-half negative and therefore impossible for any log-ratio transform (`06`
+half negative and therefore impossible for any log-ratio transform (`11`
 §7); a reported association between reporting propensity and imagery
-dissolved once stratified by version (`08` §3.1); a variance asymmetry
+dissolved once stratified by version (`04` §3.1); a variance asymmetry
 that shaped a whole section turned out to rest on six low-engagement
-participants (`06` §13.2). Publishing only the corrected version would
+participants (`11` §13.2). Publishing only the corrected version would
 hide the part that was hardest to get right.
 
 They are also the working context for the analysis itself. The scripts in
@@ -36,21 +36,33 @@ section. Where a doc and the published analysis disagree, the published
 analysis is what the study claims.
 
 Section numbers are stable within a document but sections have moved
-between documents in the past (`09` began as `03` §2.6). Citations in the
+between documents in the past (`08` began as `06` §2.6). Citations in the
 package code point at the numbering as of the commit that introduced them.
 
 ## Contents
 
+Numbered by analytic dependency: what has to be settled before the next
+thing can be. Chronology is in `CHANGELOG.md`.
+
 | Doc | Subject |
 | --- | --- |
 | `INDEX.md` | Entry point: dependency graph, per-doc summaries, house rules |
-| `00-analytical-philosophy.md` | Performance versus compositional framing, and the three-strand plan |
-| `01-score-computation.md` | Turning raw responses into per-feature scores |
-| `02-pooling-strategy.md` | Which task versions enter the analysis, and how |
-| `03-validity-checks.md` | Reliability and construct validity, as preconditions |
-| `04-parity-engagement.md` | The secondary task, and what it measures in each version |
-| `05-performance-modelling.md` | Absolute per-feature performance |
-| `06-compositional-analysis.md` | Relative allocation, ILR coordinates, and its implementation record |
-| `07-clustering-analysis.md` | Unsupervised profiles, and the held-out validation logic |
-| `08-response-propensity.md` | Non-response as its own quantity, not missing data |
-| `09-floor-group.md` | Whether complete aphantasia behaves as a group or a scale end |
+| `CHANGELOG.md` | What changed when, and in what order |
+| `00-framing.md` | Why the study is framed as it is |
+| `01-task-design.md` | The paradigm, its incentive structure, version history |
+| `02-score-computation.md` | Turning a response into a score |
+| `03-parity-engagement.md` | The secondary task, and what it measures in each version |
+| `04-response-propensity.md` | Abstention as a substantive variable, not missing data |
+| `05-version-scope.md` | Which task versions enter the analysis |
+| `06-task-validity.md` | Whether the task measures anything stable |
+| `07-questionnaire-psychometrics.md` | Whether the instruments do |
+| `08-predictor-form.md` | How imagery vividness enters any model |
+| `09-joint-model.md` | **Primary.** Propensity and accuracy across three features |
+| `10-performance-modelling.md` | Absolute per-feature performance, as a check |
+| `11-compositional-analysis.md` | Relative allocation, as a complement |
+| `12-scale-structure.md` | Relationships among the questionnaire scales |
+| `13-clustering.md` | Unsupervised subgroups |
+
+Docs `01`, `07` and `12` are stubs. They exist because the new ordering
+made the gaps visible, and an empty numbered file is more honest than a
+missing number.

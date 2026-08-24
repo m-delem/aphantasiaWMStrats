@@ -1,4 +1,4 @@
-# WM-FTT: cross-version pooling strategy
+# WM-FTT: version scope and pooling strategy
 
 **Status:** plan settled at the level of principles and a decision
 procedure. Amended 2026-08-20: §3 step 4 extended to require per-version
@@ -6,7 +6,7 @@ non-response reporting, after versions turned out to differ sharply in
 engagement as well as in task mechanics. Otherwise unchanged; the actual numerical decision (pool or not, and how) is
 deferred to implementation time, once real per-version sample sizes and
 distributions are back in hand. This doc is a precondition for
-`04-parity-engagement.md`, `03-validity-checks.md`, and every future
+`03-parity-engagement.md`, `06-task-validity.md`, and every future
 performance/compositional/clustering doc — read it before those make any
 version-dependent choice.
 
@@ -76,7 +76,7 @@ questions can reasonably make different pooling choices:
   because the base rate is expected to differ by version _by design_ (v1
   had no parity penalty; v2/v3 did), so a version difference here isn't
   evidence pooling is invalid, it's an expected design consequence, as
-  already noted in `04-parity-engagement.md` §6.
+  already noted in `03-parity-engagement.md` §6.
 - A question about a **specific v3-only design feature** (e.g., does
   response-order randomisation change anything) is by construction not
   poolable — v1/v2 don't have the randomised-order data to compare against.
@@ -130,7 +130,7 @@ Proposed as a checklist to apply per-analysis, not a single formula:
    participants respond at all, which this doc did not anticipate —
    orientation non-response runs 13.6% / 32.5% / 37.0% across v1 / v2 /
    v3, colour 6.7% / 19.6% / 15.0%, word 8.0% / 14.1% / 17.0%
-   (`08-response-propensity.md` §3.4). This is a version difference in
+   (`04-response-propensity.md` §3.4). This is a version difference in
    *engagement* rather than in task mechanics, and since roughly half the
    between-participant variance in the score columns is reporting
    propensity rather than accuracy, pooling versions pools populations
@@ -160,7 +160,7 @@ have the sample to support it.
 - **Pooling actively created a false result.** The apparent association
   between reporting propensity and imagery (~ρ −0.30 pooled) dissolves
   within version, because v3 is simultaneously aphantasia-heavy and the
-  highest-non-response version (`08-response-propensity.md` §3.1). This is
+  highest-non-response version (`04-response-propensity.md` §3.1). This is
   step 3b's warned-of assumption failing in practice, not in principle.
 - **v1-only is cleaner, not just smaller.** Responders-only accuracy
   against VVIQ in v1: orientation ρ = +0.229 (p = 0.035), colour +0.173
@@ -168,7 +168,7 @@ have the sample to support it.
   stratum on its own is interpretable.
 - **Standardisation stability.** v2's per-version z-scores move by a
   median of 0.13 SD and up to 0.945 SD when any single participant is
-  removed (`01-score-computation.md` §3). It cannot carry its own scale.
+  removed (`02-score-computation.md` §3). It cannot carry its own scale.
 - **Recruitment reality.** v3 will not grow before the thesis handoff, so
   waiting is not an option and freezing a partial v3 mid-recruitment would
   be worse than declaring it out of scope.
@@ -188,19 +188,19 @@ procedure above, a genuinely between-version question, not pooling.
   trials the trial score equals the sum of the three feature scores. So
   parity accuracy in v1 measures whether a participant bothered with a
   consequence-free secondary task — a motivation measure, not a
-  working-memory-load measure (`04-parity-engagement.md`).
+  working-memory-load measure (`03-parity-engagement.md`).
 - **v1 has the lowest non-response** (8.0% / 13.6% / 6.7% for word /
   orientation / colour). Choosing v1 means choosing the version where
-  `08`'s phenomenon is least visible, which confirms `08`'s role as
+  `04`'s phenomenon is least visible, which confirms `04`'s role as
   design-facing rather than analytical.
 - **The four-group VVIQ split is unusable** in v1 (hyperphantasia n = 3).
   Two-group or continuous VVIQ only.
 
 **What this retires:** §3's steps 3a and 3b stop applying to this
-chapter's analyses; `05-performance-modelling.md` §6's version layer and
-`06-compositional-analysis.md` §6 become moot; `01-score-computation.md`
+chapter's analyses; `10-performance-modelling.md` §6's version layer and
+`11-compositional-analysis.md` §6 become moot; `02-score-computation.md`
 §3's small-N standardisation caution disappears with v2 out of scope; and
-the participant appearing in both v1 and v3 (`01` §3) resolves
+the participant appearing in both v1 and v3 (`02` §3) resolves
 automatically, since only the v1 record is in scope.
 
 ## 4. Bayesian modelling makes step 3 more tractable than it would otherwise be
@@ -281,7 +281,7 @@ actual content, to be resolved when poster/chapter scoping happens.
 
 ## 9. Next steps (not this doc)
 
-- Apply §3's procedure explicitly in `04-parity-engagement.md`'s
+- Apply §3's procedure explicitly in `03-parity-engagement.md`'s
   within-version-vs-pooled question (already flagged there as deferred to
   this doc).
 - Apply §3 again when the performance-modelling doc is written — that doc

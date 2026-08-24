@@ -1,21 +1,21 @@
 # ------------------------------------------------------------------------- #
-# 01-score-distributions.R ----
+# 02-score-distributions.R ----
 #
 # Targeted checks on the scores produced by compute_scores(), run before
 # any of them are relied on downstream. Diagnostic, not exported package
-# functionality — see 03-validity-checks.md §4 for why this kind of work
+# functionality — see 06-task-validity.md §4 for why this kind of work
 # lives in inst/scripts/.
 #
 # Answers four questions, in the order they gate each other:
 #
 #   Q1  Does the orientation period (180 vs 360) change any downstream
 #       conclusion? The period itself is settled on structural grounds
-#       (01-score-computation.md §2); this is a sensitivity analysis, not
+#       (02-score-computation.md §2); this is a sensitivity analysis, not
 #       a decision procedure.
 #   Q2  Is per-version standardisation stable at v2's N=9 and v3's N=21?
-#       (01-score-computation.md §3's flagged caution.)
+#       (02-score-computation.md §3's flagged caution.)
 #   Q3  Do raw and standardised scores actually tell different stories, and
-#       is each usable by the strand 01 §4 assigns it to?
+#       is each usable by the strand 02 §4 assigns it to?
 #   Q4  Closes out the cross-check and the Damerau-vs-plain question, both
 #       largely settled during implementation.
 #
@@ -48,7 +48,7 @@ save_fig <- function(plot, name, ncol = 2, height = 75) {
 rule <- function(txt) cat("\n", strrep("-", 70), "\n", txt, "\n", sep = "")
 
 # Blocks only: tutorial rows carry front-end placeholders and training rows
-# precede the blocks by design (01 §2.5.1).
+# precede the blocks by design (02 §2.5.1).
 blocks <- dplyr::filter(all_data, grepl("^expe_block", expe_phase))
 
 features <- c("score_word", "score_angle", "score_color")
@@ -56,7 +56,7 @@ labels <- c(score_word = "Word", score_angle = "Orientation",
             score_color = "Colour")
 
 # Participant-by-version is the analysis unit throughout: one participant
-# completed both v1 and v3 (01 §3), so `id` alone would silently merge them.
+# completed both v1 and v3 (02 §3), so `id` alone would silently merge them.
 blocks <- dplyr::mutate(blocks, unit = paste(id, version, sep = "_"))
 
 # ------------------------------------------------------------------------- #
@@ -130,7 +130,7 @@ save_fig(p_q1, "q1-orientation-period")
 # ------------------------------------------------------------------------- #
 # Q2. Is per-version standardisation stable at small N? ----
 # ------------------------------------------------------------------------- #
-rule("Q2. Per-version standardisation stability (01 §3's flagged caution)")
+rule("Q2. Per-version standardisation stability (02 §3's flagged caution)")
 
 cat("\nParticipants per version:\n")
 print(table(per_unit$version))
@@ -186,7 +186,7 @@ for (f in features) {
   cat(sprintf("  %-12s spearman(raw, z) = %.4f\n", labels[f], r))
 }
 
-# 01 §4 assigns standardised scores to the compositional strand. Both
+# 02 §4 assigns standardised scores to the compositional strand. Both
 # log-ratio families (ILR included) need strictly positive parts.
 z_cols <- paste0(features, "_z")
 cat("\nCompositional feasibility check (log-ratio needs strictly positive parts):\n")
@@ -276,7 +276,7 @@ flagged <- dplyr::filter(
 )
 cat("\nParticipants with >=90% non-response on any feature:\n")
 print(as.data.frame(flagged), row.names = FALSE, digits = 3)
-cat("\nUnder 01 §2.5.2 these acquire a mean score of ~0 on that feature,\n")
+cat("\nUnder 02 §2.5.2 these acquire a mean score of ~0 on that feature,\n")
 cat("which reads as 'maximally poor memory' when it means 'no data'.\n")
 cat("Exclusion candidates, or at minimum a documented caveat.\n")
 

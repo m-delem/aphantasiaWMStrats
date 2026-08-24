@@ -1,4 +1,4 @@
-# Scoring for the WM-FTT recall task. See inst/planning/01-score-computation.md for the
+# Scoring for the WM-FTT recall task. See inst/planning/02-score-computation.md for the
 # design rationale; the roxygen below records what was implemented and why.
 
 #' Normalise a string for edit-distance comparison
@@ -165,6 +165,11 @@ score_angular <- function(target, response, period) {
 #'   clustering. Note that standardised scores cannot be used for any
 #'   log-ratio transform, since roughly half of them are negative.
 #' * `responded_word`, `responded_angle`, `responded_color` — logical.
+#' * `responded_parity_1`, `responded_parity_2` — logical, added when the
+#'   `parity_*_resp` columns are present. The parity accuracy columns use
+#'   the same score-a-non-response-as-zero convention as recall, and in v1
+#'   92% of their zeros are unanswered probes rather than errors, so any
+#'   analysis of parity needs these flags. See [flag_parity_responses()].
 #'
 #' @section Non-responses:
 #' The task encodes non-response with per-feature sentinels rather than
@@ -238,6 +243,8 @@ compute_scores <- function(data,
     score_color = ifelse(.data$responded_color, .data$score_color, 0)
   )
 
+  out <- flag_parity_responses(out)
+
   standardise_by_version(out, c("score_word", "score_angle", "score_color"))
 }
 
@@ -263,6 +270,43 @@ standardise_by_version <- function(data, cols) {
         (data[[cn]][in_v] - mu) / sdev
     }
     data[[paste0(cn, "_z")]] <- z
+  }
+  data
+}
+
+#' Flag which parity probes were actually answered
+#'
+#' @description
+#' `parity_1_acc` and `parity_2_acc` score an unanswered probe as 0, the
+#' same convention the recall columns use, and with the same consequence:
+#' a zero conflates a wrong answer with no answer. In v1 the conflation is
+#' near-total. Of 3315 zeros on `parity_1_acc`, 3046 are probes where
+#' `parity_1_resp` and `parity_1_rt` are both `NA`, and only 269 are
+#' answered-and-wrong. A participant-level mean of the raw column
+#' correlates 0.989 with the proportion of probes answered and 0.215 with
+#' accuracy among those answered: it is a propensity measure wearing an
+#' accuracy label.
+#'
+#' The two components are close to orthogonal (r = 0.043 across v1
+#' participants), so collapsing them does not blur two related quantities,
+#' it discards one. This function adds the flags that let a caller
+#' separate them, exactly as `responded_word` and friends do for recall.
+#'
+#' The parity columns are optional. Data without them passes through
+#' unchanged, since [compute_scores()] is also useful on frames that carry
+#' recall responses alone.
+#'
+#' @param data A stimulus-level data frame.
+#' @return `data` with `responded_parity_1` and `responded_parity_2`
+#'   appended when the corresponding `parity_*_resp` columns are present.
+#' @keywords internal
+flag_parity_responses <- function(data) {
+  probes <- c("parity_1", "parity_2")
+  for (probe in probes) {
+    response <- paste0(probe, "_resp")
+    if (!response %in% names(data)) next
+    data[[paste0("responded_", probe)]] <-
+      !is.na(data[[response]]) & data[[response]] != ""
   }
   data
 }

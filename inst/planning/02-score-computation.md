@@ -429,7 +429,7 @@ enough by version that pooled standardisation could mix genuinely different
 distributions.
 
 **Resolved 2026-08-20 by scope rather than by method:** with v1 as the
-primary analysis sample (`02-pooling-strategy.md` §3.5), there is only one
+primary analysis sample (`05-version-scope.md` §3.5), there is only one
 version in the inferential analyses, so per-version standardisation
 reduces to standardising within v1 and the small-N problem below no longer
 bites. The shrinkage fallback is not needed. Standardisation is still
@@ -461,7 +461,7 @@ Per-version standardisation currently treats him as two independent people,
 which he is not: the v3 attempt is by someone who has already done the task.
 At N=88 and N=21 the effect on the z-scales themselves is small, but the
 non-independence is real and would also violate the exchangeability
-assumption of any pooled model in `05`/`06`/`07`. Options: drop the v3
+assumption of any pooled model in `10`/`11`/`13`. Options: drop the v3
 attempt (keeps the larger, earlier sample intact, costs 1 of 21 in the
 smallest version), drop the v1 attempt, keep both and add a random effect
 for `id` that spans versions, or keep both and note it.
@@ -527,12 +527,12 @@ parallel track. The relationship is closer than that. `bmm`'s
 continuous-report models decompose a response into target recall, guessing
 and swap errors — but each of those states **is a response**, with an
 angular error to attribute. Abstention, which accounts for 9–19% of trials
-(`08-response-propensity.md`), is a fourth state the mixture cannot
+(`04-response-propensity.md`), is a fourth state the mixture cannot
 represent, because there is no report to decompose.
 
 A hurdle gate is the natural place for it, and it **composes** with a
 mixture rather than competing: gate on responding, then decompose the
-responses that exist. `05-performance-modelling.md` §3.1 adopts exactly
+responses that exist. `10-performance-modelling.md` §3.1 adopts exactly
 this structure for the performance model, on independent grounds.
 
 The obstacle this section parks `bmm` on — per-participant trial counts —

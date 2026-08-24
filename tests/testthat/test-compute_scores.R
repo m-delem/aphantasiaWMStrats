@@ -146,3 +146,45 @@ test_that("standardisation is within version and ignores non-block rows", {
   expect_false(any(is.na(out$score_word_z)))
 })
 
+
+test_that("flag_parity_responses separates unanswered probes from wrong ones", {
+  # parity_*_acc scores an unanswered probe as 0, the same convention the
+  # recall columns use. Without a flag, a participant mean of that column
+  # measures willingness to do the secondary task, not accuracy on it.
+  data <- data.frame(
+    parity_1_resp = c("f", "j", NA, ""),
+    parity_1_acc  = c(1, 0, 0, 0),
+    parity_2_resp = c(NA, "f", "j", "j"),
+    parity_2_acc  = c(0, 1, 1, 0)
+  )
+  out <- flag_parity_responses(data)
+  expect_identical(out$responded_parity_1, c(TRUE, TRUE, FALSE, FALSE))
+  expect_identical(out$responded_parity_2, c(FALSE, TRUE, TRUE, TRUE))
+  # the one genuinely wrong answer on probe 1 is row 2, not rows 3 and 4
+  expect_equal(sum(out$parity_1_acc == 0 & out$responded_parity_1), 1)
+})
+
+test_that("flag_parity_responses leaves data without parity columns alone", {
+  data <- data.frame(x = 1:3)
+  expect_identical(flag_parity_responses(data), data)
+})
+
+test_that("compute_scores adds the parity flags when the columns are present", {
+  df <- data.frame(
+    version = rep("v1", 4),
+    expe_phase = rep("expe_block_1", 4),
+    target_word = c("table", "chien", "salle", "vide"),
+    response_word = c("table", "chein", "", "vide"),
+    target_angle = c(10, -20, 30, 0),
+    response_angle = c(10, -25, 90, 5),
+    target_color_angle = c(100, 200, 300, 50),
+    response_color_angle = c(105, 999, 300, 60),
+    parity_1_resp = c("f", NA, "j", ""),
+    parity_2_resp = NA_character_,
+    stringsAsFactors = FALSE
+  )
+  out <- compute_scores(df)
+  expect_true(all(c("responded_parity_1", "responded_parity_2") %in% names(out)))
+  expect_identical(out$responded_parity_1, c(TRUE, FALSE, TRUE, FALSE))
+  expect_false(any(out$responded_parity_2))
+})

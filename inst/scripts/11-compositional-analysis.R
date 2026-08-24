@@ -1,25 +1,25 @@
 # ------------------------------------------------------------------------- #
-# 06-compositional-analysis.R ----
+# 11-compositional-analysis.R ----
 #
 # Numbered references below are to the planning set in `inst/planning/`.
 #
-# Implements 06-compositional-analysis.md.
+# Implements 11-compositional-analysis.md.
 #
-# Sample: v1 only (02-pooling-strategy.md §3.5), restricted to the 81
-# participants clearing the engagement thresholds of 03 §2.1. That is a
-# change from 06 §7, which asked only for units with all three parts
+# Sample: v1 only (05-version-scope.md §3.5), restricted to the 81
+# participants clearing the engagement thresholds of 06 §2.1. That is a
+# change from 11 §7, which asked only for units with all three parts
 # present. §1 below records why, with the numbers that motivated it: the
 # looser sample's compositional variance is dominated by six participants
 # who answered as few as one orientation trial.
 #
-# Input scores: RAW responders-only means, not standardised (06 §7 as
+# Input scores: RAW responders-only means, not standardised (11 §7 as
 # reversed 2026-08-20; z-scores are ~50% negative and no log-ratio
 # transform accepts negative parts).
 #
 # SBP: word vs (colour + orientation) first, then colour vs orientation.
-# Chosen on substantive grounds per 06 §2, not statistical ones. See §3.
+# Chosen on substantive grounds per 11 §2, not statistical ones. See §3.
 #
-# VVIQ: the floor-group form (vviq + complete_aphant, 09-floor-group.md) is
+# VVIQ: the floor-group form (vviq + complete_aphant, 08-predictor-form.md) is
 # the pre-declared primary. Alternative functional forms are compared in §4
 # and the comparison is reported whatever it says.
 #
@@ -87,8 +87,8 @@ participant_info <-
 
 engaged <- engaged_ids(d)
 
-# Sample A: all three parts present, which is all 06 §7 asked for.
-# Sample B: A plus the engagement thresholds of 03 §2.1.
+# Sample A: all three parts present, which is all 11 §7 asked for.
+# Sample B: A plus the engagement thresholds of 06 §2.1.
 compositions_all <- compose_features(d, id)
 sample_a <- compositions_all |>
   dplyr::filter(stats::complete.cases(dplyr::pick(tidyselect::starts_with("part_"))))
@@ -96,7 +96,7 @@ sample_b <- sample_a |> dplyr::filter(.data$id %in% engaged)
 
 cat("\nv1 participants:", dplyr::n_distinct(d$id), "\n")
 cat("A, all three parts present:      ", nrow(sample_a), "\n")
-cat("B, also clearing 03 §2.1 thresholds:", nrow(sample_b), "\n")
+cat("B, also clearing 06 §2.1 thresholds:", nrow(sample_b), "\n")
 
 dropped <- dplyr::anti_join(sample_a, sample_b, by = "id")
 cat("\nThe", nrow(dropped), "units the thresholds remove:\n\n")
@@ -109,7 +109,7 @@ dropped |>
 
 cat("\nFive of them answered between 1 and 10 of the 63 orientation trials.\n")
 cat("A composition resting on one responded trial is not an allocation\n")
-cat("profile, and 03 §2.2's stability gate was computed on B, so B is the\n")
+cat("profile, and 06 §2.2's stability gate was computed on B, so B is the\n")
 cat("sample used from here. Both are reported in §2 and §3 so the effect of\n")
 cat("the choice is visible rather than assumed.\n")
 
@@ -136,17 +136,17 @@ cat("  at the VVIQ floor (16):", sum(model_data$vviq == 16),
     " above floor:", sum(model_data$vviq > 16), "\n")
 print(table(model_data$imagery_group))
 
-cat("\nParity accuracy, the covariate 06 §8 specifies as continuous:\n")
+cat("\nParity accuracy, the covariate 11 §8 specifies as continuous:\n")
 print(round(stats::quantile(model_data$parity, c(0, .1, .25, .5, .75, 1)), 3))
 cat("\nDOC-VS-DATA FLAG: a quarter of the sample sits at exactly 0. v1 carries\n")
-cat("no parity penalty (02 §3.5), so this is a motivation measure with a\n")
+cat("no parity penalty (05 §3.5), so this is a motivation measure with a\n")
 cat("large 'never engaged' spike, not a smooth covariate. It is kept\n")
-cat("continuous here because that is 06 §8's stated default, and §4 fits the\n")
+cat("continuous here because that is 11 §8's stated default, and §4 fits the\n")
 cat("primary model without it so the choice can be inspected rather than\n")
-cat("trusted. 04-parity-engagement.md should decide the form properly.\n")
+cat("trusted. 03-parity-engagement.md should decide the form properly.\n")
 
 # ------------------------------------------------------------------------- #
-# 2. How much the composition varies (06 §8.5, recomputed on v1) ----
+# 2. How much the composition varies (11 §8.5, recomputed on v1) ----
 # ------------------------------------------------------------------------- #
 rule("2. Composition descriptives")
 
@@ -171,12 +171,12 @@ spread_table <- dplyr::bind_rows(
 )
 print(as.data.frame(spread_table), row.names = FALSE, digits = 3)
 
-# 06 §8.5's partial correlations, which motivated the "two-way trade-off"
+# 11 §8.5's partial correlations, which motivated the "two-way trade-off"
 # reading. Residualising three parts on their own mean induces about -0.5
 # by construction, so that is the reference, not zero.
 # Computed on the raw responders-only means, not the closed parts. Closing
 # forces the deviations to sum to zero exactly, which pins the correlations
-# by construction and makes the comparison uninformative. 06 §8.5's own
+# by construction and makes the comparison uninformative. 11 §8.5's own
 # quantity is the raw-means one.
 centred_cor <- function(parts) {
   m <- as.matrix(dplyr::select(parts, tidyselect::starts_with("mean_")))
@@ -185,12 +185,12 @@ centred_cor <- function(parts) {
 }
 
 cat("\nPartial correlations between parts, controlling overall level:\n")
-cat("\nSample A (n = 87), which is what 06 §8.5 reports on pooled data:\n")
+cat("\nSample A (n = 87), which is what 11 §8.5 reports on pooled data:\n")
 print(round(centred_cor(sample_a), 3))
 cat("\nSample B (n = 81):\n")
 print(round(centred_cor(sample_b), 3))
 
-cat("\nDOC-VS-DATA FLAG: 06 §8.5 reads these as showing the task achieved a\n")
+cat("\nDOC-VS-DATA FLAG: 11 §8.5 reads these as showing the task achieved a\n")
 cat("two-way trade-off, orientation against colour, with word largely free.\n")
 cat("On B all three sit near the -0.5 that closure induces on its own, so\n")
 cat("that reading does not survive the engagement filter. It describes six\n")
@@ -222,7 +222,7 @@ save_ggplot(
   p_ternary, ncol = 1, height = 75, return = TRUE)
 
 # ------------------------------------------------------------------------- #
-# 3. The SBP, and the variance split 06 §2 records as awkward ----
+# 3. The SBP, and the variance split 11 §2 records as awkward ----
 # ------------------------------------------------------------------------- #
 rule("3. Sequential binary partition")
 
@@ -249,23 +249,23 @@ variance_table <- dplyr::bind_rows(
 )
 print(as.data.frame(variance_table), row.names = FALSE, digits = 3)
 
-cat("\nDOC-VS-DATA FLAG: 06 §2's amendment records 39% / 28% / 83% for the\n")
+cat("\nDOC-VS-DATA FLAG: 11 §2's amendment records 39% / 28% / 83% for the\n")
 cat("three first contrasts. Those were computed on 117 pooled units with no\n")
-cat("engagement filter, a sample 02 §3.5 has since retired. On B the three\n")
+cat("engagement filter, a sample 05 §3.5 has since retired. On B the three\n")
 cat("shares are much closer together, so the tension the amendment describes\n")
 cat("is largely an artifact of the same six units as §2.\n")
 cat("\nThis does not change the decision, and must not be presented as a\n")
 cat("reason for it. The partition is word vs (colour + orientation) because\n")
 cat("that is the contrast the thesis argues about. Two further points make\n")
-cat("the choice cheaper than 06 §2 feared:\n")
+cat("the choice cheaper than 11 §2 feared:\n")
 cat("  - any two-coordinate ILR basis is a rotation of the same geometry, so\n")
 cat("    the omnibus test and total variance do not depend on it. Only which\n")
 cat("    single-coordinate sentence can be written does.\n")
-cat("  - 03 §2.2's stability gate (0.771 / 0.721) was computed for this\n")
+cat("  - 06 §2.2's stability gate (0.771 / 0.721) was computed for this\n")
 cat("    partition specifically. Switching would leave the strand without a\n")
-cat("    cleared gate until 03a-reliability.R is re-run.\n")
+cat("    cleared gate until 06a-reliability.R is re-run.\n")
 cat("\nilr1 rests partly on word, whose own split-half reliability is 0.445\n")
-cat("(03 §2.1). A ratio can be stable where a level is not, and the gate says\n")
+cat("(06 §2.1). A ratio can be stable where a level is not, and the gate says\n")
 cat("it is, but no claim here may treat word as well measured.\n")
 
 # Figure 2: what the partition choice costs ----
@@ -699,7 +699,7 @@ m_trial <- fit_brms_model(
 print(brms::fixef(m_trial), digits = 3)
 
 # ICC per coordinate: a model-based reliability for the composition, which
-# complements 03 §2.2's split-half 0.771 / 0.721 and comes from the same fit
+# complements 06 §2.2's split-half 0.771 / 0.721 and comes from the same fit
 # as the effects.
 trial_draws <- brms::as_draws_df(m_trial)
 
@@ -740,7 +740,7 @@ icc_summary <-
 cat("\nIntraclass correlation of each ILR coordinate:\n\n")
 print(as.data.frame(icc_summary), row.names = FALSE, digits = 3)
 
-cat("\nRead against 03 §2.2's split-half stability (ilr1 0.771, ilr2 0.721).\n")
+cat("\nRead against 06 §2.2's split-half stability (ilr1 0.771, ilr2 0.721).\n")
 cat("These are different estimands: split-half asks how well half the trials\n")
 cat("predict the other half, the ICC asks what share of trial-level variance\n")
 cat("is between people. They should agree in direction, not in value.\n")

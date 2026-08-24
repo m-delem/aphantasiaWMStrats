@@ -1,6 +1,6 @@
 # WM-FTT: compositional analysis
 
-**Status: implemented 2026-08-21** (`inst/scripts/06-compositional-analysis.R`).
+**Status: implemented 2026-08-21** (`inst/scripts/11-compositional-analysis.R`).
 §13 is the implementation record and supersedes several earlier sections:
 the sample is 81 rather than 87, §2's variance-share table and §8.5's
 partial correlations were computed on a superseded sample and are
@@ -10,14 +10,14 @@ are resolved. Read §13 before acting on §§1-12.
 Earlier status, retained: amended 2026-08-20, §7's input choice
 **reversed** (raw, not standardised), §2 gained two findings about the
 real data, and §8.5 recorded how little the composition varies. Depends on
-`01-score-computation.md`, directly implements
-`00-analytical-philosophy.md` §2's stated obligation ("adopting the
+`02-score-computation.md`, directly implements
+`00-framing.md` §2's stated obligation ("adopting the
 compositional framing is a commitment to doing the transform properly,
 not naive proportions") and addresses §6's flagged weakness (overall
 performance level being discarded).
 
 **Context:** this is the confirmatory/hypothesis-testing strand of the
-three-strand plan (see `00-analytical-philosophy.md` §5) — builds a
+three-strand plan (see `00-framing.md` §5) — builds a
 per-participant relative-allocation profile and tests it against
 researcher-defined groups (VVIQ group, continuous VVIQ), as distinct from
 clustering's fully unsupervised, group-agnostic approach (separate,
@@ -27,7 +27,7 @@ not-yet-written doc).
 
 ## 1. The core technical requirement, confirmed against the literature
 
-`00-analytical-philosophy.md` §2 already flagged that naive proportions
+`00-framing.md` §2 already flagged that naive proportions
 (sum-to-one values correlated or regressed directly) are statistically
 invalid for a composition — the fixed-sum constraint induces forced
 negative correlation between components, and a 3-part composition only
@@ -152,7 +152,7 @@ verbal/non-verbal interpretation specifically, not a general hygiene note.
 **Note on what the group gap does and does not show.** These rates are
 pooled across versions, and the underlying association between
 non-response and imagery does not survive stratification — within v1 it is
-null except marginally for colour (`08-response-propensity.md` §3.1).
+null except marginally for colour (`04-response-propensity.md` §3.1).
 That weakens the substantive claim about aphantasics but **not** the
 methodological one here: the composition would still be contaminated by
 whatever drives the differential non-response, version composition
@@ -171,7 +171,7 @@ Mechanics, confirmed via package documentation:
   call).
 - `brmcoda()` wraps `brm()`, fitting the ILR coordinates as a **multivariate
   outcome** via `mvbind()` (same underlying `brms` mechanism flagged in
-  `05-performance-modelling.md` for Option B) — e.g.
+  `10-performance-modelling.md` for Option B) — e.g.
   `mvbind(ilr1, ilr2) ~ predictors + (1 | ID)`.
 - Supports multilevel structure natively (random effects, e.g. `(1|ID)`,
   extendable to richer structures) and post-hoc tools for interpreting
@@ -184,24 +184,24 @@ the coordinate construction, the back-transformation for interpretation,
 and documented post-hoc functions for group comparisons — exactly the
 kind of "make the results explicit and interpretable" tooling commitment
 already made for the performance model's Option C
-(`05-performance-modelling.md` §4). Worth treating this as the default
+(`10-performance-modelling.md` §4). Worth treating this as the default
 implementation path rather than reimplementing ILR machinery from
 scratch, unless a specific limitation is found once real data is in hand.
 
-**Difference from `05`'s Option B, worth being precise about:** `05`
+**Difference from `10`'s Option B, worth being precise about:** `10`
 rejected `mvbind()`/`rescor` specifically because forcing a Gaussian
 family onto bounded [0,1] *raw* similarity scores was a distributional
 mismatch. Here, the multivariate outcome is **ILR coordinates**, which
 live in unconstrained Euclidean space by construction (that's the whole
 point of the transform) — a Gaussian-family multivariate model is
 actually the *appropriate* choice for ILR coordinates, not a mismatch.
-This is not an inconsistency with `05`'s reasoning; it's the same
+This is not an inconsistency with `10`'s reasoning; it's the same
 reasoning correctly applied to a different (already-transformed) outcome
 space.
 
 ## 4. Retaining overall performance level — direct fix for a named weakness
 
-`00-analytical-philosophy.md` §6 flagged directly: pure compositional
+`00-framing.md` §6 flagged directly: pure compositional
 analysis discards overall performance level by construction (two
 participants with identical relative-allocation profiles but very
 different absolute totals look identical). **Decided:** this is not
@@ -209,7 +209,7 @@ solved *within* the compositional model itself — trying to smuggle a
 "total" dimension into the ILR coordinates would undermine the
 compositional transform's own logic (it's specifically designed to
 represent relative allocation, independent of scale). Instead, this is
-explicitly the job of **Option D in `05-performance-modelling.md`**
+explicitly the job of **Option D in `10-performance-modelling.md`**
 (the total-performance model) — the two are complementary by design, not
 competing solutions to the same gap. Worth stating this connection
 explicitly in the eventual writeup so a reader doesn't wonder why the
@@ -218,7 +218,7 @@ deliberately hands that question to a different, purpose-built model.
 
 ## 5. VVIQ group comparison and continuous regression — both in scope
 
-Per `00-analytical-philosophy.md` §5's framing (compositional = broad,
+Per `00-framing.md` §5's framing (compositional = broad,
 exploratory-but-confirmatory hypothesis testing against researcher-defined
 groups): the compositional model should support both
 
@@ -236,7 +236,7 @@ specification.
 
 ## 6. Version/pooling integration — resolved, v1 only
 
-**Resolved 2026-08-20 (`02-pooling-strategy.md` §3.5): v1 (N=88) only, so
+**Resolved 2026-08-20 (`05-version-scope.md` §3.5): v1 (N=88) only, so
 no version grouping factor and no pooled-versus-per-version question.**
 Note this does not rescue §8.5's concern: the composition varies just as
 little within v1 (SD 0.030 / 0.039 / 0.028 on the three parts) as it does
@@ -244,21 +244,21 @@ pooled, so the stability gate stands unchanged.
 
 ### 6.1 Original version/pooling reasoning, now superseded
 
-Same status as `05-performance-modelling.md` §6: falls under
-`02-pooling-strategy.md`'s "needs pooling for power" case. Given the ILR
+Same status as `10-performance-modelling.md` §6: falls under
+`05-version-scope.md`'s "needs pooling for power" case. Given the ILR
 transform itself doesn't change the sample-size problem (still N=118
 pooled / N=21 for v3 alone), the same considerations apply directly:
 version as a potential multilevel grouping factor, kept as an option
 rather than committed by default, deferred to empirical estimability
 checks once real data is available — not re-litigated in detail here,
-`02-pooling-strategy.md`'s decision procedure governs this doc the same
-way it governs `05`.
+`05-version-scope.md`'s decision procedure governs this doc the same
+way it governs `10`.
 
 ## 7. Standardised vs. raw scores as compositional input
 
 **Reversed 2026-08-20. The answer is raw, not standardised.** §7 as
 originally written assigned the standardised (per-version z-scored) scores
-per `01-score-computation.md` §4, and asked implementers to "confirm this
+per `02-score-computation.md` §4, and asked implementers to "confirm this
 is still the intended input at implementation time". That check has now
 fired.
 
@@ -273,17 +273,17 @@ sparse-zeros problem, it is the wrong number line.
 rationale was that "proportions computed from raw values on mismatched
 difficulty/variance scales would be dominated by whichever feature happens
 to have the larger raw range or variance". That was written before the
-scores existed. Both of `01` §2's transforms — Gonthier edit-distance for
+scores existed. Both of `02` §2's transforms — Gonthier edit-distance for
 word, cosine for colour and orientation — produce values on **[0, 1] by
 construction**. The ranges are identical, so the domination problem the
 standardisation was meant to solve does not arise for this composition.
 
-Note this does not overturn `01` §4's general logic, which correctly says
+Note this does not overturn `02` §4's general logic, which correctly says
 different strands need different things from "comparable". It overturns
 one application of it, made before the scores were built.
 
 **Additional constraint: the composition must be built from responded
-trials only.** Per `08-response-propensity.md`, non-responses are scored 0
+trials only.** Per `04-response-propensity.md`, non-responses are scored 0
 and non-response rates differ by imagery group and by feature. A
 composition computed from those zeros does not measure relative
 allocation — it partly measures which features the participant declined
@@ -297,11 +297,11 @@ affected at present, leaving 117 usable.
 
 ## 8. Parity engagement's place in this strand
 
-Per `04-parity-engagement.md` §5, parity accuracy's default use is as a
+Per `03-parity-engagement.md` §5, parity accuracy's default use is as a
 continuous covariate in modelling. For the compositional model
 specifically, this means parity accuracy as an additional predictor
 alongside VVIQ group/continuous VVIQ in the `brmcoda()` formula, not a
-filter — consistent with `03`'s stated default (covariate over filter)
+filter — consistent with `06`'s stated default (covariate over filter)
 and avoiding yet another silent sample-size reduction on top of the
 v2/v3 constraints already in play.
 
@@ -335,7 +335,7 @@ trial, or shorter exposure would be the levers.
 **Whether the composition is interpretable at all is an empirical question
 with an existing gate.** With parts varying by an SD of roughly 0.03, much
 of the observed spread could be measurement error rather than trait-like
-allocation. `03-validity-checks.md` §2.2 already specifies the right test:
+allocation. `06-task-validity.md` §2.2 already specifies the right test:
 split-half stability of the composition itself, computed on odd versus
 even trials per participant. **Result 2026-08-20: the gate passes.** Split-half stability of the
 composition, 1000 random trial-level splits on the 81 v1 participants
@@ -364,9 +364,9 @@ consistently declines a feature will show a spuriously *stable* profile.
 - Does not decide the SBP/partition choice (§2) — explicitly left open,
   needs the author's direct input.
 - Does not re-design the version/pooling question — governed by
-  `02-pooling-strategy.md`, referenced not repeated.
+  `05-version-scope.md`, referenced not repeated.
 - Does not attempt to fold "overall performance level" into the
-  compositional model itself — that's `05`'s Option D, by design (§4).
+  compositional model itself — that's `10`'s Option D, by design (§4).
 - Does not design the ternary-plot visualisation in detail — flagged as a
   legitimate complementary output (§1) but not scoped here; likely belongs
   with the broader plotting/legacy-code disposition question, not yet
@@ -381,14 +381,14 @@ consistently declines a feature will show a spuriously *stable* profile.
 | SBP / partition choice | **Word vs (colour + orientation)**, on substantive grounds (§13.5) | Resolved 2026-08-21 |
 | Modelling infrastructure | Hand-rolled ILR plus `brms`, not `multilevelcoda` (§13.7) | Changed 2026-08-21 |
 | Ternary plots | Kept as visualisation only, not the inferential model | Settled |
-| Overall-level gap | Not solved here — explicitly handed to `05`'s Option D | Settled |
+| Overall-level gap | Not solved here — explicitly handed to `10`'s Option D | Settled |
 | Group comparison vs. continuous VVIQ regression | Both in scope, same model structure | Settled |
-| Version/pooling | Governed by `02-pooling-strategy.md`, not re-decided | Settled (deferred) |
+| Version/pooling | Governed by `05-version-scope.md`, not re-decided | Settled (deferred) |
 | Input scores | **Raw**, responders-only participant means — standardised scores are ~50% negative and unusable for any log-ratio transform (§7) | Reversed 2026-08-20 |
 | Analysis sample | 81 clearing the engagement thresholds, 79 with VVIQ (§13.1) | Changed 2026-08-21 |
 | SBP choice given the variance split | Recommendation unchanged; variance split recorded as a limitation, explicitly not used as a criterion (§2) | Settled 2026-08-20 |
-| Interpretability of the composition | Gated on `03` §2.2's split-half stability check, run before any interpretation (§8.5) | Settled 2026-08-20 |
-| Parity engagement | Continuous covariate, per `04-parity-engagement.md` §5, but see §13.7's flag | Settled, flagged |
+| Interpretability of the composition | Gated on `06` §2.2's split-half stability check, run before any interpretation (§8.5) | Settled 2026-08-20 |
+| Parity engagement | Continuous covariate, per `03-parity-engagement.md` §5, but see §13.7's flag | Settled, flagged |
 | VVIQ functional form | Floor-group additive, pre-declared primary, with a five-model LOO comparison (§13.6) | Resolved 2026-08-21 |
 | Multilevel structure | Trial-level compositions exist and are modelled (§13.4) | Added 2026-08-21 |
 
@@ -397,7 +397,7 @@ consistently declines a feature will show a spuriously *stable* profile.
 - ~~**SBP/partition choice (§2)**~~ **RESOLVED 2026-08-21** (§13.5):
   word vs (colour + orientation), on substantive grounds. The variance
   argument that made this look expensive was itself an artifact (§13.2).
-- ~~Whether this strand survives `03` §2.2's stability gate~~ **RESOLVED
+- ~~Whether this strand survives `06` §2.2's stability gate~~ **RESOLVED
   2026-08-20**: it passes (§8.5). This is a result, not a documented
   attempt.
 - Whether `multilevelcoda`'s post-hoc/interpretation functions cover
@@ -416,13 +416,13 @@ remains:
 - Run the Bayesian fits. Everything up to §13.6 has been executed; no
   `brms` model in the script has been.
 - Decide the parity covariate's form properly in
-  `04-parity-engagement.md` (§13.7).
+  `03-parity-engagement.md` (§13.7).
 - Write the EOR vignette page for this strand once the fits have run.
 
 ## 13. Implementation record, 2026-08-21
 
 Written during the session that implemented this doc as
-`inst/scripts/06-compositional-analysis.R`, with helpers in
+`inst/scripts/11-compositional-analysis.R`, with helpers in
 `R/composition.R`, `R/ggplot_tools.R`, `R/plot_composition.R` and
 `R/modelling_tools.R`. Records four doc-versus-data mismatches, resolves
 the two decisions §§2 and 5 left open, and documents one departure from
@@ -431,10 +431,10 @@ the real data; the Bayesian fits have not, and §13.7 says what that means.
 
 ### 13.1 Sample: 81, not 87
 
-`06` §7 asks only that units with a structurally missing part be dropped,
-which in v1 removes one participant of 88 and leaves 87. `03` §2.2's
+`11` §7 asks only that units with a structurally missing part be dropped,
+which in v1 removes one participant of 88 and leaves 87. `06` §2.2's
 stability gate, the result that licenses this whole strand, was computed on
-the 81 participants clearing the engagement thresholds of `03` §2.1. The
+the 81 participants clearing the engagement thresholds of `06` §2.1. The
 two docs specify different samples for the same object.
 
 **Decided: the threshold-clearing sample, n = 81, and n = 79 once VVIQ is
@@ -462,11 +462,11 @@ can see what the choice does rather than take it on trust.
 
 ### 13.2 The variance split in §2's amendment is an artifact of those six units
 
-`06` §2's amendment records the share of ILR variance carried by the first
+`11` §2's amendment records the share of ILR variance carried by the first
 coordinate as 39% / 28% / 83% for the three candidate first contrasts, and
 treats the gap as the awkward fact that makes the theoretically motivated
 partition expensive. Those figures were computed on 117 pooled units with
-no engagement filter, a sample `02` §3.5 has since retired.
+no engagement filter, a sample `05` §3.5 has since retired.
 
 Recomputed on v1:
 
@@ -479,11 +479,11 @@ Recomputed on v1:
 
 The six units carry roughly three quarters of the total compositional
 variance. On the analysis sample the three partitions are close to
-comparable and the tension `06` §2 describes largely dissolves.
+comparable and the tension `11` §2 describes largely dissolves.
 
 **This must not be presented as the reason for the partition choice.** It
 is a correction to a number computed on a superseded sample, and the
-sample rule was fixed in `03` §2.1 before any contact with VVIQ, so it was
+sample rule was fixed in `06` §2.1 before any contact with VVIQ, so it was
 not selected to produce this. Recording the sequence matters: the
 correction happens to favour the option already preferred on theoretical
 grounds, and a reader is entitled to check that the preference did not
@@ -491,7 +491,7 @@ drive the correction.
 
 ### 13.3 §8.5's two-way trade-off does not survive the engagement filter
 
-`06` §8.5 reports partial correlations between participant means,
+`11` §8.5 reports partial correlations between participant means,
 controlling overall level, of -0.634 (orientation/colour), -0.462
 (word/orientation) and -0.275 (word/colour), and reads them against the
 roughly -0.5 that residualising three variables on their own mean induces
@@ -510,7 +510,7 @@ On v1:
 On B all three sit near the closure baseline. **The two-way trade-off
 reading describes the same six low-engagement units and should be
 withdrawn**, or restated as a property of participants who largely declined
-one feature, which is `08`'s quantity rather than this one.
+one feature, which is `04`'s quantity rather than this one.
 
 What is untouched: word is 90% at ceiling with a split-half reliability of
 0.445 and a precision criterion asking for 93 of 63 trials. The v4
@@ -519,7 +519,7 @@ Only its "the task achieved a two-way trade-off" justification goes.
 
 ### 13.4 Each trial is a composition, so §3's multilevel rationale is right
 
-`06` §3 argues for `multilevelcoda` partly because it "supports multilevel
+`11` §3 argues for `multilevelcoda` partly because it "supports multilevel
 structure natively". The participant-level analysis has one composition per
 person, where a participant random effect is unidentifiable. But each trial
 is a composition of three feature scores in its own right, and that
@@ -546,7 +546,7 @@ things the participant-level model cannot: the between-person composition
 estimated with within-person noise separated out rather than averaged in,
 which is the right treatment of the word-reliability problem rather than a
 caveat about it; an ICC per ILR coordinate, a model-based reliability that
-complements `03` §2.2's split-half 0.771 / 0.721 and comes from the same
+complements `06` §2.2's split-half 0.771 / 0.721 and comes from the same
 fit as the effects; and independence from the engagement threshold, which
 currently doubles as a fix for unequal trial counts.
 
@@ -559,11 +559,11 @@ be wrong.
 ### 13.5 The SBP is resolved: word first
 
 **Decided: word vs (colour + orientation), then colour vs orientation.**
-On substantive grounds, per `06` §2: the verbal versus non-verbal contrast
+On substantive grounds, per `11` §2: the verbal versus non-verbal contrast
 is what the thesis argues about, and the compensatory-verbal-strategy
 framing is the reason this study exists.
 
-Three things make the choice cheaper than `06` §2 feared.
+Three things make the choice cheaper than `11` §2 feared.
 
 **Any two-coordinate ILR basis is a rotation of the same geometry.** Fitted
 as a genuine multivariate model with residual correlation estimated, the
@@ -574,10 +574,10 @@ a constraint on what the data can show. Two conditions: both coordinates go
 in one model with `rescor` estimated, not two separate fits, and priors stay
 symmetric across coordinates. Both are enforced in the script.
 
-**The gate is partition-specific.** `03` §2.2's 0.771 / 0.721 were computed
+**The gate is partition-specific.** `06` §2.2's 0.771 / 0.721 were computed
 for this partition. Switching would leave the strand without a cleared gate
-until `03a-reliability.R` is re-run, which is a concrete cost of switching
-that `06` §2 did not have in view.
+until `06a-reliability.R` is re-run, which is a concrete cost of switching
+that `11` §2 did not have in view.
 
 **The variance argument for switching has shrunk**, per §13.2 above.
 
@@ -596,12 +596,12 @@ this, it would move word into ilr2.
 ### 13.6 VVIQ is resolved: floor-group form, with a comparison
 
 **Decided: `vviq + complete_aphant` is the pre-declared primary**, per
-`09-floor-group.md`. It matches `aphantasiaEmotions` and
-`inst/scripts/09-floor-group.R`, the v1 VVIQ distribution is close to
+`08-predictor-form.md`. It matches `aphantasiaEmotions` and
+`inst/scripts/08-floor-group.R`, the v1 VVIQ distribution is close to
 bimodal (18 of 79 at exactly 16) so a pure linear term is mis-specified,
-and it nests `06` §5's group and continuous questions in one structure.
+and it nests `11` §5's group and continuous questions in one structure.
 
-`09` §4's finding that the continuous term does no work once the floor term
+`08` §4's finding that the continuous term does no work once the floor term
 is present was established on per-feature accuracy, not on ILR coordinates,
 so it is not imported. It is tested.
 
@@ -610,7 +610,7 @@ smaller:** intercept only, two-group split, linear VVIQ, floor-group
 additive, and floor-group without the parity covariate. Compared by LOO.
 
 Two of aphEmo's six candidates are unavailable or ill-conditioned here.
-The four-group categorical is out by `02` §3.5 (hyperphantasia n = 3). A
+The four-group categorical is out by `05` §3.5 (hyperphantasia n = 3). A
 GAM would be smoothing a spike at one x value plus a sparse tail.
 
 **The segmented model is in, after a correction.** The MARS pre-check was
@@ -647,20 +647,20 @@ rather than at colour versus orientation.
 
 ### 13.7 Departures, flags and what has not been run
 
-**Departure from `06` §3: the ILR transform is hand-rolled, not
+**Departure from `11` §3: the ILR transform is hand-rolled, not
 `multilevelcoda`.** The transform is eleven lines, it already exists in
-`03a-reliability.R`, and writing it out keeps the SBP visible in the code
+`06a-reliability.R`, and writing it out keeps the SBP visible in the code
 rather than buried in a `complr()` argument. `multilevelcoda`'s
 between-within decomposition is the one thing it genuinely adds, and it is
 reproducible by hand from the same fit. Revisit if the trial-level model
 turns out to need substitution analyses.
 
-**Flag: parity accuracy is not a smooth covariate.** `06` §8 specifies it as
+**Flag: parity accuracy is not a smooth covariate.** `11` §8 specifies it as
 a continuous predictor. In v1 a quarter of the sample sits at exactly 0.00,
-because v1 carries no parity penalty (`02` §3.5) and the measure is
+because v1 carries no parity penalty (`05` §3.5) and the measure is
 therefore motivational. It is kept continuous, because that is the stated
 default, and the primary model is also fitted without it so the choice can
-be inspected. `04-parity-engagement.md` should decide the form properly.
+be inspected. `03-parity-engagement.md` should decide the form properly.
 
 **Flag: two of the 87 units have no VVIQ**, so the modelling sample is 79
 rather than 81.
@@ -683,7 +683,7 @@ is what brms does internally. None of the three was a modelling error;
 all three were interface errors in code that had never been executed.
 
 **Resolved in passing:** `INDEX` §3's legacy-plotting-code question and
-`06` §9's deferred ternary design. There is no `plot_wm_composition()` in
+`11` §9's deferred ternary design. There is no `plot_wm_composition()` in
 the current package, only in the waiting-room, and it drives `coda.plot`
 through `p$layers[[i]]$geom$default_aes`, which breaks silently on ggplot2
 updates. The new `plot_composition_ternary()` uses the same `coda.plot`

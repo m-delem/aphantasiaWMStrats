@@ -1,12 +1,12 @@
 # ------------------------------------------------------------------------- #
-# 03a-reliability.R ----
+# 06a-reliability.R ----
 #
-# Implements the reliability core of 03-validity-checks.md: §2.1 per-feature
+# Implements the reliability core of 06-task-validity.md: §2.1 per-feature
 # split-half reliability, §2.2 split-half stability of the compositional
 # profile, §2.3 behavioural allocation vs self-reported strategy.
 #
-# Sample: v1 only (N=88), per 02-pooling-strategy.md §3.5.
-# Scores: responders only, per 03 §2.1 as amended — non-responses are
+# Sample: v1 only (N=88), per 05-version-scope.md §3.5.
+# Scores: responders only, per 06 §2.1 as amended — non-responses are
 # scored 0 in the package columns, and a participant who never touched a
 # widget would otherwise show perfect trial-to-trial consistency while
 # measuring nothing.
@@ -16,10 +16,10 @@
 # other participants' — specifically, standard error of the mean at most
 # half the between-person SD, which gives n >= (sd_within / (0.5 *
 # sd_between))^2. Computed from the data below rather than assumed, and
-# fixed before any VVIQ contact per 03 §2.1.
+# fixed before any VVIQ contact per 06 §2.1.
 #
 # Split-half procedure: splits are drawn at the TRIAL level, not the item
-# level, and repeated. 03 §5 flagged that a naive odd/even split should not
+# level, and repeated. 06 §5 flagged that a naive odd/even split should not
 # be assumed appropriate; §1 below is that check.
 #
 # Doc references below are to the planning set in `inst/planning/`.
@@ -47,7 +47,7 @@ d <- all_data |>
   )
 
 # ------------------------------------------------------------------------- #
-# 1. Why the split is at trial level (03 §5's open question, answered) ----
+# 1. Why the split is at trial level (06 §5's open question, answered) ----
 # ------------------------------------------------------------------------- #
 rule("1. Split unit: trials, not items")
 
@@ -66,7 +66,7 @@ cat("construction. Repeated random splits rather than a single odd/even\n")
 cat("split, to avoid depending on one arbitrary partition.\n")
 
 # ------------------------------------------------------------------------- #
-# 2. Engagement threshold (03 §2.1), derived before any VVIQ contact ----
+# 2. Engagement threshold (06 §2.1), derived before any VVIQ contact ----
 # ------------------------------------------------------------------------- #
 rule("2. Engagement threshold, derived from precision requirements")
 
@@ -160,7 +160,7 @@ rel_tab <- do.call(rbind, lapply(features, function(f) {
 print(rel_tab, row.names = FALSE, digits = 3)
 
 cat("\nBenchmark: .70 is the conventional floor for group-level research use,\n")
-cat(".80+ for anything approaching individual-level interpretation. 03 §2.1\n")
+cat(".80+ for anything approaching individual-level interpretation. 06 §2.1\n")
 cat("is explicit that a weak-but-nonzero result is reportable rather than a\n")
 cat("stop condition — but it changes how much weight downstream models bear.\n")
 
@@ -184,7 +184,7 @@ save_ggplot("inst/scripts/figures/r1-split-half-reliability.pdf", p_rel,
 # ------------------------------------------------------------------------- #
 rule("4. §2.2 Split-half stability of the compositional profile")
 
-cat("\nThis is the gate 06-compositional-analysis.md §8.5 makes the whole\n")
+cat("\nThis is the gate 11-compositional-analysis.md §8.5 makes the whole\n")
 cat("compositional strand conditional on. Composition built from\n")
 cat("responders-only means; participants must clear all three thresholds.\n")
 
@@ -229,8 +229,8 @@ cat(sprintf("  ilr2  colour vs orientation        : %.3f  [%.3f, %.3f]\n",
     sb(median(stab[, "ilr2"], na.rm = TRUE)),
     sb(stats::quantile(stab[, "ilr2"], .025, na.rm = TRUE)),
     sb(stats::quantile(stab[, "ilr2"], .975, na.rm = TRUE))))
-cat("\nilr1 is the theoretically motivated coordinate (06 §2) and the\n")
-cat("low-variance one (06 §2's amendment). If it is also the unstable one,\n")
+cat("\nilr1 is the theoretically motivated coordinate (11 §2) and the\n")
+cat("low-variance one (11 §2's amendment). If it is also the unstable one,\n")
 cat("that is the compositional strand's central problem, not a detail.\n")
 
 # ------------------------------------------------------------------------- #

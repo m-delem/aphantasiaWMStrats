@@ -1,21 +1,21 @@
-# WM-FTT: validity checks
+# WM-FTT: task validity and reliability
 
 **Status:** all five checks **implemented and run** on v1; results are
 inline in each section. §2.1, §2.2 and §2.3 in
-`inst/scripts/03a-reliability.R`; §2.4 and §2.5 in
-`inst/scripts/03b-validity-checks.R`. Amended 2026-08-20 during
+`inst/scripts/06a-reliability.R`; §2.4 and §2.5 in
+`inst/scripts/06b-validity-checks.R`. Amended 2026-08-20 during
 the score-computation implementation session: §2.1, §2.2 and §2.4 revised
 for non-response handling, §2.5 added. See
 `non-response-propagation-memo.md`. Sits upstream of performance
 modelling, compositional analysis, and clustering — a shared precondition
 for all three, not specific to one strand. Should run once, before those
-three are built on top of the new scores from `01-score-computation.md`.
+three are built on top of the new scores from `02-score-computation.md`.
 
 **Context:** the handoff (§10) flagged this as an open, unresolved question
 ("does WM-FTT actually measure anything specific or relevant, or is the
 data just noise we're overinterpreting") without a concrete plan attached.
 This doc is that plan. Depends on the scoring pipeline in
-`01-score-computation.md` being implemented first (raw + standardised
+`02-score-computation.md` being implemented first (raw + standardised
 similarity scores per feature).
 
 ---
@@ -38,7 +38,7 @@ can honestly bear in the poster/chapter.
 
 *Four when this doc was written. §2.5 and §2.7 were added during
 implementation, for reasons given in each. A floor-group model was briefly
-added here as §2.6 and then moved out to `09-floor-group.md`: it asks
+added here as §2.6 and then moved out to `08-predictor-form.md`: it asks
 whether complete aphantasia is qualitatively distinct, which is a claim
 about people rather than about the instrument, and a null there would not
 make anyone doubt the task. This doc is validity only.*
@@ -60,7 +60,7 @@ attempt now.
 
 **Amendment 2026-08-20: compute on responded trials only, with a stated
 minimum engagement.** The task encodes non-response with per-feature
-sentinels, and `01-score-computation.md` §2.5.2 scores those as 0. A
+sentinels, and `02-score-computation.md` §2.5.2 scores those as 0. A
 participant who never touched the orientation widget therefore has a
 perfectly consistent score of 0 across every trial, odd and even alike,
 which inflates split-half reliability while measuring nothing about
@@ -103,7 +103,7 @@ like.
 than a stop condition:** orientation and colour support
 individual-differences claims; **word does not**, and no downstream model
 should make one for it regardless of what its coefficients say. See
-`05-performance-modelling.md` §3.4.
+`10-performance-modelling.md` §3.4.
 
 **The threshold must be set on measurement-adequacy grounds and fixed
 before looking at how it interacts with VVIQ.** Non-response is
@@ -133,7 +133,7 @@ separately on odd and even trials per participant, compare. If a
 participant's preference profile bounces around unpredictably between
 random trial splits, the ternary/biplot visualisation is substantially
 showing measurement error, not a trait, regardless of how principled the
-compositional transform itself is (§1 of `01-score-computation.md`).
+compositional transform itself is (§1 of `02-score-computation.md`).
 This is specifically about the *preference framing's* validity, separate
 from whether each individual feature score is reliable — a profile could
 combine two individually-reliable features and still be an unstable
@@ -148,7 +148,7 @@ group and does so unevenly across features (21.7% vs 7.7% on the
 non-verbal features, against 12.9% vs 7.6% on word — see §2.5), a
 composition built from zeros would encode response propensity along
 almost exactly the verbal/non-verbal axis that
-`06-compositional-analysis.md` §2 recommends as the first ILR coordinate.
+`11-compositional-analysis.md` §2 recommends as the first ILR coordinate.
 
 This has a second consequence for the stability check itself: a
 participant who declines a feature consistently will show a *highly
@@ -236,7 +236,7 @@ study.
 
 **Amendment 2026-08-20: run this both ways, and report both. As written,
 this check is circular.** Non-response scores 0
-(`01-score-computation.md` §2.5.2) and non-response correlates with VVIQ
+(`02-score-computation.md` §2.5.2) and non-response correlates with VVIQ
 (§2.5), so the missing-data convention manufactures part of the very
 relationship this check is testing for. Measured directly on the current
 data:
@@ -277,7 +277,7 @@ rather than the pictorial one is a **discriminant validity failure**, and
 that is a more informative result than the original framing could have
 produced. It is worth reporting precisely because it is inconvenient.
 
-**See also `09-floor-group.md`.** The orientation result is further
+**See also `08-predictor-form.md`.** The orientation result is further
 qualified there: once a floor-group term is added, the continuous VVIQ
 slope collapses to zero, so this correlation reflects a contrast between
 complete aphantasics and everyone else rather than a gradient.
@@ -322,7 +322,7 @@ with the version-as-structural-factor position already established.
 ### 2.5 Response propensity as an outcome in its own right
 
 **New section, 2026-08-20.** Added because implementing
-`01-score-computation.md` turned a data-cleaning question into a
+`02-score-computation.md` turned a data-cleaning question into a
 measurement-model one. The four questions above were written assuming
 every trial yields a response. Between 9% and 19% do not, and which ones
 is not random.
@@ -348,7 +348,7 @@ Within v1 (n = 88, the only version with a balanced group split) the
 correlations are −0.091 (orientation, p = 0.41), −0.183 (colour, p = 0.09)
 and −0.054 (word, p = 0.62). The pooled figure is substantially produced
 by v3 being both aphantasia-heavy and the highest-non-response version.
-See `08-response-propensity.md` §3.1. The check specified below is
+See `04-response-propensity.md` §3.1. The check specified below is
 therefore genuinely open, not a confirmation exercise.
 
 **Result 2026-08-20, v1 only.** Two estimators, deliberately reported
@@ -374,7 +374,7 @@ optimistic. The rank correlation ignores trial counts, so it is
 conservative.
 
 **Reading: suggestive for colour, not established; nothing for word or
-orientation.** This is consistent with `08-response-propensity.md` §3.1's
+orientation.** This is consistent with `04-response-propensity.md` §3.1's
 corrected position rather than a change to it.
 
 **A symmetry worth noting across §2.4 and §2.5.** For colour, the imagery
@@ -389,19 +389,19 @@ separated.
 **Check:** model the per-feature `responded_*` indicator directly — a
 binomial or beta-binomial outcome against VVIQ (continuous and grouped),
 feature, and version. This is the same three-part logic
-`04-parity-engagement.md` §1 applies to parity engagement: quantify the
+`03-parity-engagement.md` §1 applies to parity engagement: quantify the
 variable, decide separately whether a discrete split is useful, decide
 separately again what it is used *for*. What does not transfer is the
 variable itself — see below.
 
 **This is not parity disengagement.** The natural assumption is that
 feature non-response and parity disengagement are the same underlying
-withdrawal of effort, in which case `04` would already cover it. The data
+withdrawal of effort, in which case `03` would already cover it. The data
 says otherwise: per-feature non-response correlates with parity accuracy
 at ρ = +0.12 (orientation, p = 0.20), +0.09 (colour, p = 0.35), +0.23
 (word, p = 0.011). Weak, mostly non-significant, and **positive**: the
 opposite sign from a shared-disengagement account. Two distinct
-constructs. (Separately worth flagging to `04`: parity accuracy itself
+constructs. (Separately worth flagging to `03`: parity accuracy itself
 correlates with VVIQ at ρ = −0.334, which that doc does not anticipate.)
 
 **Interpretation, held open deliberately.** An aphantasic declining to
@@ -510,14 +510,14 @@ the codebooks.
 Not written as code here (per current planning-only phase), but scoped
 enough to hand off directly to an implementation session:
 
-- **Sample:** v1 only (N=88), per `02-pooling-strategy.md` §3.5. All four
+- **Sample:** v1 only (N=88), per `05-version-scope.md` §3.5. All four
   checks run on v1; v2 and v3 are reported descriptively in the scoring
   vignette but do not enter these analyses. Note this lowers the cost of
   §2.1's engagement threshold considerably — 7 of 88 excluded rather than
   20 of 118 — because v1's non-response rates are the lowest of the three
   versions.
 - **Inputs needed:** the new raw + standardised per-feature scores
-  (`01-score-computation.md`), the `responded_word`/`responded_angle`/
+  (`02-score-computation.md`), the `responded_word`/`responded_angle`/
   `responded_color` indicators from the same pipeline (added 2026-08-20,
   and required by §2.1, §2.2, §2.4 and §2.5 — the score columns alone are
   not sufficient for any of them), trial-level (not just
@@ -525,7 +525,7 @@ enough to hand off directly to an implementation session:
   requires trial-level granularity, and the existing self-report strategy
   questionnaire columns.
 - **Suggested location:** `inst/scripts/` alongside the score-computation
-  test/plotting scripts already planned in `01-score-computation.md` §8 —
+  test/plotting scripts already planned in `02-score-computation.md` §8 —
   this is exploratory/diagnostic work, not exported package functionality,
   consistent with how `inst/scripts/` is already being used for this kind
   of check.
@@ -548,7 +548,7 @@ enough to hand off directly to an implementation session:
   document. Candidate for its own EOR page (flagged, not decided) given
   it's a methodologically substantial, reusable diagnostic that future
   WM-FTT work (and possibly reviewers) would want to see directly, similar
-  to the scoring page flagged in `01-score-computation.md` §8.
+  to the scoring page flagged in `02-score-computation.md` §8.
 
 ## 5. Open questions, not resolved here
 
@@ -573,7 +573,7 @@ enough to hand off directly to an implementation session:
   and this check cannot separate them.
 - Whether the same reverse-coding inconsistency found in `osivq_items`
   (§2.7) also affects `vviq_items` and `nieq_items`. Not checked. It
-  should be, before `07` uses NIEQ as a clustering input.
+  should be, before `13` uses NIEQ as a clustering input.
 - Whether §2.5's non-response signal warrants its own EOR page or belongs
   inside this one — it has outgrown a subsection of a validity doc.
 - Whether this pass should run once on the current data and be treated as
@@ -582,7 +582,7 @@ enough to hand off directly to an implementation session:
 
 ## 6. Next steps (not this doc)
 
-- Implement `01-score-computation.md`'s scoring pipeline first — this pass
+- Implement `02-score-computation.md`'s scoring pipeline first — this pass
   depends on it.
 - Design and implement the four checks above as `inst/scripts/` diagnostics.
 - Decide, once results are in hand, whether findings are strong enough to

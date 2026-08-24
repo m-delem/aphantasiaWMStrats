@@ -1,19 +1,19 @@
-# WM-FTT: the floor-group model
+# WM-FTT: predictor form — the floor-group model
 
-**Status:** implemented and run on v1 (`inst/scripts/09-floor-group.R`);
+**Status:** implemented and run on v1 (`inst/scripts/08-floor-group.R`);
 results below. Exploratory, and explicitly so, for reasons given in §3.
 
-**Context:** this began as §2.6 of `03-validity-checks.md` and was moved
+**Context:** this began as §2.6 of `06-task-validity.md` and was moved
 out. It asks whether complete aphantasia behaves as a distinct group
 rather than as the low end of a continuum. That is a claim about people,
 not about whether the instrument works, and a null result here would not
-make anyone doubt WM-FTT. It is analysis, and `03` is validity only.
+make anyone doubt WM-FTT. It is analysis, and `06` is validity only.
 
-It sits alongside `02-pooling-strategy.md` and `04-parity-engagement.md`
+It sits alongside `05-version-scope.md` and `03-parity-engagement.md`
 as a **cross-cutting decision about how one variable enters every model**,
 rather than belonging to any single analytical strand. VVIQ is a predictor
-in the performance model (`05`), the compositional model (`06`) and the
-propensity analysis (`08`); if its floor group behaves differently, all
+in the performance model (`10`), the compositional model (`11`) and the
+propensity analysis (`04`); if its floor group behaves differently, all
 three need to know, and burying that in one of them would mean the other
 two either duplicate it or silently ignore it.
 
@@ -103,7 +103,7 @@ pre-specified. It is exploratory, and the writeup must say so.
 populated above-floor continuum. v3 is 17 aphantasia to 4 typical and v2 is
 8 to 1; neither can support an above-floor line at all. This is a v1-only
 check by construction, not merely by the scope decision in
-`02-pooling-strategy.md` §3.5.
+`05-version-scope.md` §3.5.
 
 **Reading:** the floor group may differ on colour recall accuracy, in a
 sample too small to establish it; and §2.4's orientation effect is a
@@ -113,14 +113,14 @@ findings.
 
 ## 4. Consequences for the other docs
 
-- **`03-validity-checks.md` §2.4** is annotated to point here, since its
+- **`06-task-validity.md` §2.4** is annotated to point here, since its
   orientation result is a group contrast rather than a gradient.
-- **`05-performance-modelling.md`** should decide whether VVIQ enters its
+- **`10-performance-modelling.md`** should decide whether VVIQ enters its
   models as a continuous predictor alone or with the floor term. On these
   data the continuous term does no work once the floor term is present.
-- **`06-compositional-analysis.md`** §5 regresses composition against
+- **`11-compositional-analysis.md`** §5 regresses composition against
   continuous VVIQ. Same question applies.
-- **`08-response-propensity.md`** is the one place the continuous form
+- **`04-response-propensity.md`** is the one place the continuous form
   survives: colour propensity keeps its above-floor VVIQ slope
   (p = .002) with no floor offset (p = .33).
 

@@ -1,4 +1,4 @@
-# WM-FTT: clustering analysis
+# WM-FTT: clustering
 
 **Status:** amended 2026-08-20 — §4.0 added, constraining which behavioural measures the held-out validation may use. Framing, scientific lineage (§0), and major risks identified;
 prior published/pre-print methodology reviewed directly (source code
@@ -12,20 +12,20 @@ outcome deferred to real data (§7). Remaining open items are narrower
 and checkable (NIEQ reliability checks, exact validation-pipeline
 implementation) rather than open design questions — see §10. This is the
 doc explicitly flagged as needing the most collaborative design work
-(per `00-analytical-philosophy.md` §10) — the standard here is
+(per `00-framing.md` §10) — the standard here is
 "genuinely convinced," not "technically defensible on paper," and the
 doc is written to support that bar, including surfacing reasons to *not*
 trust a clean-looking result.
 
 **Context:** the fully hypothesis-generating strand of the three-strand
-plan (`00-analytical-philosophy.md` §5) — deliberately ignores
+plan (`00-framing.md` §5) — deliberately ignores
 researcher-defined groups (VVIQ category) and instead looks for latent
 structure across the most relevant subjective and objective variables,
 letting cognitive profiles emerge rather than assuming VVIQ group is the
 right lens. Directly continuous with the author's own prior published work
 (clustering paper) and Reeder et al.'s non-visual-strategy line of
 research, both already cited as direct inspiration (per
-`00-analytical-philosophy.md` §4).
+`00-framing.md` §4).
 
 ---
 
@@ -162,7 +162,7 @@ support a 3–4 cluster solution under this guidance (roughly 30-39 per
 cluster if evenly split, though real subgroups are unlikely to be evenly
 sized). This is a real, load-bearing constraint on how many clusters
 should even be considered as plausible outcomes, not an afterthought —
-and it interacts directly with `02-pooling-strategy.md`'s open v2
+and it interacts directly with `05-version-scope.md`'s open v2
 question: clustering is a place where v2's small N (9) genuinely can't
 carry independent weight, reinforcing that doc's existing framing rather
 than reopening it.
@@ -222,7 +222,7 @@ circularity (§0).
 - OSIVQ subscales (object, spatial, verbal) — continuous, per above.
 - VVIQ — continuous. Note: VVIQ is also the basis of the researcher-
   defined groups that clustering is explicitly trying to look *beyond*
-  (`00-analytical-philosophy.md` §5) — including it as a clustering input
+  (`00-framing.md` §5) — including it as a clustering input
   is not a contradiction (clustering can still reveal structure that
   cuts across VVIQ-based categories even with VVIQ itself as an input,
   per the cited precedent: <cite>characteristic strengths in spatial or
@@ -260,7 +260,7 @@ circularity (§0).
     proportion," measuring the same thing) — should run before NIEQ
     scores are used in clustering, not just as a side curiosity. This is
     the same "reliability before inference" logic already established in
-    `03-validity-checks.md` for WM-FTT's own scores, applied here to a
+    `06-task-validity.md` for WM-FTT's own scores, applied here to a
     second instrument. Source-paper precedent: Table 3 in Heavey et al.
     reports pair-wise item correlations for all five dimensions in their
     N=260 sample — useful as a comparison baseline once WM-FTT's own
@@ -281,7 +281,7 @@ question (§7).
 inputs):**
 
 - **WM-FTT performance and/or compositional scores** (§1 of
-  `01-score-computation.md`) — the primary held-out behavioural target,
+  `02-score-computation.md`) — the primary held-out behavioural target,
   directly parallel to study 2's use of the reasoning task as its
   held-out target (§0). Checking whether trait-based clusters show real
   differences in WM-FTT behaviour is the actual hypothesis test this
@@ -291,7 +291,7 @@ inputs):**
 
 ### 4.0 Amendment 2026-08-20: sample, and what the held-out behavioural measures must be
 
-**Sample: v1 only (N=88)**, per `02-pooling-strategy.md` §3.5. This is a
+**Sample: v1 only (N=88)**, per `05-version-scope.md` §3.5. This is a
 real constraint on this strand specifically — consensus clustering over 9
 input variables at n = 88 is workable but not comfortable, and §7's
 variable-reduction decision procedure becomes more load-bearing than it
@@ -301,7 +301,7 @@ was when the pooled N=118 was assumed.
 Clustering *inputs* are the 9 subjective variables, so cluster formation
 is insulated from the issue below. The **validation** step is not.
 
-Per `08-response-propensity.md`, the per-feature score columns confound
+Per `04-response-propensity.md`, the per-feature score columns confound
 two quantities — whether a participant reported a feature at all, and how
 accurately they reported it. Including non-responses as zeros roughly
 doubles the apparent association between score and VVIQ (§3.2 there), and
@@ -312,7 +312,7 @@ in, which would look like exactly the result this strand wants and mean
 something much weaker.
 
 (Note that whether non-response itself relates to imagery is **not**
-established — the pooled association dissolves within version, `08` §3.1.
+established — the pooled association dissolves within version, `04` §3.1.
 That does not soften the requirement below: a contaminated validator is
 contaminated regardless of what drives the contamination.)
 
@@ -323,7 +323,7 @@ contaminated regardless of what drives the contamination.)
 2. **Reporting propensity is available as a held-out measure in its own
    right**, separately from accuracy. Roughly half the
    between-participant variance in the raw score columns is propensity
-   rather than accuracy (`08` §3.2), so it is a substantial signal in its
+   rather than accuracy (`04` §3.2), so it is a substantial signal in its
    own terms — but it is also strongly version-linked, so any cluster
    structure it validates must be checked against version before being
    read as cognitive.
@@ -352,7 +352,7 @@ heavy free-text/NLP-scale data:
   feature(s) the participant prioritised to maximise their score — a
   second, independent self-report of allocation, distinct from both the
   per-feature strategy checkboxes above and the behavioural compositional
-  proportions (`01-score-computation.md`).
+  proportions (`02-score-computation.md`).
 - **Note on an earlier error in this planning process**: a different
   set of Likert-style (`rating`) strategy items exist in the same source
   file, but belong to the reasoning study's task (`aphantasiaReasoningViie`),
@@ -387,7 +387,7 @@ mutually exclusive:**
   distinction clusters could reveal).
 - **Scoring-priority as a third preference measure**: directly extends
   the self-report-vs-behaviour convergent-validity question already
-  flagged in `00-analytical-philosophy.md` §6 and `03-validity-checks.md`
+  flagged in `00-framing.md` §6 and `06-task-validity.md`
   §2.3 — now three comparable signals exist (self-reported priority,
   self-reported per-feature strategy, behavioural compositional
   allocation), checkable pairwise or jointly against cluster membership.
@@ -410,7 +410,7 @@ as equally important as the model-fitting itself, not an optional add-on:
 - **Stability check**: does the cluster solution replicate under
   resampling (bootstrap, or split-half if sample size allows) rather than
   being an artifact of the specific sample fitted? Directly analogous in
-  spirit to `03-validity-checks.md`'s split-half approach for the
+  spirit to `06-task-validity.md`'s split-half approach for the
   compositional profile — the same "is this a stable trait-like signal or
   noise reshuffled" logic applies here.
 - **Null/permutation comparison**: given §1's simulation finding (spurious
@@ -434,7 +434,7 @@ as equally important as the model-fitting itself, not an optional add-on:
   a substantive check on whether the clusters are doing real explanatory
   work, not just a study of the input variables' own correlation
   structure. This connects clustering back to the performance-modelling
-  strand (`05`) as a genuine cross-check between two independently-
+  strand (`10`) as a genuine cross-check between two independently-
   designed analyses, not just a shared-variable convenience.
 - **Theory-vs-data k comparison (added, per §6.7's parallel two-arm
   design)**: a free-k, PAC-selected run compared against a theory-based
@@ -589,7 +589,7 @@ rather than strengthens the ensemble. `cmeans` (fuzzy c-means) is
 cluster membership rather than hard assignment, which fits both the
 general power-analysis guidance already in §2 (favouring methods that
 tolerate overlapping distributions over hard partitioning) and the
-substantive expectation from `00-analytical-philosophy.md` §5 that
+substantive expectation from `00-framing.md` §5 that
 cognitive profiles are more likely to overlap than form cleanly
 separated groups. **Assessment: `km`, `pam`, `cmeans` all reasonable
 candidates; `ap` excluded on principled grounds (k-selection logic
@@ -825,7 +825,7 @@ narrowed 3-variable set (which had no reduction question left to ask).
 Neither prior study directly answers this for WM-FTT — this section is a
 plan for how to decide, not the decision itself, consistent with this
 doc's general pattern of not pre-committing before real data is examined
-(§3's response-family deferral, `05-performance-modelling.md`'s deferred
+(§3's response-family deferral, `10-performance-modelling.md`'s deferred
 family choice, follow the same logic).
 
 **What would actually justify reduction, stated as a testable condition
@@ -921,7 +921,7 @@ specific, principled choice, not an assertion of uniqueness.
 |---|---|---|
 | Central risk to design against | Spurious clusters from correlated, non-orthogonal indicators at modest N | Identified, governs rest of doc |
 | Minimum viable subgroup size | N=20–30 per expected cluster (literature guidance) | Adopted as planning constraint |
-| v2 role | Excluded from carrying independent weight, consistent with `02-pooling-strategy.md` | Settled (inherited, not re-decided) |
+| v2 role | Excluded from carrying independent weight, consistent with `05-version-scope.md` | Settled (inherited, not re-decided) |
 | Comparison against the author's own prior published/pre-print methods | **Done** — both prior R packages read directly (§6.1) | Settled |
 | Prior-method finding | Model-based (GMM) clustering at N≈96–104 produced a result that replicated across two independent samples and two methods | Strong positive evidence, revises earlier general-literature caution upward (§6.2) |
 | Base clustering algorithms | `gmm`, `pam`, `km`, `cmeans` primary; `hc`/`diana` included but down-weighted; `ap`/`hdbscan`/`nmf`/`sc`/`som`/`block` excluded on a priori structural grounds | Settled (§6.4) |
@@ -954,7 +954,7 @@ specific, principled choice, not an assertion of uniqueness.
   isn't yet written as executable steps.
 - Whether version should be a clustering input, a stratification variable,
   or excluded entirely — not addressed in this draft, worth raising
-  explicitly given `02-pooling-strategy.md`'s general stance on version
+  explicitly given `05-version-scope.md`'s general stance on version
   as structural rather than nuisance.
 - Concrete operationalisation choice(s) among §4.1's several options for
   self-report strategy validation use — several were listed as
@@ -970,6 +970,6 @@ specific, principled choice, not an assertion of uniqueness.
   clustering is run, per §7's ordering constraint.
 - Design the full validation pipeline (§5) as concrete, implementable
   steps, incorporating §6.5's resampling specification directly.
-- Implement `01-score-computation.md`'s pipeline (shared dependency).
-- Revisit v2/version questions here only if `02-pooling-strategy.md`'s
+- Implement `02-score-computation.md`'s pipeline (shared dependency).
+- Revisit v2/version questions here only if `05-version-scope.md`'s
   general resolution changes.

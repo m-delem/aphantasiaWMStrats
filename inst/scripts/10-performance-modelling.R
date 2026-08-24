@@ -1,27 +1,27 @@
 # ------------------------------------------------------------------------- #
-# 05-performance-modelling.R ----
+# 10-performance-modelling.R ----
 #
-# Implements 05-performance-modelling.md §11.
+# Implements 10-performance-modelling.md §11.
 #
 # Doc references below are to the planning set in `inst/planning/`.
 #
-# Primary model, Option C-prime (05 §11.2): a multivariate model with a
+# Primary model, Option C-prime (10 §11.2): a multivariate model with a
 # per-feature response family and correlated participant random
 # intercepts. The `|p|` in `(1 | p | id)` is what carries the
 # cross-feature dependency Option C existed to capture, delivered as
 # three named pairwise correlations rather than random slopes read
 # relative to an arbitrary reference feature.
 #
-# Families, per 05 §11.3, chosen by what each boundary means:
+# Families, per 10 §11.3, chosen by what each boundary means:
 #   word        zero-one-inflated Beta   90.7% at exactly 1 is a real mass
 #   orientation Beta                     no boundary mass at all
 #   colour      Beta, after an SV squeeze  exact 1s are pixel resolution
 #
 # Word is retained but excluded from individual-differences inference
-# (05 §11.4). Its split-half reliability is 0.445; its coefficients are
+# (10 §11.4). Its split-half reliability is 0.445; its coefficients are
 # reported with that number attached and no claim is drawn from them.
 #
-# The hurdle is staged (05 §11.6): everything here is conditional on
+# The hurdle is staged (10 §11.6): everything here is conditional on
 # responding, and §7 fits the joint propensity/accuracy model on
 # orientation alone as a test of whether that conditioning was legitimate.
 #
@@ -53,7 +53,7 @@ fit_config <-
          prefix = "", trials_per_id = Inf)
   }
 
-# Sample. "engaged" is the 79 participants of 06 §13.1, which keeps this
+# Sample. "engaged" is the 79 participants of 11 §13.1, which keeps this
 # strand comparable with the compositional one. The multilevel structure
 # here would tolerate the looser sample, since partial pooling handles
 # unequal trial counts natively, but the engagement thresholds are a
@@ -124,7 +124,7 @@ cat("\nsample:", SAMPLE, "|", dplyr::n_distinct(model_data$id), "participants,",
 cat("at the VVIQ floor:", dplyr::n_distinct(model_data$id[model_data$vviq == 16]),
     " above floor:", dplyr::n_distinct(model_data$id[model_data$vviq > 16]), "\n")
 
-# Boundary mass on responded trials. This is the table 05 §11.1 records,
+# Boundary mass on responded trials. This is the table 10 §11.1 records,
 # recomputed here rather than trusted, because the family choice below
 # rests entirely on it.
 boundary_table <-
@@ -157,7 +157,7 @@ cat("and they need different things.\n")
 # open interval: y' = (y * (n - 1) + 0.5) / n.
 #
 # Applied to colour and NOT to word, because of what the boundary means
-# (05 §11.3). Colour score is cosine similarity on a continuous wheel, so
+# (10 §11.3). Colour score is cosine similarity on a continuous wheel, so
 # an exact 1 is an error of exactly zero degrees, which is pixel
 # resolution rather than a behaviour. Word's ceiling is a real mass: a
 # recalled word either matches or it does not, and that earns an
@@ -331,9 +331,9 @@ purrr::imap(
 # ------------------------------------------------------------------------- #
 rule("4. Functional form of the VVIQ relationship")
 
-cat("\nRun on orientation alone, mirroring 06 §13.6's decision to compare\n")
+cat("\nRun on orientation alone, mirroring 11 §13.6's decision to compare\n")
 cat("forms where the signal is. Orientation is the best-measured feature\n")
-cat("(split-half 0.822) and 03 §2.4 already associates it with VVIQ.\n")
+cat("(split-half 0.822) and 06 §2.4 already associates it with VVIQ.\n")
 cat("\nThe target was fixed on those grounds before the pre-check ran, and\n")
 cat("is not revised in light of it. If colour turns out to carry the knot\n")
 cat("and orientation does not, that is worth recording and is not a reason\n")
@@ -343,7 +343,7 @@ cat("to switch the comparison onto colour after the fact.\n")
 #
 # Two things it has to get right. Knots come off the PRUNED model
 # (`selected.terms`), not off `$cuts`, which also carries the candidate
-# terms the backward pass discarded; that was the bug in 06 §13.6. And it
+# terms the backward pass discarded; that was the bug in 11 §13.6. And it
 # runs on one row per participant, because the question is the shape of a
 # BETWEEN-person relationship. Run on items, each participant contributes
 # about 63 rows carrying the same VVIQ value, which inflates n by a factor
@@ -400,7 +400,7 @@ if (requireNamespace("earth", quietly = TRUE)) {
   cat("\n\n")
 
   cat("MARS silence means no HINGE worth keeping under GCV pruning, not\n")
-  cat("that VVIQ is unrelated to the feature: 03 §2.4 reports rho = +0.229\n")
+  cat("that VVIQ is unrelated to the feature: 06 §2.4 reports rho = +0.229\n")
   cat("for orientation. Pruning at n = 79 is conservative and will drop a\n")
   cat("weak linear term. The LOO comparison below is what tests that.\n")
 
@@ -443,7 +443,7 @@ candidates <- list(
 
 # The segmented model is fitted only if MARS located a single interior
 # knot. Without one there is nothing to seed it from, and at this sample
-# size it would report its prior. 06 §13.6 records what an unidentified
+# size it would report its prior. 11 §13.6 records what an unidentified
 # knot looks like: an interval running past the end of the scale.
 if (!is.na(SEED_KNOT)) {
   f_segmented <- fit_brms_model(
@@ -488,8 +488,8 @@ saveRDS(form_comparison,
         fs::path(result_dir, paste0(fit_config$prefix, "perf-form-loo.rds")))
 
 cat("\nThe floor-group form is primary because it was pre-declared\n")
-cat("(05 §11.5), not because it wins here. Check the N < 100 diagnostic\n")
-cat("flag before reading anything into the differences: 06 §13.6 hit it,\n")
+cat("(10 §11.5), not because it wins here. Check the N < 100 diagnostic\n")
+cat("flag before reading anything into the differences: 11 §13.6 hit it,\n")
 cat("and it means loo's standard errors are themselves unreliable.\n")
 
 # recent loo versions return a `model` column already; older ones put the
@@ -553,12 +553,12 @@ m_c_prime <- fit_brms_model(
 
 print(brms::fixef(m_c_prime), digits = 3)
 
-cat("\nWORD'S COEFFICIENTS ARE NOT FOR INFERENCE (05 §11.4). Word's\n")
+cat("\nWORD'S COEFFICIENTS ARE NOT FOR INFERENCE (10 §11.4). Word's\n")
 cat("split-half reliability is 0.445 [0.251, 0.605], and the precision\n")
-cat("criterion of 03 §2.1 asks for 93 trials of the 63 that exist. Its\n")
+cat("criterion of 06 §2.1 asks for 93 trials of the 63 that exist. Its\n")
 cat("rows are reported so the model is complete, not so they can be read.\n")
 
-# The dependency structure, made legible (05 §4) ----
+# The dependency structure, made legible (10 §4) ----
 #
 # Item 1 of §4: pull the correlations out of the posterior draws rather
 # than reading VarCorr() point estimates, so they can be plotted with
@@ -604,7 +604,7 @@ print(as.data.frame(correlation_summary), row.names = FALSE, digits = 3)
 saveRDS(correlation_summary,
         fs::path(result_dir, paste0(fit_config$prefix, "perf-correlations.rds")))
 
-cat("\nRead these against 06 §13.3, whose raw partial correlations sit near\n")
+cat("\nRead these against 11 §13.3, whose raw partial correlations sit near\n")
 cat("the -0.5 that closure induces on its own. These are not closed, so\n")
 cat("the sign carries information: negative would be a genuine trade-off,\n")
 cat("positive means participants good at one feature tend to be good at\n")
@@ -637,7 +637,7 @@ p_correlations <-
 save_ggplot("inst/scripts/figures/p3-feature-correlations.pdf",
             p_correlations, ncol = 1, height = 60, return = TRUE)
 
-# Figure 4: partial pooling made visible (05 §4, item 3) ----
+# Figure 4: partial pooling made visible (10 §4, item 3) ----
 observed_means <-
   model_data |>
   compose_features(id) |>
@@ -704,7 +704,7 @@ p_shrinkage <-
 save_ggplot("inst/scripts/figures/p4-shrinkage.pdf",
             p_shrinkage, ncol = 2, height = 70, return = TRUE)
 
-# Figure 5: the A-versus-C-prime contrast (05 §4, item 4) ----
+# Figure 5: the A-versus-C-prime contrast (10 §4, item 4) ----
 #
 # The narrative payoff of §1. The same quantity, the floor-group offset,
 # estimated by the model that ignores the dependency and by the model
@@ -769,7 +769,7 @@ cat("selected subsample. If participants who abstain more also perform\n")
 cat("differently when they do answer, those estimates are biased, and no\n")
 cat("separate analysis can detect it. This model estimates the one\n")
 cat("quantity that would: the participant-level correlation between\n")
-cat("response propensity and conditional accuracy (05 §11.6).\n")
+cat("response propensity and conditional accuracy (10 §11.6).\n")
 cat("\nOrientation only, deliberately. It has the highest non-response and\n")
 cat("the cleanest Beta, so it is where the problem surfaces first, and a\n")
 cat("convergence failure on all three at once would teach nothing.\n")
@@ -816,7 +816,7 @@ print(as.data.frame(joint_correlation), row.names = FALSE)
 saveRDS(joint_correlation,
         fs::path(result_dir, paste0(fit_config$prefix, "perf-joint-cor.rds")))
 
-cat("\nWhat this decides, stated before the number was seen (05 §11.6):\n")
+cat("\nWhat this decides, stated before the number was seen (10 §11.6):\n")
 cat("  inside the ROPE -> the separation is vindicated, 05 keeps accuracy,\n")
 cat("    08 keeps propensity, and both are reported separately.\n")
 cat("  outside the ROPE -> the joint model becomes primary for orientation\n")

@@ -2,21 +2,21 @@
 
 **Status:** new doc, 2026-08-20, **corrected the same day** — see §3.1.
 The first draft treated the π-by-imagery association as established on
-pooled data; stratifying by version, as `02-pooling-strategy.md` requires,
+pooled data; stratifying by version, as `05-version-scope.md` requires,
 dissolves most of it. The doc is retained because the quantity it defines
 (§1) and the convention problem it identifies (§3.2) are unaffected, and
 because the error is worth keeping visible. Written during the
 score-computation implementation session, from findings that emerged while
-implementing `01-score-computation.md` §2.5.2 rather than from prior
+implementing `02-score-computation.md` §2.5.2 rather than from prior
 planning. The
-quantity it describes is not anticipated anywhere in `00`–`07`. Evidence
+quantity it describes is not anticipated anywhere in `00`–`13`. Evidence
 is descriptive and post hoc; the modelling design here is a plan, not yet
-implemented. Depends on `01-score-computation.md`'s `responded_*`
-indicators. Amends or constrains `02`, `03`, `04`, `05`, `06` and `07` —
+implemented. Depends on `02-score-computation.md`'s `responded_*`
+indicators. Amends or constrains `05`, `06`, `03`, `10`, `11` and `13` —
 see `non-response-propagation-memo.md` for the full map.
 
 **Context:** WM-FTT encodes non-response with per-feature sentinels rather
-than `NA`, and `01` §2.5.2 scores those as 0. Between 9% and 19% of block
+than `NA`, and `02` §2.5.2 scores those as 0. Between 9% and 19% of block
 trials are non-responses, the rate differs by feature and by version, and
 it correlates with VVIQ. That last fact turns a missing-data convention
 into a measurement-model problem, because the convention manufactures part
@@ -35,7 +35,7 @@ For each participant × feature there are two distinct parameters, not one:
 - **μ, conditional accuracy** — the expected similarity score *given* that
   they responded.
 
-Under `01` §2.5.2's rule the score column is approximately **π · μ**. It is
+Under `02` §2.5.2's rule the score column is approximately **π · μ**. It is
 a product of two quantities with different meanings, which is why it
 behaves ambiguously: a mean score of 0.6 is equally consistent with
 "responded every trial, moderately accurate" and with "responded on
@@ -45,7 +45,7 @@ two-thirds of trials, near-perfect when they did".
 about.** Score-0 answers "both at once, weighted by how often the person
 declined", which is not a quantity anyone intends to estimate.
 
-**This is not a defect of the scoring rule.** `01` §2.5.2 considered
+**This is not a defect of the scoring rule.** `02` §2.5.2 considered
 `NA` and rejected it, on the grounds that non-response here is very
 unlikely to be missing-at-random and `NA` would let listwise deletion
 silently drop exactly the aphantasia-relevant observations. That reasoning
@@ -55,7 +55,7 @@ to actually separate them, which is what this doc supplies.
 
 ## 2. Why π is a substantive variable, not a nuisance
 
-`00-analytical-philosophy.md` §1 establishes, from the task's own
+`00-framing.md` §1 establishes, from the task's own
 documentation, that WM-FTT is a resource-allocation task by design:
 partial credit per feature, participants told to maximise total score,
 scoring built "to elicit a genuine strategic trade-off between feature
@@ -66,15 +66,15 @@ direct expression of allocation the task can produce.** It is not a
 degraded observation of accuracy; it is an unambiguous statement that the
 participant allocated nothing to that feature on that trial.
 
-This inverts the current framing. `06-compositional-analysis.md` infers
+This inverts the current framing. `11-compositional-analysis.md` infers
 relative allocation *indirectly*, from proportions of accuracy scores,
-while `01` §2.5.2 folds the direct expression of allocation into those same
+while `02` §2.5.2 folds the direct expression of allocation into those same
 scores as failure. The compositional strand is reconstructing from a noisy
 proxy something the data records explicitly.
 
 **Decision: π is treated as a substantive outcome in its own right, not as
 a filter, a covariate, or a data-quality threshold.** This mirrors
-`04-parity-engagement.md` §1's structure for parity engagement — quantify
+`03-parity-engagement.md` §1's structure for parity engagement — quantify
 the variable, decide separately whether a discrete split is useful, decide
 separately again what it is used *for* — and reaches the same conclusion
 for the same reason: an engagement signal that differs systematically
@@ -102,7 +102,7 @@ in full rather than quietly revised, because the error is instructive.
 | Colour | −0.303 | 0.0009 | 15.0% | 4.0% |
 | Word | −0.195 | 0.036 | 12.9% | 7.6% |
 
-**Within version, which is what `02-pooling-strategy.md` requires before
+**Within version, which is what `05-version-scope.md` requires before
 any pooled estimate is believed:**
 
 | Version | n | Aph / Typ | Orientation | Colour | Word |
@@ -119,7 +119,7 @@ The pooled association is substantially produced by v3 being *both*
 deliberately aphantasia-heavy *and* the version with by far the highest
 non-response (§3.4). Pooling those strata manufactures an
 imagery-by-propensity association out of a version-by-both association.
-This is the failure mode `02` was written to prevent, committed in the
+This is the failure mode `05` was written to prevent, committed in the
 first draft of this very doc.
 
 **What can honestly be said:** π may relate to imagery, most plausibly for
@@ -127,7 +127,7 @@ colour, and the current data cannot establish it. v3's within-version
 correlations are large but rest on 21 participants with a 17-to-4 group
 split. v1 says little. The question is open, not answered.
 
-**Modelled directly (`03-validity-checks.md` §2.5, run 2026-08-20), this
+**Modelled directly (`06-task-validity.md` §2.5, run 2026-08-20), this
 holds.** A quasi-binomial GLM on v1 gives log-odds slopes of +0.008
 (word, p = .42), +0.016 (orientation, p = .042) and +0.031 (colour,
 p = .006); the conservative rank correlations are -0.054 (p = .62),
@@ -204,7 +204,7 @@ only:
 | Colour | 0.091 | **0.000** | 0.005 |
 
 Once non-responders are removed, orientation and colour have no mass at
-either boundary. This is the evidence behind `05-performance-modelling.md`
+either boundary. This is the evidence behind `10-performance-modelling.md`
 §3's revised response-family answer (§5 below).
 
 ### 3.4 π differs sharply by version
@@ -217,7 +217,7 @@ Non-response rate, experimental blocks, by version:
 | Colour | 6.7% | 19.6% | 15.0% |
 | Word | 8.0% | 14.1% | 17.0% |
 
-`02-pooling-strategy.md` treats version as a structural factor reflecting
+`05-version-scope.md` treats version as a structural factor reflecting
 task mechanics. This is a version difference in *engagement*, which that
 doc does not anticipate, and it is large — orientation non-response
 roughly triples from v1 to v3. Whether it reflects the randomised recall
@@ -229,15 +229,15 @@ have different implications for pooling.
 
 **Not parity disengagement.** The natural assumption is that feature
 non-response and parity disengagement are the same withdrawal of effort,
-in which case `04-parity-engagement.md` would already cover it. It does
+in which case `03-parity-engagement.md` would already cover it. It does
 not: per-feature non-response correlates with parity accuracy at ρ = +0.12
 (orientation, p = 0.20), +0.09 (colour, p = 0.35), +0.23 (word,
 p = 0.011). Weak, mostly non-significant, and **positive** — higher parity
 accuracy goes with *more* feature non-response, the opposite sign from a
-shared-disengagement account. Two distinct constructs; `04`'s framework
+shared-disengagement account. Two distinct constructs; `03`'s framework
 transfers, its variable does not.
 
-Worth flagging back to `04` separately: parity accuracy itself correlates
+Worth flagging back to `03` separately: parity accuracy itself correlates
 with VVIQ at ρ = −0.334, which that doc does not anticipate.
 
 **Not a data-quality problem to be excluded away.** Removing the seven
@@ -245,7 +245,7 @@ high-non-response units would not remove an association running through
 all 118.
 
 **Not a threshold decision.** Minimum-engagement thresholds are still
-needed for μ-based analyses (`03-validity-checks.md` §2.1), but they are a
+needed for μ-based analyses (`06-task-validity.md` §2.1), but they are a
 precision requirement on a different quantity, not a treatment of this
 one. Participants excluded from μ analyses for low π are retained here,
 where they are the most informative part of the distribution.
@@ -259,24 +259,24 @@ Beta-binomial if overdispersion is present, which is likely given the
 bimodality visible in the marginal rates.
 
 **Feature must enter with sum-to-zero contrasts**, for the same reason
-`05-performance-modelling.md` §2 requires it of the performance model:
+`10-performance-modelling.md` §2 requires it of the performance model:
 the scientific question concerns relative propensity across three features
 of equal status, and dummy coding would entangle every contrast with an
 arbitrary reference feature.
 
-**Relationship to `05`'s performance model.** π and μ can be fitted as one
+**Relationship to `10`'s performance model.** π and μ can be fitted as one
 **hurdle** model — a Bernoulli component for responding and a bounded
 component for accuracy given response — or as two separate models. The
-hurdle is the more principled object and is what `05` §3's deferred
+hurdle is the more principled object and is what `10` §3's deferred
 response-family question should resolve to (§3.3 above is the evidence).
 But two separate models are easier to interpret, easier to diagnose, and
 sufficient for the questions in this doc. **Decision: fit π separately
-first, here; treat the joint hurdle as `05`'s problem, informed by this
+first, here; treat the joint hurdle as `10`'s problem, informed by this
 doc's results.** Not a permanent split — a sequencing choice, so that a
 convergence failure in a joint model does not take the π results down with
 it.
 
-**Relationship to `bmm` (`01-score-computation.md` §5).** The connection is
+**Relationship to `bmm` (`02-score-computation.md` §5).** The connection is
 closer than that doc's parked status suggests. `bmm`'s continuous-report
 models decompose a response into target recall, guessing, and swap errors —
 but each of those states *is a response*, with an angular error to
@@ -284,7 +284,7 @@ attribute. Abstention is a fourth state the mixture cannot represent,
 because there is no report to decompose. A hurdle gate is the natural
 place for it, and it **composes** with a mixture rather than competing:
 gate on responding, then decompose the responses that exist. The obstacle
-`01` §5 parked `bmm` on was per-participant trial counts, which the gate
+`02` §5 parked `bmm` on was per-participant trial counts, which the gate
 does not change — but "parked as unrelated" is no longer an accurate
 description of the relationship.
 
@@ -341,14 +341,14 @@ untouched widget, or a manipulation of the point value of each feature —
 if abstention is strategic it should respond to incentive, and if it
 reflects representational absence it should not. This belongs in the
 recommendations for a future task version, alongside the word-difficulty
-problem (`01-score-computation.md` §2, word's 90% ceiling).
+problem (`02-score-computation.md` §2, word's 90% ceiling).
 
 ## 7. Version and pooling
 
-Governed by `02-pooling-strategy.md`'s decision procedure, with one
+Governed by `05-version-scope.md`'s decision procedure, with one
 addition: because §3.4 shows π differs sharply by version, this doc's
 models should carry version explicitly rather than pooling silently, and
-`02` §3 step 4's version-composition-reporting requirement should be
+`05` §3 step 4's version-composition-reporting requirement should be
 extended to report non-response rates per version alongside group
 composition. Not re-litigated here beyond that.
 
@@ -392,11 +392,11 @@ task version (§6).
 ## 9. What this doc deliberately does not do
 
 - Does not decide the minimum-engagement threshold for μ-based analyses —
-  that is `03-validity-checks.md` §2.1's, and is a precision requirement
+  that is `06-task-validity.md` §2.1's, and is a precision requirement
   on a different quantity.
 - Does not design the joint hurdle model — deferred to
-  `05-performance-modelling.md` §3, informed by this doc's results (§5).
-- Does not re-open `01-score-computation.md` §2.5.2's score-0 decision.
+  `10-performance-modelling.md` §3, informed by this doc's results (§5).
+- Does not re-open `02-score-computation.md` §2.5.2's score-0 decision.
   That decision is correct for the default column; this doc supplies the
   missing instruction to separate π from μ at analysis time.
 - Does not attempt to adjudicate §6's three mechanisms, beyond flagging
@@ -411,8 +411,8 @@ task version (§6).
 | Is π a nuisance or an outcome? | Outcome, on `00` §1's own grounds — abstention is the direct expression of allocation | Settled |
 | Relationship to parity engagement | Distinct construct; weak, positive, mostly non-significant correlation | Settled, evidence-based |
 | Primary model | Binomial / beta-binomial on responded-trial counts, feature and version as factors | Settled |
-| Feature contrast coding | Sum-to-zero, per `05` §2's reasoning | Settled |
-| Joint hurdle with μ | Deferred to `05` §3; π fitted separately first | Settled as sequencing |
+| Feature contrast coding | Sum-to-zero, per `10` §2's reasoning | Settled |
+| Joint hurdle with μ | Deferred to `10` §3; π fitted separately first | Settled as sequencing |
 | `bmm` relationship | Composes with a mixture via a hurdle gate, not an alternative to it | Settled in principle |
 | Interpretation | Three mechanisms stated; metacognitive abstention ruled out by RT, other two remain live | Settled on current evidence |
 | Response-time check on abstained trials | Run — abstention is ~3x faster than responding (§6) | Done |
@@ -450,7 +450,7 @@ task version (§6).
 - Carry §6's task-design recommendations (confidence rating, explicit
   "don't know" control, incentive manipulation) into whatever record is
   kept for a future WM-FTT version, alongside the word-ceiling problem.
-- Apply the amendments this doc implies elsewhere: `06` §7 and §2, `05`
-  §3, `02` §3, `07` §4, `04` §1, `01` §5, and `00` §3's framing, which
+- Apply the amendments this doc implies elsewhere: `11` §7 and §2, `10`
+  §3, `05` §3, `13` §4, `03` §1, `02` §5, and `00` §3's framing, which
   currently accounts for two quantities where there are three. See
   `non-response-propagation-memo.md` §5 for the order.

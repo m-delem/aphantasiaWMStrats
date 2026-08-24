@@ -1,5 +1,10 @@
 # WM-FTT: parity engagement
 
+**Status: resolved 2026-08-24, and §11 supersedes §§2, 4 and 8.** The
+variable this doc chose as primary did not exist: `parity_*_acc` scores
+unanswered probes as 0, and in v1 92% of its zeros are unanswered rather
+than wrong. Read §11 before acting on anything above it.
+
 **Status:** plan settled, not yet implemented. Amended 2026-08-20: §1 records a second, independent engagement signal (feature non-response) that does not reduce to parity, and flags that parity accuracy itself correlates with VVIQ. Touches validity checks,
 performance modelling, and the sample-pooling decision (`02-pooling-
 strategy.md`) — read that doc alongside this one, since how parity
@@ -38,7 +43,7 @@ choice:
 **Amendment 2026-08-20: a second, independent engagement signal exists,
 and it does not reduce to parity.** Participants also decline to respond
 to the recall features themselves, at rates of 9–19% of trials
-(`08-response-propensity.md`). The natural assumption is that this is the
+(`04-response-propensity.md`). The natural assumption is that this is the
 same withdrawal of effort this doc describes, in which case this doc would
 cover both. It is not: per-feature non-response correlates with parity
 accuracy at ρ = +0.12 (orientation, p = 0.20), +0.09 (colour, p = 0.35)
@@ -58,7 +63,7 @@ not what a nuisance covariate is supposed to do. Not resolved here, but it
 should be checked before parity accuracy enters any model as a covariate.
 
 **Scope amendment 2026-08-20: v1 is the primary analysis sample
-(`02-pooling-strategy.md` §3.5), and v1 carries no parity penalty.**
+(`05-version-scope.md` §3.5), and v1 carries no parity penalty.**
 Verified directly: in all 1848 v1 trials the trial score equals the sum of
 the three feature scores, with no deduction for incorrect parity
 judgements. So in the version this doc's analyses will actually run on,
@@ -147,7 +152,7 @@ different costs and different justificatory burdens:
 - **Filter** (exclude disengaged participants from the main analysis):
   the most destructive option — reduces effective sample size, which
   matters a great deal given v2/v3 are already small (see
-  `02-pooling-strategy.md`). Defensible only if disengagement genuinely
+  `05-version-scope.md`). Defensible only if disengagement genuinely
   means the manipulation failed for that person in a way that invalidates
   their data for the specific question being asked, not just "engagement
   was imperfect." **Not the default choice** — needs an explicit
@@ -165,14 +170,14 @@ different costs and different justificatory burdens:
   split is worth building even though the continuous variable handles the
   covariate case.
 
-**Where this connects to `03-validity-checks.md`:** the engaged/disengaged
+**Where this connects to `06-task-validity.md`:** the engaged/disengaged
 moderation finding is arguably as much a validity question (does the task
 work as intended, for whom) as it is a performance-modelling question.
 Worth deciding at write-up time whether it's presented primarily as a
 validity finding, a performance-modelling finding, or both — not decided
 here, flagged for later.
 
-## 6. Cross-version dependency — read alongside `02-pooling-strategy.md`
+## 6. Cross-version dependency — read alongside `05-version-scope.md`
 
 Parity engagement can't be fully scoped independent of the pooling
 decision: whether "engaged" is defined and analysed **within each version
@@ -206,7 +211,7 @@ Not written as code here (planning-only phase). Sequenced roughly as:
    subgroups) replicates or is specific to v1's no-penalty design. This
    may only be meaningfully testable within v1 alone, given v2/v3's small
    samples and different task mechanics — flagged, not resolved, depends
-   on `02-pooling-strategy.md`.
+   on `05-version-scope.md`.
 
 **Suggested location:** `inst/scripts/`, alongside the scoring and
 validity-check diagnostics already planned, for the same reason — this is
@@ -224,7 +229,7 @@ part of the "real" performance model at step 3.
 | Default use in performance model                  | Covariate (continuous)                                                                        | Settled                     |
 | Filter (exclusion) use                            | Not default, needs case-by-case justification                                                 | Settled                     |
 | Moderator use                                     | Real candidate, motivated by v1's documented finding; feasibility depends on pooling decision | Flagged, not fully resolved |
-| Within-version vs. pooled definition of "engaged" | Depends on `02-pooling-strategy.md`                                                           | Deferred to that doc        |
+| Within-version vs. pooled definition of "engaged" | Depends on `05-version-scope.md`                                                           | Deferred to that doc        |
 
 ## 9. Open questions, not resolved here
 
@@ -238,9 +243,124 @@ part of the "real" performance model at step 3.
 
 ## 10. Next steps (not this doc)
 
-- Read `02-pooling-strategy.md` alongside this one before implementing
+- Read `05-version-scope.md` alongside this one before implementing
   anything version-dependent here.
 - Implement the distribution check (§7 step 1) first — its result shapes
   whether steps 2–4 need a threshold decision at all.
 - Fold the covariate (§7 step 3) into the performance-modelling plan once
   that doc exists.
+
+# --- appended below ---
+
+## 11. Resolution, 2026-08-24
+
+**The variable this doc is about did not exist.** `03` §2 chose "continuous
+parity accuracy" as the primary variable, and §8 recorded that as settled.
+It was not answerable as written, because `parity_1_acc` and
+`parity_2_acc` are not accuracy variables.
+
+### 11.1 What the columns actually contain
+
+They score an unanswered probe as 0, the same convention `02` §2.5.2
+applies to recall and that `04` exists to unpick. Nobody unpicked it here.
+In v1, of 3315 zeros on `parity_1_acc`, **3046 are probes where
+`parity_1_resp` and `parity_1_rt` are both `NA`** and only 269 are
+answered-and-wrong.
+
+Split at participant level over 126 probes each:
+
+| Variable | median | at exactly 0 |
+|---|---|---|
+| Parity response rate | 0.694 | **25 of 88** |
+| Accuracy given a response | 0.908 | 0 |
+| The raw column, as used until now | 0.591 | 25 |
+
+The raw column correlates **0.989** with the response rate and **0.215**
+with conditional accuracy. It is a propensity measure wearing an accuracy
+label, and that is the entire explanation for the bimodality and the spike
+at zero that `10` §11 flagged.
+
+The two components are close to orthogonal, r = 0.043. Collapsing them
+does not blur two related quantities, it discards one.
+
+### 11.2 Fix
+
+`compute_scores()` now adds `responded_parity_1` and `responded_parity_2`
+alongside the recall flags, via `flag_parity_responses()`. Analyses derive
+a response rate and a responders-only accuracy from them exactly as they
+do for recall. Regenerate `all_data` by re-running
+`data-raw/04_apply_manual_review.R`.
+
+### 11.3 Abandoning parity is not disengagement
+
+25 of 88 answered no parity probe at all. They are **not** disengaged on
+the main task:
+
+| | parity zero (n = 25) | everyone else |
+|---|---|---|
+| Word non-response | 0.066 | 0.086 |
+| Orientation non-response | 0.149 | 0.132 |
+| Colour non-response | 0.061 | 0.069 |
+
+**23 of the 25 clear the recall engagement thresholds.** v1 carries no
+parity penalty (`05` §3.5), so ignoring the secondary task is the
+rational move, and abandoning it while keeping recall intact is arguably
+the most strategically sophisticated behaviour in the dataset. The old
+variable coded it as failure.
+
+### 11.4 Parity is not functioning as a load manipulation in v1
+
+Parity response rate against recall accuracy, engaged sample, participant
+level:
+
+| Outcome | Slope | p |
+|---|---|---|
+| Word | -0.015 (SE 0.013) | 0.233 |
+| Orientation | -0.043 (SE 0.029) | 0.139 |
+| Colour | -0.013 (SE 0.026) | 0.632 |
+
+A quarter of the sample opted out of the secondary task and gained nothing
+measurable. That is a finding about the design rather than about the
+participants, and it belongs in the v4 recommendations alongside the word
+ceiling: a secondary task that can be ignored costlessly is not imposing
+load.
+
+### 11.5 The confound was tested and does not exist
+
+The hypothesis: lower imagery leads to greater compliance, compliance
+costs recall accuracy, so the floor-group effects on colour and
+orientation are really parity effects. Tested on all three features,
+engaged sample.
+
+Link 1, imagery to compliance: parity response rate is **0.505 at the VVIQ
+floor against 0.495 above it, Wilcoxon p = 0.925**. Absent, and this is
+decisive: with no link 1 there is nothing to mediate.
+
+Link 2 is §11.4 above, and the floor offsets barely move when parity is
+controlled:
+
+| Feature | Floor offset alone | Parity controlled | Change |
+|---|---|---|---|
+| Word | +0.0337 (p .076) | +0.0319 (p .094) | -5.5% |
+| Orientation | -0.0447 (p .286) | -0.0504 (p .228) | -12.8% |
+| Colour | -0.0685 (p .068) | -0.0702 (p .064) | -2.5% |
+
+Word matters most here, because it carries the one floor offset that
+clears zero in `10` §11's C-prime fit, and because it has the largest raw
+correlation with parity engagement of the three. It was tested explicitly
+rather than by inheritance, and the answer is the same.
+
+### 11.6 Decisions, superseding §8
+
+| Decision | Was | Now |
+|---|---|---|
+| Primary variable | Continuous parity accuracy | **Parity response rate**, which is what the old variable measured anyway (§11.1) |
+| Second variable | A binary split, for a narrower purpose | **Accuracy given a response**, reported here as a data-quality and effort measure, kept out of the models |
+| Role in modelling | Covariate | **Covariate on the accuracy arms of `09`**, as the dual-task load actually incurred, which is a strategy variable and not a confound control (§11.5) |
+| Binary threshold (§4) | Open | **Moot.** The response rate is the continuous version of the same thing |
+
+One observation worth a sentence and not a parameter: among participants
+who did both tasks, parity conditional accuracy correlates 0.310 with
+colour recall accuracy, 0.116 with orientation and 0.000 with word. That
+looks like a shared-resource signal, and it is the only interesting thing
+conditional accuracy does.
