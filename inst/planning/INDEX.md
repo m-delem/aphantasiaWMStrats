@@ -233,7 +233,9 @@ planning and got settled later; don't rediscover and re-litigate.
   `03`, `05`, `06` and `07` alike. There is no default; a model that does
   not state this is under-specified.
 - **Whether VVIQ enters models continuously or with a floor term** —
-  owned by `09-floor-group.md` §4. On current data the continuous term
+  owned by `09-floor-group.md` §4. **`05` adopted the same form on
+  2026-08-21** (`05` §11.5), so this is now settled everywhere it
+  applies. On current data the continuous term
   does no work once the floor term is present, except for colour
   propensity where it survives. **`06` resolved this for its own strand
   on 2026-08-21** (`06` §13.6): floor-group additive as the pre-declared
@@ -267,6 +269,14 @@ planning and got settled later; don't rediscover and re-litigate.
 
 These are established, consistent practice with the author across this entire
 planning process, not stated once and possibly forgotten:
+
+- **Numbering: `inst/scripts/NN-*.R` implements `inst/planning/NN-*.md`.**
+  Adopted 2026-08-21, when the two sets had drifted far enough that the
+  compositional script was numbered 05 against a plan numbered 06. Where
+  one plan needs more than one script, use letter suffixes (`03a`, `03b`).
+  Where a plan needs no script, its number is simply unused on the script
+  side. In conversation, say **plan-NN** and **script-NN** rather than a
+  bare number.
 
 - **Verify against real data/files, never assert from memory.** Several
   points in this planning process were corrected specifically because an
@@ -364,7 +374,7 @@ docs, which carry their results inline, and the scripts listed in §6.5.
 
 **Compositional analysis (`06`): DONE**, 2026-08-21, except for the
 Bayesian fits themselves. Read `06` §13 rather than re-deriving anything;
-the script is `inst/scripts/05-compositional-analysis.R`. What remains is
+the script is `inst/scripts/06-compositional-analysis.R`. What remains is
 running it, starting with `TEST_RUN <- TRUE`.
 
 **Response propensity (`08`):**
@@ -406,9 +416,9 @@ For anyone reconstructing what changed on 2026-08-20:
 | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
 | `compute_scores()`, `score_word()`, `score_angular()`, `damerau_levenshtein()`, `normalise_word()` | `R/compute_scores.R`, with tests in `tests/testthat/`       |
 | Score distributions, orientation-period sensitivity, standardisation stability                     | `inst/scripts/01-score-distributions.R`                     |
-| Split-half reliability, compositional stability, self-report convergence                           | `inst/scripts/02-reliability.R`                             |
-| VVIQ sensitivity, response propensity, OSIVQ multitrait-multimethod                                | `inst/scripts/03-validity-checks.R`                         |
-| Floor-group model                                                                                  | `inst/scripts/04-floor-group.R`                             |
+| Split-half reliability, compositional stability, self-report convergence                           | `inst/scripts/03a-reliability.R`                             |
+| VVIQ sensitivity, response propensity, OSIVQ multitrait-multimethod                                | `inst/scripts/03b-validity-checks.R`                         |
+| Floor-group model                                                                                  | `inst/scripts/09-floor-group.R`                             |
 | Public-facing narrative of the whole scoring pipeline                                              | `vignettes/articles/scoring.Rmd`                            |
 | Questionnaire reliabilities, the OSIVQ reverse-coding trap, NIEQ pair consistency                  | `vignettes/articles/psychometrics.Rmd`                      |
 | Parity disengagement and recall non-response, and the evidence they are separate behaviours        | `vignettes/articles/engagement.Rmd`                         |
@@ -431,8 +441,8 @@ And what changed on 2026-08-21:
 | `theme_pdf()`, `save_ggplot()`, the group/feature scales, ported from `aphantasiaEmotions` | `R/ggplot_tools.R` |
 | `plot_composition_ternary()`, `plot_composition_biplot()` | `R/plot_composition.R` |
 | `fit_brms_model()`, `report_rope()` | `R/modelling_tools.R` |
-| Sample construction, composition descriptives, the SBP table, five candidate models, the trial-level multilevel model | `inst/scripts/05-compositional-analysis.R` |
-| Figures moved from screen-size PNG to vector PDF at printed size | `inst/scripts/01`, `02`, `03`, figures in `inst/scripts/figures/` |
+| Sample construction, composition descriptives, the SBP table, five candidate models, the trial-level multilevel model | `inst/scripts/06-compositional-analysis.R` |
+| Figures moved from screen-size PNG to vector PDF at printed size | `inst/scripts/01`, `03a`, `03b`, figures in `inst/scripts/figures/` |
 | These planning docs, moved into the package | `inst/planning/` |
 
 Three doc-versus-data mismatches from that session are worth carrying

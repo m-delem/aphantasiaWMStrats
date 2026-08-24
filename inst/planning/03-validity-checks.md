@@ -2,8 +2,8 @@
 
 **Status:** all five checks **implemented and run** on v1; results are
 inline in each section. §2.1, §2.2 and §2.3 in
-`inst/scripts/02-reliability.R`; §2.4 and §2.5 in
-`inst/scripts/03-validity-checks.R`. Amended 2026-08-20 during
+`inst/scripts/03a-reliability.R`; §2.4 and §2.5 in
+`inst/scripts/03b-validity-checks.R`. Amended 2026-08-20 during
 the score-computation implementation session: §2.1, §2.2 and §2.4 revised
 for non-response handling, §2.5 added. See
 `non-response-propagation-memo.md`. Sits upstream of performance

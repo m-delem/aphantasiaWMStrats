@@ -1,6 +1,6 @@
 # WM-FTT: compositional analysis
 
-**Status: implemented 2026-08-21** (`inst/scripts/05-compositional-analysis.R`).
+**Status: implemented 2026-08-21** (`inst/scripts/06-compositional-analysis.R`).
 §13 is the implementation record and supersedes several earlier sections:
 the sample is 81 rather than 87, §2's variance-share table and §8.5's
 partial correlations were computed on a superseded sample and are
@@ -422,7 +422,7 @@ remains:
 ## 13. Implementation record, 2026-08-21
 
 Written during the session that implemented this doc as
-`inst/scripts/05-compositional-analysis.R`, with helpers in
+`inst/scripts/06-compositional-analysis.R`, with helpers in
 `R/composition.R`, `R/ggplot_tools.R`, `R/plot_composition.R` and
 `R/modelling_tools.R`. Records four doc-versus-data mismatches, resolves
 the two decisions §§2 and 5 left open, and documents one departure from
@@ -576,7 +576,7 @@ symmetric across coordinates. Both are enforced in the script.
 
 **The gate is partition-specific.** `03` §2.2's 0.771 / 0.721 were computed
 for this partition. Switching would leave the strand without a cleared gate
-until `02-reliability.R` is re-run, which is a concrete cost of switching
+until `03a-reliability.R` is re-run, which is a concrete cost of switching
 that `06` §2 did not have in view.
 
 **The variance argument for switching has shrunk**, per §13.2 above.
@@ -597,7 +597,7 @@ this, it would move word into ilr2.
 
 **Decided: `vviq + complete_aphant` is the pre-declared primary**, per
 `09-floor-group.md`. It matches `aphantasiaEmotions` and
-`inst/scripts/04-floor-group.R`, the v1 VVIQ distribution is close to
+`inst/scripts/09-floor-group.R`, the v1 VVIQ distribution is close to
 bimodal (18 of 79 at exactly 16) so a pure linear term is mis-specified,
 and it nests `06` §5's group and continuous questions in one structure.
 
@@ -649,7 +649,7 @@ rather than at colour versus orientation.
 
 **Departure from `06` §3: the ILR transform is hand-rolled, not
 `multilevelcoda`.** The transform is eleven lines, it already exists in
-`02-reliability.R`, and writing it out keeps the SBP visible in the code
+`03a-reliability.R`, and writing it out keeps the SBP visible in the code
 rather than buried in a `complr()` argument. `multilevelcoda`'s
 between-within decomposition is the one thing it genuinely adds, and it is
 reproducible by hand from the same fit. Revisit if the trial-level model

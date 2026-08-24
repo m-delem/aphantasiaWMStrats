@@ -1,5 +1,5 @@
-# -----------------------------------------------------------------------
-# 05-compositional-analysis.R
+# ------------------------------------------------------------------------- #
+# 06-compositional-analysis.R ----
 #
 # Numbered references below are to the planning set in `inst/planning/`.
 #
@@ -27,12 +27,12 @@
 # against the real data. The brms fits in §4 and §5 were written but not
 # run by their author; set TEST_RUN <- TRUE for a fast pass that checks the
 # whole pipeline executes before committing to full sampling.
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 
 devtools::load_all()
 library(ggplot2)
 
-# ---- run configuration ------------------------------------------------
+# Run configuration ----
 # TEST_RUN fits tiny models with a different cache prefix, so a smoke test
 # can never overwrite a real fit.
 TEST_RUN <- FALSE
@@ -64,9 +64,9 @@ labels   <- c(word = "Word", angle = "Orientation", color = "Colour")
 
 if (TEST_RUN) rule("TEST_RUN is TRUE: tiny fits, cached under test- prefix")
 
-# -----------------------------------------------------------------------
-# 1. Sample construction, and why the engagement threshold is applied here
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 1. Sample construction, and why the engagement threshold is applied here ----
+# ------------------------------------------------------------------------- #
 rule("1. Sample")
 
 d <-
@@ -145,9 +145,9 @@ cat("continuous here because that is 06 §8's stated default, and §4 fits the\n
 cat("primary model without it so the choice can be inspected rather than\n")
 cat("trusted. 04-parity-engagement.md should decide the form properly.\n")
 
-# -----------------------------------------------------------------------
-# 2. How much the composition varies (06 §8.5, recomputed on v1)
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 2. How much the composition varies (06 §8.5, recomputed on v1) ----
+# ------------------------------------------------------------------------- #
 rule("2. Composition descriptives")
 
 part_summary <- function(parts, label) {
@@ -198,7 +198,7 @@ cat("low-engagement participants. The separate evidence that word is too\n")
 cat("easy (90% at ceiling, reliability 0.445) is untouched by this and the\n")
 cat("v4 recommendation stands on those grounds instead.\n")
 
-# ---- Figure 1: the composition itself ---------------------------------
+# Figure 1: the composition itself ----
 ternary_data <-
   sample_b |>
   dplyr::left_join(participant_info, by = "id") |>
@@ -212,19 +212,18 @@ p_ternary <-
   ) +
   labs(
     caption = paste(
-      "Centred and scaled: parts vary by an SD of about 0.025,\n so an",
+      "Centred and scaled: parts vary by an SD of about 0.025, so an",
       "uncentred triangle would show a single dot."
     )
   )
 
 save_ggplot(
   "inst/scripts/figures/c1-composition-ternary.pdf",
-  p_ternary, ncol = 1, height = 75
-)
+  p_ternary, ncol = 1, height = 75, return = TRUE)
 
-# -----------------------------------------------------------------------
-# 3. The SBP, and the variance split 06 §2 records as awkward
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 3. The SBP, and the variance split 06 §2 records as awkward ----
+# ------------------------------------------------------------------------- #
 rule("3. Sequential binary partition")
 
 partition_variance <- function(parts, label) {
@@ -264,12 +263,12 @@ cat("    the omnibus test and total variance do not depend on it. Only which\n")
 cat("    single-coordinate sentence can be written does.\n")
 cat("  - 03 §2.2's stability gate (0.771 / 0.721) was computed for this\n")
 cat("    partition specifically. Switching would leave the strand without a\n")
-cat("    cleared gate until 02-reliability.R is re-run.\n")
+cat("    cleared gate until 03a-reliability.R is re-run.\n")
 cat("\nilr1 rests partly on word, whose own split-half reliability is 0.445\n")
 cat("(03 §2.1). A ratio can be stable where a level is not, and the gate says\n")
 cat("it is, but no claim here may treat word as well measured.\n")
 
-# ---- Figure 2: what the partition choice costs ------------------------
+# Figure 2: what the partition choice costs ----
 p_partition <-
   variance_table |>
   tidyr::pivot_longer(c("var_ilr1", "var_ilr2"),
@@ -298,12 +297,11 @@ p_partition <-
 
 save_ggplot(
   "inst/scripts/figures/c2-partition-variance.pdf",
-  p_partition, ncol = 2, height = 70
-)
+  p_partition, ncol = 2, height = 70, return = TRUE)
 
-# -----------------------------------------------------------------------
-# 4. Participant-level models: how should VVIQ enter?
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 4. Participant-level models: how should VVIQ enter? ----
+# ------------------------------------------------------------------------- #
 rule("4. Participant-level model space")
 
 # Pre-check: is a segmented model with an estimated knot identifiable here?
@@ -395,7 +393,7 @@ fit_composition <- function(rhs, name) {
   )
 }
 
-# ---- the functional-form comparison, on ilr1 ---------------------------
+# The functional-form comparison, on ilr1 ----
 #
 # Univariate, and deliberately so. The question here is what shape the VVIQ
 # relationship has, and per the MARS pre-check the only coordinate with any
@@ -454,8 +452,13 @@ candidates <- list(
   "Segmented"            = f_segmented
 )
 
+# `loo_compare()` dispatches on its FIRST argument. Handing it a list sends
+# it to loo's default method, which wants loo objects and rejects fits with
+# "All inputs should have class 'loo'". Attach the criterion to each fit,
+# then compare the extracted loo objects, which is what brms itself does
+# internally and which keeps the list's names as row labels.
 candidates <- lapply(candidates, brms::add_criterion, "loo")
-comparison <- brms::loo_compare(lapply(candidates, \(fit) fit$criteria$loo))
+comparison <- loo::loo_compare(lapply(candidates, \(fit) fit$criteria$loo))
 print(comparison, digits = 2)
 
 saveRDS(comparison, fs::path(result_dir,
@@ -474,7 +477,7 @@ cat("\nThe two are near-relatives. A knot low on the VVIQ scale with a\n")
 cat("near-flat arm below it is what a floor offset looks like when it is\n")
 cat("estimated as a hinge instead of an indicator.\n")
 
-# ---- the multivariate models, for inference ---------------------------
+# The multivariate models, for inference ----
 m_floor  <- fit_composition("vviq + complete_aphant + parity", "comp-floor")
 m_floor_noparity <- fit_composition("vviq + complete_aphant",
                                     "comp-floor-noparity")
@@ -482,7 +485,7 @@ m_floor_noparity <- fit_composition("vviq + complete_aphant",
 cat("\nParity covariate, kept or dropped (§1's flag):\n\n")
 print(brms::fixef(m_floor_noparity)[, c("Estimate", "Q2.5", "Q97.5")], digits = 3)
 
-# ---- primary model, reported against a ROPE ---------------------------
+# Primary model, reported against a ROPE ----
 cat("\nPrimary model: floor-group additive form.\n\n")
 print(brms::fixef(m_floor), digits = 3)
 
@@ -510,10 +513,10 @@ print(as.data.frame(rope_table), row.names = FALSE)
 saveRDS(rope_table, fs::path(result_dir,
                              paste0(fit_config$prefix, "comp-rope.rds")))
 
-# ---- Figure 3: model comparison --------------------------------------
+# Figure 3: model comparison ----
 p_loo <-
   as.data.frame(comparison) |>
-  # tibble::rownames_to_column("model") |>
+  tibble::rownames_to_column("model") |>
   dplyr::mutate(model = stats::reorder(.data$model, .data$elpd_diff)) |>
   ggplot(aes(x = .data$elpd_diff, y = .data$model)) +
   geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.2) +
@@ -523,7 +526,7 @@ p_loo <-
     size = 0.2
   ) +
   labs(
-    x = "elpd difference from the best model (± 1 SE)",
+    x = "elpd difference from the best model, with one standard error",
     y = NULL,
     title = "How VVIQ enters the compositional model",
     caption = "Intervals overlapping zero mean the data do not separate the forms."
@@ -531,9 +534,9 @@ p_loo <-
   theme_pdf()
 
 save_ggplot("inst/scripts/figures/c3-model-comparison.pdf",
-            p_loo, ncol = 1, height = 60)
+            p_loo, ncol = 1, height = 60, return = TRUE)
 
-# ---- Figure 4: the fitted relationship -------------------------------
+# Figure 4: the fitted relationship ----
 grid <- tidyr::expand_grid(
   vviq = seq(16, 80, by = 1),
   parity = stats::median(model_data$parity)
@@ -610,11 +613,11 @@ p_effect <-
   theme_pdf()
 
 save_ggplot("inst/scripts/figures/c4-composition-vviq.pdf",
-            p_effect, ncol = 2, height = 75)
+            p_effect, ncol = 2, height = 75, return = TRUE)
 
-# -----------------------------------------------------------------------
-# 5. Trial-level compositions: the multilevel model
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 5. Trial-level compositions: the multilevel model ----
+# ------------------------------------------------------------------------- #
 rule("5. Trial-level compositional model")
 
 cat("\n06 §3 assumed multilevel structure without checking there was any, and\n")
@@ -739,7 +742,7 @@ cat("is between people. They should agree in direction, not in value.\n")
 saveRDS(icc_summary, fs::path(result_dir,
                               paste0(fit_config$prefix, "comp-icc.rds")))
 
-# ---- Figure 5: where the variance lives ------------------------------
+# Figure 5: where the variance lives ----
 p_icc <-
   icc_draws |>
   dplyr::mutate(coordinate = coordinate_labels[.data$coordinate]) |>
@@ -756,9 +759,9 @@ p_icc <-
       dplyr::n_distinct(trial_data$id), "participants."
     )
   ) +
-  theme_pdf(base_size = 6)
+  theme_pdf()
 
 save_ggplot("inst/scripts/figures/c5-composition-icc.pdf",
-            p_icc, ncol = 1, height = 65)
+            p_icc, ncol = 1, height = 65, return = TRUE)
 
 rule("Done. Figures in inst/scripts/figures/, models in inst/models/.")

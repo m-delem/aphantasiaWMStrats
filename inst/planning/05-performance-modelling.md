@@ -1,11 +1,17 @@
 # WM-FTT: performance modelling
 
-**Status:** structure and narrative arc settled. Amended 2026-08-20: §3's
-response-family question is resolved against real distributions (hurdle,
-not ZOIB), §3.3 raises a new problem for Option C, and §5's Option D is
-constrained. The random-effects structure remains deferred as designed. Depends on scoring
-(`01-score-computation.md`), pooling strategy (`02-pooling-strategy.md` —
-renumbering pending, referred to here by content not final filename), and
+**Status: planned in full 2026-08-21.** §11 is the implementation plan
+and supersedes parts of §§2, 3 and 8: the primary structure is now
+Option C-prime (multivariate, per-feature families, correlated random
+intercepts), the family question is resolved per feature, word's status
+is decided, and §3.1's hurdle is deferred by its own sequencing rule.
+Read §11 before acting on §§1-10.
+
+Earlier status, retained: structure and narrative arc settled. Amended
+2026-08-20: §3's response-family question is resolved against real
+distributions (hurdle, not ZOIB), §3.3 raises a new problem for Option C,
+and §5's Option D is constrained. Depends on scoring
+(`01-score-computation.md`), pooling strategy (`02-pooling-strategy.md`), and
 directly implements the standard set by the philosophy discussion
 (`00-analytical-philosophy.md` §3, §6) that performance modelling must
 respect feature non-independence rather than treat the three features as
@@ -432,3 +438,195 @@ the pooling assumption visible rather than hidden.
   starting point per §1), then C.
 - Fit Option D separately, with the raw/standardised sensitivity check
   (§5), once scoring pipeline is available.
+
+## 11. Implementation plan, 2026-08-21
+
+Written before any code, in the shape of `06-compositional-analysis.md`
+§13. Resolves §9's first open question, changes the primary structure in
+§8's table, and defers §3.1's hurdle by §3.1's own sequencing rule.
+Implemented as `inst/scripts/05-performance-modelling.R`.
+
+### 11.1 What the v1 distributions force
+
+Boundary mass on responded trials, v1 only:
+
+| Feature | n responded | at 0 | at 1 |
+|---|---|---|---|
+| Word | 5100 | 3.2% | **90.7%** |
+| Orientation | 4788 | 0.00% | 0.00% |
+| Colour | 5174 | 0.00% | 0.48% |
+
+Two corrections to §3.1. Its claim that every zero is a non-response
+holds for orientation and colour but **not for word**: 3.2% of responded
+word trials score exactly 0, and those are real wrong answers, not
+abstentions. And colour has 25 trials at exactly 1, which is not a
+rounding annoyance but a hard obstacle, since Beta has zero density at
+the boundary and the fit errors rather than degrades.
+
+### 11.2 Primary structure: Option C-prime
+
+**Decided: a multivariate model with per-feature families and correlated
+random intercepts**, which is §3.3's first escape route, the one that
+section called the most faithful and the most complex.
+
+```r
+bf(score_word  ~ vviq + complete_aphant + (1 | p | id), family = zero_one_inflated_beta) +
+bf(score_angle ~ vviq + complete_aphant + (1 | p | id), family = Beta) +
+bf(score_color ~ vviq + complete_aphant + (1 | p | id), family = Beta)
+```
+
+Fitted on responded trials only.
+
+**Why this rather than long-format Option C.** It dissolves §3.3's
+trilemma instead of choosing a horn of it: each feature gets the family
+its distribution demands, which a single `score ~ group * feature` model
+cannot do. It keeps what Option C existed to provide, since `(1 | p | id)`
+estimates a correlated random-intercept matrix across responses, which is
+the same "is this participant high on word and low on colour" question,
+delivered as three named pairwise correlations instead of random slopes
+read relative to whichever feature is the reference. That also makes
+§2's sum-to-zero contrast decision unnecessary: the features are
+symmetric by construction, so there is no reference level to be relative
+to. Estimability is better than long-format random slopes, being three
+intercepts across 79 participants with about 63 trials each. And it is
+the structure already built and debugged in
+`06-compositional-analysis.md` §13, so the machinery is tested.
+
+**What it costs, stated plainly.** No single `rescor` parameter, and
+`mvbind()` is unavailable because the families differ. Neither matters,
+because §4 already scoped making the dependency structure legible as real
+build work, and three named correlations are more legible than a
+covariance matrix over random slopes.
+
+**Option B is not thereby revived.** B was dropped because a Gaussian
+`rescor` model misrepresents bounded scores. C-prime is multivariate in
+syntax only; the dependency is at the random-effect level, exactly as
+Option C intended.
+
+### 11.3 Families, chosen by what each boundary means
+
+**Orientation: Beta.** No boundary mass at all once non-responders are
+removed. Nothing to accommodate.
+
+**Colour: Beta after a Smithson-Verkuilen squeeze.** The transform
+(Smithson & Verkuilen, 2006) is
+
+$$y' = \frac{y(n-1) + 0.5}{n}$$
+
+With n = 5174 responded colour trials, exact ones become 0.99990 and
+every other value moves by about one ten-thousandth. It is monotone,
+order-preserving, standard and citable.
+
+Preferred over one-inflation **because of what the boundary means**.
+Colour score is cosine similarity on a continuous wheel, so a score of
+exactly 1 is an error of exactly zero degrees, which is pixel resolution
+rather than a distinct behaviour. Modelling it as an inflation component
+would estimate a process parameter for a rounding effect, on 25
+observations.
+
+**Word: zero-one-inflated Beta.** The opposite case, and the asymmetry is
+the entire argument: 90.7% at exactly 1 is a genuine mass, because a
+recalled word either matches or does not. That earns an inflation
+component, and the 3.2% at zero earns the other one.
+
+**Flag on word, recorded rather than solved:** its score is
+`1 - distance / nchar(target)`, so it takes only discrete values. Any
+continuous family is an approximation there. This is one more reason its
+coefficients are not for inference (§11.4), not a reason to prefer a
+different continuous family.
+
+### 11.4 Word's status: retained, but not for inference
+
+**Decided, resolving §3.4's open question.** Word stays in the model as a
+third response, and **no individual-differences claim is drawn from its
+coefficients**. Its split-half reliability of 0.445 is reported alongside
+them every time they appear.
+
+Retained rather than dropped because deleting an outcome for being noisy
+is itself a bias, and because the model is a claim about how three
+features relate; removing one would answer a different question.
+
+**This sits deliberately alongside `06`, and the two must be read
+together or they look inconsistent.** Word is unusable as a *level* for
+individual differences (reliability 0.445) and stable as part of a
+*ratio* (ilr1 stability 0.771). Both statements are true, they are about
+different quantities, and each doc must say so explicitly rather than
+leaving a reader to reconcile them.
+
+### 11.5 VVIQ enters as the floor-group form
+
+Pre-declared primary, mirroring `06` §13.6 and `09`. A MARS pre-check
+runs first, reading knots off the **pruned** model (`selected.terms`),
+not off `$cuts`, per the bug recorded in `06` §13.6. The LOO comparison
+of functional forms runs on **orientation**, which is the best-measured
+feature (split-half 0.822) and the one `03` §2.4 already associates with
+VVIQ. Candidates as in `06`: intercept only, two-group, linear,
+floor-group additive, segmented if a knot is identifiable.
+
+### 11.6 The hurdle, staged
+
+§3.1 decided a hurdle and its own sequencing rule says fit propensity
+separately first, in `08`. `08`'s Bayesian model does not exist yet.
+
+**Decided: `05` models accuracy conditional on responding, as `06` did,
+and the joint model is fitted afterwards with a specific and narrow
+job.** That job is not "the fuller picture". It is **the test of whether
+separating the two quantities was legitimate at all.**
+
+The argument for it is informative missingness. Every responders-only
+analysis conditions on a selected subsample, and if people who abstain
+more also perform differently when they do answer, the conditional
+estimates are biased in a way no separate analysis can detect. A joint
+model with random effects shared across the two parts estimates exactly
+one quantity neither separate model gives: the person-level correlation
+between response propensity and conditional accuracy.
+
+The argument that the two are near-duplicates does not survive the
+existing evidence. `09` §2 examined both on colour: propensity keeps a
+continuous above-floor VVIQ slope (p = .002) with no floor offset, while
+conditional accuracy shows a floor offset (p = .054) with no continuous
+slope. Same feature, opposite structure.
+
+Structure, statically validated against brms:
+
+```r
+bf(responded ~ vviq + complete_aphant + (1 | p | id), family = bernoulli) +
+bf(score | subset(responded) ~ vviq + complete_aphant + (1 | p | id), family = Beta)
+```
+
+**Fitted on orientation alone first**, which has the highest non-response
+and the cleanest Beta, so it is where the problem would surface first.
+Not all three features jointly at the outset: six responses sharing a
+random-effect matrix is a large model, and a convergence failure there
+teaches nothing, which is the failure `08` §5's rule exists to prevent.
+
+**What the result decides.** A correlation near zero vindicates the
+separation, and `05` keeps accuracy while `08` keeps propensity. A
+credibly non-zero correlation makes the joint model primary for
+orientation and colour, and **`06` inherits an explicit caveat**, since
+its entire compositional analysis is responders-only. The stakes are
+wider than this doc.
+
+### 11.7 Still open, deliberately
+
+- **Option D's aggregation** (§5) is untouched here. It remains a
+  separate model with a separate purpose.
+- **D's raw-and-standardised sensitivity check** (§8) needs a flag: the
+  standardised scores are z-scores and roughly half are negative, so they
+  cannot enter a Beta. A standardised D is a Gaussian model, which makes
+  it a different model rather than a sensitivity check on the same one.
+- **§4's tooling** (posterior correlation plots, shrinkage plots, the
+  A-versus-C contrast display) is built alongside the model, per §10.
+- **Option A** is still fitted first as the narrative's deliberate wrong
+  baseline (§1), and is cheap.
+
+### 11.8 Changes to §8's decision table
+
+| Decision | Was | Now |
+|---|---|---|
+| Primary model structure | Option C, long-format, random slopes | **Option C-prime**, multivariate, per-feature families, correlated random intercepts (§11.2) |
+| Feature contrast coding | Sum-to-zero | **Not applicable** under C-prime; features are symmetric by construction (§11.2) |
+| One family across all three | Open, three options outlined | **Resolved**: per-feature families (§11.3) |
+| Word's status | Open | **Retained, excluded from individual-differences inference** (§11.4) |
+| Response family for C | Hurdle | **Deferred by §3.1's own sequencing**; conditional accuracy now, joint model as an assumption test (§11.6) |
+| Full random-effects structure | Deferred, estimability unknown | Correlated random intercepts across three responses; slopes not attempted (§11.2) |

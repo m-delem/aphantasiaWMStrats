@@ -1,5 +1,5 @@
-# -----------------------------------------------------------------------
-# 02-reliability.R
+# ------------------------------------------------------------------------- #
+# 03a-reliability.R ----
 #
 # Implements the reliability core of 03-validity-checks.md: §2.1 per-feature
 # split-half reliability, §2.2 split-half stability of the compositional
@@ -23,7 +23,7 @@
 # be assumed appropriate; §1 below is that check.
 #
 # Doc references below are to the planning set in `inst/planning/`.
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 
 devtools::load_all()
 library(ggplot2)
@@ -46,9 +46,9 @@ d <- all_data |>
     within_trial_pos = ((item_number - 1L) %% 3L) + 1L
   )
 
-# -----------------------------------------------------------------------
-# 1. Why the split is at trial level (03 §5's open question, answered)
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 1. Why the split is at trial level (03 §5's open question, answered) ----
+# ------------------------------------------------------------------------- #
 rule("1. Split unit: trials, not items")
 
 cat("\nWithin-trial serial position, responders only:\n")
@@ -65,9 +65,9 @@ cat("three items together, which balances serial position across halves by\n")
 cat("construction. Repeated random splits rather than a single odd/even\n")
 cat("split, to avoid depending on one arbitrary partition.\n")
 
-# -----------------------------------------------------------------------
-# 2. Engagement threshold (03 §2.1), derived before any VVIQ contact
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 2. Engagement threshold (03 §2.1), derived before any VVIQ contact ----
+# ------------------------------------------------------------------------- #
 rule("2. Engagement threshold, derived from precision requirements")
 
 feature_mean <- function(df, f) {
@@ -118,9 +118,9 @@ cat("\nThese exclusions are not random with respect to imagery, so all\n")
 cat("estimates below are conditional: accuracy given response, among those\n")
 cat("who responded often enough for a mean to be estimable.\n")
 
-# -----------------------------------------------------------------------
-# 3. §2.1 — per-feature split-half reliability
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 3. §2.1 — per-feature split-half reliability ----
+# ------------------------------------------------------------------------- #
 rule("3. §2.1 Per-feature split-half reliability")
 
 trials <- unique(d$trial_uid)
@@ -177,11 +177,11 @@ p_rel <- data.frame(
        y = paste("Count of", N_SPLITS, "splits"),
        title = "Per-feature reliability, v1, responders only")
 save_ggplot("inst/scripts/figures/r1-split-half-reliability.pdf", p_rel,
-            ncol = 2, height = 70)
+            ncol = 2, height = 70, return = TRUE)
 
-# -----------------------------------------------------------------------
-# 4. §2.2 — stability of the compositional profile
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 4. §2.2 — stability of the compositional profile ----
+# ------------------------------------------------------------------------- #
 rule("4. §2.2 Split-half stability of the compositional profile")
 
 cat("\nThis is the gate 06-compositional-analysis.md §8.5 makes the whole\n")
@@ -233,9 +233,9 @@ cat("\nilr1 is the theoretically motivated coordinate (06 §2) and the\n")
 cat("low-variance one (06 §2's amendment). If it is also the unstable one,\n")
 cat("that is the compositional strand's central problem, not a detail.\n")
 
-# -----------------------------------------------------------------------
-# 5. §2.3 — behavioural allocation vs self-reported priority
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# 5. §2.3 — behavioural allocation vs self-reported priority ----
+# ------------------------------------------------------------------------- #
 rule("5. §2.3 Behavioural allocation vs self-reported scoring priority")
 
 strat <- do.call(rbind, lapply(which(!duplicated(d$id)), function(i) {

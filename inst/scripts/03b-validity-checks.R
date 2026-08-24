@@ -1,12 +1,12 @@
-# -----------------------------------------------------------------------
-# 03-validity-checks.R
+# ------------------------------------------------------------------------- #
+# 03b-validity-checks.R ----
 #
 # Implements the two remaining checks of 03-validity-checks.md:
 #   §2.4  VVIQ / imagery-group sensitivity of the per-feature scores
 #   §2.5  Reporting propensity as an outcome in its own right
 #
 # §2.1 (reliability), §2.2 (compositional stability) and §2.3 (self-report
-# convergence) are in 02-reliability.R.
+# convergence) are in 03a-reliability.R.
 #
 # Sample: v1 only (N=88), per 02-pooling-strategy.md §3.5. Section 2.5 also
 # reports the across-version comparison, because that is where the apparent
@@ -18,7 +18,7 @@
 # score-0 convention folds reporting propensity into the score.
 #
 # Doc references below are to the planning set in `inst/planning/`.
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 
 devtools::load_all()
 library(ggplot2)
@@ -62,9 +62,9 @@ v1_participants <- v1_trials |>
   ) |>
   dplyr::mutate(clears_threshold = n_answered >= engagement_thresholds[feature])
 
-# -----------------------------------------------------------------------
-# §2.4  VVIQ / imagery-group sensitivity, run both ways
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# §2.4  VVIQ / imagery-group sensitivity, run both ways ----
+# ------------------------------------------------------------------------- #
 rule("2.4  Does anything in WM-FTT track VVIQ? (v1, both scorings)")
 
 correlation_test <- function(score, vviq) {
@@ -128,11 +128,11 @@ p_vviq <- v1_participants |>
   labs(x = "VVIQ total score", y = "Mean score, responded trials only",
        title = "Recall accuracy against imagery vividness (v1)")
 save_ggplot("inst/scripts/figures/v1-vviq-accuracy.pdf", p_vviq,
-            ncol = 2, height = 70)
+            ncol = 2, height = 70, return = TRUE)
 
-# -----------------------------------------------------------------------
-# §2.5  Reporting propensity as an outcome
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# §2.5  Reporting propensity as an outcome ----
+# ------------------------------------------------------------------------- #
 rule("2.5  Reporting propensity as an outcome (08-response-propensity.md)")
 
 cat("\nNon-response rates by version and feature:\n\n")
@@ -215,13 +215,13 @@ p_propensity <- v1_participants |>
   labs(x = "VVIQ total score", y = "Non-response rate",
        title = "Reporting propensity against imagery vividness (v1)")
 save_ggplot("inst/scripts/figures/v1-propensity-vviq.pdf", p_propensity,
-            ncol = 2, height = 70)
+            ncol = 2, height = 70, return = TRUE)
 
 rule("Done. Figures written to inst/scripts/figures/")
 
-# -----------------------------------------------------------------------
-# §2.7  OSIVQ multitrait-multimethod check
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# §2.7  OSIVQ multitrait-multimethod check ----
+# ------------------------------------------------------------------------- #
 rule("2.7  OSIVQ convergent/discriminant validity")
 
 # OSIVQ's three subscales map onto WM-FTT's three features:

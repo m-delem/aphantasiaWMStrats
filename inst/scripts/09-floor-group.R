@@ -1,8 +1,8 @@
-# -----------------------------------------------------------------------
-# 04-floor-group.R
+# ------------------------------------------------------------------------- #
+# 09-floor-group.R ----
 #
 # The floor-group model, per 09-floor-group.md. Moved out of
-# 03-validity-checks.R: this asks a substantive question about complete
+# 03b-validity-checks.R: this asks a substantive question about complete
 # aphantasia rather than about whether the instrument works, so it is
 # analysis, not a validity check.
 #
@@ -12,7 +12,7 @@
 # cannot supply the second.
 #
 # Doc references below are to the planning set in `inst/planning/`.
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 
 devtools::load_all()
 
@@ -35,9 +35,9 @@ v1_participants <- all_data |>
                    vviq = dplyr::first(vviq), .by = c(id, feature)) |>
   dplyr::mutate(clears_threshold = n_answered >= engagement_thresholds[feature])
 
-# -----------------------------------------------------------------------
-# §2.6  Floor-group model: is complete aphantasia its own group?
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# §2.6  Floor-group model: is complete aphantasia its own group? ----
+# ------------------------------------------------------------------------- #
 rule("2.6  Floor-group model (idiom carried over from aphantasiaEmotions)")
 
 # VVIQ has a hard floor at 16, and complete aphantasics pile there with no

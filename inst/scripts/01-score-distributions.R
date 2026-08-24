@@ -1,5 +1,5 @@
-# -----------------------------------------------------------------------
-# 01-score-distributions.R
+# ------------------------------------------------------------------------- #
+# 01-score-distributions.R ----
 #
 # Targeted checks on the scores produced by compute_scores(), run before
 # any of them are relied on downstream. Diagnostic, not exported package
@@ -26,7 +26,7 @@
 # in the scoring vignette.
 #
 # Doc references below are to the planning set in `inst/planning/`.
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 
 devtools::load_all()
 
@@ -42,8 +42,7 @@ theme_set(theme_pdf())
 save_fig <- function(plot, name, ncol = 2, height = 75) {
   save_ggplot(
     fs::path("inst/scripts/figures", paste0(name, ".pdf")),
-    plot, ncol = ncol, height = height
-  )
+    plot, ncol = ncol, height = height, return = TRUE)
 }
 
 rule <- function(txt) cat("\n", strrep("-", 70), "\n", txt, "\n", sep = "")
@@ -60,9 +59,9 @@ labels <- c(score_word = "Word", score_angle = "Orientation",
 # completed both v1 and v3 (01 §3), so `id` alone would silently merge them.
 blocks <- dplyr::mutate(blocks, unit = paste(id, version, sep = "_"))
 
-# -----------------------------------------------------------------------
-# Q1. Orientation period sensitivity
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# Q1. Orientation period sensitivity ----
+# ------------------------------------------------------------------------- #
 rule("Q1. Does the orientation period change anything downstream?")
 
 blocks <- dplyr::mutate(
@@ -128,9 +127,9 @@ p_q1 <- per_unit |>
   theme(legend.position = "none")
 save_fig(p_q1, "q1-orientation-period")
 
-# -----------------------------------------------------------------------
-# Q2. Is per-version standardisation stable at small N?
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# Q2. Is per-version standardisation stable at small N? ----
+# ------------------------------------------------------------------------- #
 rule("Q2. Per-version standardisation stability (01 §3's flagged caution)")
 
 cat("\nParticipants per version:\n")
@@ -174,9 +173,9 @@ p_q2 <- per_unit |>
   theme(legend.position = "none")
 save_fig(p_q2, "q2-version-distributions")
 
-# -----------------------------------------------------------------------
-# Q3. Raw vs standardised, and whether each strand can use its assigned input
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# Q3. Raw vs standardised, and whether each strand can use its assigned input ----
+# ------------------------------------------------------------------------- #
 rule("Q3. Raw vs standardised divergence")
 
 cat("\nWithin a version, z is a linear transform of raw, so rank order is\n")
@@ -213,9 +212,9 @@ p_q3 <- blocks |>
        title = "Raw score distributions, experimental blocks") 
 save_fig(p_q3, "q3-raw-distributions")
 
-# -----------------------------------------------------------------------
-# Q4. Closing out the cross-check and the Damerau question
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# Q4. Closing out the cross-check and the Damerau question ----
+# ------------------------------------------------------------------------- #
 rule("Q4. Cross-check against live_diff_*, and Damerau vs plain Levenshtein")
 
 resp_a <- dplyr::filter(blocks, responded_angle)
@@ -256,9 +255,9 @@ cat(sprintf("  the cap     (floor at 0)                  : %4d rows changed\n",
 cat("\n  Without the cap, scores run as low as",
     round(min(no_cap), 3), "- the cap is not cosmetic.\n")
 
-# -----------------------------------------------------------------------
-# Data-quality items for exclusion review, not for a score column
-# -----------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# Data-quality items for exclusion review, not for a score column ----
+# ------------------------------------------------------------------------- #
 rule("Data-quality items to raise in data-raw/review/")
 
 nonresp <- blocks |>

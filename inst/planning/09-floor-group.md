@@ -1,6 +1,6 @@
 # WM-FTT: the floor-group model
 
-**Status:** implemented and run on v1 (`inst/scripts/04-floor-group.R`);
+**Status:** implemented and run on v1 (`inst/scripts/09-floor-group.R`);
 results below. Exploratory, and explicitly so, for reasons given in §3.
 
 **Context:** this began as §2.6 of `03-validity-checks.md` and was moved
