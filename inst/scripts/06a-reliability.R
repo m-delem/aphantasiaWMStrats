@@ -177,18 +177,10 @@ cat(".80+ for anything approaching individual-level interpretation. 06 §2.1\n")
 cat("is explicit that a weak-but-nonzero result is reportable rather than a\n")
 cat("stop condition — but it changes how much weight downstream models bear.\n")
 
-p_rel <- data.frame(
-  feature = rep(labels[features], each = N_SPLITS),
-  r = sb(unlist(rel))
-) |> dplyr::filter(!is.na(r)) |>
-  ggplot(aes(r, fill = feature)) +
-  geom_histogram(bins = 40, show.legend = FALSE) +
-  geom_vline(xintercept = 0.7, linetype = "dashed") +
-  facet_wrap(~feature) +
-  scale_discrete_feature(aesthetics = "fill") +
-  labs(x = "Split-half reliability (Spearman-Brown corrected)",
-       y = paste("Count of", N_SPLITS, "splits"),
-       title = "Per-feature reliability, v1, responders only")
+# Built by plot_split_half() in R/ so the task-validity page draws the same
+# figure at screen size rather than a second version of it.
+p_rel <- plot_split_half(lapply(rel, sb)) +
+  labs(title = "Per-feature reliability, v1, responders only")
 save_ggplot("inst/scripts/figures/r1-split-half-reliability.pdf", p_rel,
             ncol = 2, height = 70, return = TRUE)
 

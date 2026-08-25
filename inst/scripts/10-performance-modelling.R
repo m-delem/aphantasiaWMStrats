@@ -752,6 +752,9 @@ cat("\nOrientation only, deliberately. It has the highest non-response and\n")
 cat("the cleanest Beta, so it is where the problem surfaces first, and a\n")
 cat("convergence failure on all three at once would teach nothing.\n")
 
+# save_pars: see 09-joint-model.R. Applied here and NOT to the C-prime
+# model above, because figure p4 calls ranef() on that one and needs the
+# per-participant deviations this would discard.
 m_joint <- fit_brms_model(
   formula =
     brms::bf(responded_angle ~ vviq + complete_aphant + (1 | p | id),
@@ -765,6 +768,7 @@ m_joint <- fit_brms_model(
     performance_priors(c("respondedangle", "scoreangle")),
     brms::prior("lkj(2)", class = "cor")
   ),
+  save_pars = brms::save_pars(group = FALSE),
   file   = model_path("perf-joint-orientation"),
   chains = fit_config$chains,
   iterations = fit_config$iterations,

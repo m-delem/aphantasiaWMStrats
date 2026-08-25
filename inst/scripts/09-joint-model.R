@@ -31,7 +31,7 @@ devtools::load_all()
 library(ggplot2)
 
 # Run configuration ----
-TEST_RUN <- TRUE
+TEST_RUN <- FALSE
 
 set.seed(20260824)
 
@@ -40,7 +40,7 @@ fit_config <-
     list(chains = 2, iterations = 100, warmup = 100, refresh = 0,
          prefix = "test-", trials_per_id = 6)
   } else {
-    list(chains = 4, iterations = 2000, warmup = 1000, refresh = 500,
+    list(chains = 4, iterations = 2000, warmup = 1000, refresh = 100,
          prefix = "", trials_per_id = Inf)
   }
 
@@ -210,6 +210,7 @@ m_gates <- fit_brms_model(
   formula = gates_only,
   data    = model_data,
   prior   = joint_priors(accuracy_features = character(0), lkj = lkj_eta),
+  save_pars = brms::save_pars(group = FALSE),
   file    = model_path("joint-gates"),
   chains  = fit_config$chains,
   iterations = fit_config$iterations,
@@ -232,6 +233,11 @@ joint_specification
 
 accuracy_responses <- unname(accuracy)
 
+# save_pars drops the per-participant deviations from the saved object.
+# They are 89% of the parameters and nothing reads them: the pages report
+# fixed effects, the correlation matrix, and posterior_epred() at the
+# population level (re_formula = NA). The sd and cor hyperparameters, which
+# the correlations come from, are kept.
 m_joint <- fit_brms_model(
   formula = joint_specification,
   data    = model_data,

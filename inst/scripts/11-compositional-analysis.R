@@ -219,16 +219,16 @@ save_ggplot(
 # ------------------------------------------------------------------------- #
 rule("3. Sequential binary partition")
 
-# partition_variance() is in R/; this keeps the display labels local.
-partition_variance <- function(parts, label) {
-  aphantasiaWMStrats::partition_variance(parts, label) |>
-    dplyr::mutate(first = labels[.data$first])
-}
+# partition_variance() is in R/. Relabelling for display happens at the
+# call site rather than in a wrapper of the same name, which would shadow
+# the package function it calls.
 
-variance_table <- dplyr::bind_rows(
-  partition_variance(sample_a, "A (n=87)"),
-  partition_variance(sample_b, "B (n=81)")
-)
+variance_table <-
+  dplyr::bind_rows(
+    partition_variance(sample_a, "A (n=87)"),
+    partition_variance(sample_b, "B (n=81)")
+  ) |>
+  dplyr::mutate(first = labels[.data$first])
 print(as.data.frame(variance_table), row.names = FALSE, digits = 3)
 
 cat("\nDOC-VS-DATA FLAG: 11 §2's amendment records 39% / 28% / 83% for the\n")
@@ -296,12 +296,10 @@ rule("4. Participant-level model space")
 # which also carries the candidate terms the backward pass discarded. An
 # earlier version of this check read `$cuts` whole and reported five knots
 # where the fitted model has one.
-mars_knots <- function(response) {
-  aphantasiaWMStrats::mars_knots(model_data, outcome = response)
-}
+# mars_knots() is in R/, called directly rather than wrapped.
 
 if (requireNamespace("earth", quietly = TRUE)) {
-  mars <- lapply(c("ilr1", "ilr2"), mars_knots)
+  mars <- lapply(c("ilr1", "ilr2"), \(v) mars_knots(model_data, outcome = v))
   names(mars) <- c("ilr1", "ilr2")
   for (coordinate in names(mars)) {
     m <- mars[[coordinate]]
@@ -353,7 +351,7 @@ ilr_prior <- composition_priors()
 
 fit_composition <- function(rhs, name) {
   fit_brms_model(
-    formula = aphantasiaWMStrats::composition_formula(rhs),
+    formula = composition_formula(rhs),
     data   = model_data,
     prior  = ilr_prior,
     file   = model_path(name),
@@ -654,12 +652,16 @@ if (is.finite(fit_config$trials_per_id)) {
 # between-person quantity is NOT the participant-level model's outcome
 # estimated better. It is a different quantity, and the writeup must not
 # present the two as one result twice.
+# save_pars: see 09-joint-model.R. The ICC below needs sd_id__ and sigma,
+# which are hyperparameters and are kept; only the per-participant
+# deviations are dropped.
 m_trial <- fit_brms_model(
   formula = composition_formula(
-    "vviq + complete_aphant + parity + trial_c + (1 | p | id)"
+    "vviq + complete_aphant + parity_rate + trial_c + (1 | p | id)"
   ),
   data   = trial_data,
   prior  = ilr_prior,
+  save_pars = brms::save_pars(group = FALSE),
   file   = model_path("comp-trial-multilevel"),
   chains = fit_config$chains,
   iterations = fit_config$iterations,
