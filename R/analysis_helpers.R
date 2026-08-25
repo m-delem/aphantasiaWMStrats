@@ -226,3 +226,69 @@ partition_variance <- function(
   ) |>
     purrr::list_rbind()
 }
+
+#' Participant-level correlations from a multivariate model
+#'
+#' @description
+#' Pulls the group-level correlation parameters out of a fitted model and
+#' returns them tidily, with the response names recovered from the
+#' parameter names rather than assumed. brms names these
+#' `cor_<group>__<a>_Intercept__<b>_Intercept`, and the order of `a` and
+#' `b` follows the order the responses appear in the formula, so a caller
+#' asking for a specific pair cannot know in advance which way round it is.
+#'
+#' Also reports whether each posterior is narrower than the marginal prior
+#' on a single correlation under `lkj(eta)` (see [lkj_marginal()]). With
+#' fifteen correlations estimated from fewer than a hundred participants,
+#' some will not have moved, and a correlation that did not move is not a
+#' finding.
+#'
+#' @param draws A `draws_df`, or anything with the correlation columns,
+#'   typically `brms::as_draws_df(model)`.
+#' @param group The grouping factor name used in the model.
+#' @param lkj The LKJ shape parameter the model was fitted with, used for
+#'   the `moved` column. `NULL` skips that column.
+#' @param dimension Size of the correlation matrix, for the same purpose.
+#'
+#' @returns A tibble with one row per correlation: the two responses, the
+#'   median, a 95% interval, the probability of direction, and `moved`.
+#' @export
+posterior_correlations <- function(
+    draws,
+    group = "id",
+    lkj = 4,
+    dimension = NULL
+) {
+  pattern <- paste0("^cor_", group, "__(.+)_Intercept__(.+)_Intercept$")
+  columns <- grep(pattern, names(draws), value = TRUE)
+  if (!length(columns)) {
+    stop("No correlation parameters matching '", pattern, "'.\nAvailable: ",
+         paste(grep("^cor_", names(draws), value = TRUE), collapse = ", "))
+  }
+
+  prior_sd <-
+    if (is.null(lkj)) NA_real_
+    else {
+      d <- if (is.null(dimension)) ceiling((1 + sqrt(1 + 8 * length(columns))) / 2) else dimension
+      stats::sd(lkj_marginal(1e5, lkj, d))
+    }
+
+  purrr::map(
+    columns,
+    function(column) {
+      parts <- strsplit(sub(pattern, "\\1|\\2", column), "|",
+                               fixed = TRUE)[[1]]
+      values <- draws[[column]]
+      tibble::tibble(
+        response_a = parts[1],
+        response_b = parts[2],
+        median = stats::median(values),
+        lower  = stats::quantile(values, 0.025),
+        upper  = stats::quantile(values, 0.975),
+        pd     = max(mean(values > 0), mean(values < 0)),
+        moved  = stats::sd(values) < prior_sd
+      )
+    }
+  ) |>
+    purrr::list_rbind()
+}

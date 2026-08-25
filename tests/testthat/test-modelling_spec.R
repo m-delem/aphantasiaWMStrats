@@ -105,3 +105,53 @@ test_that("composition_formula estimates residual correlation", {
   expect_true(formula$rescor)
   expect_length(formula$forms, 2)
 })
+
+test_that("composition_priors covers both coordinates", {
+  skip_if_not_installed("brms")
+  priors <- composition_priors()
+  expect_setequal(priors$resp, c("ilr1", "ilr2"))
+  expect_true(all(priors$class == "b"))
+})
+
+test_that("composition_priors matches composition_formula", {
+  skip_if_not_installed("brms")
+  data <- data.frame(
+    ilr1 = stats::rnorm(20), ilr2 = stats::rnorm(20),
+    vviq = stats::rnorm(20, 40, 10),
+    complete_aphant = factor(rep(c("above_floor", "floor"), 10),
+                             levels = c("above_floor", "floor"))
+  )
+  expect_no_error(
+    brms::validate_prior(
+      composition_priors(),
+      formula = composition_formula("vviq + complete_aphant"),
+      data = data
+    )
+  )
+})
+
+test_that("performance_formula gives each feature its own family", {
+  skip_if_not_installed("brms")
+  formula <- performance_formula()
+  expect_length(formula$forms, 3)
+  # word's ceiling is a real point mass; the other two are not
+  expect_equal(formula$forms[["scoreword"]]$family$family,
+               "zero_one_inflated_beta")
+  expect_equal(formula$forms[["scoreangle"]]$family$family, "beta")
+  expect_equal(formula$forms[["scorecolor"]]$family$family, "beta")
+  # rescor is off: it is only defined for gaussian and student responses,
+  # and the dependency here lives in the random effects instead
+  expect_false(formula$rescor)
+})
+
+test_that("performance_formula respects the parity switch", {
+  skip_if_not_installed("brms")
+  with_parity <- deparse1(performance_formula()$forms[["scoreangle"]]$formula)
+  without <- deparse1(
+    performance_formula(parity = FALSE)$forms[["scoreangle"]]$formula)
+  expect_true(grepl("parity_rate", with_parity))
+  expect_false(grepl("parity_rate", without))
+  # both keep the subset(), which is what lets a row carry three responses
+  # with independent non-response
+  expect_true(grepl("subset\\(responded_angle\\)", without))
+})

@@ -9,3 +9,14 @@
 ^pkgdown$
 ^\.github$
 ^LICENSE\.md$
+# Fitted models cached by the working scripts that no documentation page
+# loads. Listed one by one because .Rbuildignore has no exception
+# mechanism: ignoring inst/models wholesale would drop the fits the
+# vignettes need via system.file() and break every modelling page.
+^inst/models/comp-floor-noparity\.rds$
+^inst/models/ilr1-null\.rds$
+^inst/models/ilr1-group\.rds$
+^inst/models/ilr1-linear\.rds$
+^inst/models/ilr1-floor\.rds$
+^inst/models/ilr1-segmented\.rds$
+^inst/models/joint-gates\.rds$

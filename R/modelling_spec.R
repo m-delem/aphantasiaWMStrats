@@ -330,8 +330,12 @@ performance_formula <- function(
 composition_formula <- function(rhs) {
   rlang::check_installed("brms", reason = "to build model formulas.")
 
-  brms::bf(stats::as.formula(paste("ilr1 ~", rhs))) +
-    brms::bf(stats::as.formula(paste("ilr2 ~", rhs))) +
+  # gaussian() is set explicitly rather than left to brm()'s default, so
+  # the object is self-contained: it prints its own families, and
+  # make_standata() can resolve rescor without being told the family
+  # separately.
+  brms::bf(stats::as.formula(paste("ilr1 ~", rhs)), family = stats::gaussian()) +
+    brms::bf(stats::as.formula(paste("ilr2 ~", rhs)), family = stats::gaussian()) +
     brms::set_rescor(TRUE)
 }
 
