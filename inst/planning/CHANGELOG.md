@@ -9,6 +9,29 @@ analytic dependency, which is stable. Sequence lives here instead.
 
 ---
 
+## 2026-08-24 — joint model specified and coded
+
+`inst/scripts/09-joint-model.R` written. Reporting set hard-coded from
+`09` §8.3 so it cannot drift with the fit. Staged: gates first, then all
+six, with `INCLUDE_PARITY` and `INCLUDE_WORD_ACC` as the documented
+fallback switches.
+
+---
+
+## 2026-08-24 — joint model specified
+
+`09` §8 written before fitting and checked against brms without compiling,
+so the parameter list is the model's own. 54 parameters, of which the 15
+correlations are the point. The reporting set is fixed in three tiers in
+§8.3, with §8.4 stating what each possible result would mean before it
+exists.
+
+Sample is all 86 with VVIQ; the engagement thresholds are deliberately not
+applied, because the model forms no participant means. `10` and `11` stay
+on 79, so every reported quantity has to name its sample.
+
+---
+
 ## 2026-08-24 — parity resolved, and it was not the variable we thought
 
 `parity_*_acc` scores unanswered probes as 0, the same convention `02`

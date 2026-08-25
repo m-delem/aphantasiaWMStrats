@@ -1,11 +1,11 @@
 # WM-FTT: the joint propensity and accuracy model
 
-**Status: agreed in principle 2026-08-24, not yet specified in full.**
-This doc will hold the primary model of the study. What is recorded below
-is what has been decided, so that the specification session starts from
-the decisions rather than re-deriving them. The full parameter
-pre-specification, the reporting set and the fitting plan are the next
-task.
+**Status: specified and coded 2026-08-24, not yet fitted.** The script is `inst/scripts/09-joint-model.R`.
+This doc will hold the primary model of the study. §8 is the specification: the
+formula, every parameter it yields, which of them are of interest and why,
+the priors, and the fitting plan. It was written before fitting and
+checked against brms without compiling, so the parameter names and counts
+are the model's own.
 
 ## 1. Why this model exists
 
@@ -126,7 +126,191 @@ mechanism question needs.
 
 ## 7. Next steps
 
-- Specify the model and its full parameter list.
-- Fix the reporting set in writing.
+- ~~Specify the model and its full parameter list.~~ Done, §8.
+- ~~Fix the reporting set in writing.~~ Done, §8.3.
 - ~~Settle `03-parity-engagement.md`'s covariate form.~~ Done, `03` §11.6.
-- Then `inst/scripts/09-joint-model.R`.
+- ~~Write `inst/scripts/09-joint-model.R`.~~ Done.
+- Fit it, stage 1 first, with `TEST_RUN <- TRUE`.
+
+## 8. Specification, 2026-08-24
+
+Written before fitting. Everything below has been checked against brms
+with `get_prior()` and `make_standata()`, which run without compiling, so
+the parameter names and counts are the model's own rather than asserted.
+
+### 8.1 The formula
+
+```r
+gate <- function(f) {
+  bf(as.formula(paste0("responded_", f, " ~ vviq + complete_aphant + (1 | p | id)")),
+     family = bernoulli())
+}
+acc <- function(f, family) {
+  bf(as.formula(paste0("score_", f, " | subset(responded_", f, ") ~ ",
+                       "vviq + complete_aphant + parity_rate + (1 | p | id)")),
+     family = family)
+}
+
+gate("word") + gate("angle") + gate("color") +
+  acc("word",  zero_one_inflated_beta()) +
+  acc("angle", Beta()) +
+  acc("color", Beta()) +
+  set_rescor(FALSE)
+```
+
+`subset()` is what lets one row carry six responses with independent
+non-response, and what lets a participant contribute to a gate whether or
+not they ever answered that feature. Confirmed by `make_standata()`: the
+three gates each see all 5418 items, the accuracy arms see 4981, 4662 and
+5048.
+
+Families follow `10` §11.3, and `parity_rate` is the corrected variable
+from `03` §11.6, not the accuracy column that preceded it. It sits on the
+accuracy arms only: it is the dual-task load a participant incurred, and
+it does not predict recall non-response (r between -0.10 and +0.09), so
+there is no reason to put it on the gates.
+
+### 8.2 Every parameter the model yields
+
+54 parameters, in six groups.
+
+| Group | n | What they are |
+|---|---|---|
+| `Intercept` | 6 | one per response, plus 1 more for ZOIB's `zoi`/`coi` block |
+| `b` | 15 | `vviq` and `complete_aphantfloor` on all six responses; `parity_rate` on the three accuracy arms |
+| `sd` | 6 | participant SD of each response's random intercept |
+| `cor` | **15** | the 6x6 correlation matrix, off-diagonal |
+| `phi` | 3 | Beta precision, one per accuracy arm |
+| `zoi`, `coi` | 2 | word's inflation components |
+
+Response names are `respondedword`, `respondedangle`, `respondedcolor`,
+`scoreword`, `scoreangle`, `scorecolor`. brms strips the underscores, so
+priors and draw columns use those forms and not the column names.
+
+### 8.3 What is of interest, fixed in advance
+
+The 15 correlations are the reason the model exists, and they are not all
+equally interesting. Three tiers, declared here so that choosing among
+them after seeing them is not possible.
+
+**Tier 1, foregrounded, 6 parameters.**
+
+| Parameter | Question |
+|---|---|
+| `cor(respondedword, scoreword)` | Selection, word |
+| `cor(respondedangle, scoreangle)` | Selection, orientation |
+| `cor(respondedcolor, scorecolor)` | Selection, colour |
+| `cor(scoreword, scoreangle)` | Trade-off or shared ability |
+| `cor(scoreword, scorecolor)` | Trade-off or shared ability |
+| `cor(scoreangle, scorecolor)` | Trade-off or shared ability |
+
+The first three answer whether conditioning on responding was legitimate,
+and whether the 0.512 found on orientation alone (`10` §11.6) is
+feature-specific or a general engagement trait. Only a model carrying all
+three can tell those apart, and that distinction is what `04` §6's
+mechanism question needs. The second three test the trade-off reading
+directly: `10` §11 found orientation and colour at **+0.586 [0.349,
+0.764]**, so the prediction is positive, and a positive value means the
+trade-off the task imposes is a within-trial constraint rather than a
+between-person one.
+
+**Tier 2, reported in a table with intervals, 9 parameters.** The three
+propensity-propensity correlations (do people who skip one feature skip
+others) and the six cross terms. Interesting if large, not the reason for
+fitting.
+
+**Tier 3, the fixed effects.** The six `complete_aphantfloor` offsets are
+the confirmatory quantities and are reported for all six responses. The
+six `vviq` slopes are reported and expected to be null, per `08` and the
+flat comparison in `10` §11. The three `parity_rate` coefficients are
+reported and expected to be near zero, per `03` §11.4.
+
+**Word's accuracy coefficients remain excluded from individual-differences
+inference** (`10` §11.4). Its gate coefficients are not: whether someone
+answers is not a low-reliability quantity.
+
+### 8.4 What each result would mean, before it exists
+
+- **Selection correlations near zero**: the responders-only analyses in
+  `10` and `11` were legitimate after all, and the orientation result was
+  feature-specific. Report both, keep both.
+- **Selection correlations positive and large across all three**: a
+  general engagement trait, `11` inherits its caveat, and the joint model
+  is the only defensible view of accuracy.
+- **Accuracy correlations positive**: shared ability dominates between
+  people, and `11` §13.3's negative partial correlations were closure
+  artifacts. This is the expected outcome given `10`.
+- **Accuracy correlations negative**: a genuine between-person trade-off,
+  which would be a surprise and would need `11` re-read in its light.
+- **Floor offsets in the gates**: complete aphantasics differ in what they
+  are willing to report, which is a different and arguably more direct
+  claim about strategy than any accuracy difference.
+
+### 8.5 Priors
+
+Gates and accuracy arms are both on the logit scale, so priors go per
+coefficient rather than per class: a `vviq` slope acts over a 64-point
+range, a binary offset does not.
+
+```r
+prior(normal(0, 1.5), class = "Intercept", resp = <each>)
+prior(normal(0, 0.05), class = "b", coef = "vviq", resp = <each>)
+prior(normal(0, 1),    class = "b", coef = "complete_aphantfloor", resp = <each>)
+prior(normal(0, 1),    class = "b", coef = "parity_rate", resp = <accuracy arms>)
+prior(lkj(4),          class = "cor")
+```
+
+`lkj(4)` rather than the `lkj(2)` used in `10`, because 15 correlations
+from 86 clusters need more regularisation than 3 do. It concentrates mass
+near the identity, so a correlation has to be earned. **Check which
+correlations moved off the prior** rather than reporting all 15 as
+findings: the ones involving word's gate are the likeliest to be
+prior-dominated, since word non-response has an SD of only 0.088.
+
+### 8.6 Fitting plan
+
+Staged, so a failure localises rather than presenting as one opaque wall.
+
+1. **Three gates alone.** Cheap, and it is `04`'s model in its own right.
+   Gives the three propensity-propensity correlations and the gate fixed
+   effects independently of anything else.
+2. **All six.** The full model.
+
+`adapt_delta = 0.99`, `max_treedepth = 15`, 4 chains. Random intercepts
+only, no slopes. Expect this to be slow.
+
+Sanity checks against models already fitted: gate coefficients from stage
+1 should resemble `04`'s descriptive rates; the accuracy floor offsets
+should resemble `10` §11's C-prime fit (word +0.587, orientation -0.109,
+colour -0.238, all on 79 rather than 86); and
+`cor(respondedangle, scoreangle)` should resemble 0.512.
+
+**If it will not converge**, in order of what is given up: drop
+`parity_rate` (it is expected null anyway), then drop word's accuracy arm
+while keeping its gate, then fall back to the staged models and report
+them as primary with this attempt documented as a failure.
+
+### 8.7 Sample and its consequences
+
+All 86 participants with VVIQ, per §3. This is 7 more than `10` and `11`
+use, and one of them answered zero orientation trials.
+
+The engagement thresholds of `06` §2.1 are **not** applied. That rule
+exists to stop imprecise participant means being treated as measurements,
+and this model does not form participant means: partial pooling handles
+unequal precision and the gates model the abstention directly. Recorded as
+a decision rather than an omission.
+
+Every reported quantity must say which sample it came from. `11` stays on
+79, `10` stays on 79, this stays on 86, and the comparison in §8.6 is
+therefore approximate by construction.
+
+### 8.8 Pre-declared, and repeated here because it matters
+
+- On disagreement with `10` or `11`, **this model wins**, provided it
+  converged cleanly, because it conditions on less.
+- `10` and `11` are **robustness and convergence checks, not
+  corroboration**. Same data, simpler lens; agreement is not independent
+  evidence.
+- The reporting set in §8.3 is fixed. Anything outside it that turns out
+  to be interesting is **exploratory** and is labelled as such.
