@@ -1,0 +1,335 @@
+---
+title: "Composition: how effort is divided, independently of how much there is"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Composition}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  error = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+theme_set(theme_pdf(base_size = 16))
+fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
+
+# Models are loaded from their saved artefacts and never refitted here.
+# See the analysis strategy page for how they were built.
+pkg <- "aphantasiaWMStrats"
+refit <- "never"
+```
+
+Two participants can score the same overall and have divided their effort
+completely differently. This page is about that difference: **relative
+allocation across the three features, with overall performance removed.**
+
+It is a complement to the accuracy models rather than a weaker version of
+them. A composition is a different object, with its own geometry, and it
+answers a question absolute scores cannot: not *how well*, but *where*.
+
+Everything here is v1 ([version scope](version-scope.html)) and uses
+responded trials only, which carries a caveat set out in section 6.
+
+```{r data}
+v1 <- get_data("v1") |>
+  dplyr::filter(grepl("^expe_block", expe_phase))
+
+participant_info <- v1 |>
+  dplyr::summarise(
+    vviq = dplyr::first(vviq_total_score),
+    imagery_group = dplyr::first(vviq_group_2),
+    parity_rate = (sum(responded_parity_1) + sum(responded_parity_2)) /
+      (2 * dplyr::n()),
+    .by = id
+  )
+
+# Every participant with all three parts, and the subset clearing the
+# engagement thresholds of the task validity page.
+all_parts <- compose_features(v1, id) |>
+  dplyr::filter(stats::complete.cases(dplyr::pick(tidyselect::everything())))
+
+engaged_parts <- dplyr::filter(all_parts, id %in% engaged_ids(v1))
+
+model_data <- engaged_parts |>
+  dplyr::left_join(participant_info, by = "id") |>
+  dplyr::filter(!is.na(vviq))
+
+model_data <- model_data |>
+  dplyr::bind_cols(
+    ilr_coords(dplyr::select(model_data, tidyselect::starts_with("part_")))
+  ) |>
+  dplyr::mutate(
+    complete_aphant = factor(
+      dplyr::if_else(vviq == 16, "floor", "above_floor"),
+      levels = c("above_floor", "floor")
+    )
+  )
+```
+
+## 1. What a composition is, and why proportions will not do
+
+Each participant has three responders-only mean scores. Divide each by
+their sum and you have a **composition**: three parts that sum to one,
+carrying only relative information.
+
+That closure is not a technicality. Three proportions summing to a
+constant cannot vary independently, so a rise in one forces a fall in the
+others, and ordinary correlations between them are not interpretable. The
+[scoring](scoring.html) page shows what that does in practice:
+residualising three parts on their own mean induces a correlation of about
+-0.5 whatever the data says.
+
+The standard solution is to leave the simplex. `ilr_coords()` applies an
+isometric log-ratio transform, turning three constrained parts into two
+unconstrained coordinates:
+
+```{r ilr-demo}
+head(model_data[, c("part_word", "part_angle", "part_color", "ilr1", "ilr2")],
+     3) |>
+  knitr::kable(digits = 3)
+```
+
+The two coordinates are contrasts, and **which contrasts is a choice**:
+
+- `ilr1` is words against the geometric mean of orientations and colours,
+  the verbal versus non-verbal balance.
+- `ilr2` is colours against orientations.
+
+## 2. The partition is a substantive choice, not a statistical one
+
+Any two-coordinate log-ratio basis is a rotation of the same geometry. The
+total variance, the distances between participants and the omnibus test are
+**identical** whichever feature is contrasted first. Only the split between
+the two coordinates moves.
+
+```{r partition}
+dplyr::bind_rows(
+  partition_variance(all_parts, "All with three parts"),
+  partition_variance(engaged_parts, "Clearing thresholds")
+) |>
+  dplyr::mutate(
+    first = c(word = "Word", color = "Colour", angle = "Orientation")[first],
+    total = var_ilr1 + var_ilr2
+  ) |>
+  knitr::kable(digits = 4,
+               caption = "Variance by partition, and the invariant total")
+```
+
+Within each sample the total is constant, which is the invariance made
+visible. So a partition should be chosen for the contrast it names, and
+the verbal versus non-verbal one is what this study argues about.
+
+There is a second, quieter lesson in that table. On the looser sample the
+orientation-first partition appears to carry far more of the variance,
+which would look like a reason to prefer it. On the engaged sample the
+three are close. **The apparent asymmetry was six participants**, all of
+whom answered very few orientation trials, and choosing a partition on
+that basis would have meant choosing it on an artifact.
+
+## 3. The composition barely varies
+
+```{r spread}
+composition_summary(engaged_parts, "Clearing thresholds") |>
+  knitr::kable(digits = 3, caption = "The three parts")
+```
+
+Allocation is close to even and remarkably tight: each part sits near a
+third with a standard deviation of about 0.025. Whatever this analysis
+finds, it finds inside that range.
+
+```{r ternary, fig.alt="Ternary diagram of the three-part composition, coloured by imagery group.", fig.height = 6}
+ternary_data <- engaged_parts |>
+  dplyr::left_join(participant_info, by = "id") |>
+  dplyr::filter(!is.na(imagery_group))
+
+plot_composition_ternary(
+  ternary_data,
+  group = as.character(ternary_data$imagery_group),
+  base_size = 16,
+  # the default is sized for a print PDF; screen needs bigger marks
+  point_size = 2.5
+) +
+  labs(caption = "Centred and scaled: the raw spread is very small.")
+```
+
+## 4. Does imagery predict allocation?
+
+Both coordinates are modelled together, with the residual correlation
+between them estimated. That is not cosmetic: the invariance in section 2
+holds for a genuine multivariate model, and two separate fits would lose
+it.
+
+```{r model}
+composition_formula("vviq + complete_aphant + parity_rate")
+
+composition_model <- fit_brms_model(
+  formula = composition_formula("vviq + complete_aphant + parity_rate"),
+  data    = model_data,
+  prior   = composition_priors(),
+  file    = system.file("models", "comp-floor.rds", package = pkg),
+  file_refit = refit
+)
+```
+
+Imagery vividness enters in the form the [analysis
+strategy](analysis-strategy.html) page describes: a slope among everyone
+above the scale floor, plus a single offset for participants at it, who
+have no vividness variance among themselves.
+
+```{r results}
+knitr::kable(brms::fixef(composition_model), digits = 4,
+             caption = "Population-level effects")
+```
+
+Read against a region of practical equivalence of a tenth of the outcome's
+own standard deviation:
+
+```{r rope}
+readRDS(system.file("results", "comp-rope.rds", package = pkg)) |>
+  knitr::kable(caption = "Posterior against the ROPE")
+```
+
+**Participants at the imagery floor sit above the line on the verbal
+coordinate.** The offset is 0.093, with 95% of the posterior between 0.025
+and 0.161, a standardised effect of about one outcome SD, and 99.3% of the
+posterior above the ROPE. In interpretable terms, their ratio of word
+allocation to the geometric mean of the two non-verbal features is roughly
+12% higher.
+
+**Vividness above the floor does nothing at all.** Its slope lies entirely
+inside the ROPE on both coordinates. Whatever is happening is a property of
+the floor group rather than a gradient.
+
+**On the colour versus orientation coordinate there is no result**, and it
+is worth being precise about which kind of no result. The floor offset has
+52% of its posterior below the ROPE, 19% inside and 30% above. That is not
+evidence of absence, it is an uninformative posterior, and it should be
+reported as such.
+
+## 5. What the coordinate cannot tell you
+
+A ratio moved. It cannot say which part moved it.
+
+```{r levels}
+model_data |>
+  dplyr::mutate(group = dplyr::if_else(complete_aphant == "floor",
+                                       "At the VVIQ floor", "Above floor")) |>
+  dplyr::summarise(
+    participants = dplyr::n(),
+    word = mean(mean_word), orientation = mean(mean_angle),
+    colour = mean(mean_color),
+    .by = group
+  ) |>
+  knitr::kable(digits = 3,
+               caption = "Raw responders-only accuracy, not shares")
+```
+
+In levels, the floor group is marginally better on words and clearly worse
+on orientations and colours. **The balance shifts toward words because the
+non-verbal side falls, not because the verbal side rises.**
+
+That distinction matters more than it might appear. "Aphantasic
+participants rely more on verbal encoding" and "aphantasic participants are
+worse at the non-verbal features" predict the same compositional result,
+and this analysis cannot separate them. Doing so needs the absolute
+accuracy models, which is exactly why the two framings are complementary
+rather than competing.
+
+One further caution. `ilr1` rests partly on word, and the [task
+validity](task-validity.html) page shows word does not function as an
+individual-differences measure. The *ratio* is stable where the *level* is
+not, which is not a contradiction, but no claim here may treat word as a
+well-measured quantity. Measurement noise in an outcome widens intervals
+rather than biasing estimates, so if anything this result is conservative.
+
+## 6. Two checks, and one caveat that is still open
+
+**The functional form was not assumed.** Five ways of entering imagery were
+compared, with the floor-group form pre-declared as primary regardless of
+which won.
+
+```{r comparison}
+comparison <- readRDS(system.file("results", "comp-loo.rds", package = pkg))
+if (!"model" %in% names(comparison)) {
+  comparison <- tibble::rownames_to_column(as.data.frame(comparison), "model")
+}
+comparison |>
+  dplyr::select(model, elpd_diff, se_diff) |>
+  knitr::kable(digits = 2, caption = "Model comparison, first coordinate")
+```
+
+The forms with a discontinuity sit above those without one, by roughly one
+to one and a half standard errors. That is weak, it was predicted to be
+weak in advance, and it is reported rather than converted into a claim.
+
+**The result survives at trial level.** Each trial is itself a composition,
+and 96% of them are usable without any zero replacement, so the same
+question can be asked with within-person noise separated from
+between-person signal rather than averaged into it.
+
+```{r trial-level}
+trial_model <- fit_brms_model(
+  formula = composition_formula(
+    "vviq + complete_aphant + parity_rate + trial_c + (1 | p | id)"),
+  data    = model_data,
+  file    = system.file("models", "comp-trial-multilevel.rds", package = pkg),
+  file_refit = refit
+)
+
+knitr::kable(brms::fixef(trial_model)[, c("Estimate", "Q2.5", "Q97.5")],
+             digits = 4, caption = "Trial-level model, population-level effects")
+```
+
+The floor offset on the verbal coordinate is larger there, and the interval
+still excludes zero. These are **different estimands**, not one quantity
+measured twice: the log-ratio of a mean is not the mean of the log-ratios.
+Agreement between them is convergence rather than replication.
+
+That model also gives a reliability estimate from the same fit as the
+effects:
+
+```{r icc}
+readRDS(system.file("results", "comp-icc.rds", package = pkg)) |>
+  knitr::kable(digits = 3, caption = "Between-person share of trial-level variance")
+```
+
+An intraclass correlation near 0.09 sounds alarming until it is aggregated:
+at that level, a mean over 21 trials has a reliability near 0.70, which is
+close to the 0.77 the [task validity](task-validity.html) page finds by
+split-half. They are consistent, not contradictory.
+
+**The caveat, now resolved and narrower than expected.** Every composition
+here is built from trials a participant chose to answer, which conditions
+on a selected subsample. The [joint model](joint-model.html) tested
+whether that mattered, and the answer is **feature-specific**: willingness
+and accuracy are related on orientation and unrelated on word and colour.
+
+So one of the three parts is built on a selected subsample and the other
+two are not. Both coordinates mix all three parts, so both carry the
+caveat, but through one part rather than three. That is weaker than the
+blanket warning this section used to carry, and it is a constraint on
+interpretation rather than a reason to discount the result.
+
+The same model also settles the question §1 raised about closure: between
+people, accuracy on orientation and colour correlates **positively**, so
+there is no between-person trade-off for closure to have been hiding.
+
+---
+
+**Continuing through the Extended Online Report:** this page follows [performance](performance.html). To keep reading in order, continue to [beyond vividness](beyond-vividness.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

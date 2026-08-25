@@ -1,0 +1,333 @@
+---
+title: "Task validity: what the WM-FTT measures well, and what it does not"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Task validity}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+theme_set(theme_pdf(base_size = 16))
+set.seed(20260820)
+
+n_splits <- 1000
+feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
+trials_per_feature <- 63L
+
+as_pct <- function(x, digits = 1) sprintf(paste0("%.", digits, "f%%"), 100 * x)
+fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
+```
+
+The [scoring](scoring.html) page defines the three recall scores. This page
+asks the prior question every result on this site depends on: **are they
+reliable enough to carry an individual-differences claim?**
+
+For two of the three features the answer is yes. For the third it is no,
+and that is a fact about the task rather than about the metric. The
+[questionnaire psychometrics](psychometrics.html) page asks the same
+question of the instruments.
+
+Everything here is v1 only, per the [version scope](version-scope.html)
+page.
+
+## The data this page works from
+
+The same frames the scoring page builds, reproduced so this page stands
+alone.
+
+```{r data}
+# 1. Experimental-block rows only. Tutorial rows carry placeholder values,
+#    and training rows precede the blocks by design.
+block_trials <- all_data |>
+  dplyr::filter(grepl("^expe_block", expe_phase)) |>
+  dplyr::mutate(
+    participant = paste(id, version, sep = "_"),  # one id spans two versions
+    trial_id = paste(expe_phase, trial_number, sep = "_"),
+    position_in_trial = (item_number - 1L) %% 3L + 1L
+  )
+
+# 2. One row per stimulus per feature: score, whether it was answered.
+trials_by_feature <- block_trials |>
+  dplyr::select(
+    id, participant, version, trial_id, position_in_trial,
+    vviq = vviq_total_score,
+    score_word, score_angle, score_color,
+    responded_word, responded_angle, responded_color
+  ) |>
+  tidyr::pivot_longer(
+    cols = c(tidyselect::starts_with("score_"),
+             tidyselect::starts_with("responded_")),
+    names_to = c(".value", "feature"),
+    names_pattern = "(score|responded)_(word|angle|color)"
+  ) |>
+  dplyr::mutate(
+    feature = factor(feature, levels = c("word", "angle", "color"),
+                     labels = c("Word", "Orientation", "Colour"))
+  )
+
+# 3. v1 alone is the primary analysis sample; see section 4.
+v1_trials <- dplyr::filter(trials_by_feature, version == "v1")
+
+# 4. One mean per participant per feature, over answered trials only.
+v1_participant_means <- v1_trials |>
+  dplyr::filter(responded) |>
+  dplyr::summarise(
+    mean_score = mean(score),
+    n_answered = dplyr::n(),
+    vviq = dplyr::first(vviq),
+    .by = c(id, feature)
+  )
+
+dplyr::slice_head(trials_by_feature, n = 6) |>
+  knitr::kable(digits = 3, caption = "trials_by_feature: first six rows")
+```
+
+## 1. Reliability
+
+Splits are drawn over trials rather than items, because items within a
+trial share an encoding episode and there is a within-trial primacy
+effect:
+
+```{r primacy}
+v1_trials |>
+  dplyr::filter(responded) |>
+  dplyr::summarise(mean_score = mean(score),
+                   .by = c(feature, position_in_trial)) |>
+  tidyr::pivot_wider(names_from = position_in_trial, values_from = mean_score,
+                     names_prefix = "position_") |>
+  dplyr::mutate(primacy_drop = position_1 - position_3) |>
+  knitr::kable(digits = 3,
+               caption = "Mean score by serial position within the trial")
+```
+
+Each trial's three items therefore stay together, and the split is
+repeated `r n_splits` times rather than relying on one arbitrary odd/even
+partition.
+
+The engagement threshold is derived rather than chosen: a participant
+contributes to a feature only if their mean has a standard error of at
+most half the between-person SD.
+
+```{r thresholds}
+engagement_thresholds <- v1_trials |>
+  dplyr::filter(responded) |>
+  dplyr::summarise(participant_mean = mean(score),
+                   sd_within_participant = sd(score),
+                   .by = c(feature, id)) |>
+  dplyr::summarise(
+    sd_within_participant = median(sd_within_participant, na.rm = TRUE),
+    sd_between_participants = sd(participant_mean),
+    .by = feature
+  ) |>
+  dplyr::mutate(
+    trials_needed = ceiling(
+      (sd_within_participant / (0.5 * sd_between_participants))^2),
+    trials_available = trials_per_feature,
+    # Fall back to half the trials where the target is unreachable.
+    threshold_used = pmin(trials_needed, 32L)
+  )
+
+knitr::kable(engagement_thresholds, digits = 3,
+             caption = "Trials needed for a participant mean worth comparing")
+```
+
+```{r threshold-values, include = FALSE}
+word_row <- dplyr::filter(engagement_thresholds, feature == "Word")
+```
+
+**Word's requirement cannot be met.** It asks for
+`r word_row$trials_needed` trials of the `r trials_per_feature` that exist,
+because its between-person SD among responders
+(`r fmt(word_row$sd_between_participants)`) is small relative to
+within-person trial noise (`r fmt(word_row$sd_within_participant)`). A
+floor of 32 trials is used instead, recorded as a data-sufficiency rule
+and not a precision guarantee.
+
+```{r reliability}
+eligible_participants <- v1_participant_means |>
+  dplyr::left_join(dplyr::select(engagement_thresholds, feature, threshold_used),
+                   by = "feature") |>
+  dplyr::filter(n_answered >= threshold_used) |>
+  dplyr::select(id, feature)
+
+# split_half_reliability() and spearman_brown() are package functions, so
+# this page and inst/scripts/06a-reliability.R compute the same quantity
+# with the same code rather than two implementations of it.
+v1_block <- block_trials |>
+  dplyr::filter(version == "v1") |>
+  dplyr::rename(trial_uid = trial_id)
+
+# Splits are drawn over trials, so these are needed here and again by the
+# compositional stability check below.
+trial_ids <- unique(v1_block$trial_uid)
+half_size <- length(trial_ids) %/% 2
+
+split_half_draws <- lapply(
+  c(word = "word", angle = "angle", color = "color"),
+  \(feature) spearman_brown(
+    split_half_reliability(v1_block, feature, n_splits = n_splits)
+  )
+)
+
+reliability_table <-
+  tibble::tibble(
+    feature = feature_labels[names(split_half_draws)],
+    reliability = vapply(split_half_draws, stats::median, numeric(1),
+                         na.rm = TRUE),
+    lower_95 = vapply(split_half_draws, stats::quantile, numeric(1),
+                      probs = 0.025, na.rm = TRUE),
+    upper_95 = vapply(split_half_draws, stats::quantile, numeric(1),
+                      probs = 0.975, na.rm = TRUE)
+  ) |>
+  dplyr::left_join(dplyr::count(eligible_participants, feature,
+                                name = "participants"),
+                   by = "feature") |>
+  dplyr::select(feature, participants, reliability, lower_95, upper_95)
+
+knitr::kable(reliability_table, digits = 3,
+             caption = "Split-half reliability, Spearman-Brown corrected")
+```
+
+```{r reliability-values, include = FALSE}
+reliability_of <- function(which_feature) {
+  reliability_table$reliability[reliability_table$feature == which_feature]
+}
+```
+
+```{r reliability-figure, fig.alt="Split-half reliability distributions for the three recall features."}
+plot_split_half(split_half_draws, base_size = 16)
+```
+
+Orientation (`r fmt(reliability_of("Orientation"), 2)`) and colour
+(`r fmt(reliability_of("Colour"), 2)`) clear the conventional 0.80 mark
+for individual-level interpretation. Word
+(`r fmt(reliability_of("Word"), 2)`) does not clear the 0.70 floor for
+group-level use. That is the same fact as the threshold failure, seen from
+the other side.
+
+**Word does not function as an individual-differences measure in this
+sample.** The metric is not at fault; Gonthier's formula works exactly as
+designed. Single-word recall at this exposure is simply too easy to
+discriminate between people. No downstream model should make an
+individual-differences claim about word, whatever its coefficients say.
+
+```{r composition-stability}
+ids_clearing_all_features <- eligible_participants |>
+  dplyr::count(id) |>
+  dplyr::filter(n == 3) |>
+  dplyr::pull(id)
+
+# Isometric log-ratio coordinates from one half of the trials, via the
+# package functions rather than a local copy of the transform. The
+# partition is word vs (colour and orientation), which is the one the
+# modelling pages use, so this stability estimate applies to those
+# coordinates and not to some other rotation of them.
+ilr_coordinates_over <- function(chosen_trials) {
+  parts <- v1_block |>
+    dplyr::filter(id %in% ids_clearing_all_features,
+                  trial_uid %in% chosen_trials) |>
+    compose_features(id)
+  parts <- parts[stats::complete.cases(parts), ]
+
+  dplyr::bind_cols(
+    dplyr::select(parts, id),
+    ilr_coords(dplyr::select(parts, tidyselect::starts_with("part_")))
+  )
+}
+
+composition_stability <- purrr::map(seq_len(n_splits), \(iteration) {
+  first_half <- sample(trial_ids, half_size)
+  dplyr::inner_join(
+    ilr_coordinates_over(first_half),
+    ilr_coordinates_over(setdiff(trial_ids, first_half)),
+    by = "id", suffix = c("_first", "_second")
+  ) |>
+    dplyr::summarise(ilr1 = cor(ilr1_first, ilr1_second),
+                     ilr2 = cor(ilr2_first, ilr2_second))
+}) |>
+  purrr::list_rbind() |>
+  dplyr::summarise(dplyr::across(
+    c(ilr1, ilr2), \(x) spearman_brown(median(x, na.rm = TRUE)))) |>
+  tidyr::pivot_longer(everything(), names_to = "coordinate",
+                      values_to = "stability") |>
+  dplyr::mutate(contrast = c("Word vs (colour and orientation)",
+                             "Colour vs orientation"))
+
+knitr::kable(composition_stability, digits = 3,
+             caption = "Split-half stability of the compositional profile")
+```
+
+The compositional profile fares better than its parts would suggest, on
+the `r length(ids_clearing_all_features)` participants clearing all three
+thresholds. A ratio can carry information a level does not, though the
+first coordinate rests partly on word, and its interpretation should not
+lean on word as a well-measured quantity.
+
+## 2. What this supports
+
+Orientation and colour scores support individual-differences analysis.
+Word scores do not, and should be reported with the measurement caveat
+attached. The compositional profile is stable enough to interpret, with
+the same caveat on its verbal coordinate.
+
+Self-reported strategy and behavioural allocation are not the same
+construct:
+
+```{r self-report}
+self_reported_priority <- block_trials |>
+  dplyr::filter(version == "v1") |>
+  dplyr::distinct(id, .keep_all = TRUE) |>
+  dplyr::select(id, strategy_items) |>
+  tidyr::unnest(strategy_items) |>
+  dplyr::select(id, tidyselect::contains("scoring_strat")) |>
+  tidyr::pivot_longer(-id, values_to = "named_feature",
+                      values_transform = as.character) |>
+  dplyr::filter(named_feature %in% c("words", "colours", "orientations")) |>
+  dplyr::summarise(
+    priority = dplyr::if_else(dplyr::n() > 1, "multiple",
+                              dplyr::first(named_feature)),
+    .by = id
+  )
+
+v1_compositions <- v1_participant_means |>
+  dplyr::filter(id %in% ids_clearing_all_features) |>
+  dplyr::mutate(proportion = mean_score / sum(mean_score), .by = id) |>
+  dplyr::select(id, feature, proportion) |>
+  tidyr::pivot_wider(names_from = feature, values_from = proportion)
+
+v1_compositions |>
+  dplyr::left_join(self_reported_priority, by = "id") |>
+  tidyr::replace_na(list(priority = "none/other")) |>
+  dplyr::summarise(dplyr::across(c(Word, Orientation, Colour), mean),
+                   participants = dplyr::n(),
+                   .by = priority) |>
+  knitr::kable(digits = 3,
+               caption = "Behavioural composition by self-reported priority")
+```
+
+Behavioural compositions barely differ between participants who named
+different priorities. This is a dissociation to report, not a validity
+failure. But "preference" language should not be used as though the two
+measures were interchangeable.
+
+---
+
+**Continuing through the Extended Online Report:** this page follows [versions](version-scope.html). To keep reading in order, continue to [questionnaire psychometrics](psychometrics.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

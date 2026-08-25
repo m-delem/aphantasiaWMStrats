@@ -1,0 +1,379 @@
+---
+title: "Performance: how well each feature is recalled"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Performance}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  error = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+library(patchwork)
+theme_set(theme_pdf(base_size = 16))
+fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
+
+pkg <- "aphantasiaWMStrats"
+refit <- "never"
+```
+
+How accurately is each feature recalled, and does imagery vividness predict
+it? This is the question the study started from, and it is now a
+**robustness check** on the [joint model](joint-model.html) rather than the
+main event, for the reason the [analysis
+strategy](analysis-strategy.html) page gives: it conditions on responded
+trials, and whether that is innocent is something only the joint model can
+test.
+
+Same data through a simpler lens, so agreement with the joint model is not
+independent evidence. It is still worth having, because a result that
+appears only under the more complex model deserves suspicion.
+
+```{r data}
+v1 <- get_data("v1") |>
+  dplyr::filter(grepl("^expe_block", expe_phase))
+
+participant_info <- v1 |>
+  dplyr::summarise(
+    vviq = dplyr::first(vviq_total_score),
+    imagery_group = dplyr::first(vviq_group_2),
+    .by = id
+  )
+
+model_data <- v1 |>
+  dplyr::filter(id %in% engaged_ids(v1)) |>
+  dplyr::left_join(participant_info, by = "id") |>
+  dplyr::filter(!is.na(vviq)) |>
+  dplyr::mutate(
+    complete_aphant = factor(
+      dplyr::if_else(vviq == 16, "floor", "above_floor"),
+      levels = c("above_floor", "floor")
+    ),
+    score_color = squeeze_boundaries(score_color, n = sum(responded_color))
+  )
+
+feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
+```
+
+This page uses the `r dplyr::n_distinct(model_data$id)` participants who
+clear the engagement thresholds of the [task
+validity](task-validity.html) page, not the 86 the joint model uses. The
+thresholds are there to stop imprecise participant means being treated as
+measurements, and unlike the joint model this analysis does form them.
+
+## 1. Three features, three response families
+
+Nothing about these scores makes a single response family appropriate, and
+the [scoring](scoring.html) page shows why: on responded trials, word piles
+at 1, orientation has no boundary mass at all, and colour has a trace of
+mass at 1 that is pixel resolution rather than behaviour.
+
+```{r families}
+performance_formula(parity = FALSE)
+```
+
+Word takes a zero-one-inflated Beta because its ceiling is a real point
+mass, orientation a plain Beta, and colour a Beta after a
+Smithson-Verkuilen squeeze. `subset()` restricts each arm to the trials
+that feature was reported on, which is what lets one row carry three
+responses with independent non-response.
+
+## 2. Modelling the features separately is the wrong thing to do
+
+Start with what looks obvious: fit each feature on its own.
+
+```{r option-a}
+fit_feature <- function(feature, family, file) {
+  fit_brms_model(
+    formula = brms::bf(
+      stats::as.formula(paste0(
+        "score_", feature, " | subset(responded_", feature, ") ~ ",
+        "vviq + complete_aphant + (1 | id)")),
+      family = family
+    ),
+    data = model_data,
+    file = system.file("models", file, package = pkg),
+    file_refit = refit
+  )
+}
+
+independent <- list(
+  Word = fit_feature("word", brms::zero_one_inflated_beta(), "perf-a-word.rds"),
+  Orientation = fit_feature("angle", brms::Beta(), "perf-a-angle.rds"),
+  Colour = fit_feature("color", brms::Beta(), "perf-a-color.rds")
+)
+```
+
+The task makes that false by construction. Points are traded across
+features within a trial, so a participant who does well on one has spent
+effort they could not spend elsewhere. Three independent models cannot
+represent that, and more importantly they cannot **measure** it.
+
+```{r c-prime}
+correlated <- fit_brms_model(
+  formula = performance_formula(parity = FALSE),
+  data    = model_data,
+  file    = system.file("models", "perf-c-prime.rds", package = pkg),
+  file_refit = refit
+)
+```
+
+The correlated model adds `(1 | p | id)`, which gives the three features a
+shared participant-level correlation matrix. That is the whole difference,
+and it buys two things: a dependency structure the design implies, and
+three named correlations that are themselves the quantity of interest.
+
+```{r contrast, fig.alt="Floor-group offsets from independent and correlated models."}
+offsets <- dplyr::bind_rows(
+  purrr::imap(independent, \(model, feature) {
+    values <- brms::fixef(model)["complete_aphantfloor", ]
+    tibble::tibble(feature = feature, model = "Independent",
+                   estimate = values[["Estimate"]],
+                   lower = values[["Q2.5"]], upper = values[["Q97.5"]])
+  }) |> purrr::list_rbind(),
+  purrr::map(names(feature_labels), \(feature) {
+    row <- paste0("score", feature, "_complete_aphantfloor")
+    values <- brms::fixef(correlated)[row, ]
+    tibble::tibble(feature = feature_labels[[feature]],
+                   model = "Correlated",
+                   estimate = values[["Estimate"]],
+                   lower = values[["Q2.5"]], upper = values[["Q97.5"]])
+  }) |> purrr::list_rbind()
+) |>
+  dplyr::mutate(feature = factor(feature, levels = unname(feature_labels)))
+
+ggplot(offsets, aes(x = estimate, y = feature, colour = model)) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.3) +
+  geom_pointrange(aes(xmin = lower, xmax = upper),
+                  position = position_dodge(width = 0.5), size = 0.4) +
+  scale_colour_manual(values = unname(palette.colors()[c(6, 2)]), name = NULL) +
+  labs(x = "Floor-group offset, log-odds", y = NULL,
+       caption = "The same quantity, estimated two ways.")
+```
+
+**The coefficients barely move.** That is worth saying plainly rather than
+implying the simpler model was misleading: on these data, respecting the
+dependency structure changes the floor-group estimates very little. What it
+adds is not a correction but a measurement.
+
+## 3. What the correlations say
+
+```{r correlations}
+posterior_correlations(brms::as_draws_df(correlated), lkj = 2, dimension = 3) |>
+  dplyr::mutate(
+    pair = paste(feature_labels[sub("^score", "", response_a)], "and",
+                 feature_labels[sub("^score", "", response_b)])
+  ) |>
+  dplyr::select(pair, median, lower, upper, pd, moved) |>
+  knitr::kable(digits = 3, caption = "Participant-level correlations between features")
+```
+
+Orientation and colour correlate **positively**, and clearly. Between
+people, doing well on one non-verbal feature goes with doing well on the
+other: shared ability, not a trade-off.
+
+This matters because the raw data suggests the opposite. Working from
+proportions, orientation and colour appear to trade off, and the
+[scoring](scoring.html) page shows why that reading is an artifact:
+residualising three parts on their own mean induces negative correlation
+whatever the data says. Here the parts are not closed, so a negative
+correlation would have meant something. It is positive.
+
+**The trade-off the task imposes is a within-trial constraint, not a
+between-person one.** The [joint model](joint-model.html) reaches the same
+conclusion with the gates in place.
+
+## 4. How imagery enters
+
+Vividness is not a smoothly continuous predictor here, so rather than
+assume a form, several were compared on orientation, which is the
+best-measured feature.
+
+```{r comparison}
+form_models <- list(
+  "Intercept only" = fit_brms_model(
+    formula = brms::bf(score_angle | subset(responded_angle) ~ 1 + (1 | id),
+                       family = brms::Beta()),
+    data = model_data,
+    file = system.file("models", "perf-form-null.rds", package = pkg),
+    file_refit = refit),
+  "Two-group split" = fit_brms_model(
+    formula = brms::bf(
+      score_angle | subset(responded_angle) ~ imagery_group + (1 | id),
+      family = brms::Beta()),
+    data = model_data,
+    file = system.file("models", "perf-form-group.rds", package = pkg),
+    file_refit = refit),
+  "Linear vividness" = fit_brms_model(
+    formula = brms::bf(score_angle | subset(responded_angle) ~ vviq + (1 | id),
+                       family = brms::Beta()),
+    data = model_data,
+    file = system.file("models", "perf-form-linear.rds", package = pkg),
+    file_refit = refit),
+  "Floor-group additive" = independent$Orientation
+)
+
+form_models <- lapply(form_models, brms::add_criterion, "loo")
+comparison <- loo::loo_compare(lapply(form_models, \(fit) fit$criteria$loo))
+if (!"model" %in% names(comparison)) {
+  comparison <- tibble::rownames_to_column(as.data.frame(comparison), "model")
+}
+comparison |>
+  dplyr::select(model, elpd_diff, se_diff) |>
+  knitr::kable(digits = 2, caption = "Functional form, compared on orientation")
+```
+
+The differences sit inside their standard errors, so **the data do not
+separate these forms**. That was predicted in advance, and it is reported
+rather than converted into a claim: at this sample size, with this outcome,
+a comparison of four models was never going to be decisive.
+
+The floor-group form remains primary because it was declared so before
+fitting, not because it won. Its justification is structural: participants
+at the scale floor have no vividness variance among themselves, so a slope
+cannot be estimated for them, while an offset can.
+
+```{r floor-figure, fig.alt="Orientation accuracy against imagery vividness, with the floor group shown separately.", fig.height = 6}
+orientation <- independent$Orientation
+
+grid <- tibble::tibble(
+  vviq = seq(16, 80, length.out = 200),
+  complete_aphant = factor("above_floor", levels = c("above_floor", "floor")),
+  responded_angle = TRUE
+)
+above_floor <- brms::posterior_epred(orientation, newdata = grid,
+                                     re_formula = NA)
+
+floor_row <- grid[1, ]
+floor_row$complete_aphant <- factor("floor",
+                                    levels = c("above_floor", "floor"))
+floor_draws <- as.vector(
+  brms::posterior_epred(orientation, newdata = floor_row, re_formula = NA))
+
+observed <- model_data |>
+  dplyr::filter(responded_angle) |>
+  dplyr::summarise(y = mean(score_angle), vviq = dplyr::first(vviq), .by = id)
+
+effect <- brms::fixef(orientation)["complete_aphantfloor", ]
+
+main_panel <- plot_floor_group(
+  observed = dplyr::transmute(dplyr::filter(observed, vviq > 16),
+                              x = vviq, y = y),
+  fitted = tibble::tibble(
+    x = grid$vviq,
+    estimate = apply(above_floor, 2, stats::median),
+    lower = apply(above_floor, 2, stats::quantile, 0.025),
+    upper = apply(above_floor, 2, stats::quantile, 0.975)
+  ),
+  floor_draws = floor_draws,
+  floor_observed = dplyr::filter(observed, vviq == 16)$y,
+  effect_label = sprintf("%.2f\n[%.2f, %.2f]", effect[["Estimate"]],
+                         effect[["Q2.5"]], effect[["Q97.5"]]),
+  y_lab = "Orientation recall accuracy",
+  caption = "Offset in log-odds. Points coloured by vividness.",
+  base_size = 16, point_size = 2.2, left_expansion = 0.15,
+  arrow_nudge = -5.5
+)
+
+plot_vviq_histogram(observed$vviq, base_size = 16, left_expansion = 0.15) /
+  main_panel + patchwork::plot_layout(heights = c(1, 4))
+```
+
+The histogram is the argument for the model: vividness is a spike at the
+floor plus an irregular remainder, not a continuum. In the panel the arrow
+has almost nothing to span, which is the result.
+
+## 5. Where the floor group does and does not differ
+
+```{r floor-table}
+purrr::map(names(feature_labels), \(feature) {
+  row <- paste0("score", feature, "_complete_aphantfloor")
+  values <- brms::fixef(correlated)[row, ]
+  tibble::tibble(feature = feature_labels[[feature]],
+                 estimate = values[["Estimate"]],
+                 lower = values[["Q2.5"]], upper = values[["Q97.5"]])
+}) |>
+  purrr::list_rbind() |>
+  knitr::kable(digits = 3, caption = "Floor-group offsets, log-odds")
+```
+
+Word is positive and excludes zero, colour is negative and touches it,
+orientation is centred near nothing.
+
+**Word's row must not be read as an individual-differences result.** Its
+split-half reliability is 0.45, and the [task
+validity](task-validity.html) page sets out why: single-word recall at this
+exposure is too easy to discriminate between people. A group contrast is a
+different estimand from an individual-differences claim, and measurement
+error widens intervals rather than biasing estimates, so the offset is not
+*wrong*. But this page is not where that claim should be made, and the
+[composition](composition.html) page reaches the same conclusion through a
+quantity that does clear its reliability gate.
+
+## 6. Partial pooling, made visible
+
+A multilevel model does not take each participant's mean at face value: it
+pulls imprecise estimates toward the group. Worth seeing rather than
+asserting, because on one feature it is dramatic.
+
+```{r shrinkage, fig.alt="Observed against model-implied participant means for the three features."}
+observed_means <- compose_features(model_data, id) |>
+  dplyr::select(id, tidyselect::starts_with("mean_")) |>
+  tidyr::pivot_longer(tidyselect::starts_with("mean_"), names_to = "feature",
+                      values_to = "observed", names_prefix = "mean_")
+
+fitted_means <- purrr::map(names(feature_labels), \(feature) {
+  responded <- model_data[[paste0("responded_", feature)]]
+  epred <- brms::posterior_epred(correlated, resp = paste0("score", feature))
+  tibble::tibble(
+    id = model_data$id[responded],
+    feature = feature,
+    modelled = apply(epred, 2, mean)
+  ) |>
+    dplyr::summarise(modelled = mean(modelled), .by = c(id, feature))
+}) |>
+  purrr::list_rbind()
+
+dplyr::inner_join(observed_means, fitted_means, by = c("id", "feature")) |>
+  dplyr::mutate(feature = factor(feature_labels[feature],
+                                 levels = unname(feature_labels))) |>
+  ggplot(aes(x = observed, y = modelled, colour = feature)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", linewidth = 0.3) +
+  geom_point(size = 1.6, alpha = 0.7, show.legend = FALSE) +
+  facet_wrap(~feature) +
+  scale_discrete_feature(aesthetics = "colour") +
+  labs(x = "Observed mean, responded trials", y = "Model-implied mean",
+       caption = "Points off the diagonal have been pulled toward the group.")
+```
+
+Orientation and colour track the diagonal with modest shrinkage, which is
+what partial pooling normally looks like.
+
+**Word does not track it at all.** Observed means run from about 0.78 to
+1.00, and the model returns essentially the same estimate for everybody.
+That is not a bug: it is the model saying it cannot distinguish these
+participants, and it is the same fact as word's split-half reliability of
+0.45 seen from another angle. A figure of this shape is what an unusable
+individual-differences measure looks like, and it is the clearest reason on
+this page not to read word's coefficient as one.
+
+---
+
+**Continuing through the Extended Online Report:** this page follows [the joint model](joint-model.html). To keep reading in order, continue to [composition](composition.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

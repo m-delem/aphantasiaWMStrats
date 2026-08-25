@@ -7,6 +7,67 @@ template:
       google: Montserrat
     heading_font:
       google: DM Sans
+# Ordered by the reading order in inst/planning/EOR-OUTLINE.md, not
+# alphabetically: a reader should never meet a quantity before the page
+# that defines it. Groups with no pages yet are absent rather than empty;
+# the outline records what is missing.
+articles:
+  - title: What was measured
+    navbar: What was measured
+    desc: >
+      The paradigm, and how a response becomes a number. Everything after
+      this depends on it.
+    contents:
+      - sample-description
+      - task-design
+      - scoring
+      - engagement
+  - title: Scope
+    navbar: Scope
+    desc: >
+      Which task versions enter the analyses, and why the rest do not.
+      Every result downstream inherits this restriction.
+    contents:
+      - version-scope
+  - title: Does anything here measure anything?
+    navbar: Measurement quality
+    desc: >
+      Reliability and validity, for the task and for the questionnaires.
+      Both have to hold before an association between them means anything.
+    contents:
+      - task-validity
+      - psychometrics
+  - title: Confirmatory modelling
+    navbar: Modelling
+    desc: >
+      Imagery groups fixed in advance. The strategy page says what is
+      modelled and why before any results appear.
+    contents:
+      - analysis-strategy
+      - joint-model
+      - performance
+      - composition
+  - title: Exploratory
+    navbar: Exploratory
+    desc: >
+      Groups not fixed in advance. Whether the questionnaires contain
+      structure the vividness split misses.
+    contents:
+      - beyond-vividness
+  - title: Technical
+    navbar: Technical
+    desc: >
+      How the models were built and checked, and what was tried and
+      withdrawn along the way.
+    contents:
+      - model-diagnostics
+      - implementation-notes
+      - lessons
+  - title: Reference
+    navbar: Reference
+    contents:
+      - codebook
+
 reference:
   - title: Data
     desc: >
@@ -66,6 +127,17 @@ reference:
       - composition_summary
       - centred_correlations
       - partition_variance
+      - posterior_correlations
+  - title: Questionnaire structure
+    desc: >
+      The exploratory strand: preparing the questionnaire scales for
+      clustering, and checking that a clustering means what it appears to.
+    contents:
+      - questionnaire_scales
+      - standardise_scales
+      - add_imagery_composite
+      - cluster_stability
+      - adjusted_rand_index
   - title: Figures
     desc: >
       The plotting identity shared with `aphantasiaEmotions`, plus the
@@ -74,28 +146,72 @@ reference:
       - theme_pdf
       - save_ggplot
       - scale_x_vviq
+      - scale_discrete_feature
       - scale_x_aphantasia
       - scale_discrete_aphantasia
       - scale_shape_aphantasia
       - plot_composition_ternary
       - plot_composition_biplot
+      - plot_split_half
+      - plot_floor_group
+      - plot_vviq_histogram
 
 navbar:
-  left:
-    - text: "Extended Online Report"
+  structure:
+    left:  [intro, eor, reference]
+    right: [search, github, lightswitch]
+  components:
+    eor:
+      text: "Extended Online Report"
+      # Same order as the `articles` groups above and as
+      # inst/planning/EOR-OUTLINE.md. Pages that do not exist yet are
+      # simply absent; the outline is the record of what is missing.
       menu:
-        - text: "Paradigm characteristics"
+        - text: "What was measured"
+        - text: "The sample"
+          href: articles/sample-description.html
         - text: "Task design"
           href: articles/task-design.html
-        - text: "Psychometrics"
-          href: articles/psychometrics.html
-        - text: "Task engagement"
-          href: articles/engagement.html
         - text: "Scoring"
           href: articles/scoring.html
+        - text: "Task engagement"
+          href: articles/engagement.html
         - text: "----"
-        - text: "Technical details"
+        - text: "Scope"
+        - text: "Versions, and which one the analyses use"
+          href: articles/version-scope.html
+        - text: "----"
+        - text: "Measurement quality"
+        - text: "Task validity"
+          href: articles/task-validity.html
+        - text: "Questionnaire psychometrics"
+          href: articles/psychometrics.html
+        - text: "----"
+        - text: "Confirmatory modelling"
+        - text: "The analysis: what is modelled, and why"
+          href: articles/analysis-strategy.html
+        - text: "The joint model"
+          href: articles/joint-model.html
+        - text: "Performance"
+          href: articles/performance.html
+        - text: "Composition"
+          href: articles/composition.html
+        - text: "----"
+        - text: "Exploratory"
+        - text: "Beyond vividness"
+          href: articles/beyond-vividness.html
+        - text: "----"
+        - text: "Technical"
+        - text: "Model diagnostics"
+          href: articles/model-diagnostics.html
+        - text: "Implementation notes"
+          href: articles/implementation-notes.html
+        - text: "What was tried and withdrawn"
+          href: articles/lessons.html
+        - text: "----"
+        - text: "Reference"
         - text: "Codebook"
           href: articles/codebook.html
-    - text: "Reference"
+    reference:
+      text: "Reference"
       href: reference/index.html

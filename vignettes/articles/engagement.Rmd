@@ -1,5 +1,5 @@
 ---
-title: "Task engagement: two ways participants withdrew"
+title: "Task engagement: two ways of not doing the task"
 output: rmarkdown::html_vignette
 bibliography: ../references.bib
 csl: ../apa.csl
@@ -16,36 +16,51 @@ knitr::opts_chunk$set(
 )
 library(aphantasiaWMStrats)
 library(ggplot2)
-theme_set(theme_minimal(base_size = 16))
+theme_set(theme_pdf(base_size = 16))
 fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
 pct <- function(x) sprintf("%.1f%%", 100 * x)
 ```
 
-Participants could withdraw effort from the WM-FTT in two places: the
+Participants could decline to do the WM-FTT in two places: the
 parity-judgement distractor between encoding and recall, and the recall
-responses themselves. This page establishes that these are **separate
-behaviours** rather than one underlying disengagement, describes each, and
-sets out why neither can be treated as a nuisance to control away.
+responses themselves. This page establishes what each of those variables
+measures, shows that they are **separate behaviours**, and argues that
+neither is a nuisance to be controlled away.
 
-It is descriptive groundwork. The models that build on it live elsewhere;
-what is settled here is what the variables are and how they relate.
+The second claim is the one the modelling pages depend on. Under a
+points-per-feature incentive with optional recall, **declining to report a
+feature is an allocation decision**, not missing data.
+
+It is descriptive groundwork. The models that build on it live elsewhere.
 
 ```{r data}
 block_trials <- all_data |>
   dplyr::filter(grepl("^expe_block", expe_phase), version == "v1")
 
-# Per participant: parity accuracy across both judgements per trial, and
-# non-response rate per recall feature.
 by_participant <- block_trials |>
   dplyr::summarise(
-    parity_accuracy = mean(c(parity_1_acc, parity_2_acc), na.rm = TRUE),
+    # Parity is split into its two components. Section 2 shows why the
+    # `parity_*_acc` columns cannot be used directly.
+    parity_probes   = 2 * dplyr::n(),
+    parity_answered = sum(responded_parity_1) + sum(responded_parity_2),
+    parity_correct  = sum(parity_1_acc) + sum(parity_2_acc),
     non_response_word = 1 - mean(responded_word),
     non_response_orientation = 1 - mean(responded_angle),
     non_response_colour = 1 - mean(responded_color),
     vviq = dplyr::first(vviq_total_score),
     imagery_group = dplyr::first(vviq_group_2),
     .by = id
+  ) |>
+  dplyr::mutate(
+    parity_rate = parity_answered / parity_probes,
+    parity_accuracy_given_response =
+      dplyr::if_else(parity_answered > 0, parity_correct / parity_answered,
+                     NA_real_),
+    # what a naive mean of `parity_*_acc` gives, kept for section 2
+    parity_accuracy_naive = parity_correct / parity_probes
   )
+
+engaged <- engaged_ids(block_trials)
 ```
 
 ## 1. The parity task had no consequence in v1
@@ -73,59 +88,137 @@ block_trials |>
 Every trial. No deduction was ever applied, so a participant who worked out
 that parity did not count lost nothing by ignoring it.
 
-```{r parity-distribution}
-ggplot(by_participant, aes(parity_accuracy)) +
-  geom_histogram(binwidth = 0.05, boundary = 0) +
-  geom_vline(xintercept = 0.5, linetype = "dashed") +
-  labs(x = "Parity judgement accuracy", y = "Participants",
-       title = "Parity accuracy in v1, with chance marked")
-```
+Some of them worked it out.
 
-```{r parity-summary}
-by_participant |>
-  dplyr::summarise(
-    participants = dplyr::n(),
-    median_accuracy = stats::median(parity_accuracy, na.rm = TRUE),
-    at_or_below_chance = sum(parity_accuracy <= 0.5, na.rm = TRUE),
-    above_ninety = sum(parity_accuracy > 0.9, na.rm = TRUE)
-  ) |>
-  knitr::kable(digits = 3, caption = "Parity engagement, v1")
-```
-
-The distribution is not unimodal noise around a competence level. It
-separates people who did the task from people who did not, which is what
-makes a binary split tempting and also what makes "accuracy" the wrong word
-for it. In v1 this measures **compliance with a task that did not matter**,
-not concurrent memory load.
-
-## 2. Parity engagement is not independent of imagery
-
-This is the finding that stops parity accuracy being usable as a nuisance
-covariate.
-
-```{r parity-vviq}
-parity_vviq <- by_participant |>
-  dplyr::filter(!is.na(parity_accuracy), !is.na(vviq))
+```{r parity-optout}
+optout <- dplyr::filter(by_participant, parity_rate == 0)
 
 tibble::tibble(
-  n = nrow(parity_vviq),
-  rho = stats::cor(parity_vviq$parity_accuracy, parity_vviq$vviq,
-                   method = "spearman"),
-  p = suppressWarnings(stats::cor.test(parity_vviq$parity_accuracy,
-                                       parity_vviq$vviq,
-                                       method = "spearman")$p.value)
+  participants = nrow(by_participant),
+  answered_no_parity_probe = nrow(optout),
+  of_those_clearing_recall_thresholds = sum(optout$id %in% engaged)
 ) |>
-  knitr::kable(digits = 4, caption = "Parity accuracy against VVIQ, v1")
+  knitr::kable(caption = "Participants who ignored the distractor entirely, v1")
 ```
 
-Lower imagery vividness goes with *higher* parity accuracy. A covariate
-that correlates with the grouping variable is not a nuisance: adjusting for
-it removes part of the effect under study. Any model that includes parity
-accuracy as a control needs to say what it thinks it is controlling for.
+`r nrow(optout)` of `r nrow(by_participant)` participants answered **no
+parity probe at all**, and `r sum(optout$id %in% engaged)` of those clear
+the per-feature engagement thresholds on the recall task. That is not
+withdrawal. Under v1's incentives, abandoning a consequence-free secondary
+task while keeping recall performance intact is the rational move.
 
-Why the correlation runs in that direction is not established here. A
-resource-allocation account would predict it (effort not spent on imagery
-is available for the distractor), but so would several duller explanations.
+## 2. What the parity accuracy column actually measures
+
+`parity_1_acc` and `parity_2_acc` score an **unanswered** probe as 0, the
+same convention the recall scores use. That makes a zero ambiguous, and in
+v1 the ambiguity is close to total.
+
+```{r parity-zeros}
+tibble::tibble(
+  zeros = sum(block_trials$parity_1_acc == 0),
+  unanswered = sum(block_trials$parity_1_acc == 0 & !block_trials$responded_parity_1),
+  answered_and_wrong = sum(block_trials$parity_1_acc == 0 & block_trials$responded_parity_1)
+) |>
+  knitr::kable(caption = "Zeros on parity_1_acc, v1: what they are")
+```
+
+Most of them are probes nobody answered. A participant mean of that column
+is therefore not an accuracy measure. Split into its two components, the
+two barely relate to each other:
+
+```{r parity-components}
+components <- dplyr::filter(by_participant, !is.na(parity_accuracy_given_response))
+
+tibble::tibble(
+  quantity = c("Naive mean of parity_*_acc", "Proportion of probes answered",
+               "Accuracy given a response"),
+  median = c(stats::median(by_participant$parity_accuracy_naive),
+             stats::median(by_participant$parity_rate),
+             stats::median(components$parity_accuracy_given_response)),
+  at_exactly_zero = c(sum(by_participant$parity_accuracy_naive == 0),
+                      sum(by_participant$parity_rate == 0), 0L)
+) |>
+  knitr::kable(digits = 3, caption = "Three quantities, v1")
+
+tibble::tibble(
+  pair = c("Naive mean vs proportion answered",
+           "Naive mean vs accuracy given a response",
+           "Proportion answered vs accuracy given a response"),
+  r = c(stats::cor(by_participant$parity_accuracy_naive, by_participant$parity_rate),
+        stats::cor(components$parity_accuracy_naive,
+                   components$parity_accuracy_given_response),
+        stats::cor(components$parity_rate,
+                   components$parity_accuracy_given_response))
+) |>
+  knitr::kable(digits = 3, caption = "What the naive column is made of")
+```
+
+The naive column is almost perfectly correlated with the proportion of
+probes answered, and weakly with accuracy among those answered. It is a
+response-rate variable wearing an accuracy name, and that is the whole
+explanation for its bimodality. Meanwhile the two real components are close
+to orthogonal, so collapsing them does not blur two related quantities: it
+discards one.
+
+```{r parity-distribution}
+by_participant |>
+  dplyr::select(id, parity_rate, parity_accuracy_given_response) |>
+  tidyr::pivot_longer(-id, names_to = "quantity", values_to = "value") |>
+  dplyr::mutate(quantity = factor(
+    dplyr::recode(quantity,
+      parity_rate = "Proportion of probes answered",
+      parity_accuracy_given_response = "Accuracy given a response"),
+    # narrative order, not alphabetical
+    levels = c("Proportion of probes answered", "Accuracy given a response")
+  )) |>
+  ggplot(aes(value)) +
+  geom_histogram(binwidth = 0.05, boundary = 0) +
+  # chance is only a reference point for the accuracy panel; drawing it on
+  # a response rate would imply something it does not mean
+  geom_vline(
+    data = tibble::tibble(quantity = factor("Accuracy given a response",
+      levels = c("Proportion of probes answered", "Accuracy given a response"))),
+    aes(xintercept = 0.5), linetype = "dashed"
+  ) +
+  facet_wrap(~quantity) +
+  labs(x = NULL, y = "Participants",
+       title = "The two components behave completely differently",
+       caption = "Dashed line marks chance on the parity judgement.")
+```
+
+Whether someone did the distractor is bimodal, with a hard spike at zero.
+How well they did it, among those who did, is unimodal and well above the
+chance line. Only the second is an accuracy variable.
+
+### The claim this section used to make
+
+An earlier version of this page reported a correlation between the naive
+column and VVIQ and concluded that it was "the finding that stops parity
+accuracy being usable as a nuisance covariate". Both halves of that were
+too strong.
+
+```{r parity-vviq}
+usable <- dplyr::filter(by_participant, !is.na(vviq))
+
+naive_vviq <- correlation_test(usable$parity_accuracy_naive, usable$vviq)
+
+dplyr::bind_rows(
+  dplyr::mutate(naive_vviq, quantity = "Naive mean of parity_*_acc"),
+  dplyr::mutate(correlation_test(usable$parity_rate, usable$vviq),
+                quantity = "Proportion of probes answered"),
+  dplyr::mutate(
+    correlation_test(usable$parity_accuracy_given_response, usable$vviq),
+    quantity = "Accuracy given a response")
+) |>
+  dplyr::select(quantity, n, rho, p) |>
+  knitr::kable(digits = 4, caption = "Parity against VVIQ, v1")
+```
+
+The original figure was rho = `r fmt(naive_vviq$rho)` with p =
+`r fmt(naive_vviq$p)`, which is not evidence for a direction, and it came
+from a variable that measures willingness rather than accuracy. Neither
+corrected component does any better. **Parity engagement is not related to
+imagery vividness in this sample.**
 
 ## 3. The second signal: declining to report a feature
 
@@ -158,48 +251,70 @@ by_participant |>
   tidyr::pivot_longer(tidyselect::starts_with("non_response_"),
                       names_to = "feature", values_to = "non_response",
                       names_prefix = "non_response_") |>
-  dplyr::filter(!is.na(parity_accuracy)) |>
   dplyr::summarise(
-    rho = stats::cor(non_response, parity_accuracy, method = "spearman"),
-    p = suppressWarnings(stats::cor.test(non_response, parity_accuracy,
+    rho = stats::cor(non_response, parity_rate, method = "spearman"),
+    p = suppressWarnings(stats::cor.test(non_response, parity_rate,
                                          method = "spearman")$p.value),
     .by = feature
   ) |>
   dplyr::mutate(feature = stringr::str_to_title(feature)) |>
   knitr::kable(digits = 3,
-               caption = "Feature non-response against parity accuracy, v1")
+               caption = "Feature non-response against parity engagement, v1")
 ```
 
-The correlations are weak, mostly non-significant, and **positive**:
-participants who engaged more with the parity task declined *more* recall
-responses, which is the opposite of what a shared-disengagement account
-predicts. Two behaviours, not one.
+The correlations are near zero and inconsistent in sign. Ignoring the
+distractor tells you essentially nothing about whether someone will answer
+a recall prompt, which is what a shared-disengagement account would need.
+**Two behaviours, not one.**
 
 That has a practical consequence. A single "engagement" covariate would
-average two things that point in different directions, and would control
-for neither properly.
+average two unrelated things and control for neither.
 
 ## 5. What this means downstream
 
-Neither variable is a nuisance to be partialled out, and both correlate
-with the grouping variable of interest.
+**Parity engagement is not a confound.** It does not differ by imagery
+group:
 
-- **Parity accuracy** in v1 measures compliance with a consequence-free
-  task, and correlates with VVIQ at
-  `r fmt(stats::cor(parity_vviq$parity_accuracy, parity_vviq$vviq, method = "spearman"), 3)`.
-  Using it as a control silently adjusts away part of the imagery effect.
-- **Non-response** is folded into the recall scores as zeros, which means
-  any analysis of accuracy that ignores the `responded_*` flags is
-  measuring a blend of accuracy and willingness to answer. The
-  [Scoring](scoring.html) page quantifies how much difference that makes.
+```{r parity-not-confound}
+floor_split <- by_participant |>
+  dplyr::filter(!is.na(vviq), id %in% engaged) |>
+  dplyr::mutate(floor = dplyr::if_else(vviq == 16, "VVIQ floor", "Above floor"))
 
-The honest framing is that participants had two independent ways of not
-doing the task, both are measurable, and both carry information about the
-people doing them. Treating either as measurement error discards that.
+floor_split |>
+  dplyr::summarise(
+    participants = dplyr::n(),
+    mean_parity_rate = mean(parity_rate),
+    .by = floor
+  ) |>
+  knitr::kable(digits = 3,
+               caption = "Parity engagement by imagery group, engaged sample")
+```
 
-## References
+```{r parity-wilcox}
+stats::wilcox.test(parity_rate ~ floor, data = floor_split, exact = FALSE)
+```
 
-<div id="refs"></div>
+It is still worth carrying in the accuracy models, but as the **dual-task
+load a participant actually incurred**, which is a strategy variable in its
+own right, rather than as a control for something it does not predict.
+
+**Non-response is the substantive one.** It is folded into the recall
+scores as zeros, so any analysis of accuracy that ignores the `responded_*`
+flags is measuring a blend of accuracy and willingness to answer. The
+[Scoring](scoring.html) page quantifies how much difference that makes.
+
+More than that: under a points-per-feature incentive with optional recall,
+choosing not to report a feature **is** an allocation decision, and
+arguably a more direct one than how accurately a reported feature was
+recalled. Treating it as missing data discards the clearest strategic
+signal the task produces. That is why the primary model of this study
+models whether a feature was reported and how well it was reported
+together, rather than conditioning on the first and analysing only the
+second.
+
+---
+
+**Continuing through the Extended Online Report:** this page follows [scoring](scoring.html). To keep reading in order, continue to [versions](version-scope.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
 
 ---
 

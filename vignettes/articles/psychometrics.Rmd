@@ -236,6 +236,10 @@ is the argument for this page existing.
 
 ---
 
+**Continuing through the Extended Online Report:** this page follows [task validity](task-validity.html). To keep reading in order, continue to [the analysis](analysis-strategy.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+
+---
+
 ```{r}
 #| label: session_info
 #| echo: false

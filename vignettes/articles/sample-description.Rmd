@@ -1,0 +1,194 @@
+---
+title: "The sample: who took part"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Sample description}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 4.5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  error = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+theme_set(theme_pdf(base_size = 16))
+```
+
+Who these participants are, and one thing about how they were recruited
+that constrains what any analysis here can claim.
+
+This page describes **all `r nrow(all_data |> dplyr::distinct(id))`
+participants across the three task versions**. The behavioural analyses
+use v1 alone and the questionnaire analyses pool all three; section 3 is
+where that split comes from.
+
+```{r data}
+participants <- all_data |>
+  dplyr::distinct(id, .keep_all = TRUE) |>
+  dplyr::mutate(
+    imagery_group = factor(
+      vviq_group_4,
+      levels = c("aphantasia", "hypophantasia", "typical", "hyperphantasia")
+    ),
+    # Free-text gender, harmonised. Seven raw values across two languages
+    # describe three categories; the raw column is kept in `all_data`.
+    gender = dplyr::case_when(
+      gender == "f" ~ "Women",
+      gender == "m" ~ "Men",
+      TRUE ~ "Non-binary or self-described"
+    )
+  )
+
+extra <- dplyr::bind_rows(participants$extra_demographics)
+```
+
+## 1. Overall
+
+```{r overall}
+# Named `n_participants`, not `participants`: inside tibble() later
+# expressions see earlier columns, so a column called `participants` would
+# mask the data frame of the same name and every line below it would be
+# operating on a count.
+tibble::tibble(
+  n_participants = nrow(participants),
+  median_age = stats::median(participants$age),
+  age_range = paste(range(participants$age), collapse = " to "),
+  french_speaking = sum(participants$language == "fr"),
+  in_France = sum(extra$country == "fra", na.rm = TRUE)
+) |>
+  knitr::kable(caption = "The pooled sample, across all three task versions")
+```
+
+```{r gender}
+participants |>
+  dplyr::count(gender) |>
+  dplyr::arrange(dplyr::desc(n)) |>
+  knitr::kable(caption = "Gender")
+```
+
+A predominantly French, predominantly women sample, skewed toward higher
+education: `r sum(grepl("master|doctorat", extra$education))` of
+`r nrow(extra)` hold a master's degree or a doctorate. That matters mainly
+for generalisation, and it is the usual profile for online volunteer
+studies of this kind.
+
+```{r education}
+extra |>
+  dplyr::filter(!is.na(education)) |>
+  dplyr::mutate(
+    level = factor(sub("^isced_[0-9]+_", "", education))
+  ) |>
+  dplyr::count(level) |>
+  dplyr::arrange(dplyr::desc(n)) |>
+  knitr::kable(caption = "Highest completed education (ISCED)")
+```
+
+## 2. By imagery group
+
+Imagery vividness is measured by the VVIQ, and the four-way split below is
+the conventional one. The modelling pages use a **two-way** split instead,
+between participants at the scale floor and everyone above it, and the
+[analysis strategy](analysis-strategy.html) page explains why.
+
+```{r groups}
+participants |>
+  dplyr::filter(!is.na(imagery_group)) |>
+  dplyr::summarise(
+    n = dplyr::n(),
+    median_age = stats::median(age),
+    women = sum(gender == "Women"),
+    .by = imagery_group
+  ) |>
+  knitr::kable(caption = "By VVIQ group")
+```
+
+```{r vviq-distribution, fig.alt="Distribution of VVIQ scores, with the floor group highlighted."}
+plot_vviq_histogram(participants$vviq_total_score, base_size = 16) +
+  labs(x = "VVIQ total score",
+       caption = "The floor group is coloured separately.") +
+  theme(axis.text.x = element_text(), axis.ticks.x = element_line(),
+        axis.line.x = element_line())
+```
+
+The distribution is the reason the modelling pages treat vividness the way
+they do. It is not a smooth continuum with a low tail: it is a sharp,
+isolated spike at the scale minimum plus an irregular remainder above it.
+A model fitting one slope through all of it would describe neither part.
+
+## 3. Recruitment, and why the versions are not interchangeable
+
+This is the constraint worth carrying into every other page.
+
+```{r recruitment}
+participants |>
+  dplyr::summarise(
+    n = dplyr::n(),
+    at_vviq_floor = sum(vviq_total_score == 16, na.rm = TRUE),
+    percent_floor = round(100 * mean(vviq_total_score == 16, na.rm = TRUE)),
+    median_age = stats::median(age),
+    .by = version
+  ) |>
+  dplyr::arrange(version) |>
+  knitr::kable(caption = "By task version")
+```
+
+The three versions recruited **different populations**. v1 is roughly a
+quarter floor group; v2 and v3 are around two thirds, because later
+recruitment deliberately targeted participants with no visual imagery,
+partly through aphantasia community channels.
+
+Two consequences run through the whole site.
+
+**The behavioural analyses use v1 only.** Not because v2 and v3 are worse
+data, but because a group comparison needs both groups: v2 has nine
+participants and v3 has twenty, with four and one typical imagers
+respectively. The [version scope](version-scope.html) page sets out the
+full argument, including a case where pooling the three produced an
+association that stratification removed.
+
+**The questionnaire analyses pool all three**, because the instruments are
+identical and were administered identically in every version, so version
+is a property of the task rather than of the scales. That decision is
+checked rather than assumed on the [beyond
+vividness](beyond-vividness.html) page.
+
+## 4. What was administered
+
+Every participant completed the same battery in the same session: the
+WM-FTT itself, then the VVIQ, the OSIVQ and the NIEQ. The
+[psychometrics](psychometrics.html) page reports how those instruments
+behave in this sample, including one subscale that does not reach its
+reliability threshold and one scoring inconsistency between versions.
+
+Field of study, occupation and recruitment route are recorded in
+`extra_demographics` and are not analysed anywhere: they were collected for
+description rather than as variables.
+
+```{r fields}
+extra |>
+  dplyr::filter(!is.na(field)) |>
+  dplyr::mutate(field = sub("^isced_f_[0-9]+_", "", field)) |>
+  dplyr::count(field) |>
+  dplyr::arrange(dplyr::desc(n)) |>
+  head(6) |>
+  knitr::kable(caption = "Field of study or work, six most common")
+```
+
+---
+
+**Continuing through the Extended Online Report:** this is the first page of the report. To keep reading in order, continue to [task design](task-design.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

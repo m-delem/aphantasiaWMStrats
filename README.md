@@ -50,29 +50,110 @@ every number was arrived at.
 Beyond any eventual article, this project is documented as an **Extended
 Online Report (EOR)**: a structure of interlinked, executable pages that
 go past what a Methods section can carry, including the reasoning behind
-each measurement choice and the problems found along the way. It is
-organised as follows.
+each measurement choice and the problems found along the way.
 
-**Paradigm characteristics**
+The pages are ordered so that **no quantity appears before the page that
+defines it**. Everything from *Scope* onward is conditional on the
+version decision, so it all runs on v1. Pages still being written are
+listed without a link.
 
+**What was measured**
+
+- [**The
+  sample**](https://m-delem.github.io/aphantasiaWMStrats/articles/sample-description.html):
+  who took part, and the recruitment difference between task versions
+  that constrains every analysis after it.
 - [**Task
   design**](https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.html):
   what participants actually did, screen by screen, and why the task
-  changed twice.
-- [**Psychometrics**](https://m-delem.github.io/aphantasiaWMStrats/articles/psychometrics.html):
+  changed twice. The points-per-feature incentive introduced here is
+  what makes the later analyses interpretable.
+- [**Scoring**](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.html):
+  how raw responses become the scores in `all_data`, why the task’s own
+  in-browser scores are not used, and what the resulting measures will
+  and will not support.
+- [**Task
+  engagement**](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.html):
+  the two independent ways participants declined to do the task, and why
+  neither is a nuisance to control away. Declining to report a feature
+  turns out to be an allocation decision rather than missing data, which
+  is the premise the main model rests on.
+
+**Scope**
+
+- [**Versions**](https://m-delem.github.io/aphantasiaWMStrats/articles/version-scope.html):
+  which of the three task versions enter the analyses, and why the
+  others are described rather than modelled. Includes the case where
+  pooling produced an association that stratification removed.
+
+**Does anything here measure anything?**
+
+- [**Task
+  validity**](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.html):
+  split-half reliability per feature and the stability of the
+  compositional coordinates. One of the three features does not survive
+  as an individual-differences measure, which constrains how every later
+  result may be read.
+- [**Questionnaire
+  psychometrics**](https://m-delem.github.io/aphantasiaWMStrats/articles/psychometrics.html):
   how the VVIQ, OSIVQ and NIEQ behave in this sample, including one
   scale that does not hold together and one scoring inconsistency worth
   knowing about.
-- [**Task
-  engagement**](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.html):
-  the two independent ways participants withdrew effort, and why neither
-  can be treated as a nuisance to control away.
-- [**Scoring**](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.html):
-  how raw responses become the scores in `all_data`, why the task’s own
-  in-browser scores are not used, what the resulting measures will and
-  will not support, and a comparison of the three versions.
 
-**Technical details**
+**Confirmatory modelling**
+
+Imagery groups fixed in advance.
+
+- [**The analysis: what is modelled, and
+  why**](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.html):
+  why declining to report a feature is treated as a behaviour rather
+  than missing data, what the primary model is, and what was fixed
+  before any model was fitted.
+- [**The joint
+  model**](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.html):
+  the centre of the report. Whether a feature was reported and how well
+  it was reported, modelled together across all three features, with the
+  fifteen correlations between those six quantities as the object of
+  interest. Willingness to report turns out to be a strong
+  participant-level trait, and it links to accuracy on one feature only.
+- [**Performance**](https://m-delem.github.io/aphantasiaWMStrats/articles/performance.html):
+  absolute per-feature accuracy, as a robustness check on the joint
+  model. Includes the clearest picture of why one of the three features
+  cannot carry an individual-differences claim.
+- [**Composition**](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.html):
+  relative allocation across the three features, independently of
+  overall performance. Participants at the imagery floor divide effort
+  differently, and the page is explicit about what a ratio can and
+  cannot tell you.
+
+**Exploratory modelling**
+
+Groups not fixed in advance, and labelled exploratory throughout.
+
+- [**Beyond
+  vividness**](https://m-delem.github.io/aphantasiaWMStrats/articles/beyond-vividness.html):
+  whether the questionnaires contain structure the imagery split misses.
+  As a group structure, no. On one dimension, yes: participants
+  reporting no voluntary imagery describe markedly more *unsymbolised
+  thinking*, which is a claim about what aphantasic experience is rather
+  than what it lacks.
+
+**Technical**
+
+- [**Model
+  diagnostics**](https://m-delem.github.io/aphantasiaWMStrats/articles/model-diagnostics.html):
+  convergence, and posterior predictive checks for each of the three
+  response families.
+- [**Implementation
+  notes**](https://m-delem.github.io/aphantasiaWMStrats/articles/implementation-notes.html):
+  fitting defaults, prior conventions, and why the model formulas are
+  exported objects rather than code inside a script.
+- [**What was tried and
+  withdrawn**](https://m-delem.github.io/aphantasiaWMStrats/articles/lessons.html):
+  the findings this project reported and then removed, and what removed
+  them.
+
+**Reference**
 
 - [**Codebook**](https://m-delem.github.io/aphantasiaWMStrats/articles/codebook.html):
   every column in `all_data`, with its type, range and meaning.

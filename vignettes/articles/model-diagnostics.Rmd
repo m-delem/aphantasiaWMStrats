@@ -1,0 +1,252 @@
+---
+title: "Model diagnostics"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Model diagnostics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 4.5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  error = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+theme_set(theme_pdf(base_size = 16))
+pkg <- "aphantasiaWMStrats"
+refit <- "never"
+```
+
+The modelling pages report estimates. This page asks whether the models
+producing them sampled properly and whether their response families
+describe the data. Both questions are usually answered in a sentence; here
+they get the space to be checked, because three of the family choices are
+not obvious.
+
+```{r data}
+v1 <- get_data("v1") |>
+  dplyr::filter(grepl("^expe_block", expe_phase))
+
+participant_info <- v1 |>
+  dplyr::summarise(
+    vviq = dplyr::first(vviq_total_score),
+    parity_rate = (sum(responded_parity_1) + sum(responded_parity_2)) /
+      (2 * dplyr::n()),
+    .by = id
+  )
+
+model_data <- v1 |>
+  dplyr::left_join(participant_info, by = "id") |>
+  dplyr::filter(!is.na(vviq)) |>
+  dplyr::mutate(
+    complete_aphant = factor(
+      dplyr::if_else(vviq == 16, "floor", "above_floor"),
+      levels = c("above_floor", "floor")
+    ),
+    score_color = squeeze_boundaries(score_color, n = sum(responded_color))
+  )
+
+joint_model <- fit_brms_model(
+  formula = joint_formula(),
+  data    = model_data,
+  prior   = joint_priors(),
+  file    = system.file("models", "joint-full.rds", package = pkg),
+  file_refit = refit
+)
+```
+
+## 1. Convergence {#convergence}
+
+Four chains, 2000 iterations each with half discarded as warmup, giving
+8000 draws across 571 parameters.
+
+```{r convergence}
+tibble::tibble(
+  parameters = length(brms::rhat(joint_model)),
+  `max R-hat` = max(brms::rhat(joint_model), na.rm = TRUE),
+  `R-hat above 1.01` = sum(brms::rhat(joint_model) > 1.01, na.rm = TRUE),
+  `min bulk ESS ratio` = min(brms::neff_ratio(joint_model), na.rm = TRUE),
+  `divergent transitions` = sum(
+    subset(brms::nuts_params(joint_model),
+           Parameter == "divergent__")$Value),
+  `max treedepth hits` = sum(
+    subset(brms::nuts_params(joint_model),
+           Parameter == "treedepth__")$Value >= 15)
+) |>
+  knitr::kable(digits = 4, caption = "The joint model")
+```
+
+Nothing to report, which is the point of reporting it. R-hat below 1.004
+everywhere, no divergent transitions, no saturated treedepths, and the
+worst-sampled parameter still has an effective sample size ratio above
+0.12.
+
+That was not guaranteed. A six-response model with fifteen correlated
+random intercepts estimated from 86 participants is the kind of model that
+diverges, which is why it was fitted with `adapt_delta = 0.99` and
+`max_treedepth = 15` from the start.
+
+```{r rhat-spread, fig.alt="Distribution of R-hat values across all parameters."}
+tibble::tibble(rhat = brms::rhat(joint_model)) |>
+  dplyr::filter(!is.na(rhat)) |>
+  ggplot(aes(x = rhat)) +
+  geom_histogram(bins = 40, fill = "grey55") +
+  geom_vline(xintercept = 1.01, linetype = "dashed", colour = "#C44E52") +
+  labs(x = "R-hat", y = "Parameters",
+       caption = "Dashed line marks the conventional 1.01 threshold.")
+```
+
+## 2. Do the families fit? {#ppc}
+
+The three recall features get three different response families, and the
+[scoring](scoring.html) page argues for each from what the boundary of that
+feature's scale means. An argument is not a check.
+
+A posterior predictive check draws replicate datasets from the fitted model
+and compares them to the real one. If the family is wrong, the replicates
+look wrong in a visible way.
+
+```{r ppc-orientation, fig.alt="Posterior predictive check for orientation accuracy."}
+brms::pp_check(joint_model, resp = "scoreangle", ndraws = 60) +
+  labs(title = "Orientation: plain Beta",
+       caption = "Dark line is the observed density; light lines are replicates.") +
+  theme_pdf(base_size = 16)
+```
+
+Orientation has no boundary mass at all once non-responders are removed,
+so a plain Beta is unremarkable and the replicates track the observed
+density closely.
+
+```{r ppc-word, fig.alt="Posterior predictive check for word accuracy."}
+brms::pp_check(joint_model, resp = "scoreword", ndraws = 60) +
+  labs(title = "Word: zero-one-inflated Beta") +
+  theme_pdf(base_size = 16)
+```
+
+Word is the interesting one. About 91% of responded word trials score
+exactly 1 and 3% exactly 0, because a recalled word either matches the
+target or does not. Those are genuine point masses, not rounding, and the
+inflation components are what let the model put mass exactly there. A plain
+Beta cannot: it has zero density at both boundaries.
+
+```{r ppc-colour, fig.alt="Posterior predictive check for colour accuracy."}
+brms::pp_check(joint_model, resp = "scorecolor", ndraws = 60) +
+  labs(title = "Colour: Beta after a Smithson-Verkuilen squeeze") +
+  theme_pdf(base_size = 16)
+```
+
+Colour is the case where the same reasoning gives the opposite answer. It
+has a trace of mass at 1, but colour score is cosine similarity on a
+continuous wheel, so an exact 1 means an error of exactly zero degrees:
+pixel resolution, not behaviour. Modelling that with an inflation component
+would estimate a process parameter for a rounding artifact on a couple of
+dozen trials. The squeeze moves every value by about one ten-thousandth
+instead, and `squeeze_boundaries()` documents the trade.
+
+```{r ppc-gates, fig.alt="Posterior predictive check for the response gates."}
+patchwork::wrap_plots(
+  purrr::map(
+    c("respondedword", "respondedangle", "respondedcolor"),
+    \(response) brms::pp_check(joint_model, resp = response, ndraws = 40) +
+      labs(title = response) + theme_pdf(base_size = 14)
+  ),
+  ncol = 3, guides = "collect"
+)
+```
+
+The three gates are Bernoulli, where the check reduces to whether the model
+reproduces the proportion of trials answered. It does.
+
+## 3. The compositional model {#composition-diagnostics}
+
+The [composition](composition.html) page fits both log-ratio coordinates
+together with the residual correlation estimated, which is what makes the
+omnibus test invariant to the choice of partition.
+
+```{r composition-model}
+composition_data <- compose_features(
+  dplyr::filter(v1, id %in% engaged_ids(v1)), id
+)
+composition_data <- composition_data[stats::complete.cases(composition_data), ]
+composition_data <- composition_data |>
+  dplyr::left_join(participant_info, by = "id") |>
+  dplyr::filter(!is.na(vviq))
+composition_data <- dplyr::bind_cols(
+  composition_data,
+  ilr_coords(dplyr::select(composition_data, tidyselect::starts_with("part_")))
+) |>
+  dplyr::mutate(
+    complete_aphant = factor(
+      dplyr::if_else(vviq == 16, "floor", "above_floor"),
+      levels = c("above_floor", "floor")
+    )
+  )
+
+composition_model <- fit_brms_model(
+  formula = composition_formula("vviq + complete_aphant + parity_rate"),
+  data    = composition_data,
+  prior   = composition_priors(),
+  file    = system.file("models", "comp-floor.rds", package = pkg),
+  file_refit = refit
+)
+
+tibble::tibble(
+  `max R-hat` = max(brms::rhat(composition_model), na.rm = TRUE),
+  `divergent transitions` = sum(
+    subset(brms::nuts_params(composition_model),
+           Parameter == "divergent__")$Value),
+  `min bulk ESS ratio` = min(brms::neff_ratio(composition_model), na.rm = TRUE)
+) |>
+  knitr::kable(digits = 4, caption = "The compositional model")
+```
+
+```{r ppc-composition, fig.alt="Posterior predictive checks for both ILR coordinates."}
+patchwork::wrap_plots(
+  brms::pp_check(composition_model, resp = "ilr1", ndraws = 60) +
+    labs(title = "ilr1: words vs non-verbal") + theme_pdf(base_size = 14),
+  brms::pp_check(composition_model, resp = "ilr2", ndraws = 60) +
+    labs(title = "ilr2: colour vs orientation") + theme_pdf(base_size = 14),
+  ncol = 2, guides = "collect"
+)
+```
+
+Gaussian is appropriate here for a reason worth stating: log-ratio
+coordinates are unbounded by construction. That is the whole point of
+leaving the simplex, and it is why the [composition](composition.html)
+page can use an ordinary linear model where the accuracy pages cannot.
+
+## 4. What is not checked here
+
+**Prior sensitivity.** The joint model's priors were chosen per
+coefficient and are documented on the [analysis
+strategy](analysis-strategy.html) page, but no alternative-prior refit was
+run. For the correlations there is a partial substitute: each posterior is
+compared against the marginal implied by the `lkj(4)` prior, and a
+posterior no narrower than its prior is flagged rather than reported.
+
+**Cross-validation of the primary model.** Model comparison was run on
+functional form for one feature ([performance](performance.html) §4) and
+on the compositional coordinate, not on the joint model as a whole. With
+54 parameters and 86 participants, a LOO comparison against alternatives
+would mostly report its own uncertainty.
+
+Both are limitations of scope rather than oversights, and both are the kind
+of thing a larger sample would make worth doing.
+
+---
+
+**Continuing through the Extended Online Report:** this page follows [beyond vividness](beyond-vividness.html). To keep reading in order, continue to [implementation notes](implementation-notes.html) next. Or return to [the analysis](analysis-strategy.html) for what the models were built to do.
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

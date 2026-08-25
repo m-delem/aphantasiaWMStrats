@@ -1,0 +1,405 @@
+---
+title: "The joint model: reporting and accuracy together"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{The joint model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5.5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  error = FALSE
+)
+library(aphantasiaWMStrats)
+library(ggplot2)
+library(patchwork)
+theme_set(theme_pdf(base_size = 16))
+fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
+
+pkg <- "aphantasiaWMStrats"
+refit <- "never"
+```
+
+This is the model the rest of the analysis is organised around. The
+[analysis strategy](analysis-strategy.html) page explains why it exists;
+this page is what it says.
+
+Six responses. Three **gates**, one per feature, for whether it was
+reported at all. Three **accuracies**, for how well it was reported when it
+was. All six share a participant-level correlation matrix, and those
+fifteen correlations are the point.
+
+```{r data}
+v1 <- get_data("v1") |>
+  dplyr::filter(grepl("^expe_block", expe_phase))
+
+participant_info <- v1 |>
+  dplyr::summarise(
+    vviq = dplyr::first(vviq_total_score),
+    parity_rate = (sum(responded_parity_1) + sum(responded_parity_2)) /
+      (2 * dplyr::n()),
+    .by = id
+  )
+
+model_data <- v1 |>
+  dplyr::left_join(participant_info, by = "id") |>
+  dplyr::filter(!is.na(vviq)) |>
+  dplyr::mutate(
+    complete_aphant = factor(
+      dplyr::if_else(vviq == 16, "floor", "above_floor"),
+      levels = c("above_floor", "floor")
+    ),
+    score_color = squeeze_boundaries(score_color, n = sum(responded_color))
+  )
+
+joint_model <- fit_brms_model(
+  formula = joint_formula(),
+  data    = model_data,
+  prior   = joint_priors(),
+  file    = system.file("models", "joint-full.rds", package = pkg),
+  file_refit = refit
+)
+```
+
+## 1. The sample is larger here, deliberately
+
+Every other modelling page uses the `r length(engaged_ids(v1))` participants
+who clear the engagement thresholds. This one uses all
+`r dplyr::n_distinct(model_data$id)` with a vividness score.
+
+The thresholds exist to stop imprecise participant *means* being treated as
+measurements, and this model forms no participant means. More to the point,
+the participants they exclude are the ones with the most to say about
+abstention: one answered **zero** orientation trials, which makes them
+invisible to every responders-only analysis and highly informative here.
+
+```{r specification}
+joint_formula()
+```
+
+The `subset()` terms are what let one trial carry six responses with
+independent non-response. `parity_rate` is on the accuracy arms only: it is
+the dual-task load a participant actually incurred, and the [task
+engagement](engagement.html) page shows it does not predict whether they
+respond.
+
+## 2. Was analysing responded trials only legitimate?
+
+Three correlations answer that, one per feature. The rule for reading them
+was fixed before they existed: near zero everywhere would mean
+responders-only analyses were fine; large everywhere would mean a general
+engagement trait and a caveat on everything conditional.
+
+```{r correlations}
+labels <- c(respondedword = "Word gate", respondedangle = "Orientation gate",
+            respondedcolor = "Colour gate", scoreword = "Word accuracy",
+            scoreangle = "Orientation accuracy", scorecolor = "Colour accuracy")
+
+correlations <- posterior_correlations(
+  brms::as_draws_df(joint_model), dimension = 6) |>
+  dplyr::mutate(
+    feature_a = sub("^responded|^score", "", response_a),
+    feature_b = sub("^responded|^score", "", response_b),
+    kind_a = ifelse(grepl("^responded", response_a), "gate", "accuracy"),
+    kind_b = ifelse(grepl("^responded", response_b), "gate", "accuracy"),
+    family = dplyr::case_when(
+      feature_a == feature_b ~ "Selection",
+      kind_a == "accuracy" & kind_b == "accuracy" ~ "Trade-off",
+      kind_a == "gate" & kind_b == "gate" ~ "Reporting, across features",
+      TRUE ~ "Cross terms"
+    ),
+    pair = paste(labels[response_a], "and", labels[response_b])
+  )
+
+correlations |>
+  dplyr::filter(family == "Selection") |>
+  dplyr::select(pair, median, lower, upper, pd) |>
+  knitr::kable(digits = 3, caption = "Reporting against accuracy, within a feature")
+```
+
+Neither. It is **feature-specific**: substantial for orientation, absent for
+word and colour.
+
+That is a third case the rule did not anticipate, and it is recorded as one
+rather than filed under whichever branch it resembles. What follows from it
+is narrower and more useful than either branch would have been:
+**responders-only analysis is sound for word and colour, and conditions on
+something real for orientation.** Pages that mix all three features, such
+as the [composition](composition.html) page, inherit a weakened version of
+the caveat rather than a blanket one.
+
+Two things make the orientation result more credible rather than less.
+It replicates: estimated from orientation alone it is 0.52, and with all
+six responses in the model 0.56, so it is not an artifact of the smaller
+specification. Both numbers in the table below are read from the fitted
+models rather than transcribed. And orientation is the one feature whose gate is
+*inferred* rather than observed: an untouched widget returns 90 degrees, so
+genuine 90-degree responses are miscoded as non-responses. That miscoding
+removes guaranteed-wrong trials from the accuracy of exactly the
+participants with low measured response rates, which pushes the correlation
+**negative**. Finding it positive despite that makes it conservative.
+
+## 3. Does doing well on one feature cost another?
+
+```{r tradeoff}
+correlations |>
+  dplyr::filter(family == "Trade-off") |>
+  dplyr::select(pair, median, lower, upper, pd) |>
+  knitr::kable(digits = 3, caption = "Accuracy against accuracy, across features")
+```
+
+No. Orientation and colour correlate **positively**, clearly so, and the
+other two pairs are uninformative. Between people, shared ability dominates:
+participants good at one non-verbal feature tend to be good at the other.
+
+This settles a question the earlier analyses could not. Working from raw
+proportions, orientation and colour appeared to trade off against each
+other, and the [scoring](scoring.html) page shows why that reading was
+wrong: closure induces negative correlation whatever the data says, and the
+apparent asymmetry was six low-engagement participants. Here the parts are
+not closed, so a negative correlation would have meant something. It is
+positive.
+
+**The trade-off the task imposes is a within-trial constraint, not a
+between-person one.**
+
+```{r tier1-figure, fig.alt="Posterior distributions of the six pre-specified correlations."}
+correlations |>
+  dplyr::filter(family %in% c("Selection", "Trade-off")) |>
+  dplyr::mutate(pair = stats::reorder(pair, median)) |>
+  ggplot(aes(x = median, y = pair, colour = family)) +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.3) +
+  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.4) +
+  facet_grid(family ~ ., scales = "free_y", space = "free_y") +
+  scale_x_continuous(limits = c(-1, 1)) +
+  scale_colour_manual(values = unname(palette.colors()[c(6, 4)]),
+                      guide = "none") +
+  labs(x = "Participant-level correlation", y = NULL,
+       caption = "Medians with 95% credible intervals.")
+```
+
+## 4. What complete aphantasia changes
+
+The model estimates a floor-group offset on all six responses, so the same
+question can be asked of willingness and of accuracy.
+
+```{r floor-effects}
+fixed <- as.data.frame(brms::fixef(joint_model))
+fixed$parameter <- rownames(fixed)
+
+fixed |>
+  dplyr::filter(grepl("complete_aphantfloor$", parameter)) |>
+  dplyr::mutate(
+    response = sub("_complete_aphantfloor$", "", parameter),
+    kind = ifelse(grepl("^responded", response),
+                  "Gate: willing to report", "Accuracy when reporting"),
+    feature = c(word = "Word", angle = "Orientation",
+                color = "Colour")[sub("^responded|^score", "", response)]
+  ) |>
+  dplyr::select(kind, feature, Estimate, Q2.5, Q97.5) |>
+  knitr::kable(digits = 3, row.names = FALSE,
+               caption = "Floor-group offsets, log-odds")
+```
+
+**On willingness to report, there is no result.** Not a null: no result. On
+the probability scale the orientation gate's interval runs from about 0.84
+to 0.99, which is consistent with a large difference and with none.
+Non-response is rare, between 7% and 14% of trials, and the floor group is
+20 people. This is the analysis that could in principle have shown
+aphantasic participants declining to report differently, and it does not
+have the precision to.
+
+That is worth stating as a design lesson rather than a finding: to measure
+abstention you need a task in which abstention is common.
+
+```{r floor-figure, fig.alt="Reporting probability for orientation against imagery vividness, with the floor group shown separately.", fig.height = 6}
+grid <- tibble::tibble(
+  vviq = seq(16, 80, length.out = 200),
+  complete_aphant = factor("above_floor", levels = c("above_floor", "floor")),
+  parity_rate = stats::median(model_data$parity_rate),
+  responded_word = TRUE, responded_angle = TRUE, responded_color = TRUE
+)
+
+above_floor <- brms::posterior_epred(
+  joint_model, newdata = grid, resp = "respondedangle", re_formula = NA)
+
+floor_row <- grid[1, ]
+floor_row$vviq <- 16
+floor_row$complete_aphant <- factor("floor",
+                                    levels = c("above_floor", "floor"))
+floor_draws <- as.vector(brms::posterior_epred(
+  joint_model, newdata = floor_row, resp = "respondedangle", re_formula = NA))
+
+observed <- model_data |>
+  dplyr::summarise(y = mean(responded_angle), vviq = dplyr::first(vviq),
+                   .by = id)
+
+gate_effect <- brms::fixef(joint_model)["respondedangle_complete_aphantfloor", ]
+
+main_panel <- plot_floor_group(
+  observed = dplyr::transmute(dplyr::filter(observed, vviq > 16),
+                              x = vviq, y = y),
+  fitted = tibble::tibble(
+    x = grid$vviq,
+    estimate = apply(above_floor, 2, stats::median),
+    lower = apply(above_floor, 2, stats::quantile, 0.025),
+    upper = apply(above_floor, 2, stats::quantile, 0.975)
+  ),
+  floor_draws = floor_draws,
+  floor_observed = dplyr::filter(observed, vviq == 16)$y,
+  effect_label = sprintf("%.2f\n[%.2f, %.2f]", gate_effect[["Estimate"]],
+                         gate_effect[["Q2.5"]], gate_effect[["Q97.5"]]),
+  y_lab = "P(reporting the orientation)",
+  caption = "Offset in log-odds. Points coloured by vividness.",
+  base_size = 16, point_size = 2.2
+)
+
+plot_vviq_histogram(observed$vviq, base_size = 16) / main_panel +
+  patchwork::plot_layout(heights = c(1, 4))
+```
+
+The histogram above the panel is the data that motivates the model on its
+own: vividness is a spike at the floor plus an irregular remainder, not a
+smooth continuum. In the panel, the half violin is the floor group's own
+values, the cross is where the above-floor relationship predicts they
+would be, and the arrow is the gap between them. Here there is barely a
+gap, which is the visual form of the row in the table above.
+
+The violin on the left is the model's estimate for the floor group; the
+points at 16 are those participants' own rates. The estimate sits exactly
+where the above-floor relationship predicts, which is the visual form of
+the row in the table.
+
+**On accuracy the picture is the one the other pages found.** Word's offset
+is positive and excludes zero, colour's is negative and touches it, and
+orientation's is centred near zero. Word's accuracy row is excluded from
+individual-differences interpretation on reliability grounds ([task
+validity](task-validity.html)), and its **gate** row is not: whether
+someone answers at all is not a low-reliability quantity.
+
+## 5. The strongest thing in the matrix was not pre-specified
+
+The nine remaining correlations were reported for completeness. One family
+of them is hard to ignore.
+
+```{r tier2}
+correlations |>
+  dplyr::filter(!family %in% c("Selection", "Trade-off")) |>
+  # the gate-to-gate family first: it is the one the text singles out
+  dplyr::mutate(family = factor(
+    family, levels = c("Reporting, across features", "Cross terms"))) |>
+  dplyr::arrange(family, -abs(median)) |>
+  dplyr::select(family, pair, median, lower, upper, pd) |>
+  knitr::kable(digits = 3, caption = "The nine remaining correlations")
+```
+
+The three gate-to-gate correlations are the largest in the whole model, all
+with the posterior entirely on one side of zero. **Willingness to report is
+a coherent participant-level trait**, far more consistent across features
+than accuracy is, and the two connect only on orientation.
+
+This was **not** in the pre-specified set, so it is exploratory and is
+labelled that way. It is also the clearest evidence available that
+abstention deserved to be modelled rather than filtered: a behaviour this
+consistent within participants is not noise.
+
+## 6. Checks
+
+The simpler models, reported in full on the
+[performance](performance.html) page, are the same data through a simpler
+lens, so agreement is a robustness check and not independent evidence. They also run on 79
+participants against this model's `r dplyr::n_distinct(model_data$id)`.
+
+```{r sanity}
+# Loaded rather than transcribed: the comparison stays true if either
+# model is refitted.
+performance_model <- fit_brms_model(
+  formula = performance_formula(parity = FALSE),
+  data    = model_data,
+  file    = system.file("models", "perf-c-prime.rds", package = pkg),
+  file_refit = refit
+)
+orientation_only <- fit_brms_model(
+  formula =
+    brms::bf(responded_angle ~ vviq + complete_aphant + (1 | p | id),
+             family = brms::bernoulli()) +
+    brms::bf(score_angle | subset(responded_angle) ~
+               vviq + complete_aphant + (1 | p | id),
+             family = brms::Beta()) +
+    brms::set_rescor(FALSE),
+  data    = model_data,
+  file    = system.file("models", "perf-joint-orientation.rds", package = pkg),
+  file_refit = refit
+)
+
+offset_of <- function(model, response) {
+  brms::fixef(model)[paste0(response, "_complete_aphantfloor"), "Estimate"]
+}
+correlation_of <- function(model, a, b) {
+  pairs <- posterior_correlations(brms::as_draws_df(model), lkj = NULL)
+  match <- pairs$response_a %in% c(a, b) & pairs$response_b %in% c(a, b)
+  pairs$median[match]
+}
+
+tibble::tibble(
+  quantity = c("Word accuracy floor offset",
+               "Orientation accuracy floor offset",
+               "Colour accuracy floor offset",
+               "cor(orientation, colour accuracy)",
+               "cor(orientation gate, accuracy)"),
+  simpler_model = c(
+    offset_of(performance_model, "scoreword"),
+    offset_of(performance_model, "scoreangle"),
+    offset_of(performance_model, "scorecolor"),
+    correlation_of(performance_model, "scoreangle", "scorecolor"),
+    correlation_of(orientation_only, "respondedangle", "scoreangle")
+  ),
+  joint_model = c(
+    offset_of(joint_model, "scoreword"),
+    offset_of(joint_model, "scoreangle"),
+    offset_of(joint_model, "scorecolor"),
+    correlation_of(joint_model, "scoreangle", "scorecolor"),
+    correlation_of(joint_model, "respondedangle", "scoreangle")
+  )
+) |>
+  dplyr::mutate(difference = joint_model - simpler_model) |>
+  knitr::kable(digits = 3, caption = "Against the performance models")
+```
+
+Everything lands close except the orientation-colour accuracy correlation,
+which drops from 0.586 to 0.456. That is the expected direction: with the
+gates in the model, variance previously absorbed into accuracy is
+attributed to willingness instead.
+
+Fitting the three gates without the accuracy arms moves the gate
+coefficients by almost nothing, so the accuracy arms are not pulling them.
+
+```{r diagnostics}
+tibble::tibble(
+  `max R-hat` = max(brms::rhat(joint_model), na.rm = TRUE),
+  `divergent transitions` = sum(
+    subset(brms::nuts_params(joint_model),
+           Parameter == "divergent__")$Value),
+  `min bulk ESS ratio` = min(brms::neff_ratio(joint_model), na.rm = TRUE),
+  draws = brms::ndraws(joint_model)
+) |>
+  knitr::kable(digits = 4, caption = "Sampler diagnostics")
+```
+
+---
+
+**Continuing through the Extended Online Report:** this page follows [the analysis](analysis-strategy.html). To keep reading in order, continue to [performance](performance.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```

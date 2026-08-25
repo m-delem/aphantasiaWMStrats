@@ -124,12 +124,77 @@ damerau_levenshtein("chien", "chein")  # one adjacent transposition
 normalise_word("  Fen\u00eatre ")      # lowercase, strip spaces and accents
 ```
 
+## Beyond scoring
+
+The package also exports the machinery the analyses run on, so that a
+script and a documentation page compute the same quantity with the same
+code rather than two copies that drift apart.
+
+**Building the composition.** Relative allocation across the three
+features is a three-part composition, which cannot be analysed as three
+proportions. `compose_features()` builds the parts from responded trials
+only, and `ilr_coords()` moves them off the simplex.
+
+```{r composition}
+v1 <- dplyr::filter(all_data, version == "v1", grepl("^expe_block", expe_phase))
+
+parts <- compose_features(v1, id)
+head(dplyr::select(parts, id, tidyselect::starts_with("part_")), 3) |>
+  knitr::kable(digits = 3)
+
+head(ilr_coords(parts[stats::complete.cases(parts), ]), 3) |>
+  knitr::kable(digits = 3)
+```
+
+The partition is an explicit argument rather than a hidden constant,
+because which contrast the first coordinate names is a substantive choice
+and not a statistical one.
+
+**Reporting quantities.** `split_half_reliability()`, `spearman_brown()`,
+`correlation_test()`, `mars_knots()`, `partition_variance()` and
+`centred_correlations()` are the estimators behind the numbers on the
+documentation pages.
+
+**Model specifications.** The formulas and priors are exported objects,
+not code buried in a script:
+
+```{r model-spec}
+joint_formula()
+```
+
+This matters for reproducibility rather than tidiness. Documentation pages
+load fitted models with `file_refit = "never"`, and brms returns a cached
+fit **without checking** that the formula it was handed matches the one the
+model was fitted with. A page that re-typed its formula could display
+something that is not what produced its numbers. Calling the builder makes
+that impossible.
+
+`joint_priors()`, `performance_formula()`, `composition_formula()` and
+`fit_brms_model()` complete the set.
+
+**Figures.** `theme_pdf()` and the `scale_*_aphantasia()` scales are shared
+with the sibling package `aphantasiaEmotions`, so imagery groups are the
+same colours across both. Analysis scripts render vector PDFs at printed
+size; these pages render the same figures at `base_size = 16`.
+
 ## Where to go next
+
+The documentation is an [Extended Online
+Report](https://m-delem.github.io/aphantasiaWMStrats/): pages ordered so
+that no quantity appears before the page that defines it.
 
 - [**Task design**](task-design.html) for what participants did and why the
   task changed twice.
-- [**Scoring**](scoring.html) for how these numbers are made and what they
-  support.
+- [**Scoring**](scoring.html) for how these numbers are made.
+- [**Task engagement**](engagement.html) for the two ways participants
+  declined to do the task, and why declining is itself informative.
+- [**Versions**](version-scope.html) for which of the three task versions
+  the analyses use.
+- [**Task validity**](task-validity.html) for whether these scores are
+  reliable enough to carry an individual-differences claim. One of the
+  three features is not.
+- [**Questionnaire psychometrics**](psychometrics.html) for the same
+  question asked of the VVIQ, OSIVQ and NIEQ.
 - [**Codebook**](codebook.html) for every column in `all_data`.
 
 ---

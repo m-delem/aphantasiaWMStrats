@@ -343,59 +343,13 @@ two quantities it means.
 
 ## 4. Which sample
 
-v1 is the primary analysis sample. v2 and v3 are described here but do not
-enter the inferential analyses.
+v1 is the primary analysis sample. v2 and v3 are described but do not enter
+the inferential analyses, and the [version scope](version-scope.html) page
+sets out the procedure that resolved to that, including the case where
+pooling the three versions produced an association that stratification
+removed.
 
-```{r versions}
-block_trials |>
-  dplyr::distinct(participant, version, vviq_group_4) |>
-  dplyr::count(version, vviq_group_4) |>
-  tidyr::pivot_wider(
-    names_from = vviq_group_4, 
-    values_from = n,
-    values_fill = 0) |>
-  dplyr::relocate(
-    c("aphantasia", "hypophantasia", "typical", "hyperphantasia"),
-    .after = "version") |> 
-  knitr::kable(caption = "Participants per version and imagery group")
-```
-
-v1 is the only version with a usable group split. More importantly,
-pooling the three actively created a false result: an apparent association
-between non-response and imagery vividness dissolves within version,
-because v3 is simultaneously aphantasia-heavy and the version with by far
-the highest non-response.
-
-```{r pooling-trap}
-non_response_per_participant <- trials_by_feature |>
-  dplyr::filter(feature != "Word") |>
-  dplyr::summarise(non_response_rate = 1 - mean(responded),
-                   vviq = dplyr::first(vviq),
-                   .by = c(participant, version, feature))
-
-dplyr::bind_rows(
-  dplyr::mutate(non_response_per_participant, sample = "All versions pooled"),
-  non_response_per_participant |>
-    dplyr::filter(version == "v1") |>
-    dplyr::mutate(sample = "v1 alone")
-) |>
-  dplyr::summarise(
-    rho = cor(non_response_rate, vviq, method = "spearman",
-              use = "complete.obs"),
-    .by = c(sample, feature)
-  ) |>
-  tidyr::pivot_wider(names_from = feature, values_from = rho) |>
-  knitr::kable(digits = 3,
-               caption = "Non-response against VVIQ, pooled versus within v1")
-```
-
-v3 retains one job it uniquely enables. v1 has *fixed* recall order (word,
-then orientation, then colour), so feature differences are confounded with
-output position. v3 randomised the order and can estimate that effect.
-
-Two costs are worth stating. v1 carries no parity penalty, so the parity
-distractor had no scoring consequence there; and v1 has the lowest
-non-response of the three versions.
+Everything below is v1 unless stated otherwise.
 
 ## 5. Distributions
 
@@ -419,249 +373,53 @@ knitr::kable(boundary_mass, digits = 3,
              caption = "Mass at the boundaries, responded trials only")
 ```
 
-Conditional on responding, orientation and colour are well spread with no
-mass at either boundary. Word is not:
+Conditional on responding, orientation is well spread with no mass at
+either boundary at all. Word is not:
 `r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])` of
-responded word trials are exact matches.
+responded word trials are exact matches, and
+`r as_pct(boundary_mass$share_at_zero[boundary_mass$feature == "Word"])` are
+exact misses. Colour has a trace of mass at one and none at zero.
 
-All the mass at zero in the unfiltered columns is non-response; the mass
-at one is genuine ceiling. Since those are different generative processes,
-a zero-one-inflated model would be the wrong shape. The performance model
-uses a hurdle instead, gating on whether a response occurred before
-modelling its accuracy.
+**Those three patterns need three different treatments**, and each choice
+follows from what the boundary means rather than from convenience.
 
-## 6. Reliability
+- **Word's boundaries are real.** A recalled word either matches the target
+  or it does not, so the pile at one is a genuine point mass, and the
+  zeros here are wrong answers rather than absent ones: this table is
+  already conditional on responding. Both earn an inflation component, so
+  word is modelled with a zero-one-inflated Beta.
+- **Orientation needs nothing.** Plain Beta.
+- **Colour's mass at one is an artifact.** Colour score is cosine
+  similarity on a continuous wheel, so an exact 1 is an error of exactly
+  zero degrees, which is pixel resolution rather than a behaviour.
+  Modelling it as an inflation component would estimate a process
+  parameter for a rounding effect on a couple of dozen trials, so it is
+  handled with a Smithson-Verkuilen squeeze instead
+  (`squeeze_boundaries()`), which moves every value by about one
+  ten-thousandth.
 
-Splits are drawn over trials rather than items, because items within a
-trial share an encoding episode and there is a within-trial primacy
-effect:
+Separately from all of that, the mass at zero in the **unfiltered** columns
+is non-response, which is a different quantity again and is modelled as
+such: see [task engagement](engagement.html).
 
-```{r primacy}
-v1_trials |>
-  dplyr::filter(responded) |>
-  dplyr::summarise(mean_score = mean(score),
-                   .by = c(feature, position_in_trial)) |>
-  tidyr::pivot_wider(names_from = position_in_trial, values_from = mean_score,
-                     names_prefix = "position_") |>
-  dplyr::mutate(primacy_drop = position_1 - position_3) |>
-  knitr::kable(digits = 3,
-               caption = "Mean score by serial position within the trial")
-```
+## 6. Reliability, and what these scores support
 
-Each trial's three items therefore stay together, and the split is
-repeated `r n_splits` times rather than relying on one arbitrary odd/even
-partition.
+Both questions have moved to their own page: [task
+validity](task-validity.html). It covers the trial-level split-half
+procedure, the derived engagement thresholds, the finding that word does
+not function as an individual-differences measure in this sample, and the
+stability of the compositional coordinates.
 
-The engagement threshold is derived rather than chosen: a participant
-contributes to a feature only if their mean has a standard error of at
-most half the between-person SD.
+The short version: orientation and colour clear the conventional marks for
+individual-level interpretation, word does not, and no downstream model
+should make an individual-differences claim about word whatever its
+coefficients say.
 
-```{r thresholds}
-engagement_thresholds <- v1_trials |>
-  dplyr::filter(responded) |>
-  dplyr::summarise(participant_mean = mean(score),
-                   sd_within_participant = sd(score),
-                   .by = c(feature, id)) |>
-  dplyr::summarise(
-    sd_within_participant = median(sd_within_participant, na.rm = TRUE),
-    sd_between_participants = sd(participant_mean),
-    .by = feature
-  ) |>
-  dplyr::mutate(
-    trials_needed = ceiling(
-      (sd_within_participant / (0.5 * sd_between_participants))^2),
-    trials_available = trials_per_feature,
-    # Fall back to half the trials where the target is unreachable.
-    threshold_used = pmin(trials_needed, 32L)
-  )
+## 7. For a future version of the task
 
-knitr::kable(engagement_thresholds, digits = 3,
-             caption = "Trials needed for a participant mean worth comparing")
-```
-
-```{r threshold-values, include = FALSE}
-word_row <- dplyr::filter(engagement_thresholds, feature == "Word")
-```
-
-**Word's requirement cannot be met.** It asks for
-`r word_row$trials_needed` trials of the `r trials_per_feature` that exist,
-because its between-person SD among responders
-(`r fmt(word_row$sd_between_participants)`) is small relative to
-within-person trial noise (`r fmt(word_row$sd_within_participant)`). A
-floor of 32 trials is used instead, recorded as a data-sufficiency rule
-and not a precision guarantee.
-
-```{r reliability}
-eligible_participants <- v1_participant_means |>
-  dplyr::left_join(dplyr::select(engagement_thresholds, feature, threshold_used),
-                   by = "feature") |>
-  dplyr::filter(n_answered >= threshold_used) |>
-  dplyr::select(id, feature)
-
-trial_ids <- unique(v1_trials$trial_id)
-half_size <- length(trial_ids) %/% 2
-
-# Mean score per participant per feature, over one half of the trials.
-mean_scores_over <- function(chosen_trials) {
-  v1_trials |>
-    dplyr::filter(responded, trial_id %in% chosen_trials) |>
-    dplyr::semi_join(eligible_participants, by = c("id", "feature")) |>
-    dplyr::summarise(mean_score = mean(score), .by = c(feature, id))
-}
-
-correlate_one_split <- function(...) {
-  first_half <- sample(trial_ids, half_size)
-  dplyr::inner_join(
-    mean_scores_over(first_half),
-    mean_scores_over(setdiff(trial_ids, first_half)),
-    by = c("feature", "id"), suffix = c("_first", "_second")
-  ) |>
-    dplyr::summarise(r = cor(mean_score_first, mean_score_second), .by = feature)
-}
-
-# Corrects a half-length test's correlation up to full-test reliability.
-spearman_brown <- function(r) 2 * r / (1 + r)
-
-split_half_reliability <- purrr::map(seq_len(n_splits), correlate_one_split) |>
-  purrr::list_rbind() |>
-  dplyr::summarise(
-    reliability = spearman_brown(median(r)),
-    lower_95 = spearman_brown(quantile(r, 0.025)),
-    upper_95 = spearman_brown(quantile(r, 0.975)),
-    .by = feature
-  ) |>
-  dplyr::left_join(dplyr::count(eligible_participants, feature,
-                                name = "participants"),
-                   by = "feature") |>
-  dplyr::select(feature, participants, reliability, lower_95, upper_95)
-
-knitr::kable(split_half_reliability, digits = 3,
-             caption = "Split-half reliability, Spearman-Brown corrected")
-```
-
-```{r reliability-values, include = FALSE}
-reliability_of <- function(which_feature) {
-  split_half_reliability$reliability[
-    split_half_reliability$feature == which_feature]
-}
-```
-
-Orientation (`r fmt(reliability_of("Orientation"), 2)`) and colour
-(`r fmt(reliability_of("Colour"), 2)`) clear the conventional 0.80 mark
-for individual-level interpretation. Word
-(`r fmt(reliability_of("Word"), 2)`) does not clear the 0.70 floor for
-group-level use. That is the same fact as the threshold failure, seen from
-the other side.
-
-**Word does not function as an individual-differences measure in this
-sample.** The metric is not at fault; Gonthier's formula works exactly as
-designed. Single-word recall at this exposure is simply too easy to
-discriminate between people. No downstream model should make an
-individual-differences claim about word, whatever its coefficients say.
-
-```{r composition-stability}
-ids_clearing_all_features <- eligible_participants |>
-  dplyr::count(id) |>
-  dplyr::filter(n == 3) |>
-  dplyr::pull(id)
-
-# Isometric log-ratio coordinates, computed from one half of the trials.
-ilr_coordinates_over <- function(chosen_trials) {
-  v1_trials |>
-    dplyr::filter(responded, id %in% ids_clearing_all_features,
-                  trial_id %in% chosen_trials) |>
-    dplyr::summarise(mean_score = mean(score), .by = c(id, feature)) |>
-    tidyr::pivot_wider(names_from = feature, values_from = mean_score) |>
-    tidyr::drop_na() |>
-    dplyr::mutate(
-      total = Word + Orientation + Colour,
-      ilr1 = sqrt(2 / 3) * log((Word / total) /
-                                 sqrt((Colour / total) * (Orientation / total))),
-      ilr2 = sqrt(1 / 2) * log((Colour / total) / (Orientation / total))
-    ) |>
-    dplyr::select(id, ilr1, ilr2)
-}
-
-composition_stability <- purrr::map(seq_len(n_splits), \(iteration) {
-  first_half <- sample(trial_ids, half_size)
-  dplyr::inner_join(
-    ilr_coordinates_over(first_half),
-    ilr_coordinates_over(setdiff(trial_ids, first_half)),
-    by = "id", suffix = c("_first", "_second")
-  ) |>
-    dplyr::summarise(ilr1 = cor(ilr1_first, ilr1_second),
-                     ilr2 = cor(ilr2_first, ilr2_second))
-}) |>
-  purrr::list_rbind() |>
-  dplyr::summarise(dplyr::across(
-    c(ilr1, ilr2), \(x) spearman_brown(median(x, na.rm = TRUE)))) |>
-  tidyr::pivot_longer(everything(), names_to = "coordinate",
-                      values_to = "stability") |>
-  dplyr::mutate(contrast = c("Word vs (colour and orientation)",
-                             "Colour vs orientation"))
-
-knitr::kable(composition_stability, digits = 3,
-             caption = "Split-half stability of the compositional profile")
-```
-
-The compositional profile fares better than its parts would suggest, on
-the `r length(ids_clearing_all_features)` participants clearing all three
-thresholds. A ratio can carry information a level does not, though the
-first coordinate rests partly on word, and its interpretation should not
-lean on word as a well-measured quantity.
-
-## 7. What this supports
-
-Orientation and colour scores support individual-differences analysis.
-Word scores do not, and should be reported with the measurement caveat
-attached. The compositional profile is stable enough to interpret, with
-the same caveat on its verbal coordinate.
-
-Self-reported strategy and behavioural allocation are not the same
-construct:
-
-```{r self-report}
-self_reported_priority <- block_trials |>
-  dplyr::filter(version == "v1") |>
-  dplyr::distinct(id, .keep_all = TRUE) |>
-  dplyr::select(id, strategy_items) |>
-  tidyr::unnest(strategy_items) |>
-  dplyr::select(id, tidyselect::contains("scoring_strat")) |>
-  tidyr::pivot_longer(-id, values_to = "named_feature",
-                      values_transform = as.character) |>
-  dplyr::filter(named_feature %in% c("words", "colours", "orientations")) |>
-  dplyr::summarise(
-    priority = dplyr::if_else(dplyr::n() > 1, "multiple",
-                              dplyr::first(named_feature)),
-    .by = id
-  )
-
-v1_compositions <- v1_participant_means |>
-  dplyr::filter(id %in% ids_clearing_all_features) |>
-  dplyr::mutate(proportion = mean_score / sum(mean_score), .by = id) |>
-  dplyr::select(id, feature, proportion) |>
-  tidyr::pivot_wider(names_from = feature, values_from = proportion)
-
-v1_compositions |>
-  dplyr::left_join(self_reported_priority, by = "id") |>
-  tidyr::replace_na(list(priority = "none/other")) |>
-  dplyr::summarise(dplyr::across(c(Word, Orientation, Colour), mean),
-                   participants = dplyr::n(),
-                   .by = priority) |>
-  knitr::kable(digits = 3,
-               caption = "Behavioural composition by self-reported priority")
-```
-
-Behavioural compositions barely differ between participants who named
-different priorities. This is a dissociation to report, not a validity
-failure. But "preference" language should not be used as though the two
-measures were interchangeable.
-
-## 8. For a future version of the task
-
-The task was designed to force a three-way trade-off. It achieves a
-two-way one, because word is cheap enough that participants can max it and
-then divide effort between colour and orientation:
+The task was designed to force a three-way trade-off. Whether it achieves
+one is harder to answer than it first appeared, and the honest version of
+that story is worth showing.
 
 ```{r tradeoff}
 v1_scores_wide <- v1_participant_means |>
@@ -669,23 +427,48 @@ v1_scores_wide <- v1_participant_means |>
   tidyr::pivot_wider(names_from = feature, values_from = mean_score) |>
   tidyr::drop_na()
 
-# Residualise each feature on overall level, then correlate the residuals.
-v1_scores_wide |>
-  dplyr::mutate(overall_level = (Word + Orientation + Colour) / 3) |>
-  dplyr::mutate(dplyr::across(
-    c(Word, Orientation, Colour),
-    \(feature_score) residuals(lm(feature_score ~ overall_level)))) |>
-  dplyr::select(Word, Orientation, Colour) |>
-  cor(method = "spearman") |>
-  knitr::kable(digits = 3,
-               caption = "Feature correlations after removing overall level")
+# Residualise each feature on overall level, then correlate the residuals,
+# on every participant with all three parts and again on those clearing
+# the engagement thresholds of the task validity page.
+all_parts <- block_trials |>
+  dplyr::filter(version == "v1") |>
+  compose_features(id) |>
+  dplyr::filter(stats::complete.cases(dplyr::pick(tidyselect::everything())))
+
+engaged_parts <- dplyr::filter(
+  all_parts, id %in% engaged_ids(dplyr::filter(block_trials, version == "v1"))
+)
+
+feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
+
+knitr::kable(
+  centred_correlations(all_parts, labels = feature_labels), digits = 3,
+  caption = paste0("All participants with three parts (n = ",
+                   nrow(all_parts), ")"))
+
+knitr::kable(
+  centred_correlations(engaged_parts, labels = feature_labels), digits = 3,
+  caption = paste0("Participants clearing the engagement thresholds (n = ",
+                   nrow(engaged_parts), ")"))
 ```
 
-Controlling overall level, orientation and colour trade off against each
-other more strongly than either does against word. (Residualising three
-variables on their own mean induces negative correlation of roughly −0.5
-by construction, so read these relative to that baseline rather than as
-raw evidence of a trade-off.)
+Residualising three variables on their own mean induces a negative
+correlation of roughly -0.5 by construction, so the baseline is -0.5 and
+not zero. Only departures from it carry information.
+
+On the first table, orientation and colour appear to trade off against
+each other more strongly than either does against word, which is what a
+two-way trade-off would look like. On the second it disappears: all three
+pairs sit close to the -0.5 that closure produces on its own.
+
+**The difference between the two tables is six participants**, all of whom
+answered very few orientation trials. The apparent two-way trade-off was a
+description of them, not of the task, and it is withdrawn. What survives
+is weaker and still worth acting on: word is far too easy, with
+`r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])` of
+responded trials at ceiling and a reliability that does not support
+individual-differences use, so it cannot be carrying much of a trade-off
+whatever the correlations say.
 
 Three changes would address what this analysis could not:
 
@@ -703,6 +486,10 @@ Three changes would address what this analysis could not:
 ## References
 
 <div id="refs"></div>
+
+---
+
+**Continuing through the Extended Online Report:** this page follows [task design](task-design.html). To keep reading in order, continue to [task engagement](engagement.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
 
 ---
 

@@ -1,0 +1,192 @@
+---
+title: "The analysis: what is modelled, and why"
+output: rmarkdown::html_vignette
+bibliography: ../references.bib
+csl: ../apa.csl
+vignette: >
+  %\VignetteIndexEntry{Analysis strategy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
+  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  error = FALSE
+)
+library(aphantasiaWMStrats)
+```
+
+The preceding pages establish [who took
+part](sample-description.html), what was measured, on which sample, and
+whether it measures anything. This page says what is done with it, and in
+what order. It contains no results: it is the reasoning a reader needs
+before the modelling pages make sense, and it is deliberately written so
+that it could have been written before any model was fitted.
+
+Everything it describes runs on **task version v1**, for the reasons the
+[version scope](version-scope.html) page sets out. The one exception is
+the exploratory strand, which pools all three versions because it uses
+questionnaires rather than task behaviour.
+
+## 1. The question the models have to answer
+
+Aphantasic participants perform about as well as typical imagers on visual
+working memory tasks, and report compensating with verbal or spatial
+strategies. That self-report is the thing under suspicion, so the WM-FTT
+was built to make the trade-off behavioural: three features per stimulus,
+partial credit per feature, and instructions to maximise the score.
+
+"Where does effort go" then has two possible readings, and the difference
+between them shaped everything here.
+
+- **Absolute performance.** Are aphantasic participants worse at some
+  features than typical imagers?
+- **Relative allocation.** Independently of overall ability, do they divide
+  effort differently across the three features?
+
+These were treated as competing framings for most of this project's
+history. They are complementary, and both turned out to be **secondary** to
+something neither of them captures.
+
+## 2. What changed: abstention is a behaviour
+
+Recall of each feature is optional, and participants used that. The [task
+engagement](engagement.html) page shows that declining to report a feature
+is not missing data: under a points-per-feature incentive, **choosing not
+to report is itself an allocation decision**, and arguably the most direct
+one the task records. A participant who abandons orientation entirely to
+protect colour has made a clearer strategic statement than one whose
+orientation score is slightly lower.
+
+Both framings in section 1 filter that behaviour out before analysing what
+remains. That is a decision about which quantity is interesting, not a
+neutral preprocessing step.
+
+There is also a statistical problem with filtering it out. Analysing only
+responded trials conditions on a selected subsample. If the participants
+who abstain more also perform differently when they do answer, the
+conditional estimates are biased in a way **no responders-only analysis can
+detect**, because the information needed to detect it has been removed.
+
+That was tested rather than assumed. Fitting response and accuracy jointly
+on orientation gives a participant-level correlation between the two of
+0.51, with 95% of the posterior between 0.26 and 0.72. The rule for what
+that would mean was written down before the number existed: conditioning
+was not innocent, and the joint model becomes the primary analysis.
+
+## 3. The primary model
+
+Six responses. Three gates, one per feature, for whether it was reported at
+all. Three accuracies, one per feature, for how well it was reported when
+it was. All six share a participant-level correlation matrix.
+
+```{r formula}
+joint_formula()
+```
+
+The `subset()` terms are what let a single trial carry six responses with
+independent non-response, and what let a participant contribute to a gate
+whether or not they ever answered that feature. One participant answered
+**zero** orientation trials: invisible to every responders-only analysis,
+and highly informative here.
+
+The fifteen correlations are the object of interest, in four families:
+
+| Family | Question |
+|---|---|
+| Response and accuracy, within a feature | Was conditioning on responding legitimate, and is the effect feature-specific or a general engagement trait? |
+| Accuracy and accuracy, across features | Does doing well on one feature cost another, between people? |
+| Response and response, across features | Do people who skip one feature skip others? |
+| The six cross terms | Everything else |
+
+Which of them are foregrounded was fixed in advance, in three tiers, so
+that choosing among fifteen after seeing them is not possible.
+
+## 4. The other models, and what they are for
+
+Three models sit around the primary one. None of them is a replication of
+it: they are the same data through simpler lenses, so agreement is a
+robustness check and **not independent evidence**.
+
+- **[Composition](composition.html).** Relative allocation across the
+  three features, moved off the simplex into log-ratio coordinates. A
+  genuinely different object rather than a weaker version of the accuracy
+  model, and the one that answers section 1's second reading directly.
+- **How imagery enters.** Vividness is not a smoothly continuous predictor
+  in this sample: scores pile at the scale floor. Rather than assume a
+  functional form, several are compared, with one pre-declared as primary
+  regardless of which fits best.
+
+  That form deserves one caution, because it applies to every result on
+  the modelling pages. The floor-group offset is the distance between
+  where the floor group sits and **where a relationship fitted on everyone
+  else predicts they would sit**. Above the floor, participants cluster at
+  the top of the vividness range, with only a handful below 40, so that
+  relationship is anchored by a dense group at 50 to 80 plus a scatter of
+  points, and extending it down to 16 rests on a linearity assumption this
+  sample barely constrains. The sibling study
+  [`aphantasiaEmotions`](https://m-delem.github.io/aphantasiaEmotions/)
+  makes the same move with 1478 participants across five studies; there
+  are 86 here. On the figures, that stretch of the line is drawn **dashed**
+  to mark it as extrapolation rather than fit.
+
+  Two further things belong on the record. The model was first fitted
+  *after* seeing an association that motivated it, which is a legitimate
+  thing to do and an illegitimate thing to describe as pre-specified; it
+  was pre-declared for the models on these pages, not for the one that
+  suggested it. And its intervals comfortably contain both nothing and a
+  moderate effect, so a floor offset that does not clear its region of
+  practical equivalence should be read as low power rather than as
+  evidence of absence.
+- **[Performance](performance.html).** Absolute per-feature accuracy, with
+  a response family chosen per feature. This is the primary model with the
+  gates removed.
+If the simpler models disagree with the primary one, the primary one wins,
+provided it converged cleanly, because it conditions on less. That was also
+decided in advance.
+
+## 5. Confirmatory and exploratory
+
+Everything above uses groups defined by imagery vividness, **fixed before
+any model was fitted**. That is the confirmatory strand.
+
+A second strand asks whether the sample contains structure that vividness
+does not capture: how the questionnaire scales relate to each other, and
+whether participants cluster into groups the vividness split does not
+recover. That is exploratory, is labelled as such on every page, and
+generates hypotheses rather than testing them.
+
+The interesting outcome there would be clusters that **split** the group
+of complete aphantasics, since that is a distinction the confirmatory
+strand cannot make at all. Clusters that merely recover the vividness
+grouping would be a reportable null.
+
+## 6. What was fixed in advance, and where to check
+
+Pre-declaration only means anything if it is checkable, so the planning
+documents that record each decision ship with the package, in
+`inst/planning/`. They are working documents rather than prose, and they
+include the reversals: decisions made, tested against data, and withdrawn.
+
+Three examples, each of which changed an analysis rather than a sentence.
+The compositional input was specified as standardised scores, then found to
+be roughly half negative and therefore impossible for any log-ratio
+transform. An association between reporting propensity and imagery was
+reported, then dissolved when stratified by task version. A two-way
+trade-off between colour and orientation was reported, then found to
+describe six low-engagement participants rather than the task.
+
+---
+
+**Continuing through the Extended Online Report:** this page follows [questionnaire psychometrics](psychometrics.html). To keep reading in order, continue to [the joint model](joint-model.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+
+---
+
+```{r}
+#| label: session_info
+#| echo: false
+
+sessioninfo::session_info()
+```
