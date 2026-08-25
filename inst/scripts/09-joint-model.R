@@ -45,13 +45,11 @@ fit_config <-
   }
 
 # 09 §8.6: expect this to be slow, and expect to need both of these.
+# The INCLUDE_PARITY / INCLUDE_WORD_ACC fallback switches are gone: the
+# full model samples, so the fallbacks documented in 09 §8.6 are a manual
+# edit if they are ever needed rather than a permanent branch.
 adapt_delta   <- 0.99
 max_treedepth <- 15
-
-# Set FALSE to fall back per 09 §8.6's order if the full model will not
-# converge. `parity_rate` goes first because it is expected null anyway.
-INCLUDE_PARITY    <- TRUE
-INCLUDE_WORD_ACC  <- TRUE
 
 fig_dir    <- here::here("inst/scripts/figures")
 model_dir  <- here::here("inst/models")
@@ -129,7 +127,7 @@ model_data <-
   model_data |>
   dplyr::mutate(
     score_color_raw = .data$score_color,
-    score_color = (.data$score_color * (n_colour - 1) + 0.5) / n_colour
+    score_color = squeeze_boundaries(.data$score_color, n = n_colour)
   )
 
 cat("\nparticipants:", dplyr::n_distinct(model_data$id),
@@ -175,36 +173,16 @@ cat("\nparity response rate: median",
 # ------------------------------------------------------------------------- #
 rule("2. Priors")
 
-# Per coefficient rather than per class: a vviq slope acts over a 64-point
-# range, a binary offset does not, and both live on the logit scale.
-response_priors <- function(response, with_parity = FALSE) {
-  priors <- c(
-    brms::prior_string("normal(0, 1.5)", class = "Intercept", resp = response),
-    brms::prior_string("normal(0, 0.05)", class = "b", coef = "vviq",
-                       resp = response),
-    brms::prior_string("normal(0, 1)", class = "b",
-                       coef = "complete_aphantfloor", resp = response)
-  )
-  if (with_parity) {
-    priors <- c(priors,
-                brms::prior_string("normal(0, 1)", class = "b",
-                                   coef = "parity_rate", resp = response))
-  }
-  priors
-}
-
+# Formulas and priors come from the package (`joint_formula()`,
+# `joint_priors()`, `response_priors()`), not from local copies. That is
+# what lets the vignette reporting this model display the object that
+# produced it: models are loaded there with `file_refit = "never"`, and
+# brms does not check that the formula it is handed matches the cached
+# fit's.
+#
 # 09 §8.5: lkj(4), not the lkj(2) used in 10, because 15 correlations from
 # 86 clusters need more regularisation than 3 do.
 lkj_eta <- 4
-
-# The marginal prior on any single correlation under LKJ(eta) in d
-# dimensions is Beta(a, a) rescaled to (-1, 1), with a = eta + (d - 2)/2
-# (Lewandowski, Kurowicka & Joe, 2009). Computed rather than sampled, and
-# used in §7 to show which correlations actually moved.
-lkj_marginal <- function(n, eta, dimension) {
-  shape <- eta + (dimension - 2) / 2
-  2 * stats::rbeta(n, shape, shape) - 1
-}
 
 prior_sd <- stats::sd(lkj_marginal(1e5, lkj_eta, 6))
 cat("\nlkj(", lkj_eta, ") on a 6x6 matrix puts a marginal SD of ",
@@ -212,34 +190,26 @@ cat("\nlkj(", lkj_eta, ") on a 6x6 matrix puts a marginal SD of ",
 cat("correlation, so a correlation has to be earned rather than assumed.\n")
 
 # ------------------------------------------------------------------------- #
-# 3. Stage 1: the three gates alone ----
+# 3. The response-propensity model ----
 # ------------------------------------------------------------------------- #
-rule("3. Stage 1, the three response gates")
+rule("3. The response-propensity model (three gates)")
 
-cat("\nFitted first so that a failure in the full model localises, and\n")
-cat("because this is 04's own model: whether a feature gets reported, as\n")
-cat("a function of imagery, with participant random effects.\n")
+cat("\nThis is 04-response-propensity.md's own model, not a warm-up for the\n")
+cat("next one: whether a feature gets reported, as a function of imagery,\n")
+cat("with participant random effects. It is also the only place the three\n")
+cat("propensity correlations are estimated WITHOUT the accuracy arms\n")
+cat("pulling on them, which is what §8's comparison uses.\n")
 
-gate_formula <- function(feature) {
-  brms::bf(
-    stats::as.formula(
-      paste0("responded_", feature, " ~ vviq + complete_aphant + (1 | p | id)")
-    ),
-    family = brms::bernoulli()
-  )
-}
-
-gates_only <-
-  gate_formula("word") + gate_formula("angle") + gate_formula("color") +
-  brms::set_rescor(FALSE)
+# The gates alone. Not scaffolding: this is 04-response-propensity.md's
+# own model, and it gives the three propensity correlations estimated
+# without the accuracy arms pulling on them, which §8 below compares
+# against.
+gates_only <- joint_formula(accuracy_features = character(0))
 
 m_gates <- fit_brms_model(
   formula = gates_only,
   data    = model_data,
-  prior   = c(
-    do.call(c, lapply(unname(gates), response_priors)),
-    brms::prior_string(paste0("lkj(", lkj_eta, ")"), class = "cor")
-  ),
+  prior   = joint_priors(accuracy_features = character(0), lkj = lkj_eta),
   file    = model_path("joint-gates"),
   chains  = fit_config$chains,
   iterations = fit_config$iterations,
@@ -252,45 +222,20 @@ m_gates <- fit_brms_model(
 print(brms::fixef(m_gates), digits = 3)
 
 # ------------------------------------------------------------------------- #
-# 4. Stage 2: all six responses ----
+# 4. The joint model, all six responses ----
 # ------------------------------------------------------------------------- #
-rule("4. Stage 2, the full model")
+rule("4. The joint model, all six responses")
 
-accuracy_formula <- function(feature, family) {
-  terms <- c("vviq", "complete_aphant",
-             if (INCLUDE_PARITY) "parity_rate")
-  brms::bf(
-    stats::as.formula(paste0(
-      "score_", feature, " | subset(responded_", feature, ") ~ ",
-      paste(terms, collapse = " + "), " + (1 | p | id)"
-    )),
-    family = family
-  )
-}
+# Print these two in the vignette: they are what the model is.
+joint_specification <- joint_formula()
+joint_specification
 
-joint_formula <-
-  gate_formula("word") + gate_formula("angle") + gate_formula("color") +
-  accuracy_formula("angle", brms::Beta()) +
-  accuracy_formula("color", brms::Beta())
-
-if (INCLUDE_WORD_ACC) {
-  joint_formula <- joint_formula +
-    accuracy_formula("word", brms::zero_one_inflated_beta())
-}
-joint_formula <- joint_formula + brms::set_rescor(FALSE)
-
-accuracy_responses <-
-  if (INCLUDE_WORD_ACC) unname(accuracy) else unname(accuracy[c("angle", "color")])
+accuracy_responses <- unname(accuracy)
 
 m_joint <- fit_brms_model(
-  formula = joint_formula,
+  formula = joint_specification,
   data    = model_data,
-  prior   = c(
-    do.call(c, lapply(unname(gates), response_priors)),
-    do.call(c, lapply(accuracy_responses, response_priors,
-                      with_parity = INCLUDE_PARITY)),
-    brms::prior_string(paste0("lkj(", lkj_eta, ")"), class = "cor")
-  ),
+  prior   = joint_priors(lkj = lkj_eta),
   file    = model_path("joint-full"),
   chains  = fit_config$chains,
   iterations = fit_config$iterations,
@@ -336,11 +281,6 @@ tier_1 <- tibble::tribble(
   accuracy[["word"]], accuracy[["color"]], "Word and Colour",            "Trade-off",
   accuracy[["angle"]], accuracy[["color"]], "Orientation and Colour",    "Trade-off"
 )
-
-if (!INCLUDE_WORD_ACC) {
-  tier_1 <- tier_1[!grepl("Word", tier_1$pair), ]
-  cat("\nINCLUDE_WORD_ACC is FALSE, so the three word pairs are dropped.\n")
-}
 
 summarise_correlations <- function(spec) {
   purrr::pmap(
@@ -560,13 +500,13 @@ reference$difference <- reference$this_model - reference$published
 cat("\n")
 print(as.data.frame(reference), row.names = FALSE, digits = 3)
 
-cat("\nGate coefficients, stage 1 against stage 2:\n\n")
+cat("\nGate coefficients, propensity-only model against the joint model:\n\n")
 stage_comparison <-
   dplyr::inner_join(
     tibble::as_tibble(brms::fixef(m_gates), rownames = "parameter") |>
-      dplyr::select("parameter", stage_1 = "Estimate"),
+      dplyr::select("parameter", propensity_only = "Estimate"),
     tibble::as_tibble(brms::fixef(m_joint), rownames = "parameter") |>
-      dplyr::select("parameter", stage_2 = "Estimate"),
+      dplyr::select("parameter", joint = "Estimate"),
     by = "parameter"
   )
 print(as.data.frame(stage_comparison), row.names = FALSE, digits = 3)

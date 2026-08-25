@@ -70,12 +70,20 @@ cat("split, to avoid depending on one arbitrary partition.\n")
 # ------------------------------------------------------------------------- #
 rule("2. Engagement threshold, derived from precision requirements")
 
-feature_mean <- function(df, f) {
-  sc <- df[[paste0("score_", f)]]; rp <- df[[paste0("responded_", f)]]
-  tapply(seq_len(nrow(df)), df$id,
-         function(i) if (any(rp[i])) mean(sc[i][rp[i]]) else NA_real_)
+# Per-participant means and counts come from compose_features(), the
+# package function, rather than from local copies. The local ones drifted:
+# they predated `compose_features()` and computed the same quantity a
+# second way.
+participant_means <- compose_features(d, id)
+
+feature_mean <- function(f) {
+  stats::setNames(participant_means[[paste0("mean_", f)]],
+                  participant_means$id)
 }
-feature_n <- function(df, f) tapply(df[[paste0("responded_", f)]], df$id, sum)
+feature_n <- function(f) {
+  stats::setNames(participant_means[[paste0("n_", f)]],
+                  participant_means$id)
+}
 
 N_TRIALS <- 63L
 FLOOR <- 32L   # fallback: half the available trials, a data-sufficiency
@@ -87,7 +95,7 @@ for (f in features) {
   sc <- d[[paste0("score_", f)]]; rp <- d[[paste0("responded_", f)]]
   sd_within <- median(tapply(seq_len(nrow(d)), d$id,
     function(i) if (sum(rp[i]) > 2) stats::sd(sc[i][rp[i]]) else NA_real_), na.rm = TRUE)
-  sd_between <- stats::sd(feature_mean(d, f), na.rm = TRUE)
+  sd_between <- stats::sd(feature_mean(f), na.rm = TRUE)
   need <- ceiling((sd_within / (0.5 * sd_between))^2)
   feasible <- need <= N_TRIALS
   if (!feasible) infeasible <- c(infeasible, f)
@@ -109,7 +117,7 @@ if (length(infeasible)) {
       "  individual-differences claim for these features is unsupported\n",
       "  by the measurement, independently of what the models return.\n", sep = "")
 }
-n_resp <- sapply(features, function(f) feature_n(d, f))
+n_resp <- sapply(features, function(f) feature_n(f))
 cat("\nParticipants excluded per feature: ",
     paste(sprintf("%s %d", labels[features],
                   colSums(t(t(n_resp) < thresholds))), collapse = " | "),
@@ -126,8 +134,13 @@ rule("3. §2.1 Per-feature split-half reliability")
 trials <- unique(d$trial_uid)
 
 split_half_r <- function(f, n_splits = N_SPLITS) {
+  # thin wrapper so the call sites below stay readable; the computation is
+  # split_half_reliability() in R/
+  split_half_reliability(d, f, n_splits = n_splits, thresholds = thresholds)
+}
+.superseded_split_half_r <- function(f, n_splits = N_SPLITS) {
   sc <- d[[paste0("score_", f)]]; rp <- d[[paste0("responded_", f)]]
-  keep <- names(which(feature_n(d, f) >= thresholds[f]))
+  keep <- names(which(feature_n(f) >= thresholds[f]))
   idx <- d$id %in% keep
   out <- numeric(n_splits)
   for (k in seq_len(n_splits)) {
@@ -143,7 +156,7 @@ split_half_r <- function(f, n_splits = N_SPLITS) {
   out
 }
 
-sb <- function(r) 2 * r / (1 + r)   # Spearman-Brown, half-test -> full-test
+sb <- spearman_brown   # Spearman-Brown, half-test -> full-test
 
 rel <- lapply(features, split_half_r)
 names(rel) <- features
@@ -151,7 +164,7 @@ names(rel) <- features
 cat("\n", N_SPLITS, " random trial-level splits, Spearman-Brown corrected:\n", sep = "")
 rel_tab <- do.call(rbind, lapply(features, function(f) {
   r <- rel[[f]][!is.na(rel[[f]])]
-  data.frame(feature = labels[f], n = sum(feature_n(d, f) >= thresholds[f]),
+  data.frame(feature = labels[f], n = sum(feature_n(f) >= thresholds[f]),
              threshold = unname(thresholds[f]),
              raw_median = median(r), sb_median = sb(median(r)),
              sb_lo = sb(stats::quantile(r, .025)),
@@ -189,23 +202,21 @@ cat("compositional strand conditional on. Composition built from\n")
 cat("responders-only means; participants must clear all three thresholds.\n")
 
 keep_all <- Reduce(intersect, lapply(features, function(f)
-  names(which(feature_n(d, f) >= thresholds[f]))))
+  names(which(feature_n(f) >= thresholds[f]))))
 cat("Participants clearing all three thresholds:", length(keep_all), "\n")
 
-ilr <- function(p1, p2, p3) cbind(
-  ilr1 = sqrt(2/3) * log(p1 / sqrt(p2 * p3)),   # word vs (colour, orientation)
-  ilr2 = sqrt(1/2) * log(p2 / p3)               # colour vs orientation
-)
+# The ILR transform is ilr_coords() in R/. The local copy that used to sit
+# here was a second implementation of the same formula.
 
 comp_half <- function(ids, trial_set) {
-  sel <- d$id %in% ids & d$trial_uid %in% trial_set
-  parts <- sapply(features, function(f) {
-    sc <- d[[paste0("score_", f)]]; rp <- d[[paste0("responded_", f)]]
-    s <- sel & rp
-    tapply(sc[s], factor(d$id[s], levels = ids), mean)
-  })
-  tot <- rowSums(parts)
-  ilr(parts[, "word"] / tot, parts[, "color"] / tot, parts[, "angle"] / tot)
+  half <- d[d$id %in% ids & d$trial_uid %in% trial_set, , drop = FALSE]
+  parts <- compose_features(half, id)
+  # reindex so a participant with no responded trials in this half keeps a
+  # row of NAs rather than dropping out and misaligning the pairing
+  parts <- parts[match(ids, parts$id), , drop = FALSE]
+  as.matrix(ilr_coords(
+    dplyr::select(parts, tidyselect::starts_with("part_"))
+  ))
 }
 
 stab <- matrix(NA_real_, N_SPLITS, 2, dimnames = list(NULL, c("ilr1", "ilr2")))
@@ -253,7 +264,7 @@ strat$priority <- apply(strat[c("p1", "p2", "p3")], 1, function(r) {
 cat("\nSelf-reported scoring priority (v1):\n")
 print(table(strat$priority, useNA = "ifany"))
 
-parts <- sapply(features, function(f) feature_mean(d, f))
+parts <- sapply(features, function(f) feature_mean(f))
 tot <- rowSums(parts)
 props <- data.frame(id = rownames(parts), prop_word = parts[, "word"] / tot,
                     prop_angle = parts[, "angle"] / tot,

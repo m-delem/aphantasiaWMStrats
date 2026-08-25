@@ -92,8 +92,12 @@ participant_info <-
   dplyr::summarise(
     vviq          = dplyr::first(.data$vviq_total_score),
     imagery_group = dplyr::first(.data$vviq_group_2),
-    parity        = mean(c(.data$parity_1_acc, .data$parity_2_acc),
-                         na.rm = TRUE),
+    # The proportion of parity probes ANSWERED, not a mean of
+    # `parity_*_acc`: that column scores an unanswered probe as 0, and 92%
+    # of its v1 zeros are unanswered rather than wrong, so a mean of it is
+    # a response rate wearing an accuracy name (03 §11.1).
+    parity_rate = (sum(.data$responded_parity_1) +
+                     sum(.data$responded_parity_2)) / (2 * dplyr::n()),
     .by = "id"
   )
 
@@ -168,7 +172,7 @@ model_data <-
   model_data |>
   dplyr::mutate(
     score_color_raw = .data$score_color,
-    score_color = (.data$score_color * (n_colour - 1) + 0.5) / n_colour
+    score_color = squeeze_boundaries(.data$score_color, n = n_colour)
   )
 
 cat("\nSV squeeze on colour, n =", n_colour, "responded trials:\n")
@@ -232,16 +236,11 @@ rule("2. Priors")
 #
 # Note the response names: brms strips non-alphanumeric characters, so
 # these are `scoreword`, `scoreangle`, `scorecolor`, not the column names.
+# response_priors() is in R/, so the vignette reporting these models builds
+# its priors from the same function rather than a second copy.
 performance_priors <- function(response_names = responses) {
-  do.call(c, lapply(unname(response_names), function(r) {
-    c(
-      brms::prior_string("normal(0, 1.5)", class = "Intercept", resp = r),
-      brms::prior_string("normal(0, 0.05)", class = "b",
-                         coef = "vviq", resp = r),
-      brms::prior_string("normal(0, 1)", class = "b",
-                         coef = "complete_aphantfloor", resp = r)
-    )
-  }))
+  do.call(c, lapply(unname(response_names), response_priors,
+                    terms = c("vviq", "complete_aphant")))
 }
 
 # lkj(2) mildly favours the identity, so the cross-feature correlations
@@ -269,22 +268,8 @@ cat("A is fitted, reported, and then shown to be the wrong model.\n")
 # recent brms versions reject the whole call, which is how the intercept-
 # only and two-group candidates in §4 would otherwise fail.
 univariate_priors <- function(rhs) {
-  priors <- brms::prior(normal(0, 1.5), class = "Intercept")
-  if (grepl("vviq", rhs)) {
-    priors <- c(priors,
-                brms::prior(normal(0, 0.05), class = "b", coef = "vviq"))
-  }
-  if (grepl("complete_aphant", rhs)) {
-    priors <- c(priors,
-                brms::prior(normal(0, 1), class = "b",
-                            coef = "complete_aphantfloor"))
-  }
-  if (grepl("imagery_group", rhs)) {
-    priors <- c(priors,
-                brms::prior(normal(0, 1), class = "b",
-                            coef = "imagery_grouptypical"))
-  }
-  priors
+  terms <- c("vviq", "complete_aphant", "imagery_group", "parity_rate")
+  response_priors(NULL, terms = terms[vapply(terms, grepl, logical(1), rhs)])
 }
 
 fit_univariate <- function(response, family, name, rhs =
@@ -525,17 +510,10 @@ save_ggplot("inst/scripts/figures/p2-form-comparison.pdf",
 # ------------------------------------------------------------------------- #
 rule("5. Option C-prime")
 
-c_prime_formula <-
-  brms::bf(score_word | subset(responded_word) ~
-             vviq + complete_aphant + (1 | p | id),
-           family = brms::zero_one_inflated_beta()) +
-  brms::bf(score_angle | subset(responded_angle) ~
-             vviq + complete_aphant + (1 | p | id),
-           family = brms::Beta()) +
-  brms::bf(score_color | subset(responded_color) ~
-             vviq + complete_aphant + (1 | p | id),
-           family = brms::Beta()) +
-  brms::set_rescor(FALSE)
+# Built by performance_formula() in R/ rather than written out here, so
+# that the vignette reporting this model shows the object that produced it.
+# Print it to see all three responses.
+c_prime_formula <- performance_formula(parity = FALSE)
 
 # `subset()` on each response is what lets one row carry three features
 # with independent non-response. Without it a row missing any one feature

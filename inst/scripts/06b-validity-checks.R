@@ -67,12 +67,8 @@ v1_participants <- v1_trials |>
 # ------------------------------------------------------------------------- #
 rule("2.4  Does anything in WM-FTT track VVIQ? (v1, both scorings)")
 
-correlation_test <- function(score, vviq) {
-  usable <- stats::complete.cases(score, vviq)
-  fit <- suppressWarnings(
-    stats::cor.test(score[usable], vviq[usable], method = "spearman"))
-  tibble::tibble(rho = unname(fit$estimate), p = fit$p.value, n = sum(usable))
-}
+# correlation_test() and cronbach_alpha() are in R/ now, so the vignette
+# that reports these numbers computes them with the same code.
 
 vviq_continuous <- v1_participants |>
   dplyr::filter(clears_threshold) |>
@@ -240,11 +236,7 @@ participants <- all_data |>
 # reversing gives 0.25 for verbal instead of 0.84. See R/data.R.
 reverse_keyed <- c("osivq_q41v", "osivq_q09v", "osivq_q02v", "osivq_q42s")
 
-cronbach_alpha <- function(items) {
-  items <- items[stats::complete.cases(items), , drop = FALSE]
-  k <- ncol(items)
-  k / (k - 1) * (1 - sum(apply(items, 2, stats::var)) / stats::var(rowSums(items)))
-}
+
 
 osivq_items <- purrr::list_rbind(participants$osivq_items)
 for (item in reverse_keyed) osivq_items[[item]] <- 6 - osivq_items[[item]]

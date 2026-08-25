@@ -36,10 +36,36 @@ reference:
   - title: Modelling
     desc: >
       Shared Bayesian fitting defaults and posterior reporting, matching the
-      `aphantasiaEmotions` package.
+      `aphantasiaEmotions` package, plus the model specifications
+      themselves. Formulas and priors are exported so that a script and a
+      vignette use the same object: models are loaded with
+      `file_refit = "never"`, and brms does not check that the formula it
+      is handed matches the one the cached fit was built with.
     contents:
       - fit_brms_model
       - report_rope
+      - joint_formula
+      - joint_priors
+      - performance_formula
+      - composition_formula
+      - composition_priors
+      - response_priors
+      - feature_family
+      - squeeze_boundaries
+      - lkj_marginal
+  - title: Analysis helpers
+    desc: >
+      Quantities computed identically by the working scripts and by the
+      vignettes that report them.
+    contents:
+      - split_half_reliability
+      - spearman_brown
+      - correlation_test
+      - cronbach_alpha
+      - mars_knots
+      - composition_summary
+      - centred_correlations
+      - partition_variance
   - title: Figures
     desc: >
       The plotting identity shared with `aphantasiaEmotions`, plus the

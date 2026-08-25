@@ -46,6 +46,11 @@ absolute performance, standardised for cross-feature comparison and
 clustering. Note that standardised scores cannot be used for any
 log-ratio transform, since roughly half of them are negative.
 \item \code{responded_word}, \code{responded_angle}, \code{responded_color} — logical.
+\item \code{responded_parity_1}, \code{responded_parity_2} — logical, added when the
+\verb{parity_*_resp} columns are present. The parity accuracy columns use
+the same score-a-non-response-as-zero convention as recall, and in v1
+92\% of their zeros are unanswered probes rather than errors, so any
+analysis of parity needs these flags. See \code{\link[=flag_parity_responses]{flag_parity_responses()}}.
 }
 }
 

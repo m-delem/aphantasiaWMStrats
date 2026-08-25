@@ -25,7 +25,7 @@ maximises a contrast selects a split nobody has a substantive interest
 in. It is therefore an explicit argument with a default matching the
 study's own decision, rather than a hidden constant.
 
-Convention, identical to the one used in \code{inst/scripts/02-reliability.R},
+Convention, identical to the one used in \verb{inst/scripts/06a-reliability.R},
 so that the split-half stability estimates computed there apply to these
 coordinates unchanged:
 

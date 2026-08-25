@@ -80,8 +80,11 @@ participant_info <-
   dplyr::summarise(
     vviq          = dplyr::first(.data$vviq_total_score),
     imagery_group = dplyr::first(.data$vviq_group_2),
-    parity        = mean(c(.data$parity_1_acc, .data$parity_2_acc),
-                         na.rm = TRUE),
+    # The proportion of parity probes ANSWERED (03 §11.1). The accuracy
+    # column scores an unanswered probe as 0, so a mean of it measures
+    # willingness to do the distractor task, not accuracy on it.
+    parity_rate = (sum(.data$responded_parity_1) +
+                     sum(.data$responded_parity_2)) / (2 * dplyr::n()),
     .by = "id"
   )
 
@@ -136,34 +139,26 @@ cat("  at the VVIQ floor (16):", sum(model_data$vviq == 16),
     " above floor:", sum(model_data$vviq > 16), "\n")
 print(table(model_data$imagery_group))
 
-cat("\nParity accuracy, the covariate 11 §8 specifies as continuous:\n")
-print(round(stats::quantile(model_data$parity, c(0, .1, .25, .5, .75, 1)), 3))
-cat("\nDOC-VS-DATA FLAG: a quarter of the sample sits at exactly 0. v1 carries\n")
-cat("no parity penalty (05 §3.5), so this is a motivation measure with a\n")
-cat("large 'never engaged' spike, not a smooth covariate. It is kept\n")
-cat("continuous here because that is 11 §8's stated default, and §4 fits the\n")
-cat("primary model without it so the choice can be inspected rather than\n")
-cat("trusted. 03-parity-engagement.md should decide the form properly.\n")
+cat("\nParity engagement, the covariate 11 §8 specifies (03 §11.6):\n")
+print(round(stats::quantile(model_data$parity_rate, c(0, .1, .25, .5, .75, 1)), 3))
+cat("\nThis is the CORRECTED parity variable (03 §11.6): the proportion of\n")
+cat("probes answered, which is the dual-task load actually incurred. The\n")
+cat("spike at exactly 0 is 25 participants who never touched the secondary\n")
+cat("task, which under v1's incentives is the rational move and not\n")
+cat("disengagement: 23 of them clear the recall engagement thresholds.\n")
+cat("It predicts recall accuracy at p = .14 to .63 and does not differ by\n")
+cat("floor group (p = .925), so it is carried as load rather than as a\n")
+cat("confound control.\n")
 
 # ------------------------------------------------------------------------- #
 # 2. How much the composition varies (11 §8.5, recomputed on v1) ----
 # ------------------------------------------------------------------------- #
 rule("2. Composition descriptives")
 
-part_summary <- function(parts, label) {
-  parts |>
-    dplyr::select(tidyselect::starts_with("part_")) |>
-    tidyr::pivot_longer(tidyselect::everything(),
-                        names_to = "part", values_to = "value") |>
-    dplyr::summarise(
-      sample = label,
-      mean   = mean(.data$value),
-      sd     = stats::sd(.data$value),
-      min    = min(.data$value),
-      max    = max(.data$value),
-      .by    = "part"
-    )
-}
+# composition_summary(), centred_correlations() and partition_variance()
+# are in R/ now, so the vignette reporting these tables computes them with
+# the same code.
+part_summary <- composition_summary
 
 spread_table <- dplyr::bind_rows(
   part_summary(sample_a, "A (n=87)"),
@@ -179,9 +174,7 @@ print(as.data.frame(spread_table), row.names = FALSE, digits = 3)
 # by construction and makes the comparison uninformative. 11 §8.5's own
 # quantity is the raw-means one.
 centred_cor <- function(parts) {
-  m <- as.matrix(dplyr::select(parts, tidyselect::starts_with("mean_")))
-  colnames(m) <- labels[sub("^mean_", "", colnames(m))]
-  stats::cor(t(apply(m, 1, \(x) x - mean(x))))
+  centred_correlations(parts, labels = labels)
 }
 
 cat("\nPartial correlations between parts, controlling overall level:\n")
@@ -226,21 +219,10 @@ save_ggplot(
 # ------------------------------------------------------------------------- #
 rule("3. Sequential binary partition")
 
+# partition_variance() is in R/; this keeps the display labels local.
 partition_variance <- function(parts, label) {
-  purrr::map(
-    c("word", "color", "angle"),
-    function(first) {
-      z <- ilr_coords(parts, first = first)
-      tibble::tibble(
-        sample     = label,
-        first      = labels[[first]],
-        var_ilr1   = stats::var(z$ilr1),
-        var_ilr2   = stats::var(z$ilr2),
-        ilr1_share = stats::var(z$ilr1) / (stats::var(z$ilr1) + stats::var(z$ilr2))
-      )
-    }
-  ) |>
-    purrr::list_rbind()
+  aphantasiaWMStrats::partition_variance(parts, label) |>
+    dplyr::mutate(first = labels[.data$first])
 }
 
 variance_table <- dplyr::bind_rows(
@@ -315,12 +297,7 @@ rule("4. Participant-level model space")
 # earlier version of this check read `$cuts` whole and reported five knots
 # where the fitted model has one.
 mars_knots <- function(response) {
-  fit <- earth::earth(stats::as.formula(paste(response, "~ vviq")),
-                      data = model_data)
-  cuts <- fit$cuts[fit$selected.terms, , drop = FALSE]
-  list(knots = sort(unique(cuts[cuts != 0])),
-       n_terms = length(fit$selected.terms),
-       rsq = fit$rsq, grsq = fit$grsq)
+  aphantasiaWMStrats::mars_knots(model_data, outcome = response)
 }
 
 if (requireNamespace("earth", quietly = TRUE)) {
@@ -361,10 +338,7 @@ model_data |>
 # In a multivariate model the population-level coefficients belong to a
 # response, so `class = "b"` on its own matches no parameter and recent
 # brms versions reject it outright. Hence the explicit `resp`.
-ilr_prior <- c(
-  brms::prior(normal(0, 0.15), class = "b", resp = "ilr1"),
-  brms::prior(normal(0, 0.15), class = "b", resp = "ilr2")
-)
+ilr_prior <- composition_priors()
 
 # rescor is set explicitly rather than left to the default. It matters: the
 # rotation-invariance argument in §3 holds for a genuine multivariate model
@@ -374,15 +348,12 @@ ilr_prior <- c(
 # mvbind(). Both are documented brms idioms and fit the same model, but
 # mvbind() has to be resolved from inside the formula, which is fragile when
 # the formula is built from a string and brms is not attached.
-composition_formula <- function(rhs) {
-  brms::bf(stats::as.formula(paste("ilr1 ~", rhs))) +
-    brms::bf(stats::as.formula(paste("ilr2 ~", rhs))) +
-    brms::set_rescor(TRUE)
-}
+# composition_formula() is in R/. rescor is estimated there, which is
+# what makes the omnibus test invariant to the partition.
 
 fit_composition <- function(rhs, name) {
   fit_brms_model(
-    formula = composition_formula(rhs),
+    formula = aphantasiaWMStrats::composition_formula(rhs),
     data   = model_data,
     prior  = ilr_prior,
     file   = model_path(name),
@@ -415,10 +386,10 @@ fit_ilr1 <- function(rhs, name) {
   )
 }
 
-f_null   <- fit_ilr1("1 + parity", "ilr1-null")
-f_group  <- fit_ilr1("imagery_group + parity", "ilr1-group")
-f_linear <- fit_ilr1("vviq + parity", "ilr1-linear")
-f_floor  <- fit_ilr1("vviq + complete_aphant + parity", "ilr1-floor")
+f_null   <- fit_ilr1("1 + parity_rate", "ilr1-null")
+f_group  <- fit_ilr1("imagery_group + parity_rate", "ilr1-group")
+f_linear <- fit_ilr1("vviq + parity_rate", "ilr1-linear")
+f_floor  <- fit_ilr1("vviq + complete_aphant + parity_rate", "ilr1-floor")
 
 # The segmented model, as the direct response to "a single categorical and
 # a single continuous model is not a comparison". Parametrised as an
@@ -478,7 +449,7 @@ cat("near-flat arm below it is what a floor offset looks like when it is\n")
 cat("estimated as a hinge instead of an indicator.\n")
 
 # The multivariate models, for inference ----
-m_floor  <- fit_composition("vviq + complete_aphant + parity", "comp-floor")
+m_floor  <- fit_composition("vviq + complete_aphant + parity_rate", "comp-floor")
 m_floor_noparity <- fit_composition("vviq + complete_aphant",
                                     "comp-floor-noparity")
 
@@ -545,7 +516,7 @@ save_ggplot("inst/scripts/figures/c3-model-comparison.pdf",
 # Figure 4: the fitted relationship ----
 grid <- tidyr::expand_grid(
   vviq = seq(16, 80, by = 1),
-  parity = stats::median(model_data$parity)
+  parity_rate = stats::median(model_data$parity_rate)
 ) |>
   dplyr::mutate(
     complete_aphant = factor(
