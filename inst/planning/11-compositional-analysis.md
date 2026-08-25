@@ -1,6 +1,19 @@
 # WM-FTT: compositional analysis
 
 **Status: implemented 2026-08-21** (`inst/scripts/11-compositional-analysis.R`).
+**Secondary as of 2026-08-24**, and under an open caveat: see the box below.
+
+> **This analysis is responders-only, and whether that was legitimate is
+> currently being tested elsewhere.** Every composition here is built from
+> trials a participant chose to answer. `10` §11.6 found that willingness
+> to report and accuracy when reporting correlate at 0.512 [0.257, 0.719]
+> on orientation, which is 99.9% above its ROPE. If `09-joint-model.md`'s
+> selection correlations confirm that across features, this strand
+> inherits an explicit caveat: its estimates condition on a selected
+> subsample in a way no responders-only analysis can detect or correct.
+> `09` §8.4 states what each outcome means, and it was written before the
+> numbers existed. Nothing here should be written up as final until that
+> model has run.
 §13 is the implementation record and supersedes several earlier sections:
 the sample is 81 rather than 87, §2's variance-share table and §8.5's
 partial correlations were computed on a superseded sample and are
@@ -528,10 +541,10 @@ empirical question about zeros, and it does:
 
 | | count | share |
 |---|---|---|
-| Trial-level compositions (81 x 21) | 1701 | |
+| Trial-level compositions (79 x 21) | 1659 | |
 | Missing a part (no responded item for that feature) | 57 | 3.4% |
 | Containing an exact zero part (all on word) | 6 | 0.4% |
-| **Usable with no zero replacement** | **1638** | **96.3%** |
+| **Usable with no zero replacement** | **1596** | **96.2%** |
 
 Orientation and colour never score exactly zero, because cosine similarity
 on a continuous wheel essentially never returns 0, and word survives

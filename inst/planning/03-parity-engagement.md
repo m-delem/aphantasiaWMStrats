@@ -359,6 +359,36 @@ rather than by inheritance, and the answer is the same.
 | Role in modelling | Covariate | **Covariate on the accuracy arms of `09`**, as the dual-task load actually incurred, which is a strategy variable and not a confound control (§11.5) |
 | Binary threshold (§4) | Open | **Moot.** The response rate is the continuous version of the same thing |
 
+### 11.7 A published-facing page states the opposite, on a pooled sample
+
+`vignettes/articles/engagement.Rmd` §2 is titled "Parity engagement is not
+independent of imagery" and concludes that this "is the finding that stops
+parity accuracy being usable as a nuisance covariate". Three things are
+wrong with it.
+
+**Its sample is not what its caption says.** `by_participant` applies no
+version filter, so the table captioned "Parity accuracy against VVIQ, v1"
+is computed on all three versions.
+
+| Sample | rho | p |
+|---|---|---|
+| Pooled, as computed | -0.333 | 0.0003 |
+| v1 only, as captioned | **-0.154** | **0.157** |
+
+**The association does not survive stratification**, which is the exact
+failure mode §3.1 of `04-response-propensity.md` records and that INDEX
+§6.5 carries forward as the project's standing lesson. It was written into
+a public page anyway.
+
+**The variable is the broken one** (§11.1), so even the pooled figure is a
+statement about willingness to answer probes rather than about accuracy.
+
+Corrected, the direction of the claim reverses: parity response rate is
+0.505 at the VVIQ floor against 0.495 above it, p = 0.925 (§11.5). The
+page needs rewriting before the EOR is published, and the rewrite should
+say what the section now shows rather than deleting it, since a pooled
+association that dissolves on stratification is worth showing.
+
 One observation worth a sentence and not a parameter: among participants
 who did both tasks, parity conditional accuracy correlates 0.310 with
 colour recall accuracy, 0.116 with orientation and 0.000 with word. That

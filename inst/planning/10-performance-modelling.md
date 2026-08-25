@@ -1,6 +1,13 @@
 # WM-FTT: performance modelling
 
-**Status: planned in full 2026-08-21.** §11 is the implementation plan
+**Status: secondary as of 2026-08-24.** `09-joint-model.md` is the
+primary model, and this doc is a robustness and convergence check on it,
+not corroboration: same data through a simpler lens, so agreement is not
+independent evidence (`09` §8.8). On disagreement, `09` wins, provided it
+converged cleanly, because it conditions on less. §11.6's separation test
+is what produced that reordering.
+
+Earlier status: planned in full 2026-08-21. §11 is the implementation plan
 and supersedes parts of §§2, 3 and 8: the primary structure is now
 Option C-prime (multivariate, per-feature families, correlated random
 intercepts), the family question is resolved per feature, word's status

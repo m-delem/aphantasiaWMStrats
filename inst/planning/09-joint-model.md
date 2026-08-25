@@ -184,8 +184,18 @@ there is no reason to put it on the gates.
 | `zoi`, `coi` | 2 | word's inflation components |
 
 Response names are `respondedword`, `respondedangle`, `respondedcolor`,
-`scoreword`, `scoreangle`, `scorecolor`. brms strips the underscores, so
-priors and draw columns use those forms and not the column names.
+`scoreword`, `scoreangle`, `scorecolor`, **in that order**. brms strips the
+underscores, so priors and draw columns use those forms and not the column
+names.
+
+The order matters and is not cosmetic. It determines the Stan code, so a
+formula built in a different order is a different model as far as brms's
+caching is concerned. The first version of the script appended word's
+accuracy arm last, an artifact of a conditional block, and the fit from it
+was discarded on 2026-08-25 in favour of this order. Both the script and
+any vignette build the formula with `joint_formula()` for that reason:
+with `file_refit = "never"` a vignette would otherwise display a formula
+that is not the one behind its numbers.
 
 ### 8.3 What is of interest, fixed in advance
 
@@ -269,12 +279,19 @@ prior-dominated, since word non-response has an SD of only 0.088.
 
 ### 8.6 Fitting plan
 
-Staged, so a failure localises rather than presenting as one opaque wall.
+Two models, and the first is not a warm-up.
 
-1. **Three gates alone.** Cheap, and it is `04`'s model in its own right.
-   Gives the three propensity-propensity correlations and the gate fixed
-   effects independently of anything else.
+1. **The three gates alone.** This is `04-response-propensity.md`'s own
+   model, and without it that strand has no fitted model at all. It is
+   also the only place the three propensity correlations are estimated
+   without the accuracy arms pulling on them, which makes the comparison
+   in the script's §8 a real diagnostic rather than a formality.
 2. **All six.** The full model.
+
+**Confirmed 2026-08-25: the full model samples**, so the staging is no
+longer a convergence strategy. The fallback switches are gone from the
+script; the fallback order below stands as a manual edit if it is ever
+needed.
 
 `adapt_delta = 0.99`, `max_treedepth = 15`, 4 chains. Random intercepts
 only, no slopes. Expect this to be slow.

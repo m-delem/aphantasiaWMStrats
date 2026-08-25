@@ -17,7 +17,9 @@ Restructured 2026-08-24; the old numbering encoded write order and had
 become misleading.
 
 **Read this document first, then read only the specific doc(s) relevant to
-your task**, not all fourteen.
+your task**, not all fourteen. `EOR-OUTLINE.md` maps these docs onto the
+public pkgdown pages, which are ordered for a reader rather than by
+dependency.
 
 **Two things govern everything downstream.** v1 (N = 88) is the primary
 analysis sample and v2/v3 do not enter the inferential analyses

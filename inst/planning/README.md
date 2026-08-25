@@ -48,6 +48,7 @@ thing can be. Chronology is in `CHANGELOG.md`.
 | --- | --- |
 | `INDEX.md` | Entry point: dependency graph, per-doc summaries, house rules |
 | `CHANGELOG.md` | What changed when, and in what order |
+| `EOR-OUTLINE.md` | How the planning set maps onto the public pkgdown pages |
 | `00-framing.md` | Why the study is framed as it is |
 | `01-task-design.md` | The paradigm, its incentive structure, version history |
 | `02-score-computation.md` | Turning a response into a score |
