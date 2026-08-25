@@ -359,35 +359,34 @@ rather than by inheritance, and the answer is the same.
 | Role in modelling | Covariate | **Covariate on the accuracy arms of `09`**, as the dual-task load actually incurred, which is a strategy variable and not a confound control (§11.5) |
 | Binary threshold (§4) | Open | **Moot.** The response rate is the continuous version of the same thing |
 
-### 11.7 A published-facing page states the opposite, on a pooled sample
+### 11.7 A published-facing page overclaims from this variable
 
 `vignettes/articles/engagement.Rmd` §2 is titled "Parity engagement is not
 independent of imagery" and concludes that this "is the finding that stops
-parity accuracy being usable as a nuisance covariate". Three things are
+parity accuracy being usable as a nuisance covariate". Two things are
 wrong with it.
 
-**Its sample is not what its caption says.** `by_participant` applies no
-version filter, so the table captioned "Parity accuracy against VVIQ, v1"
-is computed on all three versions.
+**It reports a non-significant result as a finding.** The correlation is
+rho = -0.154, p = 0.157, n = 86. The prose states the direction, "lower
+imagery vividness goes with higher parity accuracy", and builds a
+methodological conclusion on it, with no acknowledgement that the interval
+comfortably contains zero.
 
-| Sample | rho | p |
-|---|---|---|
-| Pooled, as computed | -0.333 | 0.0003 |
-| v1 only, as captioned | **-0.154** | **0.157** |
+**The variable is the broken one** (§11.1), so what it describes is
+willingness to answer probes, not accuracy on them.
 
-**The association does not survive stratification**, which is the exact
-failure mode §3.1 of `04-response-propensity.md` records and that INDEX
-§6.5 carries forward as the project's standing lesson. It was written into
-a public page anyway.
+Corrected, the claim reverses: parity response rate is 0.505 at the VVIQ
+floor against 0.495 above it, p = 0.925 (§11.5). Sections 4 and 5 of that
+page build on the same variable and need rewriting with it.
 
-**The variable is the broken one** (§11.1), so even the pooled figure is a
-statement about willingness to answer probes rather than about accuracy.
-
-Corrected, the direction of the claim reverses: parity response rate is
-0.505 at the VVIQ floor against 0.495 above it, p = 0.925 (§11.5). The
-page needs rewriting before the EOR is published, and the rewrite should
-say what the section now shows rather than deleting it, since a pooled
-association that dissolves on stratification is worth showing.
+**Correction to an earlier version of this section**, 2026-08-25. It
+asserted that the page's sample was pooled across versions and mislabelled
+as v1, with a table contrasting a pooled rho of -0.333 against a v1 rho of
+-0.154. That was wrong. `block_trials` does filter to v1 and the chunk
+computes exactly what its caption says. The claim came from reading the
+`summarise()` call without reading the object it consumed. Recorded rather
+than deleted: it is the same shape as the errors this doc exists to
+catch.
 
 One observation worth a sentence and not a parameter: among participants
 who did both tasks, parity conditional accuracy correlates 0.310 with

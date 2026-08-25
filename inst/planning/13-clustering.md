@@ -29,6 +29,119 @@ research, both already cited as direct inspiration (per
 
 ---
 
+
+## Result, 2026-08-25: the null, and it is clean
+
+Implemented in `inst/scripts/13-clustering.R`. Feature set, held-out set
+and success criterion were all fixed by `12-scale-structure.md` before this
+ran.
+
+**k = 2**, selected rather than assumed. Lowest PAC and highest mean
+silhouette at k = 2, and all three consensus functions returned two
+clusters independently.
+
+**The pooling is innocent**, which was the open question `12` §5 handed
+over. Refitting on v1's 85 participants alone reproduces the pooled
+partition almost exactly: agreement 0.976 after matching labels, adjusted
+Rand 0.907. The larger sample is kept.
+
+**The floor group is not split.** All 39 participants at the vividness
+floor fall in one cluster.
+
+| | Above floor | VVIQ floor |
+|---|---|---|
+| Cluster 1 | 60 | 0 |
+| Cluster 2 | 15 | 39 |
+
+Adjusted Rand against the vividness split: **0.539**. By the pre-declared
+criterion this is the **null result**: the structure the questionnaires
+contain is imagery, and the clustering finds nothing the confirmatory
+strand did not already have.
+
+**The solution is one axis, dichotomised.** Every feature separates in the
+same direction except unsymbolised thinking, which separates in the
+opposite one, and `12` §4 explains why: it correlates -0.42 with the
+imagery composite and behaves as an inverse imagery measure rather than an
+independent construct. So the clusters are not evidence of a second
+dimension; they are a threshold on the first.
+
+The one respect in which this is not purely a relabelling: the boundary is
+**not** the scale floor. Cluster 2 holds the 39 floor participants plus 15
+low-vividness participants above it. The clustering draws the line at a
+vividness threshold rather than at the floor.
+
+**k = 3 was inspected after the fact** and is labelled as such in the
+script. It splits off two above-floor participants and leaves the floor
+group otherwise intact (38 of 39 in one cluster, adjusted Rand 0.530). It
+does not change the conclusion.
+
+### The validation step is not run, and that is the point
+
+`09`'s plan was to refit the joint model on the cluster labels. Its stated
+precondition was clusters that are not simply imagery groups. That
+precondition is not met. Refitting anyway would reproduce the floor-group
+analysis with the boundary moved slightly, and reporting that as
+validation of a cluster solution is close to what §0 records going wrong
+the first time.
+
+Recorded as a decision rather than an omission: **the honest end of this
+strand is the null.**
+
+### Two extensions, run after seeing the null
+
+Both are in `§8` of the script and are labelled there as post-hoc.
+
+**The substantive result is not the clustering, it is the group
+contrast.** On the NIEQ, unsymbolised thinking is the **only** dimension
+where the floor group scores higher, and the effect is large:
+
+| Dimension | Floor | Above floor | d | p |
+|---|---|---|---|---|
+| **Unsymbolised** | **52.3** | **28.8** | **+0.83** | **.0003** |
+| Inner voice | 64.0 | 74.0 | -0.36 | .99 |
+| Emotions | 59.6 | 69.4 | -0.42 | .12 |
+| Sensory focus | 47.7 | 59.1 | -0.49 | .053 |
+| Imagery | 2.4 | 54.8 | -2.17 | <.001 |
+
+Participants reporting no voluntary visual imagery recognise themselves
+more in what the NIEQ, following Hurlburt's descriptive experience
+sampling, calls thinking without words or images. That is a positive
+result about what aphantasic experience *is*, from an instrument designed
+to ask, and it does not depend on any clustering.
+
+It is also the same fact as the loading in the cluster profiles seen from
+the other side: unsymbolised correlates -0.42 with the imagery composite.
+
+**Clustering the floor group alone is not supported.** Restricting to the
+39 participants at the floor is a better question than forcing more
+clusters on the whole sample, because it removes the axis that dominated:
+anything found there is necessarily beyond vividness. Features were
+re-standardised within the subsample and the imagery scales dropped, since
+they barely vary in it.
+
+The consensus functions returned four clusters and agreed with each other,
+but **PAC runs from 0.22 to 0.76 across algorithms**, meaning a large
+share of participant pairs cluster together inconsistently across
+resamples. At n = 39 on 6 features, an algorithm that always returns a
+partition returned one, and the stability indices say not to believe it.
+
+Had the indices supported it, the claim would have been a contrast between
+participants high on inner voice and unsymbolised thinking and
+participants low on both. That is worth a properly powered study rather
+than a footnote here, and it is recorded so the question is visibly closed
+rather than left for someone to retry with a different seed.
+
+**k = 3 on the full sample** (script §6) splits off two above-floor
+participants and leaves the floor group otherwise intact. It changes
+nothing.
+
+### What it leaves open
+
+The cluster boundary sits above the vividness floor, so it is a different
+dichotomy of the same axis. Whether it predicts task behaviour better than
+the floor split is answerable and cheap, and would need declaring before
+it is run. Stated here as a question, deliberately unanswered.
+
 ## 0. The actual scientific lineage this analysis belongs to — stated directly, for the record
 
 This context was given directly by the author during planning and is recorded

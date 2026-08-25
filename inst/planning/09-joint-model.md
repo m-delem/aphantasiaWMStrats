@@ -1,6 +1,6 @@
 # WM-FTT: the joint propensity and accuracy model
 
-**Status: specified and coded 2026-08-24, not yet fitted.** The script is `inst/scripts/09-joint-model.R`.
+**Status: fitted 2026-08-25.** The script is `inst/scripts/09-joint-model.R`, the results are in §8.4b, and the public account is `vignettes/articles/joint-model.Rmd`.
 This doc will hold the primary model of the study. §8 is the specification: the
 formula, every parameter it yields, which of them are of interest and why,
 the priors, and the fitting plan. It was written before fitting and
@@ -255,6 +255,58 @@ answers is not a low-reliability quantity.
 - **Floor offsets in the gates**: complete aphantasics differ in what they
   are willing to report, which is a different and arguably more direct
   claim about strategy than any accuracy difference.
+
+### 8.4b Outcome, 2026-08-25: the dichotomy was too coarse
+
+Fitted cleanly (max R-hat 1.004, no divergences, no treedepth saturation,
+minimum bulk ESS ratio 0.13 over 8000 draws). Recorded here as a **third
+case §8.4 did not anticipate**, rather than filed under whichever branch
+it most resembles.
+
+**Selection is feature-specific.**
+
+| Pair | median | 95% | PD |
+|---|---|---|---|
+| Word gate and accuracy | 0.131 | [-0.249, 0.481] | 0.76 |
+| **Orientation gate and accuracy** | **0.557** | **[0.327, 0.729]** | **1.00** |
+| Colour gate and accuracy | 0.012 | [-0.240, 0.252] | 0.54 |
+
+Neither "near zero" nor "large across all three". What follows is narrower
+and more useful than either branch: **responders-only analysis is sound
+for word and colour, and conditions on something real for orientation.**
+Pages mixing all three features inherit a weakened, feature-specific
+caveat rather than a blanket one. `11`'s caveat is narrowed accordingly.
+
+Two things make the orientation result credible rather than suspect. It
+replicates the value from the orientation-only model, 0.52 there against
+0.56 here, so it is not an artifact of the smaller specification. And
+orientation is the one feature whose gate is **inferred** rather than
+observed: an untouched widget returns 90 degrees, so genuine 90-degree
+responses are miscoded as non-responses. That miscoding removes
+guaranteed-wrong trials from the accuracy of exactly the participants with
+low measured response rates, which pushes the correlation **negative**.
+Finding it positive despite that makes it conservative.
+
+**Accuracy correlations are positive**, as `10` predicted: orientation and
+colour 0.456 [0.210, 0.654], PD 1.00. The trade-off the task imposes is a
+within-trial constraint, not a between-person one, and `11` §13.3's
+negative partial correlations were closure artifacts. Confirmed.
+
+**The gate floor offsets are not a null, they are no result.** On the
+probability scale the orientation gate's interval runs from about 0.84 to
+0.99, consistent with a large difference and with none. Non-response is
+7 to 14% of trials and the floor group is 20 people. This was billed as
+the claim no earlier analysis could make, and the model does not have the
+precision to make it. That belongs in the v4 recommendations: **to measure
+abstention you need a task in which abstention is common.**
+
+**The largest correlations in the model were not in the reporting set.**
+The three gate-to-gate pairs are 0.447, 0.586 and 0.752, all with PD 1.00.
+Willingness to report is a strong participant-level trait, far more
+coherent across features than accuracy is, and the two connect only on
+orientation. Exploratory by §8.8, labelled as such wherever it appears,
+and the clearest available evidence that abstention deserved modelling
+rather than filtering.
 
 ### 8.5 Priors
 

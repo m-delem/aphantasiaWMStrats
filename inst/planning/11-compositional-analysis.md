@@ -3,17 +3,24 @@
 **Status: implemented 2026-08-21** (`inst/scripts/11-compositional-analysis.R`).
 **Secondary as of 2026-08-24**, and under an open caveat: see the box below.
 
-> **This analysis is responders-only, and whether that was legitimate is
-> currently being tested elsewhere.** Every composition here is built from
-> trials a participant chose to answer. `10` §11.6 found that willingness
-> to report and accuracy when reporting correlate at 0.512 [0.257, 0.719]
-> on orientation, which is 99.9% above its ROPE. If `09-joint-model.md`'s
-> selection correlations confirm that across features, this strand
-> inherits an explicit caveat: its estimates condition on a selected
-> subsample in a way no responders-only analysis can detect or correct.
-> `09` §8.4 states what each outcome means, and it was written before the
-> numbers existed. Nothing here should be written up as final until that
-> model has run.
+> **Caveat, narrowed 2026-08-25 after the joint model ran.** Every
+> composition here is built from trials a participant chose to answer, and
+> `09` §8.4b tested whether that conditioning was innocent. The answer is
+> **feature-specific**: willingness and accuracy correlate at 0.557
+> [0.327, 0.729] on orientation, and at nothing on word (0.131) or colour
+> (0.012).
+>
+> So this strand does not inherit a blanket caveat. It inherits a precise
+> one: **the orientation part of every composition here is built on a
+> selected subsample, the other two are not.** Since both ILR coordinates
+> mix all three parts, both carry it, but weakly and through one part
+> rather than three.
+>
+> One further consequence, in this strand's favour. `09` §8.4b confirms
+> that accuracy correlates **positively** across features between people
+> (orientation and colour 0.456 [0.210, 0.654]), so §13.3's withdrawal of
+> the two-way trade-off reading was correct, and the negative partial
+> correlations reported before it really were closure artifacts.
 §13 is the implementation record and supersedes several earlier sections:
 the sample is 81 rather than 87, §2's variance-share table and §8.5's
 partial correlations were computed on a superseded sample and are

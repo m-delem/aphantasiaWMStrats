@@ -138,15 +138,15 @@ paragraph.
 
 ## Known problems, 2026-08-25
 
-**`engagement.Rmd` §2 is wrong and is public-facing.** It reports a
-parity/VVIQ association in a table captioned "v1" that is computed on all
-three versions: pooled rho = -0.333, p = 0.0003; v1 only, rho = -0.154,
-p = 0.157. It then builds "this is the finding that stops parity accuracy
-being usable as a nuisance covariate" on top of it. The variable is also
-the broken one (`03` §11.1). Corrected, the claim reverses. Full account
-in `03` §11.7. **Fix before anything else on this list**, and rewrite the
-section rather than deleting it: a pooled association that dissolves on
-stratification is worth showing, and this project has the receipts.
+**`engagement.Rmd` is public-facing and four of its five sections rest on
+a variable that does not measure what it claims.** §2 reports rho = -0.154,
+p = 0.157 as "the finding that stops parity accuracy being usable as a
+nuisance covariate": a non-significant result stated as a finding, from a
+column where 92% of the zeros are unanswered probes rather than wrong
+answers (`03` §11.1). §4's conclusion survives but its evidence does not.
+§5's downstream advice is backwards: corrected, parity does not differ by
+imagery group at all (p = 0.925). **Fix before anything else on this
+list.**
 
 **`scoring.Rmd` mixes in scope and validity.** Its "Which sample" belongs
 in B1 and its "Distributions" partly in C1. Splitting is cheap now and
@@ -183,3 +183,61 @@ are written.
 
 Not a commitment to page granularity. D2 may be three pages or one. It is
 a commitment to **order**, and to each result having exactly one home.
+
+# --- reconciled 2026-08-25 ---
+
+## What was actually built
+
+Thirteen pages. The plan above held with three departures, all recorded
+here rather than quietly absorbed.
+
+| Part | Pages, in navbar order |
+|---|---|
+| What was measured | sample-description, task-design, scoring, engagement |
+| Scope | version-scope |
+| Measurement quality | task-validity, psychometrics |
+| Confirmatory modelling | analysis-strategy, joint-model, performance, composition |
+| Exploratory | beyond-vividness |
+| Reference | codebook, plus Get started |
+
+**Departure 1: no predictor-form page.** Plan `08`'s content is split
+between `analysis-strategy` (why vividness is not a smooth predictor, the
+extrapolation caveat, the provenance of the model) and `performance` §4
+(the functional-form comparison). A separate page would have repeated
+both.
+
+**Departure 2: `sample-description` was not in the plan at all.** It came
+out of a comparison with `aphantasiaEmotions`, which has one and we did
+not. Nothing on the site said who the participants were, and the
+recruitment difference between versions is load-bearing for two other
+pages.
+
+**Departure 3: the exploratory strand is one page, not three.** `12`
+(scale structure) and `13` (clustering) answer one question and the null
+only means anything next to the structure that produced it. The planned
+third page, refitting the joint model on cluster labels, is **cancelled**:
+its precondition was clusters that are not simply imagery groups, and that
+precondition failed. `13`'s planning doc records the decision.
+
+## Still missing, in priority order
+
+- **Model diagnostics.** Ours exist in one table on `joint-model` and
+  nowhere else, and `pp_check()` appears nowhere in the package. Three
+  non-obvious family choices are defended in prose without being shown to
+  fit. `aphantasiaEmotions` has a page for this.
+- **Implementation notes.** Iteration counts, ROPE conventions, the
+  MARS-derived knot rationale and the `save_pars` decision are scattered
+  across scripts and function documentation.
+- **Superseded models and lessons.** The withdrawn two-way trade-off, the
+  parity variable that measured willingness rather than accuracy, the
+  retracted pooled-versus-v1 claim, the response-order artifact. Good
+  material, cheap to write, and the kind of thing that makes an EOR worth
+  more than a methods section.
+
+## Bookkeeping done, 2026-08-25
+
+- Every internal link resolves.
+- Every export appears exactly once in the reference index.
+- Every page states its sample within its first screen.
+- No page is reachable only from the navbar: `performance` and
+  `sample-description` had no inbound links and now do.
