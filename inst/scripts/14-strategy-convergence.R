@@ -246,6 +246,99 @@ save_ggplot("inst/scripts/figures/s4-strategy-convergence.pdf",
             p_convergence, ncol = 1, height = 80, return = TRUE)
 
 # ------------------------------------------------------------------------- #
+# 4b. The phenomenological questions ----
+# ------------------------------------------------------------------------- #
+rule("4b. Do the reports about EXPERIENCE cohere with the questionnaire?")
+
+cat("\nThe prioritisation question above asks about behaviour: which\n")
+cat("features did you try to keep. People can answer that.\n")
+
+cat("\nThe per-feature questions ask something else. 'How did you memorise\n")
+cat("the colours' offers MENTAL IMAGERY as one option, and naming it is a\n")
+cat("claim about experience, not about behaviour. It is the kind of report\n")
+cat("aphantasia research treats as least trustworthy, and it is asked here\n")
+cat("in different words, in a different context, weeks or minutes after a\n")
+cat("questionnaire that asked about imagery directly.\n")
+
+cat("\nSo the two can be checked against each other.\n")
+
+per_feature <-
+  strategies |>
+  dplyr::filter(.data$strategy %in% coded) |>
+  dplyr::left_join(
+    dplyr::distinct(v1, .data$id, vviq = .data$vviq_total_score), by = "id"
+  ) |>
+  dplyr::filter(!is.na(.data$vviq)) |>
+  dplyr::mutate(
+    group = ifelse(.data$vviq == 16, "VVIQ floor", "Above floor")
+  ) |>
+  dplyr::distinct(.data$id, .data$group, .data$feature, .data$strategy)
+
+group_sizes <- per_feature |>
+  dplyr::distinct(.data$id, .data$group) |>
+  dplyr::count(.data$group, name = "participants")
+
+cat("\n")
+print(as.data.frame(group_sizes), row.names = FALSE)
+
+profile <-
+  per_feature |>
+  dplyr::count(.data$feature, .data$strategy, .data$group) |>
+  dplyr::left_join(group_sizes, by = "group") |>
+  dplyr::mutate(percent = round(100 * .data$n / .data$participants)) |>
+  dplyr::select("feature", "strategy", "group", "percent") |>
+  tidyr::pivot_wider(names_from = "group", values_from = "percent",
+                     values_fill = 0L) |>
+  dplyr::arrange(.data$feature, dplyr::desc(.data$`Above floor`))
+
+cat("\nStrategies named, as a percentage of each group:\n\n")
+print(as.data.frame(profile), row.names = FALSE)
+
+imagery_mentions <- per_feature |>
+  dplyr::filter(.data$strategy == "mental_image") |>
+  dplyr::count(.data$group)
+
+cat("\nMENTAL IMAGERY, NAMED BY:\n\n")
+print(as.data.frame(imagery_mentions), row.names = FALSE)
+
+cat("\nNot one participant at the VVIQ floor named mental imagery, for any\n")
+cat("of the three features. Zero out of",
+    3 * group_sizes$participants[group_sizes$group == "VVIQ floor"],
+    "opportunities.\n")
+
+cat("\nWHAT THAT IS AND IS NOT EVIDENCE OF. It is a coherence check, and\n")
+cat("it passes: a participant reporting no voluntary imagery on the VVIQ\n")
+cat("also declines to name imagery as a memory strategy when asked in\n")
+cat("different words about a specific task, unprompted by any mention of\n")
+cat("aphantasia. Consistency across instruments and contexts is what you\n")
+cat("would expect if the reports track something real, and is not what\n")
+cat("you would expect if they were noise.\n")
+
+cat("\nIt is NOT evidence that introspective report is ACCURATE. Two\n")
+cat("reports agreeing with each other is a weaker property than either\n")
+cat("being right, and nothing here reaches the stronger claim.\n")
+
+cat("\nNo model is fitted. One cell is a structural zero, so a logistic\n")
+cat("model of the group contrast would not converge, and the contingency\n")
+cat("table already says everything the data support.\n")
+
+cat("\nTwo further things in that table, neither of them about imagery:\n")
+cat("  * On orientation,",
+    profile$`VVIQ floor`[profile$feature == "orientation" &
+                           profile$strategy == "none"],
+    "% of the floor group named NO strategy,\n    against",
+    profile$`Above floor`[profile$feature == "orientation" &
+                            profile$strategy == "none"],
+    "% above it. Orientation is the feature they abandon,\n")
+cat("    which converges with its non-response rate being the highest of\n")
+cat("    the three (03-parity-engagement.md).\n")
+cat("  * They name body-centred spatial strategies LESS often than typical\n")
+cat("    imagers, not more, which cuts against a simple compensation\n")
+cat("    account.\n")
+
+saveRDS(profile, fs::path(result_dir, "strategy-profile.rds"))
+
+# ------------------------------------------------------------------------- #
 # 5. What this does and does not establish ----
 # ------------------------------------------------------------------------- #
 rule("5. Reading")
@@ -262,7 +355,8 @@ cat("which people can answer. 'Did you use visual imagery' is a question\n")
 cat("about phenomenology, and nothing here bears on that.\n")
 
 cat("\nEXPLORATORY: not pre-declared, and run after the confirmatory strand.\n")
-cat("The per-feature strategy questions are reported descriptively only,\n")
-cat("because the option sets differ across features.\n")
+cat("The per-feature strategy questions are compared WITHIN a feature and\n")
+cat("never across features, because the option sets differ: spatial_body\n")
+cat("and spatial_cardinal are offered for orientation alone.\n")
 
 rule("Done. Results in inst/results/strategy-convergence.rds.")
