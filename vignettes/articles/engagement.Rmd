@@ -310,14 +310,12 @@ stats::wilcox.test(parity_rate ~ floor, data = floor_split, exact = FALSE)
 
 It is still worth carrying in the accuracy models, but as the **dual-task
 load a participant actually incurred**, which is a strategy variable in its
-own right, rather than as a control for something it does not predict. The
-[composition](composition.html) page carries it, and the [joint
-model](joint-model.html) carries it on its accuracy arms. The
-[performance](performance.html) page does **not**: every model there is
-fitted without it, so that page's internal comparison holds the
-right-hand side constant, but no argument was recorded for dropping it
-rather than adding it to both. That is an open inconsistency rather than a
-decision, and it is flagged here rather than smoothed over.
+own right, rather than as a control for something it does not predict.
+Every accuracy model on this site carries it, and no gate does: the
+[composition](composition.html), [performance](performance.html) and
+[joint model](joint-model.html) pages all put `parity_rate` on the arms
+that model how well a feature was recalled, and leave it off the arms that
+model whether it was recalled at all.
 
 **Non-response is the substantive one.** It is folded into the recall
 scores as zeros, so any analysis of accuracy that ignores the `responded_*`

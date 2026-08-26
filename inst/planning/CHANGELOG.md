@@ -9,6 +9,74 @@ analytic dependency, which is stable. Sequence lives here instead.
 
 ---
 
+## 2026-08-26 — parity_rate added to every accuracy model
+
+Resolves the open item left by phase 2. `performance_formula(parity =
+FALSE)` had no recorded justification and was the only accuracy
+specification on the site without the covariate. **Decision: add it
+everywhere rather than argue for the exception.**
+
+The reason, which is better than the one phase 2 could reconstruct:
+`joint-model` §6 compares C-prime's accuracy offsets against the joint
+model's, and the joint model carries `parity_rate` on its accuracy arms.
+The comparison was between models with different right-hand sides while
+claiming to be a like-for-like robustness check. It now is one.
+
+**The convention, stated once so it does not drift again: `parity_rate`
+goes on every arm that models how well a feature was recalled, and on no
+arm that models whether it was recalled at all.** That is what
+`joint_formula()` already did; everything else now matches it. The
+justification is in `03` §11.6 — it is the dual-task load a participant
+incurred while recalling, and it does not predict non-response.
+
+### Refitted
+
+| Model | Change |
+|---|---|
+| `perf-c-prime` | `performance_formula()` instead of `parity = FALSE` |
+| `perf-a-word`, `perf-a-angle`, `perf-a-color` | `+ parity_rate` on the default univariate rhs |
+| `perf-form-null`, `perf-form-group`, `perf-form-linear` | `+ parity_rate`, so all four form candidates share a rhs |
+| `perf-form-segmented` | `parity_rate` on the `a` nlpar |
+| `perf-joint-orientation` | `parity_rate` on the accuracy arm, not the gate |
+| `alloc-full`, `alloc-vividness` | `+ parity_rate`, so §5 is comparable with §4's `comp-floor` |
+
+Option A had to move with C-prime: `performance` §2's whole argument is
+that the independent and correlated fits give nearly the same floor-group
+offsets, and that is not a comparison if the two carry different
+predictors. The form candidates inherit from `perf-a-angle`, so they move
+too. `comp-floor`, `comp-trial-multilevel` and `joint-full` already
+carried it and are unchanged.
+
+### Also fixed here, an F91 miss from phase 0
+
+`joint-model` §6 loaded `perf-c-prime` and `perf-joint-orientation` with
+`data = model_data` — that page's **86**-participant frame, where both were
+fitted on the engaged 79 — and with no priors at all. The chunk now
+rebuilds the engaged frame and passes the priors `inst/scripts/10` used,
+including `save_pars(group = FALSE)` on the orientation model. This was
+missed in phase 0's sweep, which covered `performance` and
+`model-diagnostics` but not the two fits loaded from a third page.
+
+### Left alone deliberately
+
+- **The gates.** `responded_*` arms in `joint_formula()`, `10` §12 and
+  `joint-model` §6 carry no parity, by the convention above.
+- **The NIEQ models** (`beyond-vividness` §3, `13`). The outcome is a
+  questionnaire scale, not task accuracy; a dual-task load incurred during
+  the WM-FTT does not belong in it.
+- **`08-floor-group.R`.** Exploratory predictor-form script, predates the
+  corrected parity variable, and reports nothing on the site.
+
+### Consequences to watch on refit
+
+`performance` §2's "the coefficients barely move" and §3's correlation
+table are both re-estimated. §4's form comparison is re-run on a shifted
+set of candidates. `composition` §5's "the floor-group offset is 0.095
+here against 0.093 in section 4" is a transcribed pair of numbers and will
+need re-reading from the new fits.
+
+---
+
 ## 2026-08-26 — cold review, phase 2 (the [A] items)
 
 Wrong or contradictory sentences, in file order. Most are one-line

@@ -48,6 +48,11 @@ participant_info <- v1 |>
   dplyr::summarise(
     vviq = dplyr::first(vviq_total_score),
     imagery_group = dplyr::first(vviq_group_2),
+    # The proportion of parity probes ANSWERED, not a mean of
+    # `parity_*_acc`: that column scores an unanswered probe as 0, so a
+    # mean of it is a response rate wearing an accuracy name.
+    parity_rate = (sum(responded_parity_1) + sum(responded_parity_2)) /
+      (2 * dplyr::n()),
     .by = id
   )
 
@@ -84,16 +89,15 @@ at 1, orientation has no boundary mass at all, and colour has a trace of
 mass at 1 that is pixel resolution rather than behaviour.
 
 ```{r families}
-performance_formula(parity = TRUE)
+performance_formula()
 ```
 
-`parity = FALSE` is worth naming, because it is an exception. The
-[composition](composition.html) and [joint model](joint-model.html) pages
-both carry `parity_rate`, and [task engagement](engagement.html) §5 argues
-it belongs in the accuracy models as a strategy variable. Every model on
-*this* page omits it, which keeps the right-hand side constant across the
-comparison section 2 runs, but no reason was recorded for resolving the
-divergence this way round rather than the other. It is a known loose end.
+Every accuracy model on this site carries `parity_rate`: it is the
+dual-task load a participant actually incurred, which [task
+engagement](engagement.html) §5 shows is a strategy variable in its own
+right rather than a control for something it does not predict. The [joint
+model](joint-model.html) puts it on its accuracy arms and not on its
+gates, for the same reason, so the two pages estimate the same quantity.
 
 Word takes a zero-one-inflated Beta because its ceiling is a real point
 mass, orientation a plain Beta, and colour a Beta after a
@@ -115,7 +119,7 @@ univariate_priors <- function(rhs) {
 }
 
 fit_feature <- function(feature, family, file) {
-  rhs <- "vviq + complete_aphant + (1 | id)"
+  rhs <- "vviq + complete_aphant + parity_rate + (1 | id)"
   fit_brms_model(
     formula = brms::bf(
       stats::as.formula(paste0(
@@ -150,13 +154,13 @@ represent that, and more importantly they cannot **measure** it.
 c_prime_priors <- c(
   do.call(c, lapply(
     c("scoreword", "scoreangle", "scorecolor"),
-    response_priors, terms = c("vviq", "complete_aphant")
+    response_priors, terms = c("vviq", "complete_aphant", "parity_rate")
   )),
   brms::prior("lkj(2)", class = "cor")
 )
 
 correlated <- fit_brms_model(
-  formula = performance_formula(parity = FALSE),
+  formula = performance_formula(),
   data    = model_data,
   prior   = c_prime_priors,
   file    = system.file("models", "perf-c-prime.rds", package = pkg),
@@ -238,25 +242,28 @@ best-measured feature.
 ```{r comparison}
 form_models <- list(
   "Intercept only" = fit_brms_model(
-    formula = brms::bf(score_angle | subset(responded_angle) ~ 1 + (1 | id),
-                       family = brms::Beta()),
+    formula = brms::bf(
+      score_angle | subset(responded_angle) ~ parity_rate + (1 | id),
+      family = brms::Beta()),
     data = model_data,
-    prior = univariate_priors("1 + (1 | id)"),
+    prior = univariate_priors("parity_rate + (1 | id)"),
     file = system.file("models", "perf-form-null.rds", package = pkg),
     file_refit = refit),
   "Two-group split" = fit_brms_model(
     formula = brms::bf(
-      score_angle | subset(responded_angle) ~ imagery_group + (1 | id),
+      score_angle | subset(responded_angle) ~
+        imagery_group + parity_rate + (1 | id),
       family = brms::Beta()),
     data = model_data,
-    prior = univariate_priors("imagery_group + (1 | id)"),
+    prior = univariate_priors("imagery_group + parity_rate + (1 | id)"),
     file = system.file("models", "perf-form-group.rds", package = pkg),
     file_refit = refit),
   "Linear vividness" = fit_brms_model(
-    formula = brms::bf(score_angle | subset(responded_angle) ~ vviq + (1 | id),
-                       family = brms::Beta()),
+    formula = brms::bf(
+      score_angle | subset(responded_angle) ~ vviq + parity_rate + (1 | id),
+      family = brms::Beta()),
     data = model_data,
-    prior = univariate_priors("vviq + (1 | id)"),
+    prior = univariate_priors("vviq + parity_rate + (1 | id)"),
     file = system.file("models", "perf-form-linear.rds", package = pkg),
     file_refit = refit),
   "Floor-group additive" = independent$Orientation

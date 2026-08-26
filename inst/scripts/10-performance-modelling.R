@@ -238,9 +238,11 @@ rule("2. Priors")
 # these are `scoreword`, `scoreangle`, `scorecolor`, not the column names.
 # response_priors() is in R/, so the vignette reporting these models builds
 # its priors from the same function rather than a second copy.
-performance_priors <- function(response_names = responses) {
-  do.call(c, lapply(unname(response_names), response_priors,
-                    terms = c("vviq", "complete_aphant")))
+performance_priors <- function(
+    response_names = responses,
+    terms = c("vviq", "complete_aphant", "parity_rate")
+) {
+  do.call(c, lapply(unname(response_names), response_priors, terms = terms))
 }
 
 # lkj(2) mildly favours the identity, so the cross-feature correlations
@@ -273,7 +275,7 @@ univariate_priors <- function(rhs) {
 }
 
 fit_univariate <- function(response, family, name, rhs =
-                             "vviq + complete_aphant + (1 | id)") {
+                             "vviq + complete_aphant + parity_rate + (1 | id)") {
   subset_flag <- paste0("responded_", sub("^score_", "", response))
   fit_brms_model(
     formula = brms::bf(
@@ -348,7 +350,7 @@ participant_means <-
   compose_features(id) |>
   dplyr::left_join(participant_info, by = "id")
 
-mars_knots <- function(feature) {
+mars_knots_2 <- function(feature) {
   column <- paste0("mean_", feature)
   # A participant with no responded trials on a feature has an NA mean,
   # and earth() defaults to na.fail. That happens whenever TEST_RUN thins
@@ -375,7 +377,7 @@ if (requireNamespace("earth", quietly = TRUE)) {
     cat("from a test pass.\n")
   }
   for (f in features) {
-    m <- mars_knots(f)
+    m <- mars_knots_2(f)
     cat(sprintf(
       "\n  %-11s: n %2d | %d term(s) | knots: %-20s | RSq %.3f | GRSq %.3f",
       labels[[f]], m$n, m$n_terms,
@@ -389,7 +391,7 @@ if (requireNamespace("earth", quietly = TRUE)) {
   cat("for orientation. Pruning at n = 79 is conservative and will drop a\n")
   cat("weak linear term. The LOO comparison below is what tests that.\n")
 
-  orientation <- mars_knots("angle")
+  orientation <- mars_knots_2("angle")
   candidate_knots <- orientation$knots[orientation$knots <= FLOOR_REGION]
 
   # The criterion is about WHERE a knot sits, not how many there are. Two
@@ -413,11 +415,11 @@ if (requireNamespace("earth", quietly = TRUE)) {
 # rather than refitted.
 f_floor  <- a_angle
 f_null   <- fit_univariate("score_angle", brms::Beta(), "perf-form-null",
-                           rhs = "1 + (1 | id)")
+                           rhs = "1 + parity_rate + (1 | id)")
 f_group  <- fit_univariate("score_angle", brms::Beta(), "perf-form-group",
-                           rhs = "imagery_group + (1 | id)")
+                           rhs = "imagery_group + parity_rate + (1 | id)")
 f_linear <- fit_univariate("score_angle", brms::Beta(), "perf-form-linear",
-                           rhs = "vviq + (1 | id)")
+                           rhs = "vviq + parity_rate + (1 | id)")
 
 candidates <- list(
   "Intercept only"       = f_null,
@@ -435,7 +437,7 @@ if (!is.na(SEED_KNOT)) {
     formula = brms::bf(
       score_angle | subset(responded_angle) ~
         a + b1 * vviq + b2 * (vviq - k) * step(vviq - k),
-      a ~ 1 + (1 | id), b1 ~ 1, b2 ~ 1, k ~ 1,
+      a ~ 1 + parity_rate + (1 | id), b1 ~ 1, b2 ~ 1, k ~ 1,
       nl = TRUE, family = brms::Beta()
     ),
     data = model_data,
@@ -760,12 +762,17 @@ m_joint <- fit_brms_model(
     brms::bf(responded_angle ~ vviq + complete_aphant + (1 | p | id),
              family = brms::bernoulli()) +
     brms::bf(score_angle | subset(responded_angle) ~
-               vviq + complete_aphant + (1 | p | id),
+               vviq + complete_aphant + parity_rate + (1 | p | id),
              family = brms::Beta()) +
     brms::set_rescor(FALSE),
   data   = model_data,
+  # parity_rate on the accuracy arm only, as in joint_formula(): it is the
+  # dual-task load incurred while recalling, and it does not predict
+  # whether a feature is reported at all (03).
   prior  = c(
-    performance_priors(c("respondedangle", "scoreangle")),
+    performance_priors("respondedangle",
+                       terms = c("vviq", "complete_aphant")),
+    performance_priors("scoreangle"),
     brms::prior("lkj(2)", class = "cor")
   ),
   save_pars = brms::save_pars(group = FALSE),

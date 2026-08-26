@@ -251,16 +251,27 @@ Read against a region of practical equivalence of a tenth of the outcome's
 own standard deviation:
 
 ```{r rope}
-readRDS(system.file("results", "comp-rope.rds", package = pkg)) |>
-  knitr::kable(caption = "Posterior against the ROPE")
+comp_rope <- readRDS(system.file("results", "comp-rope.rds", package = pkg))
+
+knitr::kable(comp_rope, caption = "Posterior against the ROPE")
+```
+
+```{r floor-row, include = FALSE}
+# The row the prose below reads from, pulled out by name rather than by
+# position so a reordering of the table cannot silently repoint it.
+floor_ilr1 <- comp_rope[
+  comp_rope$coordinate == "ilr1" & comp_rope$term == "complete_aphantfloor", ]
+stopifnot(nrow(floor_ilr1) == 1)
 ```
 
 **Participants at the imagery floor sit above the line on the verbal
-coordinate.** The offset is 0.093, with 95% of the posterior between 0.025
-and 0.161, a standardised effect of about one outcome SD, and 99.3% of the
-posterior above the ROPE. In interpretable terms, their ratio of word
-allocation to the geometric mean of the two non-verbal features is roughly
-12% higher.
+coordinate.** The offset is `r fmt(floor_ilr1$Estimate)`, with 95% of the
+posterior in `r floor_ilr1[["95% CrI"]]`, a standardised effect of
+`r fmt(floor_ilr1$d, 2)` outcome SD, and
+`r fmt(100 * floor_ilr1[["Above ROPE"]], 1)`% of the posterior above the
+ROPE. In interpretable terms, their ratio of word allocation to the
+geometric mean of the two non-verbal features is roughly
+`r round(100 * (exp(floor_ilr1$Estimate / sqrt(2 / 3)) - 1))`% higher.
 
 **Vividness above the floor does nothing at all.** Its slope lies entirely
 inside the ROPE on both coordinates. Whatever is happening is a property of
@@ -306,7 +317,8 @@ imagery.
 ```{r style-model}
 style_model <- fit_brms_model(
   formula = composition_formula(
-    paste("vviq + complete_aphant + osivq_spatial + osivq_verbal +",
+    paste("vviq + complete_aphant + parity_rate +",
+          "osivq_spatial + osivq_verbal +",
           "nieq_inner_voice + nieq_unsymbolised")),
   data    = style_data,
   prior   = composition_priors(),
@@ -328,11 +340,36 @@ colour-orientation coordinate is -0.001 with 55% inside. A verbaliser does
 not measurably protect words, and a spatialiser does not measurably protect
 orientations.
 
+```{r offset-comparison}
+# The same parameter from both fits, each against its own frame's outcome
+# SD, so the ROPE means the same thing in both rows.
+floor_offsets <- dplyr::bind_rows(
+  dplyr::mutate(
+    report_rope(
+      brms::as_draws_df(composition_model)$b_ilr1_complete_aphantfloor,
+      outcome_sd = stats::sd(model_data$ilr1)),
+    model = "Section 4: vividness only"),
+  dplyr::mutate(
+    report_rope(
+      brms::as_draws_df(style_model)$b_ilr1_complete_aphantfloor,
+      outcome_sd = stats::sd(style_data$ilr1)),
+    model = "Section 5: vividness, style and inner experience")
+) |>
+  dplyr::relocate(model)
+
+knitr::kable(
+  floor_offsets,
+  caption = "The floor-group offset on the verbal coordinate, with and without the style predictors")
+```
+
 **The imagery effect is untouched by adding them.** The floor-group offset
-is 0.095 [0.029, 0.161] here against 0.093 [0.025, 0.161] in section 4,
-with 99.4% of the posterior beyond the ROPE. Whatever drives allocation, it
-is not a style effect wearing a vividness label — which is the outcome that
-would have required every result on this site to be reread.
+is `r fmt(floor_offsets$Estimate[2])` `r floor_offsets[["95% CrI"]][2]`
+here against `r fmt(floor_offsets$Estimate[1])`
+`r floor_offsets[["95% CrI"]][1]` in section 4, with
+`r fmt(100 * floor_offsets[["Above ROPE"]][2], 1)`% of the posterior beyond
+the ROPE. Whatever drives allocation, it is not a style effect wearing a
+vividness label — which is the outcome that would have required every
+result on this site to be reread.
 
 **One predictor does something, and the prediction did not name it.**
 

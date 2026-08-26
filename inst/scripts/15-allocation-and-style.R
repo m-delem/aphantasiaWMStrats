@@ -40,7 +40,7 @@ fit_config <-
     list(chains = 2, iterations = 100, warmup = 100, refresh = 0,
          prefix = "test-")
   } else {
-    list(chains = 4, iterations = 2000, warmup = 1000, refresh = 0,
+    list(chains = 4, iterations = 2000, warmup = 1000, refresh = 500,
          prefix = "")
   }
 
@@ -103,7 +103,7 @@ cat("predictors drawn from the same battery could easily be redundant.\n\n")
 # included osivq_object, which the models exclude, and reported a VIF of
 # 10.6 on vviq that belonged to a specification nobody runs.
 inflation <- car::vif(stats::lm(
-  ilr1 ~ vviq + complete_aphant + osivq_spatial + osivq_verbal +
+  ilr1 ~ vviq + complete_aphant + parity_rate + osivq_spatial + osivq_verbal +
     nieq_inner_voice + nieq_unsymbolised,
   data = model_data
 ))
@@ -133,8 +133,9 @@ cat("model has to be present beside the full one. Two models, one LOO\n")
 cat("comparison, which is the minimum that answers the prediction as it\n")
 cat("was written.\n")
 
-vividness_only <- "vviq + complete_aphant"
-full_set <- paste("vviq + complete_aphant + osivq_spatial + osivq_verbal +",
+vividness_only <- "vviq + complete_aphant + parity_rate"
+full_set <- paste("vviq + complete_aphant + parity_rate +",
+                  "osivq_spatial + osivq_verbal +",
                   "nieq_inner_voice + nieq_unsymbolised")
 
 cat("\n  Vividness : ilr1, ilr2 ~", vividness_only, "\n")

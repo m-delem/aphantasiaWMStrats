@@ -356,14 +356,25 @@ The simpler models, reported in full on the
 lens, so agreement is a robustness check and not independent evidence. They
 also run on `r comparison_sample` participants against this model's
 `r dplyr::n_distinct(model_data$id)`, so the comparison below is
-approximate by construction.
+approximate by construction. It is matched on specification: both carry
+`parity_rate` on the accuracy arms and neither carries it on a gate.
 
 ```{r sanity}
 # Loaded rather than transcribed: the comparison stays true if either
-# model is refitted.
+# model is refitted. These two were fitted on the engaged sample, not on
+# this page's larger one, so the frame is rebuilt here to match.
+performance_data <- dplyr::filter(model_data, id %in% engaged)
+
 performance_model <- fit_brms_model(
-  formula = performance_formula(parity = FALSE),
-  data    = model_data,
+  formula = performance_formula(),
+  data    = performance_data,
+  prior   = c(
+    do.call(c, lapply(
+      c("scoreword", "scoreangle", "scorecolor"),
+      response_priors, terms = c("vviq", "complete_aphant", "parity_rate")
+    )),
+    brms::prior("lkj(2)", class = "cor")
+  ),
   file    = system.file("models", "perf-c-prime.rds", package = pkg),
   file_refit = refit
 )
@@ -372,10 +383,17 @@ orientation_only <- fit_brms_model(
     brms::bf(responded_angle ~ vviq + complete_aphant + (1 | p | id),
              family = brms::bernoulli()) +
     brms::bf(score_angle | subset(responded_angle) ~
-               vviq + complete_aphant + (1 | p | id),
+               vviq + complete_aphant + parity_rate + (1 | p | id),
              family = brms::Beta()) +
     brms::set_rescor(FALSE),
-  data    = model_data,
+  data    = performance_data,
+  prior   = c(
+    response_priors("respondedangle", terms = c("vviq", "complete_aphant")),
+    response_priors("scoreangle",
+                    terms = c("vviq", "complete_aphant", "parity_rate")),
+    brms::prior("lkj(2)", class = "cor")
+  ),
+  save_pars = brms::save_pars(group = FALSE),
   file    = system.file("models", "perf-joint-orientation.rds", package = pkg),
   file_refit = refit
 )
