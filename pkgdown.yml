@@ -1,0 +1,25 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  articles/analysis-strategy: analysis-strategy.html
+  aphantasiaWMStrats: aphantasiaWMStrats.html
+  articles/beyond-vividness: beyond-vividness.html
+  articles/codebook: codebook.html
+  articles/composition: composition.html
+  articles/engagement: engagement.html
+  articles/implementation-notes: implementation-notes.html
+  articles/joint-model: joint-model.html
+  articles/lessons: lessons.html
+  articles/model-diagnostics: model-diagnostics.html
+  articles/participants: participants.html
+  articles/performance: performance.html
+  articles/psychometrics: psychometrics.html
+  articles/scoring: scoring.html
+  articles/task-design: task-design.html
+  articles/task-validity: task-validity.html
+  articles/version-scope: version-scope.html
+last_built: 2026-08-26T17:12Z
+urls:
+  reference: https://m-delem.github.io/aphantasiaWMStrats/reference
+  article: https://m-delem.github.io/aphantasiaWMStrats/articles
