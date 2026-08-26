@@ -307,10 +307,10 @@ More than that: under a points-per-feature incentive with optional recall,
 choosing not to report a feature **is** an allocation decision, and
 arguably a more direct one than how accurately a reported feature was
 recalled. Treating it as missing data discards the clearest strategic
-signal the task produces. That is why the primary model of this study
-models whether a feature was reported and how well it was reported
-together, rather than conditioning on the first and analysing only the
-second.
+signal the task produces. That is why the [joint
+model](joint-model.html) fits whether a feature was reported and how well
+it was reported together, rather than conditioning on the first and
+analysing only the second.
 
 ---
 

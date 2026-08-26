@@ -26,12 +26,15 @@ refit <- "never"
 ```
 
 How accurately is each feature recalled, and does imagery vividness predict
-it? This is the question the study started from, and it is now a
-**robustness check** on the [joint model](joint-model.html) rather than the
-main event, for the reason the [analysis
-strategy](analysis-strategy.html) page gives: it conditions on responded
-trials, and whether that is innocent is something only the joint model can
-test.
+it? This is the question the study started from, and it is no longer the
+main event: the [composition](composition.html) page reports the primary
+result, because *where* effort goes is what the task was built to measure
+and absolute accuracy cannot separate a deliberate choice from an
+inability.
+
+This page is the same data read the other way. Like the composition it
+conditions on responded trials, and whether that is innocent is tested on
+the [joint model](joint-model.html) page.
 
 Same data through a simpler lens, so agreement with the joint model is not
 independent evidence. It is still worth having, because a result that
@@ -367,7 +370,7 @@ this page not to read word's coefficient as one.
 
 ---
 
-**Continuing through the Extended Online Report:** this page follows [the joint model](joint-model.html). To keep reading in order, continue to [composition](composition.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+**Continuing through the Extended Online Report:** this page follows [composition](composition.html). To keep reading in order, continue to [the joint model](joint-model.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
 
 ---
 

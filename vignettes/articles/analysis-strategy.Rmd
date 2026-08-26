@@ -34,9 +34,16 @@ questionnaires rather than task behaviour.
 
 Aphantasic participants perform about as well as typical imagers on visual
 working memory tasks, and report compensating with verbal or spatial
-strategies. That self-report is the thing under suspicion, so the WM-FTT
-was built to make the trade-off behavioural: three features per stimulus,
-partial credit per feature, and instructions to maximise the score.
+strategies. A strategy is, by definition, what someone takes themselves to
+be doing, so no performance pattern can outrank their own account of it.
+What a behavioural measure can add is **convergence**: a dependent variable
+that, if it tracks the same distinctions participants report, corroborates
+the subjective category rather than replacing it.
+
+The WM-FTT was built to provide one. Three features per stimulus, partial
+credit for each, and instructions to maximise the score, so that a
+participant who divides effort unevenly leaves a trace in the scores
+themselves.
 
 "Where does effort go" then has two possible readings, and the difference
 between them shaped everything here.
@@ -123,7 +130,7 @@ intervals comfortably contain both nothing and a moderate effect, so an
 offset that does not clear its region of practical equivalence should be
 read as low power rather than as evidence of absence.
 
-## 4. The primary model
+## 4. The primary analysis: allocation
 
 Six responses. Three gates, one per feature, for whether it was reported at
 all. Three accuracies, one per feature, for how well it was reported when
@@ -153,22 +160,26 @@ that choosing among fifteen after seeing them is not possible.
 
 ## 5. The other models, and what they are for
 
-Two models sit around the primary one, both using the form set out in
-section 3. Neither is a replication of it: they are the same data through
-simpler lenses, so agreement is a robustness check and **not independent
-evidence**.
+Two models sit around it, both using the form set out in section 3.
 
-- **[Composition](composition.html).** Relative allocation across the
-  three features, moved off the simplex into log-ratio coordinates. A
-  genuinely different object rather than a weaker version of the accuracy
-  model, and the one that answers section 1's second reading directly.
 - **[Performance](performance.html).** Absolute per-feature accuracy, with
-  a response family chosen per feature. This is the primary model with the
-  gates removed.
+  a response family chosen per feature. The same data read as *how much*
+  rather than *where*, which is section 1's first reading.
+- **[The joint model](joint-model.html).** Six responses: whether each
+  feature was reported at all, and how well it was reported when it was,
+  with the correlations between those six quantities as the object of
+  interest.
 
-If the simpler models disagree with the primary one, the primary one wins,
-provided it converged cleanly, because it conditions on less. That was also
-decided in advance.
+The joint model is not a bigger version of the composition. It exists
+because the composition is computed from **responded trials only**, and
+whether that conditioning was innocent cannot be checked from inside a
+responders-only analysis. The joint model checks it.
+
+So the precedence between them is specific rather than general. **On
+allocation, the composition is primary.** On selection and on willingness
+to report, the joint model is authoritative and the composition is silent.
+Where the joint model bears on allocation, it speaks to whether the
+composition was *computable*, not to what it found.
 
 ## 6. Confirmatory and exploratory
 
@@ -203,7 +214,7 @@ describe six low-engagement participants rather than the task.
 
 ---
 
-**Continuing through the Extended Online Report:** this page follows [questionnaire psychometrics](psychometrics.html). To keep reading in order, continue to [the joint model](joint-model.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+**Continuing through the Extended Online Report:** this page follows [questionnaire psychometrics](psychometrics.html). To keep reading in order, continue to [composition](composition.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
 
 ---
 

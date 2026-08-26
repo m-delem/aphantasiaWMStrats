@@ -229,11 +229,12 @@ run. For the correlations there is a partial substitute: each posterior is
 compared against the marginal implied by the `lkj(4)` prior, and a
 posterior no narrower than its prior is flagged rather than reported.
 
-**Cross-validation of the primary model.** Model comparison was run on
+**Cross-validation of the joint model.** Model comparison was run on
 functional form for one feature ([performance](performance.html) §4) and
-on the compositional coordinate, not on the joint model as a whole. With
-54 parameters and 86 participants, a LOO comparison against alternatives
-would mostly report its own uncertainty.
+on the compositional coordinates ([composition](composition.html) §5 and
+§8), not on the joint model as a whole. With 54 parameters and 86
+participants, a LOO comparison against alternatives would mostly report its
+own uncertainty.
 
 Both are limitations of scope rather than oversights, and both are the kind
 of thing a larger sample would make worth doing.

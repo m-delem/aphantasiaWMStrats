@@ -376,8 +376,23 @@ therefore approximate by construction.
 
 ### 8.8 Pre-declared, and repeated here because it matters
 
-- On disagreement with `10` or `11`, **this model wins**, provided it
-  converged cleanly, because it conditions on less.
+- ~~On disagreement with `10` or `11`, **this model wins**, provided it
+  converged cleanly, because it conditions on less.~~ **Amended
+  2026-08-26.** That rule was written when this model was primary, and it
+  is too broad now that it is not. It reads:
+
+  > The **composition** (`11`) is primary for allocation, which is what
+  > the study was designed to measure and what the thesis's Chapter 2.III
+  > prediction is about. **This model** is authoritative on selection and
+  > on willingness to report, which `11` cannot see at all. Where this
+  > model bears on allocation, it speaks to whether the composition was
+  > **computable**, not to what it found.
+
+  The reasoning: this model appears in no design-time hypothesis. It was
+  built mid-analysis because `10` §11.6 found that conditioning on
+  responding might not be innocent, which makes it a check on a result
+  rather than the result. It conditioning on less remains true, and is why
+  it is the right instrument for the question it was built for.
 - `10` and `11` are **robustness and convergence checks, not
   corroboration**. Same data, simpler lens; agreement is not independent
   evidence.

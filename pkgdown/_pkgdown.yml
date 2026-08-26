@@ -44,9 +44,9 @@ articles:
       modelled and why before any results appear.
     contents:
       - articles/analysis-strategy
-      - articles/joint-model
-      - articles/performance
       - articles/composition
+      - articles/performance
+      - articles/joint-model
   - title: Exploratory
     navbar: Exploratory
     desc: >
@@ -190,12 +190,12 @@ navbar:
         - text: "Confirmatory modelling"
         - text: "The analysis: what is modelled, and why"
           href: articles/analysis-strategy.html
-        - text: "The joint model"
-          href: articles/joint-model.html
-        - text: "Performance"
-          href: articles/performance.html
         - text: "Composition"
           href: articles/composition.html
+        - text: "Performance"
+          href: articles/performance.html
+        - text: "The joint model"
+          href: articles/joint-model.html
         - text: "----"
         - text: "Exploratory"
         - text: "Beyond vividness"

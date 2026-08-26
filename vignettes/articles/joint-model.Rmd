@@ -25,9 +25,15 @@ pkg <- "aphantasiaWMStrats"
 refit <- "never"
 ```
 
-This is the model the rest of the analysis is organised around. The
-[analysis strategy](analysis-strategy.html) page explains why it exists;
-this page is what it says.
+The [composition](composition.html) page reports this study's primary
+result, and it computes it from **responded trials only**. Whether that
+conditioning was innocent cannot be checked from inside a responders-only
+analysis, because the information needed to check it has been removed.
+
+This model checks it, and answers two questions of its own that no other
+page can reach: whether willingness to report is itself a stable
+individual trait, and whether doing well on one feature costs another
+between people.
 
 Six responses. Three **gates**, one per feature, for whether it was
 reported at all. Three **accuracies**, for how well it was reported when it
@@ -393,7 +399,7 @@ tibble::tibble(
 
 ---
 
-**Continuing through the Extended Online Report:** this page follows [the analysis](analysis-strategy.html). To keep reading in order, continue to [performance](performance.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+**Continuing through the Extended Online Report:** this page follows [performance](performance.html). To keep reading in order, continue to [beyond vividness](beyond-vividness.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
 
 ---
 

@@ -499,7 +499,7 @@ cheap, and would need declaring before it is run.
 
 ---
 
-**Continuing through the Extended Online Report:** this page follows [composition](composition.html). To keep reading in order, continue to [model diagnostics](model-diagnostics.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+**Continuing through the Extended Online Report:** this page follows [the joint model](joint-model.html). To keep reading in order, continue to [model diagnostics](model-diagnostics.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
 
 ---
 

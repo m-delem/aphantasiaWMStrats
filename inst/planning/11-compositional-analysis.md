@@ -721,3 +721,145 @@ caches under a `test-` prefix, so a smoke test cannot overwrite a real fit.
 
 §10's summary table has been updated in place rather than duplicated here,
 so it remains the single authoritative list of this doc's decisions.
+
+## 14. The design-time prediction, tested at last (2026-08-26)
+
+Chapter 2 Part III of the thesis predicts that **allocation tracks
+cognitive style and inner experience, and not imagery vividness alone**: a
+verbaliser protects the word feature, a spatialiser the orientation.
+
+Every model in this doc predicts allocation from vividness and the floor
+group. **The OSIVQ had never entered a model anywhere in the package**, so
+the study's own central prediction was untested while its secondary axis
+was reported throughout. `inst/scripts/15-allocation-and-style.R` closes
+that.
+
+### 14.1 The predictor set, and why it was chosen that way
+
+Decided in `12-scale-structure.md` §4b from **how the questionnaires relate
+to each other**, never from how any of them relates to allocation. That is
+what makes the selection prospective: no criterion touches an outcome, so
+none of it can be tuned to produce a result.
+
+The rule, fixed before fitting: |r| ≥ 0.6 with an included predictor is
+redundant; 0.3 to 0.6 is retained if a hypothesis attaches to it; no
+hypothesis means excluded whatever the correlation.
+
+| Scale | r with VVIQ | Decision |
+|---|---|---|
+| nieq_imagery | 0.87 | excluded, measures vividness again |
+| osivq_object | 0.87 | excluded, measures vividness again |
+| nieq_unsymbolised | -0.40 | **kept**, hypothesis attached |
+| osivq_spatial | 0.38 | kept |
+| nieq_sensory_focus | 0.27 | excluded, no hypothesis, and fails its own reliability check |
+| nieq_emotions | ~0.2 | excluded, no hypothesis |
+| osivq_verbal | 0.16 | kept |
+| nieq_inner_voice | -0.07 | kept, independent of vividness |
+
+Unsymbolised sits in the grey band and is **kept rather than dropped**, so
+that what it contributes can be shown by the model instead of asserted
+here.
+
+### 14.2 Two models, not a space
+
+"Not vividness alone" is comparative, so the pre-declared model has to sit
+beside the full one. An eight-model space on 78 participants would mostly
+report its own uncertainty.
+
+### 14.3 What the unsymbolised coefficient will and will not show
+
+With vividness in the model, a near-zero unsymbolised coefficient
+demonstrates redundancy **conditional on vividness**. It does not show that
+unsymbolised is unrelated to allocation: marginally it is, and `12` §4b
+carries that. Two claims, one tested here.
+
+### 14.4 Analysis provenance
+
+The predictor-selection rule and the two-model design were fixed before
+either model was fitted. Separately, and earlier, an exploratory
+frequentist fit of a six-predictor specification was run during
+methodological discussion. That fit informed no part of the selection rule,
+which uses only inter-questionnaire correlations, but it is recorded so
+that the order in which things were seen is on the record.
+
+### 14.5 Result, 2026-08-26
+
+**The design-time prediction is not supported.** Neither OSIVQ subscale
+predicts either coordinate.
+
+| Predicted | Estimate | 95% CrI | Inside ROPE |
+|---|---|---|---|
+| verbal raises ilr1 | 0.005 | [-0.015, 0.025] | 56% |
+| spatial lowers ilr2 | -0.001 | [-0.027, 0.024] | 55% |
+
+A verbaliser does not protect the word feature and a spatialiser does not
+protect the orientation, at least not measurably in 78 participants.
+
+**The floor-group offset is untouched by any of it.** 0.095 [0.029, 0.161]
+with four extra predictors in the model, against 0.093 [0.025, 0.161]
+without them, and 99.4% of the posterior beyond the ROPE. That
+is strong evidence it is not a style effect wearing a vividness label,
+which was the outcome §14 named as most consequential if it had gone the
+other way.
+
+**Unsymbolised behaves exactly as §14.3 predicted.** -0.003, 53% inside the
+ROPE, conditional on vividness. Marginally it relates to allocation
+(+0.018) and it correlates 0.43 with the floor indicator; entered together
+with vividness it has nothing left to explain. The prediction about what
+the coefficient would and would not show was written before the fit.
+
+**One predictor does something, and it is not one the prediction named.**
+
+> **NIEQ inner voice on ilr1: -0.025 [-0.046, -0.004], PD 0.991, 94% of
+> the posterior below the ROPE.**
+
+By the same standard the floor offset clears (99.4% above), this clears.
+Inner voice is also the one questionnaire scale essentially orthogonal to
+vividness (r = -0.07), so it is not vividness in disguise the way
+unsymbolised is.
+
+The direction is counterintuitive: **more reported inner speech goes with
+less allocation to words**. One candidate reading, offered as a hypothesis
+and not a conclusion: someone whose inner speech is habitually occupied may
+have less phonological capacity free for the memoranda, which would make
+this a competition effect rather than a style effect. The thesis
+hypotheses call the inner-experience prediction exploratory in the strict
+sense, and this stays exploratory.
+
+**Model comparison leans to the simpler model without settling it**, by
+3.8 elpd with a standard error of 3.0, about 1.3 SE. Not a verdict: at that
+separation the data do not distinguish the two sets, which is what 78
+participants and four extra predictors should be expected to produce.
+
+It is also not in tension with the paragraph above. LOO charges for all
+four extras, three of which are noise, and one real coefficient does not
+have to pay for the other three. The comparison answers "is the fuller SET
+worth it"; §5 answers "what does each predictor do", and those can differ.
+
+**Where this leaves the strands.** Allocation connects to vividness, to
+inner experience through one dimension, and to reported strategy
+(`14-strategy-convergence.R`). It does not connect to cognitive style. The
+composition remains the place where most strands meet, but with one fewer
+than the design anticipated.
+
+### 14.6 The test run agreed with the real one
+
+Worth recording because it is not guaranteed. `TEST_RUN` fits two chains of
+100 iterations; the real fit is four chains of 2000. Every coefficient
+above agreed to within about 0.002, and the LOO difference moved from 5.1
+to 3.8 elpd, both around 1.3 to 1.7 SE and neither decisive.
+
+That is reassuring about this model, which is small and well identified. It
+should not be generalised: the joint model's correlations moved
+substantially between test and full fits.
+
+### 14.7 Errors in the first run of the script
+
+Recorded because both were visible in output that had already been read.
+
+The collinearity check in §1 was computed on a specification including
+`osivq_object`, which the models exclude, and reported a VIF of 10.6 on
+`vviq`. On the set actually fitted the highest VIF is 2.75. And the model
+comparison printed a line asserting the difference was inside its standard
+error, which was written before the result existed and was false for the
+value observed.

@@ -192,7 +192,7 @@ p_structure <-
   labs(
     x = NULL, y = NULL,
     caption = paste(
-      "Bonferroni corrected; values shown where p < .05.\n",
+      "Bonferroni corrected; values shown where p < .05.",
       "Pooled across versions, n =", nrow(scales)
     )
   ) +
@@ -204,6 +204,79 @@ p_structure <-
 
 save_ggplot("inst/scripts/figures/s1-scale-structure.pdf",
             p_structure, ncol = 1, height = 100, return = TRUE)
+
+# ------------------------------------------------------------------------- #
+# 4b. The predictor set for the allocation models ----
+# ------------------------------------------------------------------------- #
+rule("4b. Which scales enter the behavioural models")
+
+cat("\nThe allocation models in 15-allocation-and-style.R need a predictor\n")
+cat("set. It is decided HERE, from how the instruments relate to each\n")
+cat("other, and never from how any of them relates to behaviour. That is\n")
+cat("what makes the selection prospective: nothing in this section touches\n")
+cat("an outcome variable, so it cannot be tuned to produce a result.\n")
+
+cat("\nRULE, fixed before fitting anything:\n")
+cat("  * |r| >= 0.6 with an already-included predictor -> REDUNDANT.\n")
+cat("    Two instruments that agree that strongly are measuring one\n")
+cat("    construct, and entering both enters it twice.\n")
+cat("  * 0.3 <= |r| < 0.6 -> RETAINED if a hypothesis attaches to it.\n")
+cat("    Kept in the model rather than dropped, so that what it does can\n")
+cat("    be shown rather than assumed.\n")
+cat("  * No hypothesis attached -> EXCLUDED, whatever its correlation.\n")
+
+reference <- "vviq"
+others <- setdiff(names(scale_only), reference)
+
+selection <-
+  purrr::map(
+    others,
+    function(scale) {
+      r <- stats::cor(scale_only[[scale]], scale_only[[reference]],
+                      method = "spearman")
+      tibble::tibble(scale = scale, r_with_vviq = r)
+    }
+  ) |>
+  purrr::list_rbind() |>
+  dplyr::mutate(
+    band = dplyr::case_when(
+      abs(.data$r_with_vviq) >= 0.6 ~ "redundant",
+      abs(.data$r_with_vviq) >= 0.3 ~ "grey",
+      TRUE ~ "independent"
+    ),
+    hypothesis = .data$scale %in% c("osivq_spatial", "osivq_verbal",
+                                    "nieq_inner_voice", "nieq_unsymbolised"),
+    decision = dplyr::case_when(
+      .data$band == "redundant" ~ "excluded: measures vividness again",
+      !.data$hypothesis ~ "excluded: no hypothesis attached",
+      TRUE ~ "included"
+    )
+  ) |>
+  dplyr::arrange(dplyr::desc(abs(.data$r_with_vviq)))
+
+cat("\n")
+print(as.data.frame(selection), row.names = FALSE, digits = 2)
+
+saveRDS(selection, fs::path(result_dir, "predictor-selection.rds"))
+
+cat("\nNIEQ unsymbolised falls in the grey band and is KEPT. It has a\n")
+cat("hypothesis attached (the thesis predicts allocation tracks inner\n")
+cat("experience), and keeping it lets the model show what it contributes\n")
+cat("alongside vividness rather than having that decided here.\n")
+
+cat("\nOne thing the fitted model will NOT show. With vividness in the\n")
+cat("model, an unsymbolised coefficient near zero demonstrates redundancy\n")
+cat("CONDITIONAL ON VIVIDNESS, not that unsymbolised is unrelated to\n")
+cat("allocation. Those are different claims and only the first is tested.\n")
+cat("The marginal relationship belongs here, with the questionnaires.\n")
+
+cat("\nSensory focus is excluded for a second reason as well: its\n")
+cat("pair-consistency is 0.49 (07), below threshold.\n")
+
+cat("\nResulting predictor set:\n  ",
+    paste(c("vviq", "complete_aphant",
+            selection$scale[selection$decision == "included"]),
+          collapse = "\n   "), "\n", sep = "")
 
 # ------------------------------------------------------------------------- #
 # 5. Does pooling change the partition? ----

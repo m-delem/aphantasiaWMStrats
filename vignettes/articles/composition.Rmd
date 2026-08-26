@@ -30,12 +30,17 @@ Two participants can score the same overall and have divided their effort
 completely differently. This page is about that difference: **relative
 allocation across the three features, with overall performance removed.**
 
-It is a complement to the accuracy models rather than a weaker version of
-them. A composition is a different object, with its own geometry, and it
-answers a question absolute scores cannot: not *how well*, but *where*.
+This is the study's **primary analysis**, and the one it was designed
+around. A composition is a different object from an accuracy score, with
+its own geometry, and it answers the question the task was built to ask:
+not *how well*, but *where*.
+
+It is also where the strands meet. Imagery vividness, inner experience and
+participants' own accounts of what they were doing all bear on the same
+coordinate, in sections 4 to 6.
 
 Everything here is v1 ([version scope](version-scope.html)) and uses
-responded trials only, which carries a caveat set out in section 6.
+responded trials only, which carries a caveat set out in section 8.
 
 ```{r data}
 v1 <- get_data("v1") |>
@@ -70,6 +75,19 @@ model_data <- model_data |>
       dplyr::if_else(vviq == 16, "floor", "above_floor"),
       levels = c("above_floor", "floor")
     )
+  ) |>
+  # The questionnaire scales, for section 5. Standardised because the
+  # instruments sit on incompatible ranges: OSIVQ runs 1-5, NIEQ 0-100.
+  #
+  # An inner join, so participants missing any questionnaire scale drop
+  # out here. Section 5 says how many and section 4 is unaffected: it is
+  # fitted on its own frame, not this one.
+  dplyr::inner_join(
+    questionnaire_scales(all_data) |>
+      dplyr::select(id, tidyselect::starts_with("osivq_"),
+                    tidyselect::starts_with("nieq_")) |>
+      dplyr::mutate(dplyr::across(-id, \(x) as.numeric(scale(x)))),
+    by = "id"
   )
 ```
 
@@ -213,7 +231,174 @@ is worth being precise about which kind of no result. The floor offset has
 evidence of absence, it is an uninformative posterior, and it should be
 reported as such.
 
-## 5. What the coordinate cannot tell you
+## 5. Is it imagery, or is it cognitive style?
+
+The study was designed around a prediction from the Object-Spatial-Verbal
+framework: that allocation should track **cognitive style**, and not
+imagery vividness alone. A verbaliser should protect the word feature, a
+spatialiser the orientation.
+
+Section 4 tests only the vividness axis, which is the one the prediction
+names as insufficient. This section tests the prediction itself.
+
+This section runs on `r nrow(model_data)` participants rather than the
+`r nrow(engaged_parts)` of section 4: it needs the questionnaire scales,
+and `r nrow(engaged_parts) - nrow(model_data)` participants are missing at
+least one of them. Section 4's result is unaffected, being fitted on the
+larger frame.
+
+**The predictor set was chosen from the questionnaires alone**, never from
+how any of them relates to allocation, which is what keeps the choice
+independent of the result. Scales correlating above 0.6 with VVIQ are
+excluded as re-entering vividness under another name; scales with no
+hypothesis attached are excluded whatever their correlation. That leaves
+OSIVQ spatial and verbal, and the two NIEQ dimensions the
+[psychometrics](psychometrics.html) and [beyond
+vividness](beyond-vividness.html) pages identify as least redundant with
+imagery.
+
+```{r style-model}
+style_model <- fit_brms_model(
+  formula = composition_formula(
+    paste("vviq + complete_aphant + osivq_spatial + osivq_verbal +",
+          "nieq_inner_voice + nieq_unsymbolised")),
+  data    = model_data,
+  prior   = composition_priors(),
+  file    = system.file("models", "alloc-full.rds", package = pkg),
+  file_refit = refit
+)
+
+knitr::kable(
+  brms::fixef(style_model)[, c("Estimate", "Q2.5", "Q97.5")],
+  digits = 4, caption = "Allocation predicted by vividness, style and inner experience"
+)
+```
+
+**The prediction is not supported.** OSIVQ verbal on the verbal coordinate
+is 0.005 with 56% of its posterior inside the ROPE; OSIVQ spatial on the
+colour-orientation coordinate is -0.001 with 55% inside. A verbaliser does
+not measurably protect words, and a spatialiser does not measurably protect
+orientations.
+
+**The imagery effect is untouched by adding them.** The floor-group offset
+is 0.095 [0.029, 0.161] here against 0.093 [0.025, 0.161] in section 4,
+with 99.4% of the posterior beyond the ROPE. Whatever drives allocation, it
+is not a style effect wearing a vividness label — which is the outcome that
+would have required every result on this site to be reread.
+
+**One predictor does something, and the prediction did not name it.**
+
+```{r inner-voice}
+draws <- brms::as_draws_df(style_model)
+
+dplyr::bind_rows(
+  dplyr::mutate(
+    report_rope(draws$b_ilr1_nieq_inner_voice,
+                outcome_sd = stats::sd(model_data$ilr1)),
+    term = "Inner voice"),
+  dplyr::mutate(
+    report_rope(draws$b_ilr1_nieq_unsymbolised,
+                outcome_sd = stats::sd(model_data$ilr1)),
+    term = "Unsymbolised thinking")
+) |>
+  dplyr::relocate(term) |>
+  knitr::kable(caption = "The two inner-experience dimensions, on the verbal coordinate")
+```
+
+Reported **inner speech** predicts allocation on the verbal coordinate at
+the same evidential standard the floor group clears, and in the opposite
+direction to the obvious guess: more inner speech goes with **less**
+allocation to words.
+
+One reading, offered as a hypothesis rather than a conclusion: someone
+whose inner speech is habitually occupied may have less phonological
+capacity free for the memoranda, which would make this a competition effect
+rather than a style effect. It is **exploratory** — the thesis's own
+inner-experience prediction is labelled exploratory in the strict sense,
+since the sample was not sized for it.
+
+**Unsymbolised thinking, by contrast, contributes nothing here**, and that
+is informative rather than empty. It correlates -0.40 with VVIQ and 0.43
+with the floor indicator, so once vividness is in the model it has nothing
+left to explain. It was kept in deliberately so the model could show that
+rather than have it assumed. Note what this does *not* say: unsymbolised is
+related to allocation marginally, and the [beyond
+vividness](beyond-vividness.html) page shows it declining steadily across
+the vividness range. Redundancy given vividness is a different claim from
+no relationship.
+
+Comparing the two predictor sets formally leans toward the simpler one
+without settling it, by 3.8 elpd against a standard error of 3.0. At that
+separation the data do not distinguish them, which is what `r nrow(model_data)` participants
+and four extra predictors should be expected to produce.
+
+## 6. Do participants know they are doing it?
+
+Everything above is behaviour. After the task, participants were asked
+which features they had tried to keep for points — a question about what
+they were doing, not about what it felt like.
+
+A strategy is by definition what someone takes themselves to be doing, so
+no behavioural pattern can overrule their own account of it. What the
+composition can offer is **convergence**: an independent measurement that
+either tracks the same distinctions or does not.
+
+```{r convergence}
+prioritisation <-
+  dplyr::bind_rows(
+    dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)$strategy_items
+  ) |>
+  dplyr::mutate(id = dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)$id) |>
+  dplyr::select(id, tidyselect::starts_with("strats_cfa_q04")) |>
+  tidyr::pivot_longer(-id, names_to = "slot", values_to = "feature") |>
+  dplyr::filter(!is.na(feature)) |>
+  dplyr::summarise(kept = sum(feature != "none"), .by = id)
+
+convergence <- dplyr::inner_join(model_data, prioritisation, by = "id") |>
+  dplyr::filter(kept > 0)
+
+convergence |>
+  dplyr::summarise(
+    participants = dplyr::n(),
+    mean_ilr1 = mean(ilr1),
+    .by = kept
+  ) |>
+  dplyr::arrange(kept) |>
+  knitr::kable(digits = 3,
+               caption = "Features participants said they kept, against what they did")
+```
+
+```{r convergence-test}
+correlation_test(convergence$ilr1, convergence$kept) |>
+  knitr::kable(digits = 4, caption = "Spearman correlation")
+```
+
+**They converge.** Participants who said they kept one feature really did
+concentrate on words; those who said they kept all three really did spread
+their effort, monotonically across the three levels.
+
+That matters more than its p-value. The composition comes from 63 trials of
+behaviour and the report comes from one question afterwards, so they are
+**independent measurements of the same construct**, and their agreement
+corroborates the coordinate as measuring what it claims. No amount of
+internal reliability could establish that.
+
+It also bears on a worry about the whole enterprise. If self-report about
+one's own cognition were simply unreliable here, this is where it would
+show. It does not — though note what was asked: *which features did you try
+to keep* is a question about behaviour, which people can answer.
+Whether the same holds for questions about phenomenology is a different
+matter, and nothing here bears on it.
+
+Two further details, reported in
+`inst/scripts/14-strategy-convergence.R` rather than here. Naming colours
+as well as words goes with a lower word share **and** a higher colour
+share, so the agreement holds on the parts and not only on the summary
+coordinate. And prioritisation is unrelated to imagery group, which makes
+the report an independent measurement rather than a restatement of section
+4.
+
+## 7. What the coordinate cannot tell you
 
 A ratio moved. It cannot say which part moved it.
 
@@ -249,7 +434,7 @@ not, which is not a contradiction, but no claim here may treat word as a
 well-measured quantity. Measurement noise in an outcome widens intervals
 rather than biasing estimates, so if anything this result is conservative.
 
-## 6. Two checks, and one caveat that is still open
+## 8. Two checks, and one caveat that is still open
 
 **The functional form was not assumed.** Five ways of entering imagery were
 compared, with the floor-group form pre-declared as primary regardless of
@@ -323,7 +508,7 @@ there is no between-person trade-off for closure to have been hiding.
 
 ---
 
-**Continuing through the Extended Online Report:** this page follows [performance](performance.html). To keep reading in order, continue to [beyond vividness](beyond-vividness.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+**Continuing through the Extended Online Report:** this page follows [the analysis](analysis-strategy.html). To keep reading in order, continue to [performance](performance.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
 
 ---
 

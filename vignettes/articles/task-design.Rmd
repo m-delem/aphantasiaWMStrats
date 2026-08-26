@@ -38,14 +38,21 @@ This page tells that story, and shows the task as participants met it.
 Aphantasic individuals perform about as well as typical imagers on visual
 working memory tasks, despite reporting no voluntary visual imagery. Asked how,
 they say they compensate: verbal labels, spatial relations, anything but
-pictures. That answer is plausible and it is also exactly the thing under
-suspicion, because it is a self-report about a process people may have no
-introspective access to.
+pictures.
 
-WM-FTT sidesteps the report. Every stimulus carries three features at once, and
-scoring gives partial credit for each, so a participant who divides effort
-unevenly across features leaves a trace in their scores whether or not they can
-describe what they did. The question stops being "which strategy do you use"
+That answer is not the thing under suspicion. A strategy is what a person
+takes themselves to be doing, and no behavioural pattern can overrule their
+own account of it. The difficulty is narrower: **raw per-feature accuracy
+cannot tell a deliberate choice from an inability**. A low colour score is
+equally consistent with being worse at colour and with having given colour
+up to protect something else, and those are different claims about the same
+number.
+
+WM-FTT is built to separate them, and to offer the reports something to
+converge with. Every stimulus carries three features at once, and scoring
+gives partial credit for each, so a participant who divides effort unevenly
+across features leaves a trace in the pattern of their scores rather than in
+any one of them. The question stops being "which strategy do you use"
 and becomes "where did the effort go".
 
 ## 2. What a trial looks like

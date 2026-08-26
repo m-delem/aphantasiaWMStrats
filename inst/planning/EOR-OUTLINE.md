@@ -196,7 +196,7 @@ here rather than quietly absorbed.
 | What was measured | participants, task-design, scoring, engagement |
 | Scope | version-scope |
 | Measurement quality | task-validity, psychometrics |
-| Confirmatory modelling | analysis-strategy, joint-model, performance, composition |
+| Confirmatory modelling | analysis-strategy, composition, performance, joint-model |
 | Exploratory | beyond-vividness |
 | Reference | codebook, plus Get started |
 
@@ -241,3 +241,41 @@ precondition failed. `13`'s planning doc records the decision.
 - Every page states its sample within its first screen.
 - No page is reachable only from the navbar: `performance` and
   `participants` had no inbound links and now do.
+
+## Reordered 2026-08-26: composition is primary
+
+Part D now reads **analysis-strategy, composition, performance,
+joint-model**. The joint model was primary; it is not any more.
+
+**Why.** The composition is what the study was designed to measure: the
+thesis's Chapter 2.III prediction is about allocation, and the joint model
+appears in no design-time hypothesis. It exists because we discovered mid
+analysis that conditioning on response might not be innocent. It is also
+the result that clears its threshold, and the page where vividness, inner
+experience and reported strategy all bear on one coordinate.
+
+**The precedence rule changed with it**, and `09` §8.8 carries the
+amendment. It used to say the joint model wins on disagreement. It now
+says: the composition is primary for allocation; the joint model is
+authoritative on selection and on willingness to report; and where the
+joint model bears on allocation it speaks to whether the composition was
+computable, not to what it found.
+
+## Scripts and sections added since the last reconciliation
+
+- `14-strategy-convergence.R`, reported in `composition.Rmd` §6.
+- `15-allocation-and-style.R`, reported in `composition.Rmd` §5. This is
+  the first test of the study's design-time prediction; `11` §14 has the
+  full account.
+- `12-scale-structure.R` §4b, the predictor-selection rule those models use.
+
+## For whoever picks this up next
+
+The confirmatory strand is complete and the exploratory strand has reported
+its nulls. What remains is not analysis:
+
+- The poster, for a Glasgow aphantasia congress. Copy is written
+  (`poster-copy.md` in the session outputs, not in the repo), two figures
+  exist, a third needs the NIEQ fits.
+- Thesis print figures, which depend on the chapter's structure and belong
+  with the writing rather than here.
