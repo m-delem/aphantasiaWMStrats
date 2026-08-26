@@ -18,55 +18,55 @@ articles:
       The paradigm, and how a response becomes a number. Everything after
       this depends on it.
     contents:
-      - sample-description
-      - task-design
-      - scoring
-      - engagement
+      - articles/participants
+      - articles/task-design
+      - articles/scoring
+      - articles/engagement
   - title: Scope
     navbar: Scope
     desc: >
       Which task versions enter the analyses, and why the rest do not.
       Every result downstream inherits this restriction.
     contents:
-      - version-scope
+      - articles/version-scope
   - title: Does anything here measure anything?
     navbar: Measurement quality
     desc: >
       Reliability and validity, for the task and for the questionnaires.
       Both have to hold before an association between them means anything.
     contents:
-      - task-validity
-      - psychometrics
+      - articles/task-validity
+      - articles/psychometrics
   - title: Confirmatory modelling
     navbar: Modelling
     desc: >
       Imagery groups fixed in advance. The strategy page says what is
       modelled and why before any results appear.
     contents:
-      - analysis-strategy
-      - joint-model
-      - performance
-      - composition
+      - articles/analysis-strategy
+      - articles/joint-model
+      - articles/performance
+      - articles/composition
   - title: Exploratory
     navbar: Exploratory
     desc: >
       Groups not fixed in advance. Whether the questionnaires contain
       structure the vividness split misses.
     contents:
-      - beyond-vividness
+      - articles/beyond-vividness
   - title: Technical
     navbar: Technical
     desc: >
       How the models were built and checked, and what was tried and
       withdrawn along the way.
     contents:
-      - model-diagnostics
-      - implementation-notes
-      - lessons
+      - articles/model-diagnostics
+      - articles/implementation-notes
+      - articles/lessons
   - title: Reference
     navbar: Reference
     contents:
-      - codebook
+      - articles/codebook
 
 reference:
   - title: Data
@@ -168,8 +168,8 @@ navbar:
       # simply absent; the outline is the record of what is missing.
       menu:
         - text: "What was measured"
-        - text: "The sample"
-          href: articles/sample-description.html
+        - text: "The participants"
+          href: articles/participants.html
         - text: "Task design"
           href: articles/task-design.html
         - text: "Scoring"

@@ -193,7 +193,7 @@ here rather than quietly absorbed.
 
 | Part | Pages, in navbar order |
 |---|---|
-| What was measured | sample-description, task-design, scoring, engagement |
+| What was measured | participants, task-design, scoring, engagement |
 | Scope | version-scope |
 | Measurement quality | task-validity, psychometrics |
 | Confirmatory modelling | analysis-strategy, joint-model, performance, composition |
@@ -206,7 +206,7 @@ extrapolation caveat, the provenance of the model) and `performance` §4
 (the functional-form comparison). A separate page would have repeated
 both.
 
-**Departure 2: `sample-description` was not in the plan at all.** It came
+**Departure 2: `participants` was not in the plan at all.** It came
 out of a comparison with `aphantasiaEmotions`, which has one and we did
 not. Nothing on the site said who the participants were, and the
 recruitment difference between versions is load-bearing for two other
@@ -240,4 +240,4 @@ precondition failed. `13`'s planning doc records the decision.
 - Every export appears exactly once in the reference index.
 - Every page states its sample within its first screen.
 - No page is reachable only from the navbar: `performance` and
-  `sample-description` had no inbound links and now do.
+  `participants` had no inbound links and now do.

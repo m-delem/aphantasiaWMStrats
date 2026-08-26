@@ -22,7 +22,7 @@ fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
 
 The WM-FTT ran in three versions, and the [task design](task-design.html)
 page explains why each replaced the last; the
-[sample](sample-description.html) page describes who took part in each. This page answers a narrower
+[participants](participants.html) page describes who took part in each. This page answers a narrower
 question with a consequence for everything after it: **which versions enter
 the inferential analyses.**
 

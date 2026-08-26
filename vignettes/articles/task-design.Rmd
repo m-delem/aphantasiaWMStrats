@@ -280,7 +280,7 @@ strategic skipping can be told apart from an absent representation.
 
 ---
 
-**Continuing through the Extended Online Report:** this page follows [the sample](sample-description.html). To keep reading in order, continue to [scoring](scoring.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+**Continuing through the Extended Online Report:** this page follows [the participants](participants.html). To keep reading in order, continue to [scoring](scoring.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
 
 ---
 

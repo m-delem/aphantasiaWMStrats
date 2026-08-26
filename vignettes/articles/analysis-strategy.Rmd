@@ -19,7 +19,7 @@ library(aphantasiaWMStrats)
 ```
 
 The preceding pages establish [who took
-part](sample-description.html), what was measured, on which sample, and
+part](participants.html), what was measured, on which sample, and
 whether it measures anything. This page says what is done with it, and in
 what order. It contains no results: it is the reasoning a reader needs
 before the modelling pages make sense, and it is deliberately written so
@@ -76,7 +76,54 @@ on orientation gives a participant-level correlation between the two of
 that would mean was written down before the number existed: conditioning
 was not innocent, and the joint model becomes the primary analysis.
 
-## 3. The primary model
+## 3. How imagery enters every model
+
+Before any model, one decision applies to all of them: **what shape does
+imagery vividness take as a predictor?**
+
+Not a smooth one. VVIQ scores in this sample are a sharp, isolated spike at
+the scale minimum plus an irregular remainder above it, so a single slope
+fitted through everything would describe neither part. Participants at the
+floor also have **no vividness variance among themselves**: a slope cannot
+be estimated for them, while an offset can.
+
+Every model on this site therefore takes the same form:
+
+- a **slope** across participants above the floor, and
+- a single **offset** for the group at it.
+
+Rather than assume that form, several were compared, with this one
+pre-declared as primary regardless of which fit best. The
+[performance](performance.html) page reports the comparison; the data do
+not separate the candidates, which was predicted in advance.
+
+**This is not a side decision, it is the spine.** The floor-group offset is
+what every result on this site reports: the compositional shift, the
+per-feature accuracies, and the joint model's six responses all estimate it
+in the same way, which is what makes them comparable.
+
+### The caution that comes with it
+
+The offset is the distance between where the floor group sits and **where a
+relationship fitted on everyone else predicts they would sit**. Above the
+floor, participants cluster at the top of the vividness range with only a
+handful below 40, so that relationship is anchored by a dense group at 50
+to 80 plus a scatter, and extending it down to 16 rests on a linearity
+assumption this sample barely constrains. The sibling study
+[`aphantasiaEmotions`](https://m-delem.github.io/aphantasiaEmotions/) makes
+the same move with 1478 participants across five studies; there are 86
+here. On every figure, that stretch of the line is drawn **dashed** to mark
+it as extrapolation rather than fit.
+
+Two further things belong on the record. The model was first fitted *after*
+seeing an association that motivated it, which is a legitimate thing to do
+and an illegitimate thing to describe as pre-specified; it was pre-declared
+for the models on these pages, not for the one that suggested it. And its
+intervals comfortably contain both nothing and a moderate effect, so an
+offset that does not clear its region of practical equivalence should be
+read as low power rather than as evidence of absence.
+
+## 4. The primary model
 
 Six responses. Three gates, one per feature, for whether it was reported at
 all. Three accuracies, one per feature, for how well it was reported when
@@ -104,50 +151,26 @@ The fifteen correlations are the object of interest, in four families:
 Which of them are foregrounded was fixed in advance, in three tiers, so
 that choosing among fifteen after seeing them is not possible.
 
-## 4. The other models, and what they are for
+## 5. The other models, and what they are for
 
-Three models sit around the primary one. None of them is a replication of
-it: they are the same data through simpler lenses, so agreement is a
-robustness check and **not independent evidence**.
+Two models sit around the primary one, both using the form set out in
+section 3. Neither is a replication of it: they are the same data through
+simpler lenses, so agreement is a robustness check and **not independent
+evidence**.
 
 - **[Composition](composition.html).** Relative allocation across the
   three features, moved off the simplex into log-ratio coordinates. A
   genuinely different object rather than a weaker version of the accuracy
   model, and the one that answers section 1's second reading directly.
-- **How imagery enters.** Vividness is not a smoothly continuous predictor
-  in this sample: scores pile at the scale floor. Rather than assume a
-  functional form, several are compared, with one pre-declared as primary
-  regardless of which fits best.
-
-  That form deserves one caution, because it applies to every result on
-  the modelling pages. The floor-group offset is the distance between
-  where the floor group sits and **where a relationship fitted on everyone
-  else predicts they would sit**. Above the floor, participants cluster at
-  the top of the vividness range, with only a handful below 40, so that
-  relationship is anchored by a dense group at 50 to 80 plus a scatter of
-  points, and extending it down to 16 rests on a linearity assumption this
-  sample barely constrains. The sibling study
-  [`aphantasiaEmotions`](https://m-delem.github.io/aphantasiaEmotions/)
-  makes the same move with 1478 participants across five studies; there
-  are 86 here. On the figures, that stretch of the line is drawn **dashed**
-  to mark it as extrapolation rather than fit.
-
-  Two further things belong on the record. The model was first fitted
-  *after* seeing an association that motivated it, which is a legitimate
-  thing to do and an illegitimate thing to describe as pre-specified; it
-  was pre-declared for the models on these pages, not for the one that
-  suggested it. And its intervals comfortably contain both nothing and a
-  moderate effect, so a floor offset that does not clear its region of
-  practical equivalence should be read as low power rather than as
-  evidence of absence.
 - **[Performance](performance.html).** Absolute per-feature accuracy, with
   a response family chosen per feature. This is the primary model with the
   gates removed.
+
 If the simpler models disagree with the primary one, the primary one wins,
 provided it converged cleanly, because it conditions on less. That was also
 decided in advance.
 
-## 5. Confirmatory and exploratory
+## 6. Confirmatory and exploratory
 
 Everything above uses groups defined by imagery vividness, **fixed before
 any model was fitted**. That is the confirmatory strand.
@@ -163,7 +186,7 @@ of complete aphantasics, since that is a distinction the confirmatory
 strand cannot make at all. Clusters that merely recover the vividness
 grouping would be a reportable null.
 
-## 6. What was fixed in advance, and where to check
+## 7. What was fixed in advance, and where to check
 
 Pre-declaration only means anything if it is checkable, so the planning
 documents that record each decision ship with the package, in
