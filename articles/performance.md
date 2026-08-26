@@ -472,7 +472,7 @@ for the technical detail behind these models.
     #> ─ Session info ───────────────────────────────────────────────────────────────
     #>  setting  value
     #>  version  R version 4.6.1 (2026-06-24)
-    #>  os       Ubuntu 24.04.4 LTS
+    #>  os       Ubuntu 22.04.5 LTS
     #>  system   x86_64, linux-gnu
     #>  ui       X11
     #>  language en
@@ -571,9 +571,9 @@ for the technical detail behind these models.
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/Rtmph67Pun/temp_libpath87a93012435a
-    #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-noble/R-4.6/x86_64-pc-linux-gnu
-    #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-noble/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
+    #>  [1] /tmp/Rtmp4bbSia/temp_libpath84c511c35130
+    #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
+    #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 
     #>  * ── Packages attached to the search path.
     #>  P ── Loaded and on-disk path mismatch.

@@ -7,9 +7,6 @@
 
 ## Citation
 
-Source:
-[`DESCRIPTION`](https://github.com/m-delem/aphantasiaWMStrats/blob/main/DESCRIPTION)
-
 Delem M (2026). *aphantasiaWMStrats: Data Analysis for a Working Memory
 Strategies Study on Aphantasia*. R package version 0.1,
 <https://m-delem.github.io/aphantasiaWMStrats>.
