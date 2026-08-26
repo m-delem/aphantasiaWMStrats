@@ -334,9 +334,31 @@ knitr::kable(
 )
 ```
 
+```{r style-rope}
+style_draws <- brms::as_draws_df(style_model)
+
+style_rope <- dplyr::bind_rows(
+  dplyr::mutate(
+    report_rope(style_draws$b_ilr1_osivq_verbal,
+                outcome_sd = stats::sd(style_data$ilr1)),
+    term = "OSIVQ verbal, on the verbal coordinate"),
+  dplyr::mutate(
+    report_rope(style_draws$b_ilr2_osivq_spatial,
+                outcome_sd = stats::sd(style_data$ilr2)),
+    term = "OSIVQ spatial, on the colour-orientation coordinate")
+) |>
+  dplyr::relocate(term)
+
+knitr::kable(style_rope,
+             caption = "The two coefficients the prediction names")
+```
+
 **The prediction is not supported.** OSIVQ verbal on the verbal coordinate
-is 0.005 with 56% of its posterior inside the ROPE; OSIVQ spatial on the
-colour-orientation coordinate is -0.001 with 55% inside. A verbaliser does
+is `r fmt(style_rope$Estimate[1])` with
+`r fmt(100 * style_rope[["Inside ROPE"]][1], 0)`% of its posterior inside
+the ROPE; OSIVQ spatial on the colour-orientation coordinate is
+`r fmt(style_rope$Estimate[2])` with
+`r fmt(100 * style_rope[["Inside ROPE"]][2], 0)`% inside. A verbaliser does
 not measurably protect words, and a spatialiser does not measurably protect
 orientations.
 
@@ -403,7 +425,10 @@ inner-experience prediction is labelled exploratory in the strict sense,
 since the sample was not sized for it.
 
 **Unsymbolised thinking, by contrast, contributes nothing here**, and that
-is informative rather than empty. It correlates -0.40 with VVIQ and 0.43
+is informative rather than empty. It correlates
+`r fmt(stats::cor(style_data$nieq_unsymbolised, style_data$vviq, method = "spearman"), 2)`
+with VVIQ and
+`r fmt(stats::cor(style_data$nieq_unsymbolised, as.numeric(style_data$complete_aphant == "floor"), method = "spearman"), 2)`
 with the floor indicator, so once vividness is in the model it has nothing
 left to explain. It was kept in deliberately so the model could show that
 rather than have it assumed. Note what this does *not* say: unsymbolised is
@@ -412,10 +437,25 @@ vividness](beyond-vividness.html) page shows it declining steadily across
 the vividness range. Redundancy given vividness is a different claim from
 no relationship.
 
-Comparing the two predictor sets formally leans toward the simpler one
-without settling it, by 3.8 elpd against a standard error of 3.0. At that
-separation the data do not distinguish them, which is what `r nrow(style_data)` participants
-and four extra predictors should be expected to produce.
+```{r allocation-loo}
+allocation_loo <- readRDS(
+  system.file("results", "allocation-loo.rds", package = pkg))
+if (!"model" %in% names(allocation_loo)) {
+  allocation_loo <- tibble::rownames_to_column(
+    as.data.frame(allocation_loo), "model")
+}
+
+allocation_loo |>
+  dplyr::select(model, elpd_diff, se_diff) |>
+  knitr::kable(digits = 2,
+               caption = "Vividness alone against the fuller predictor set")
+```
+
+Comparing the two predictor sets formally leans toward one of them without
+settling it: the elpd difference is smaller than its own standard error.
+At that separation the data do not distinguish them, which is what
+`r nrow(style_data)` participants and four extra predictors should be
+expected to produce.
 
 ## 6. Do participants know they are doing it?
 

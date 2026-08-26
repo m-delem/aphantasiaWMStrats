@@ -295,6 +295,9 @@ orientation <- independent$Orientation
 grid <- tibble::tibble(
   vviq = seq(16, 80, length.out = 200),
   complete_aphant = factor("above_floor", levels = c("above_floor", "floor")),
+  # held at the sample median: the model carries parity_rate, so a grid
+  # without it cannot be predicted from at all
+  parity_rate = stats::median(model_data$parity_rate),
   responded_angle = TRUE
 )
 above_floor <- brms::posterior_epred(orientation, newdata = grid,

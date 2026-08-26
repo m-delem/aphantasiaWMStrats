@@ -85,6 +85,65 @@ comparison_sample <- dplyr::n_distinct(
 )
 ```
 
+```{r comparison-models}
+# The two simpler models. Loaded here rather than in section 6 because
+# both sections read from them, and a number quoted four sections before
+# the object that produces it is a transcription waiting to go stale.
+# Both were fitted on the engaged sample, not on this page's larger one,
+# so the frame is rebuilt to match.
+performance_data <- dplyr::filter(model_data, id %in% engaged)
+
+performance_model <- fit_brms_model(
+  formula = performance_formula(),
+  data    = performance_data,
+  prior   = c(
+    do.call(c, lapply(
+      c("scoreword", "scoreangle", "scorecolor"),
+      response_priors, terms = c("vviq", "complete_aphant", "parity_rate")
+    )),
+    brms::prior("lkj(2)", class = "cor")
+  ),
+  file    = system.file("models", "perf-c-prime.rds", package = pkg),
+  file_refit = refit
+)
+
+orientation_only <- fit_brms_model(
+  formula =
+    brms::bf(responded_angle ~ vviq + complete_aphant + (1 | p | id),
+             family = brms::bernoulli()) +
+    brms::bf(score_angle | subset(responded_angle) ~
+               vviq + complete_aphant + parity_rate + (1 | p | id),
+             family = brms::Beta()) +
+    brms::set_rescor(FALSE),
+  data    = performance_data,
+  prior   = c(
+    response_priors("respondedangle", terms = c("vviq", "complete_aphant")),
+    response_priors("scoreangle",
+                    terms = c("vviq", "complete_aphant", "parity_rate")),
+    brms::prior("lkj(2)", class = "cor")
+  ),
+  save_pars = brms::save_pars(group = FALSE),
+  file    = system.file("models", "perf-joint-orientation.rds", package = pkg),
+  file_refit = refit
+)
+
+offset_of <- function(model, response) {
+  brms::fixef(model)[paste0(response, "_complete_aphantfloor"), "Estimate"]
+}
+correlation_of <- function(model, a, b) {
+  pairs <- posterior_correlations(brms::as_draws_df(model), lkj = NULL)
+  match <- pairs$response_a %in% c(a, b) & pairs$response_b %in% c(a, b)
+  pairs$median[match]
+}
+
+selection_replication <- c(
+  orientation_alone = correlation_of(orientation_only,
+                                     "respondedangle", "scoreangle"),
+  six_responses     = correlation_of(joint_model,
+                                     "respondedangle", "scoreangle")
+)
+```
+
 `r length(engaged)` participants clear the engagement thresholds, and
 `r comparison_sample` of those also have a vividness score: that is the
 sample every other modelling page uses. This one uses all
@@ -176,9 +235,11 @@ as the [composition](composition.html) page, inherit a weakened version of
 the caveat rather than a blanket one.
 
 Two things make the orientation result more credible rather than less.
-It replicates: estimated from orientation alone it is 0.52, and with all
-six responses in the model 0.56, so it is not an artifact of the smaller
-specification. Both numbers in the table below are read from the fitted
+It replicates: estimated from orientation alone it is
+`r fmt(selection_replication[["orientation_alone"]], 2)`, and with all six
+responses in the model
+`r fmt(selection_replication[["six_responses"]], 2)`, so it is not an
+artifact of the smaller specification. Both are read from the fitted
 models rather than transcribed. (The [analysis
 strategy](analysis-strategy.html) page gives the orientation-only figure as
 0.51: `posterior_correlations()` returns posterior **medians** and
@@ -360,54 +421,7 @@ approximate by construction. It is matched on specification: both carry
 `parity_rate` on the accuracy arms and neither carries it on a gate.
 
 ```{r sanity}
-# Loaded rather than transcribed: the comparison stays true if either
-# model is refitted. These two were fitted on the engaged sample, not on
-# this page's larger one, so the frame is rebuilt here to match.
-performance_data <- dplyr::filter(model_data, id %in% engaged)
-
-performance_model <- fit_brms_model(
-  formula = performance_formula(),
-  data    = performance_data,
-  prior   = c(
-    do.call(c, lapply(
-      c("scoreword", "scoreangle", "scorecolor"),
-      response_priors, terms = c("vviq", "complete_aphant", "parity_rate")
-    )),
-    brms::prior("lkj(2)", class = "cor")
-  ),
-  file    = system.file("models", "perf-c-prime.rds", package = pkg),
-  file_refit = refit
-)
-orientation_only <- fit_brms_model(
-  formula =
-    brms::bf(responded_angle ~ vviq + complete_aphant + (1 | p | id),
-             family = brms::bernoulli()) +
-    brms::bf(score_angle | subset(responded_angle) ~
-               vviq + complete_aphant + parity_rate + (1 | p | id),
-             family = brms::Beta()) +
-    brms::set_rescor(FALSE),
-  data    = performance_data,
-  prior   = c(
-    response_priors("respondedangle", terms = c("vviq", "complete_aphant")),
-    response_priors("scoreangle",
-                    terms = c("vviq", "complete_aphant", "parity_rate")),
-    brms::prior("lkj(2)", class = "cor")
-  ),
-  save_pars = brms::save_pars(group = FALSE),
-  file    = system.file("models", "perf-joint-orientation.rds", package = pkg),
-  file_refit = refit
-)
-
-offset_of <- function(model, response) {
-  brms::fixef(model)[paste0(response, "_complete_aphantfloor"), "Estimate"]
-}
-correlation_of <- function(model, a, b) {
-  pairs <- posterior_correlations(brms::as_draws_df(model), lkj = NULL)
-  match <- pairs$response_a %in% c(a, b) & pairs$response_b %in% c(a, b)
-  pairs$median[match]
-}
-
-tibble::tibble(
+comparison <- tibble::tibble(
   quantity = c("Word accuracy floor offset",
                "Orientation accuracy floor offset",
                "Colour accuracy floor offset",
@@ -428,14 +442,19 @@ tibble::tibble(
     correlation_of(joint_model, "respondedangle", "scoreangle")
   )
 ) |>
-  dplyr::mutate(difference = joint_model - simpler_model) |>
-  knitr::kable(digits = 3, caption = "Against the performance models")
+  dplyr::mutate(difference = joint_model - simpler_model)
+
+knitr::kable(comparison, digits = 3,
+             caption = "Against the performance models")
 ```
 
 Everything lands close except the orientation-colour accuracy correlation,
-which drops from 0.586 to 0.456. That is the expected direction: with the
-gates in the model, variance previously absorbed into accuracy is
-attributed to willingness instead.
+which moves from
+`r fmt(comparison$simpler_model[comparison$quantity == "cor(orientation, colour accuracy)"])`
+to
+`r fmt(comparison$joint_model[comparison$quantity == "cor(orientation, colour accuracy)"])`.
+That is the expected direction: with the gates in the model, variance
+previously absorbed into accuracy is attributed to willingness instead.
 
 Fitting the three gates without the accuracy arms moves the gate
 coefficients by almost nothing, so the accuracy arms are not pulling them.

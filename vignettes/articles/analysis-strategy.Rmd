@@ -16,6 +16,12 @@ knitr::opts_chunk$set(
   error = FALSE
 )
 library(aphantasiaWMStrats)
+pkg <- "aphantasiaWMStrats"
+fmt <- function(x, digits = 2) formatC(x, format = "f", digits = digits)
+
+# The one saved result this page quotes, read rather than transcribed.
+selection <- readRDS(
+  system.file("results", "perf-joint-cor.rds", package = pkg))
 ```
 
 The preceding pages establish [who took
@@ -84,10 +90,10 @@ detect**, because the information needed to detect it has been removed.
 That was tested rather than assumed. Fitting response and accuracy jointly
 on orientation — in a bivariate model of that feature alone, not the
 six-response model of section 5 — gives a participant-level correlation
-between the two of 0.51, with 95% of the posterior between 0.26 and 0.72.
-That figure is a posterior **mean**; the [joint
-model](joint-model.html) page reports the same parameter as a median,
-0.52, which is why the two differ in the second digit.
+between the two of `r fmt(selection$Estimate)`, with 95% of the posterior
+in `r selection[["95% CrI"]]`. That figure is a posterior **mean**; the
+[joint model](joint-model.html) page reports the same parameter as a
+median, which is why the two differ in the second digit.
 
 The rule for what that would mean was written down before the number
 existed: conditioning was not innocent, so a model that does not condition
