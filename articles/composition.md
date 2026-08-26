@@ -658,11 +658,100 @@ It also bears on a worry about the whole enterprise. If self-report
 about one’s own cognition were simply unreliable here, this is where it
 would show. It does not — though note what was asked: *which features
 did you try to keep* is a question about behaviour, which people can
-answer. Whether the same holds for questions about phenomenology is a
-different matter, and nothing here bears on it.
+answer.
 
-Two further details, brought in from
-`inst/scripts/14-strategy-convergence.R` rather than left there.
+The same questionnaire asked something harder. For each feature, *how
+did you memorise it*, with mental imagery among the options. Naming
+imagery there is a claim about **experience**, not about behaviour, and
+it is the kind of report aphantasia research treats as least
+trustworthy.
+
+``` r
+
+strategy_profile <- dplyr::bind_rows(
+    dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)$strategy_items
+  ) |>
+  dplyr::mutate(id = dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)$id) |>
+  dplyr::select(id, tidyselect::matches("q0[123]")) |>
+  tidyr::pivot_longer(-id, names_to = "item", values_to = "strategy") |>
+  dplyr::filter(strategy %in% c("repetition", "mental_image", "semantic",
+                                "spatial_body", "spatial_cardinal", "none")) |>
+  dplyr::mutate(feature = dplyr::case_when(
+    grepl("colors", item) ~ "Colour",
+    grepl("orientations", item) ~ "Orientation",
+    TRUE ~ "Word")) |>
+  dplyr::inner_join(
+    dplyr::distinct(model_data, id, complete_aphant), by = "id") |>
+  dplyr::mutate(group = ifelse(complete_aphant == "floor",
+                               "VVIQ floor", "Above floor")) |>
+  dplyr::distinct(id, group, feature, strategy)
+
+group_sizes <- dplyr::count(dplyr::distinct(strategy_profile, id, group),
+                            group, name = "participants")
+
+strategy_table <- strategy_profile |>
+  dplyr::count(feature, strategy, group) |>
+  dplyr::left_join(group_sizes, by = "group") |>
+  dplyr::mutate(percent = round(100 * n / participants)) |>
+  dplyr::select(feature, strategy, group, percent) |>
+  tidyr::pivot_wider(names_from = group, values_from = percent,
+                     values_fill = 0L) |>
+  dplyr::arrange(feature, dplyr::desc(`Above floor`))
+
+percent_of <- function(which_feature, which_strategy, which_group) {
+  strategy_table[[which_group]][strategy_table$feature == which_feature &
+                                  strategy_table$strategy == which_strategy]
+}
+
+knitr::kable(strategy_table,
+             caption = "Strategies named, as a percentage of each group")
+```
+
+| feature     | strategy         | Above floor | VVIQ floor |
+|:------------|:-----------------|------------:|-----------:|
+| Colour      | repetition       |          70 |         78 |
+| Colour      | mental_image     |          31 |          0 |
+| Colour      | semantic         |          15 |         17 |
+| Colour      | none             |          13 |         22 |
+| Orientation | spatial_body     |          54 |         33 |
+| Orientation | mental_image     |          39 |          0 |
+| Orientation | repetition       |          11 |         11 |
+| Orientation | spatial_cardinal |          10 |         11 |
+| Orientation | none             |           7 |         44 |
+| Orientation | semantic         |           5 |          6 |
+| Word        | repetition       |          92 |        100 |
+| Word        | mental_image     |          18 |          0 |
+| Word        | semantic         |          13 |          0 |
+
+Strategies named, as a percentage of each group {.table}
+
+**No participant at the imagery floor named mental imagery, for any
+feature.** Above the floor, 18% named it for words, 31% for colours and
+39% for orientations.
+
+That is a **coherence check**, and it passes. Someone who reports no
+voluntary imagery on the VVIQ also declines to name imagery as a memory
+strategy when asked in different words, about a specific task, with no
+mention of aphantasia anywhere in the question. Consistency across
+instruments and contexts is what you would expect if the reports track
+something real, and not what you would expect if they were noise.
+
+It is **not** evidence that introspective report is accurate. Two
+reports agreeing with each other is a weaker property than either being
+right, and nothing here reaches the stronger claim. No model is fitted
+either: one cell is a structural zero, so a logistic model of the group
+contrast would not converge, and the table already says what the data
+support.
+
+Two further things in that table, neither about imagery. On orientation,
+**44% of the floor group named no strategy at all**, against 7% above it
+— orientation is the feature they abandon, which converges with its
+being the feature with the highest non-response rate ([task
+engagement](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.md)).
+And they named body-centred spatial strategies **less** often than
+typical imagers, 33% against 54%, which cuts against a simple
+compensation account in which the missing visual strategy is replaced by
+a spatial one.
 
 **The agreement holds on the parts, not only on the summary
 coordinate.** The one contrast with enough participants to look at is
@@ -1054,7 +1143,7 @@ for the technical detail behind these models.
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/Rtmp4bbSia/temp_libpath84c511c35130
+    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 

@@ -1233,15 +1233,168 @@ establish that.</p>
 about one’s own cognition were simply unreliable here, this is where it
 would show. It does not — though note what was asked: <em>which features
 did you try to keep</em> is a question about behaviour, which people can
-answer. Whether the same holds for questions about phenomenology is a
-different matter, and nothing here bears on it.</p>
-<p>Two further details, brought in from
-<code>inst/scripts/14-strategy-convergence.R</code> rather than left
-there.</p>
+answer.</p>
+<p>The same questionnaire asked something harder. For each feature,
+<em>how did you memorise it</em>, with mental imagery among the options.
+Naming imagery there is a claim about <strong>experience</strong>, not
+about behaviour, and it is the kind of report aphantasia research treats
+as least trustworthy.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">strategy_profile</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"v1"</span><span class="op">)</span>, <span class="va">id</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">strategy_items</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"v1"</span><span class="op">)</span>, <span class="va">id</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">matches</a></span><span class="op">(</span><span class="st">"q0[123]"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="va">id</span>, names_to <span class="op">=</span> <span class="st">"item"</span>, values_to <span class="op">=</span> <span class="st">"strategy"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">strategy</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"repetition"</span>, <span class="st">"mental_image"</span>, <span class="st">"semantic"</span>,</span>
+<span>                                <span class="st">"spatial_body"</span>, <span class="st">"spatial_cardinal"</span>, <span class="st">"none"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>feature <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"colors"</span>, <span class="va">item</span><span class="op">)</span> <span class="op">~</span> <span class="st">"Colour"</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"orientations"</span>, <span class="va">item</span><span class="op">)</span> <span class="op">~</span> <span class="st">"Orientation"</span>,</span>
+<span>    <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Word"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">model_data</span>, <span class="va">id</span>, <span class="va">complete_aphant</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">complete_aphant</span> <span class="op">==</span> <span class="st">"floor"</span>,</span>
+<span>                               <span class="st">"VVIQ floor"</span>, <span class="st">"Above floor"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">group</span>, <span class="va">feature</span>, <span class="va">strategy</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">group_sizes</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">strategy_profile</span>, <span class="va">id</span>, <span class="va">group</span><span class="op">)</span>,</span>
+<span>                            <span class="va">group</span>, name <span class="op">=</span> <span class="st">"participants"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">strategy_table</span> <span class="op">&lt;-</span> <span class="va">strategy_profile</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">feature</span>, <span class="va">strategy</span>, <span class="va">group</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">group_sizes</span>, by <span class="op">=</span> <span class="st">"group"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>percent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">n</span> <span class="op">/</span> <span class="va">participants</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">feature</span>, <span class="va">strategy</span>, <span class="va">group</span>, <span class="va">percent</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">group</span>, values_from <span class="op">=</span> <span class="va">percent</span>,</span>
+<span>                     values_fill <span class="op">=</span> <span class="fl">0L</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">feature</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">`Above floor`</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">percent_of</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">which_feature</span>, <span class="va">which_strategy</span>, <span class="va">which_group</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">strategy_table</span><span class="op">[[</span><span class="va">which_group</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">strategy_table</span><span class="op">$</span><span class="va">feature</span> <span class="op">==</span> <span class="va">which_feature</span> <span class="op">&amp;</span></span>
+<span>                                  <span class="va">strategy_table</span><span class="op">$</span><span class="va">strategy</span> <span class="op">==</span> <span class="va">which_strategy</span><span class="op">]</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">strategy_table</span>,</span>
+<span>             caption <span class="op">=</span> <span class="st">"Strategies named, as a percentage of each group"</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<caption>Strategies named, as a percentage of each group</caption>
+<thead><tr class="header">
+<th align="left">feature</th>
+<th align="left">strategy</th>
+<th align="right">Above floor</th>
+<th align="right">VVIQ floor</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Colour</td>
+<td align="left">repetition</td>
+<td align="right">70</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="left">Colour</td>
+<td align="left">mental_image</td>
+<td align="right">31</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Colour</td>
+<td align="left">semantic</td>
+<td align="right">15</td>
+<td align="right">17</td>
+</tr>
+<tr class="even">
+<td align="left">Colour</td>
+<td align="left">none</td>
+<td align="right">13</td>
+<td align="right">22</td>
+</tr>
+<tr class="odd">
+<td align="left">Orientation</td>
+<td align="left">spatial_body</td>
+<td align="right">54</td>
+<td align="right">33</td>
+</tr>
+<tr class="even">
+<td align="left">Orientation</td>
+<td align="left">mental_image</td>
+<td align="right">39</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Orientation</td>
+<td align="left">repetition</td>
+<td align="right">11</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">Orientation</td>
+<td align="left">spatial_cardinal</td>
+<td align="right">10</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">Orientation</td>
+<td align="left">none</td>
+<td align="right">7</td>
+<td align="right">44</td>
+</tr>
+<tr class="even">
+<td align="left">Orientation</td>
+<td align="left">semantic</td>
+<td align="right">5</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">Word</td>
+<td align="left">repetition</td>
+<td align="right">92</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td align="left">Word</td>
+<td align="left">mental_image</td>
+<td align="right">18</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Word</td>
+<td align="left">semantic</td>
+<td align="right">13</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>No participant at the imagery floor named mental imagery, for
+any feature.</strong> Above the floor, 18% named it for words, 31% for
+colours and 39% for orientations.</p>
+<p>That is a <strong>coherence check</strong>, and it passes. Someone
+who reports no voluntary imagery on the VVIQ also declines to name
+imagery as a memory strategy when asked in different words, about a
+specific task, with no mention of aphantasia anywhere in the question.
+Consistency across instruments and contexts is what you would expect if
+the reports track something real, and not what you would expect if they
+were noise.</p>
+<p>It is <strong>not</strong> evidence that introspective report is
+accurate. Two reports agreeing with each other is a weaker property than
+either being right, and nothing here reaches the stronger claim. No
+model is fitted either: one cell is a structural zero, so a logistic
+model of the group contrast would not converge, and the table already
+says what the data support.</p>
+<p>Two further things in that table, neither about imagery. On
+orientation, <strong>44% of the floor group named no strategy at
+all</strong>, against 7% above it — orientation is the feature they
+abandon, which converges with its being the feature with the highest
+non-response rate (<a href="engagement.html">task engagement</a>). And
+they named body-centred spatial strategies <strong>less</strong> often
+than typical imagers, 33% against 54%, which cuts against a simple
+compensation account in which the missing visual strategy is replaced by
+a spatial one.</p>
 <p><strong>The agreement holds on the parts, not only on the summary
 coordinate.</strong> The one contrast with enough participants to look
 at is words alone against words-and-colours:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">priorities</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"v1"</span><span class="op">)</span>, <span class="va">id</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">priority_set</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">priorities</span><span class="op">$</span><span class="va">strategy_items</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1292,7 +1445,7 @@ did</caption>
 <p><strong>And prioritisation is unrelated to imagery group</strong>,
 which is what makes the report an independent measurement rather than a
 restatement of section 4:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">reported</span>, <span class="va">prioritisation</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">kept</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">imagery_group</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">imagery_group</span>, <span class="va">kept</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1327,7 +1480,7 @@ restatement of section 4:</p>
 <h2 id="what-the-coordinate-cannot-tell-you">7. What the coordinate cannot tell you<a class="anchor" aria-label="anchor" href="#what-the-coordinate-cannot-tell-you"></a>
 </h2>
 <p>A ratio moved. It cannot say which part moved it.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">complete_aphant</span> <span class="op">==</span> <span class="st">"floor"</span>,</span>
 <span>                                       <span class="st">"At the VVIQ floor"</span>, <span class="st">"Above floor"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1389,7 +1542,7 @@ estimates, so if anything this result is conservative.</p>
 <p><strong>The functional form was not assumed.</strong> Five ways of
 entering imagery were compared, with the floor-group form pre-declared
 as primary regardless of which won.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"results"</span>, <span class="st">"comp-loo.rds"</span>, package <span class="op">=</span> <span class="va">pkg</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"model"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">)</span>, <span class="st">"model"</span><span class="op">)</span></span>
@@ -1442,7 +1595,7 @@ within-person noise separated from between-person signal rather than
 averaged into it. Whether that is possible at all is an empirical
 question about zeros, since a log-ratio transform needs every part
 strictly positive:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trial_parts</span> <span class="op">&lt;-</span> <span class="va">v1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">model_data</span><span class="op">$</span><span class="va">id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>trial_uid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">expe_phase</span>, <span class="va">trial_number</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1485,7 +1638,7 @@ replacement</caption>
 <p>Dropped rather than imputed: there is no zero-replacement strategy
 worth defending for that share of rows, and an unbalanced multilevel
 model handles the loss natively.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trial_data</span> <span class="op">&lt;-</span> <span class="va">usable</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_cols.html" class="external-link">bind_cols</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="../reference/ilr_coords.html">ilr_coords</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">usable</span>, <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"part_"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -1593,7 +1746,7 @@ mean is not the mean of the log-ratios. Agreement between them is
 convergence rather than replication.</p>
 <p>That model also gives a reliability estimate from the same fit as the
 effects:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"results"</span>, <span class="st">"comp-icc.rds"</span>, package <span class="op">=</span> <span class="va">pkg</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span>, caption <span class="op">=</span> <span class="st">"Between-person share of trial-level variance"</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -1749,7 +1902,7 @@ technical detail behind these models.</p>
 <span><span class="co">#&gt;    xtable               1.8-8    <span style="color: #555555;">2026-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    yaml                 2.3.12   <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/Rtmp4bbSia/temp_libpath84c511c35130</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt; </span></span>
