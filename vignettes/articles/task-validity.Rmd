@@ -19,12 +19,17 @@ library(ggplot2)
 theme_set(theme_pdf(base_size = 16))
 set.seed(20260820)
 
-n_splits <- 1000
-feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
-trials_per_feature <- 63L
-
 as_pct <- function(x, digits = 1) sprintf(paste0("%.", digits, "f%%"), 100 * x)
 fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
+```
+
+```{r constants}
+# The three constants the chunks below use, set here rather than hidden in
+# the setup chunk, so "repeated 1000 times" and "of the 63 that exist" can
+# be tied to something.
+n_splits <- 1000
+trials_per_feature <- 63L
+feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
 ```
 
 The [scoring](scoring.html) page defines the three recall scores. This page
@@ -150,7 +155,22 @@ because its between-person SD among responders
 (`r fmt(word_row$sd_between_participants)`) is small relative to
 within-person item noise (`r fmt(word_row$sd_within_participant)`). A
 floor of 32 items is used instead, recorded as a data-sufficiency rule
-and not a precision guarantee.
+and not a precision guarantee. The `pmin()` above applies it as a **cap on
+the requirement**, not as a minimum: where the precision target asks for
+more items than exist, 32 is substituted.
+
+One thing about what happens downstream. The derivation above is recomputed
+live on this page, but the filter every modelling page applies is
+`engaged_ids()`, which reads the **hard-coded** `wm_thresholds()`:
+
+```{r hard-coded-thresholds}
+wm_thresholds()
+```
+
+They agree today. They are hard-coded deliberately, because the rule was
+fixed before any contact with VVIQ and must not drift with the sample it is
+applied to — so if this page's recomputation ever diverges from that vector,
+the vector is what the analyses used, and the divergence is the finding.
 
 ```{r reliability}
 eligible_participants <- v1_participant_means |>
@@ -315,7 +335,9 @@ v1_compositions |>
 ```
 
 Behavioural compositions barely differ between participants who named
-different priorities. This is a dissociation to report, not a validity
+different priorities. This table is the evidence behind [task
+design](task-design.html) §3's claim that the report and the behaviour are
+not interchangeable per person. This is a dissociation to report, not a validity
 failure. But "preference" language should not be used as though the two
 measures were interchangeable.
 

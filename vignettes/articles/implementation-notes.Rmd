@@ -152,13 +152,18 @@ stays near zero.
 Its silence means no knot survives GCV pruning, not that the predictor is
 unrelated to the outcome. Pruning is not a significance test, and on pure
 noise MARS still retains hinge terms: what separates signal from noise is
-the cross-validated fit, which is why the calling scripts gate on GRSq.
+the cross-validated fit. The gate is therefore **GRSq > 0**: a knot is only
+used to seed a segmented model if the generalised R-squared is positive,
+since a knot with GRSq at or below zero describes a fit that does not
+generalise beyond the sample it was found in.
 
 ## 7. What is saved, and what is not {#save-pars}
 
 Fitted models are cached to `inst/models/` and loaded by the pages. Three
 of them are saved with `save_pars(group = FALSE)`, which discards the
-per-participant random-effect draws.
+per-participant random-effect draws: `joint-gates`
+(`inst/scripts/09`), `perf-joint-orientation` (`10`) and
+`comp-trial-multilevel` (`11`).
 
 Those draws are about 89% of the parameters in a fitted model and nothing
 on any page reads them: the pages report fixed effects, the correlation

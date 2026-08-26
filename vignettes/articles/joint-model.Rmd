@@ -456,8 +456,41 @@ to
 That is the expected direction: with the gates in the model, variance
 previously absorbed into accuracy is attributed to willingness instead.
 
-Fitting the three gates without the accuracy arms moves the gate
-coefficients by almost nothing, so the accuracy arms are not pulling them.
+The gates can also be fitted on their own, without the accuracy arms, to
+check that the accuracy side is not pulling them:
+
+```{r gates-only}
+gates_only <- fit_brms_model(
+  formula = joint_formula(accuracy_features = character(0)),
+  data    = model_data,
+  prior   = joint_priors(accuracy_features = character(0), lkj = 4),
+  save_pars = brms::save_pars(group = FALSE),
+  adapt_delta = 0.99,
+  max_treedepth = 15,
+  file    = system.file("models", "joint-gates.rds", package = pkg),
+  file_refit = refit
+)
+
+gate_terms <- c("vviq", "complete_aphantfloor")
+purrr::map(c("respondedword", "respondedangle", "respondedcolor"), \(r) {
+  rows <- paste0(r, "_", gate_terms)
+  tibble::tibble(
+    gate = r,
+    term = gate_terms,
+    gates_only = brms::fixef(gates_only)[rows, "Estimate"],
+    full_model = brms::fixef(joint_model)[rows, "Estimate"]
+  )
+}) |>
+  purrr::list_rbind() |>
+  dplyr::mutate(difference = full_model - gates_only) |>
+  knitr::kable(digits = 3, caption = "Gate coefficients, with and without the accuracy arms")
+```
+
+The same three numbers appear on the [model
+diagnostics](model-diagnostics.html#convergence) page, alongside the rest
+of the convergence check and the posterior predictive checks. They are
+repeated here because a reader should not have to leave the page reporting
+a result to find out whether the model that produced it sampled properly.
 
 ```{r diagnostics}
 tibble::tibble(

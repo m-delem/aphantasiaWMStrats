@@ -306,13 +306,36 @@ VVIQ score, which is what takes section 4 to `r nrow(model_data)`.
 
 **The predictor set was chosen from the questionnaires alone**, never from
 how any of them relates to allocation, which is what keeps the choice
-independent of the result. Scales correlating above 0.6 with VVIQ are
-excluded as re-entering vividness under another name; scales with no
-hypothesis attached are excluded whatever their correlation. That leaves
-OSIVQ spatial and verbal, and the two NIEQ dimensions the
+independent of the result. Two rules, both fixed before any allocation
+model was fitted: a scale correlating above 0.6 with VVIQ is excluded as
+re-entering vividness under another name, and a scale with no hypothesis
+attached is excluded whatever its correlation.
+
+```{r predictor-selection}
+questionnaire_scales(all_data) |>
+  dplyr::select(-id, -version) |>
+  (\(d) tibble::tibble(
+    scale = setdiff(names(d), "vviq"),
+    r_with_vviq = vapply(setdiff(names(d), "vviq"),
+                         \(s) stats::cor(d[[s]], d$vviq, method = "spearman"),
+                         numeric(1))
+  ))() |>
+  dplyr::mutate(
+    over_threshold = abs(r_with_vviq) > 0.6,
+    hypothesis = !scale %in% c("nieq_emotions", "nieq_sensory_focus"),
+    entered = !over_threshold & hypothesis
+  ) |>
+  dplyr::arrange(dplyr::desc(abs(r_with_vviq))) |>
+  knitr::kable(digits = 2,
+               caption = "The predictor-selection rule, applied")
+```
+
+That leaves OSIVQ spatial and verbal, and the two NIEQ dimensions the
 [psychometrics](psychometrics.html) and [beyond
 vividness](beyond-vividness.html) pages identify as least redundant with
-imagery.
+imagery. `nieq_unsymbolised` is kept despite a substantial correlation with
+VVIQ, because a hypothesis attaches to it and the model can show what it
+contributes rather than having that settled in advance.
 
 ```{r style-model}
 style_model <- fit_brms_model(
@@ -457,7 +480,7 @@ At that separation the data do not distinguish them, which is what
 `r nrow(style_data)` participants and four extra predictors should be
 expected to produce.
 
-## 6. Do participants know they are doing it?
+## 6. Does the behaviour agree with what participants report?
 
 Everything above is behaviour. After the task, participants were asked
 which features they had tried to keep for points — a question about what
@@ -518,13 +541,48 @@ to keep* is a question about behaviour, which people can answer.
 Whether the same holds for questions about phenomenology is a different
 matter, and nothing here bears on it.
 
-Two further details, reported in
-`inst/scripts/14-strategy-convergence.R` rather than here. Naming colours
-as well as words goes with a lower word share **and** a higher colour
-share, so the agreement holds on the parts and not only on the summary
-coordinate. And prioritisation is unrelated to imagery group, which makes
+Two further details, brought in from
+`inst/scripts/14-strategy-convergence.R` rather than left there.
+
+**The agreement holds on the parts, not only on the summary coordinate.**
+The one contrast with enough participants to look at is words alone against
+words-and-colours:
+
+```{r convergence-parts}
+priorities <- dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)
+priority_set <-
+  dplyr::bind_rows(priorities$strategy_items) |>
+  dplyr::mutate(id = priorities$id) |>
+  dplyr::select(id, tidyselect::starts_with("strats_cfa_q04")) |>
+  tidyr::pivot_longer(-id, names_to = "slot", values_to = "feature") |>
+  dplyr::filter(!is.na(feature), feature != "none") |>
+  dplyr::summarise(named = paste(sort(feature), collapse = " + "), .by = id)
+
+dplyr::inner_join(reported, priority_set, by = "id") |>
+  dplyr::filter(named %in% c("words", "colours + words")) |>
+  dplyr::summarise(
+    participants = dplyr::n(),
+    ilr1 = mean(ilr1),
+    word_share = mean(part_word),
+    colour_share = mean(part_color),
+    .by = named
+  ) |>
+  knitr::kable(digits = 3,
+               caption = "Naming colours as well as words, against what they did")
+```
+
+**And prioritisation is unrelated to imagery group**, which is what makes
 the report an independent measurement rather than a restatement of section
-4.
+4:
+
+```{r convergence-independence}
+dplyr::inner_join(reported, prioritisation, by = "id") |>
+  dplyr::filter(kept > 0, !is.na(imagery_group)) |>
+  dplyr::count(imagery_group, kept) |>
+  tidyr::pivot_wider(names_from = kept, values_from = n, values_fill = 0L,
+                     names_prefix = "kept ") |>
+  knitr::kable(caption = "Features named, by imagery group")
+```
 
 ## 7. What the coordinate cannot tell you
 
@@ -600,10 +658,17 @@ usable <- trial_parts |>
     dplyr::if_all(tidyselect::starts_with("part_"), \(x) x > 0)
   )
 
+# Counted before the tibble, not inside it: `usable = nrow(usable)` makes
+# every later expression see the count instead of the frame, which is the
+# masking hazard the implementation notes describe. It produced an empty
+# table here rather than an error.
+n_compositions <- nrow(trial_parts)
+n_usable <- nrow(usable)
+
 tibble::tibble(
-  compositions = nrow(trial_parts),
-  usable = nrow(usable),
-  share = nrow(usable) / nrow(trial_parts)
+  compositions = n_compositions,
+  usable = n_usable,
+  share = n_usable / n_compositions
 ) |>
   knitr::kable(digits = 3,
                caption = "Trial-level compositions usable without zero replacement")

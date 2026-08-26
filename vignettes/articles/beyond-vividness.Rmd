@@ -54,6 +54,11 @@ scales <- dplyr::mutate(
 Every modelling page on this site runs on v1 alone. This one uses all
 `r nrow(scales)` participants with complete questionnaire data.
 
+Counted **per person**, as the [participants](participants.html) page
+counts them: one participant completed both v1 and v3, and is counted once,
+under v1. That is why the version table below gives v3 twenty rather than
+the twenty-one that pages counting task sessions report.
+
 The reasoning in the [version scope](version-scope.html) page is entirely
 about **task** comparability: group balance for a behavioural contrast,
 non-response differing three-fold, per-version standardisation being
@@ -181,6 +186,21 @@ voluntary visual imagery recognise themselves more in what the NIEQ,
 following Hurlburt's descriptive experience sampling work, calls thinking
 that proceeds without words or images.
 
+One row in that table reads like a mistake and is not. **Inner voice** has
+a moderate negative effect size next to a p value of almost exactly 1,
+which looks impossible beside a smaller effect at p = .05. It is genuine:
+`d` is computed from group means and a pooled SD, while `p` comes from a
+two-sided Mann-Whitney test on ranks, and the two answer different
+questions. A distribution can be shifted in its mean and almost perfectly
+overlapping in its ranks, which is what a heavy tail on one side does. The
+test is the one to trust for a group claim here, and it says nothing is
+happening.
+
+(This is *not* the `tibble()` masking bug the [implementation
+notes](implementation-notes.html#hazards) describe. That one produced p
+values of exactly 1, and the test above is computed before the `tibble()`
+for exactly that reason.)
+
 That is the group contrast. The models below replace it with something
 more precise, and the replacement is not a group difference at all — read
 to the end of this section before carrying the heading away.
@@ -288,8 +308,28 @@ the informative estimate, running downward across the whole vividness
 range, while its offset is uninformative. The group contrast in the table
 above was real, but it describes the low end of a continuum rather than
 something specific to participants with no imagery at all. That is the
-same fact as its -0.42 partial correlation with the imagery composite: it
-behaves like an inverse imagery measure, consistently, all the way up.
+same fact as its partial correlation with the imagery **composite**, which
+the §2 heatmap cannot show because the composite does not exist until the
+three imagery scales are collapsed:
+
+```{r unsymbolised-composite}
+composite_partials <- standardise_scales(scales) |>
+  dplyr::select(-"imagery_group", -"id", -"version") |>
+  add_imagery_composite() |>
+  correlation::correlation(partial = TRUE, p_adjust = "bonferroni") |>
+  as.data.frame() |>
+  dplyr::filter(Parameter1 == "imagery" | Parameter2 == "imagery") |>
+  dplyr::transmute(
+    scale = ifelse(Parameter1 == "imagery", Parameter2, Parameter1),
+    partial_r = r, CI_low, CI_high, p
+  ) |>
+  dplyr::arrange(partial_r)
+
+knitr::kable(composite_partials, digits = 3,
+             caption = "Partial correlations with the imagery composite")
+```
+
+It behaves like an inverse imagery measure, consistently, all the way up.
 
 **And a dimension the group contrast missed.** NIEQ emotions has the only
 slope clearly excluding zero, and it is positive: more vivid imagers

@@ -9,6 +9,188 @@ analytic dependency, which is stable. Sequence lives here instead.
 
 ---
 
+## 2026-08-26 — read of the built site, and three fixes
+
+The full site was rebuilt and read. All seventeen pages reach their footer,
+no chunk errored, and every table has rows except one.
+
+### The one that did not: I wrote the bug this report documents
+
+`composition` §8's usable-share table rendered **empty**, headers and no
+rows:
+
+```r
+tibble::tibble(
+  compositions = nrow(trial_parts),
+  usable = nrow(usable),
+  share = nrow(usable) / nrow(trial_parts)   # `usable` is now the count
+)
+```
+
+`nrow()` of an integer returns `NULL`, `NULL / 1659` is `numeric(0)`, and a
+zero-length column collapses the whole tibble to zero rows. No error, no
+warning, an empty table on a published page.
+
+This is exactly the hazard `implementation-notes` §8 sets out under
+"Column masking inside `tibble()`", using almost the same example. It was
+written into the page by the person who had just finished citing it.
+Counts are now taken before the tibble. Every other chunk on every
+vignette was swept for the same pattern; this was the only instance.
+
+### Two more
+
+- **`version-scope` §3.** The leave-one-out table supports a weaker claim
+  than the sentence beneath it made. Computed: v2's median shift is 0.137
+  against v1's 0.028, but v2's *maximum* is 0.634, not the 0.945 the old
+  prose asserted, and v1's own maximum is 0.437. The argument now rests on
+  the median comparison, which is what the table demonstrates, rather than
+  on a maximum that does not separate the versions cleanly.
+- **`vignettes/aphantasiaWMStrats.Rmd`.** The "trial" sweep missed the Get
+  started vignette entirely, because it sits in `vignettes/` rather than
+  `vignettes/articles/` and every grep was scoped to the latter. Four
+  usages corrected, and the two units are now defined there too.
+
+### Checked in the render and correct
+
+Sample table 88 / 86 / 87 / 81 / 79 / 78. `composition` frames 87 / 81 / 79
+/ 78, §7 levels 18 + 61, §6 convergence n = 76 with rho -0.325 at p = .004,
+§5 offsets 0.097 [0.029, 0.164] against 0.093 [0.025, 0.161]. Reverse-keying
+item-totals -0.27 / -0.29 / -0.32 in v1 against +0.51 / +0.58 / +0.56 in v3,
+matching the review's independent check. Gate coefficients move by at most
+0.027 without the accuracy arms. Home page rebuilt: link repointed, block
+reordered, gradient wording live.
+
+**One number the review had wrong.** The partial correlation of
+unsymbolised thinking with the imagery composite is **-0.370**, not the
+-0.42 the page used to assert. It is computed now.
+
+---
+
+## 2026-08-26 — cold review, phase 4 (the [C] items and the duplication register)
+
+- **F19 / F85 / F90 / F95.** Owners assigned for the two quantities that
+  appeared in three and five places.
+  - The **two-way trade-off withdrawal** is owned by `lessons` §1, which
+    carries both 3x3 matrices. `scoring` §7 now summarises it in a
+    paragraph and links, instead of reproducing the same two tables. A side
+    effect: §7 no longer borrows `compose_features()`,
+    `centred_correlations()` or the engagement thresholds from later pages,
+    so the forward-reference paragraph added for F18 was removed again in
+    the same pass. Recorded rather than quietly dropped.
+  - The **split-half reliabilities** are owned by `task-validity`, which
+    computes them. `task-design` §8 (F15), the `codebook` and `lessons` §4
+    now describe the finding without restating the three figures.
+    `performance` §5 keeps its single mention of word's 0.45, because the
+    number is the point of the paragraph it sits in.
+  - Not consolidated: the family rationale (x4) and the sampler diagnostics
+    (x2). Both are short, and both are wanted where they sit.
+- **F27.** Orientation's n = 85 against 86 is the participant who answered
+  zero orientation items. Stated.
+- **F29.** `n_splits`, `trials_per_feature` and `feature_labels` moved out
+  of the hidden setup chunk into a visible one, so "repeated 1000 times"
+  and "of the 63 that exist" can be tied to code.
+- **F30.** `pmin()` applies the floor of 32 as a cap on the requirement,
+  not a minimum. Reworded (done with F28).
+- **F31.** `task-validity` §2's priority table is cross-linked from
+  `task-design` §3, now that F11's claim is stated correctly.
+- **F36.** The local `spearman_brown()` is justified in a comment for the
+  same reason as the local `cronbach_alpha()`: this page shows arithmetic,
+  so both formulas are visible.
+- **F56.** Resolved by the "trial" sweep.
+- **F57.** `composition` §6 retitled. "Do participants know they are doing
+  it?" presupposes the behaviour is the fact and the report the check,
+  which the section body rejects.
+- **F67.** The duplicated diagnostics table is kept, with one sentence
+  saying why: a reader should not have to leave the page reporting a result
+  to find out whether the model sampled properly.
+- **F81.** The three models saved with `save_pars(group = FALSE)` are
+  named: `joint-gates`, `perf-joint-orientation`, `comp-trial-multilevel`.
+- **F82.** The MARS gate is stated: GRSq > 0.
+- **F88.** `feedback_trial_score` now records that the parity deduction
+  applies in v2/v3 only.
+- **F89.** `prognosis` described accurately: free-text, never harmonised,
+  unused.
+
+---
+
+## 2026-08-26 — cold review, phase 3 (second batch)
+
+- **F15.** `task-design` §8 quoted split-half reliabilities six pages before
+  `task-validity` computes them. The claim is now qualitative there (word
+  barely discriminates) with the figures left to the page that derives
+  them, which is the sequencing rule the report states for itself.
+- **F18.** `scoring` §7 borrows `compose_features()`,
+  `centred_correlations()` and the engagement thresholds from two later
+  pages. It now says so in a short paragraph rather than using them
+  silently: the withdrawal cannot be told without them, and a reader can
+  take them on trust until those pages arrive.
+- **F25.** The leave-one-out standardisation figures are computed and
+  displayed per version rather than asserted, on orientation.
+- **F28 / F30.** `task-validity` now states that the derivation on the page
+  is a demonstration and the filter downstream reads the hard-coded
+  `wm_thresholds()`, printed beside it; and that `pmin()` applies the floor
+  of 32 as a **cap on the requirement**, not a minimum.
+- **F34.** The cross-version reverse-keying claim is checked rather than
+  asserted from a v1-only page: item-total correlations for the four items
+  are negative in v1 and positive in v3.
+- **F53.** The predictor-selection rule is applied in a displayed table —
+  every scale's correlation with VVIQ, whether it clears 0.6, whether a
+  hypothesis attaches, and whether it entered.
+- **F54 / F94.** `composition` §6's two deferrals to
+  `inst/scripts/14-strategy-convergence.R` are brought into the page: the
+  words-versus-words-and-colours contrast on the parts, and prioritisation
+  against imagery group. `analysis-strategy` §8's pointer to
+  `inst/planning/` is now the only remaining deferral, and it is a
+  legitimate one: what it defers is the **audit trail** for pre-declaration,
+  not a result.
+
+  **Correction to my own wording.** The review calls that a
+  "pre-registration pointer" (F94) and I repeated the phrase here. There is
+  no preregistration for this study and nothing on the site claims one. §8
+  claims pre-**declaration**, recorded in the planning documents that ship
+  with the package, which is a weaker and accurate claim. `06` §7 already
+  makes the distinction explicitly ("descriptive rather than
+  pre-registered"). Repeating a reviewer's term without checking it against
+  the files is the failure the working agreement exists to prevent.
+
+---
+
+## 2026-08-26 — cold review, phase 3 (first batch of [B] items)
+
+- **F66.** `joint-gates.rds` existed and the gates-only comparison was
+  asserted in a sentence. Now displayed, with the call matched to
+  `inst/scripts/09` (`accuracy_features = character(0)`, `save_pars`, and
+  the 0.99/15 control arguments).
+- **F69.** The `inner_voice` row is genuine and needed a clause, not a
+  correction. `d` is a mean difference over a pooled SD; `p` is a
+  Mann-Whitney test on ranks. A distribution can be shifted in its mean and
+  near-identical in its ranks, which is what one heavy tail produces. Also
+  states explicitly that it is not the `tibble()` masking bug, since it
+  looks exactly like it.
+- **F70.** The −0.42 partial correlation with the imagery *composite* was
+  asserted where the §2 heatmap runs on individual scales, before the
+  composite exists. Now computed and displayed against
+  `add_imagery_composite()`.
+- **F72.** `beyond-vividness` gives v3 twenty because
+  `questionnaire_scales()` counts people, and the repeat participant is
+  counted once under v1. Stated in prose, consistent with the person /
+  person-session convention set on `participants`.
+- **F86.** The `target_angle` range cell is computed over all rows while
+  the `responded_angle` caveat is stated over experimental blocks. Both are
+  true; the range cell now says what it is computed over.
+- **F87.** `score_*_z` was documented as kept "for cross-feature
+  comparison", which nothing performs. Now documented as retained for
+  provenance, with the reason no analysis uses it.
+
+### Declined
+
+- **F71** asked for the adjusted Rand index to be put in displayed output.
+  It is already live — `beyond-vividness` §4 computes it inline with
+  `adjusted_rand_index()`, and §4's stability table displays a second one.
+  Nothing to fix.
+
+---
+
 ## 2026-08-26 — "trial" swept, and the codebook was wrong about `item_number`
 
 The word meant two units. `task-design` used it for the 21 encode-distract-

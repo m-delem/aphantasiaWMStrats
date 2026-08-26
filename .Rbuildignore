@@ -13,10 +13,14 @@
 # loads. Listed one by one because .Rbuildignore has no exception
 # mechanism: ignoring inst/models wholesale would drop the fits the
 # vignettes need via system.file() and break every modelling page.
+#
+# Check this list against the vignettes before every release. joint-gates
+# was here until joint-model.Rmd started loading it for the gates-only
+# comparison; a model listed here that a page loads makes system.file()
+# return "" in the installed package, and the page tries to refit.
 ^inst/models/comp-floor-noparity\.rds$
 ^inst/models/ilr1-null\.rds$
 ^inst/models/ilr1-group\.rds$
 ^inst/models/ilr1-linear\.rds$
 ^inst/models/ilr1-floor\.rds$
 ^inst/models/ilr1-segmented\.rds$
-^inst/models/joint-gates\.rds$

@@ -116,10 +116,40 @@ stores them already reversed. The `object_mean`, `spatial_mean` and
 `verbal_mean` columns are correct in both cases. Only the raw items in
 `osivq_items` differ.
 
-The consequence is silent, so it is worth showing:
+That claim spans versions while the rest of this page is v1, so it is
+checked directly rather than asserted: if v3 really does store them
+reversed, its item-total correlations for those items should be **positive**
+where v1's are negative.
+
+```{r reversal-across-versions}
+reverse_keyed <- c("osivq_q02v", "osivq_q09v", "osivq_q41v", "osivq_q42s")
+
+item_total_by_version <- function(v) {
+  people <- get_data(v) |> dplyr::distinct(id, .keep_all = TRUE)
+  items <- purrr::list_rbind(people$osivq_items)
+  suffix <- sub("^.*q[0-9]+", "", reverse_keyed)
+  purrr::map2_dbl(reverse_keyed, suffix, function(item, s) {
+    block <- items[, grepl(paste0(s, "$"), names(items)), drop = FALSE]
+    block <- block[stats::complete.cases(block), , drop = FALSE]
+    stats::cor(block[[item]], rowSums(block) - block[[item]])
+  })
+}
+
+tibble::tibble(item = reverse_keyed) |>
+  dplyr::mutate(
+    v1 = item_total_by_version("v1"),
+    v3 = item_total_by_version("v3")
+  ) |>
+  knitr::kable(digits = 2,
+               caption = "Corrected item-total correlations for the four reverse-keyed items")
+```
+
+Negative in v1, positive in v3. The items are the same; only the storage
+convention differs.
+
+The consequence within v1 is silent, so it is worth showing too:
 
 ```{r osivq-reversal}
-reverse_keyed <- c("osivq_q02v", "osivq_q09v", "osivq_q41v", "osivq_q42s")
 osivq_raw <- purrr::list_rbind(participants$osivq_items)
 osivq_fixed <- osivq_raw
 for (item in reverse_keyed) osivq_fixed[[item]] <- 6 - osivq_fixed[[item]]
@@ -174,7 +204,10 @@ like a defect but is not one. The right check is whether each pair agrees.
 nieq_items <- purrr::list_rbind(participants$nieq_items)
 
 # Two-item reliability is the Spearman-Brown correction of the pair's
-# correlation, not alpha.
+# correlation, not alpha. Written out for the same reason as
+# `cronbach_alpha()` above: this page's job is to show the arithmetic, so
+# both formulas are visible rather than called from the package. The
+# exported `spearman_brown()` is identical and is what the scripts use.
 spearman_brown <- function(r) 2 * r / (1 + r)
 
 nieq_pairs <- tibble::tibble(

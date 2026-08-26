@@ -123,7 +123,7 @@ trial_structure_variables |>
 stimulus_variables <- tibble::tribble(
   ~Variable,               ~Description,
   "target_word",           "The to-be-remembered word.",
-  "target_angle",          "The to-be-remembered rectangle orientation, in degrees.",
+  "target_angle",          "The to-be-remembered rectangle orientation, in degrees. The range shown is over ALL rows, including tutorial and training; experimental-block targets run -63 to 61, which is what the `responded_angle` caveat below is stated over.",
   "target_color_angle",    "The to-be-remembered colour, as an angle on the colour wheel.",
   "target_color",          "The to-be-remembered colour, as its nearest named colour.",
   "response_word",         "Participant's recalled word.",
@@ -167,17 +167,18 @@ Two things to know before using them. Non-responses are scored 0 and
 flagged by the `responded_*` columns, so any analysis of recall *accuracy*
 should filter on those flags; leaving them out combines accuracy with
 willingness to respond, which are different quantities. And word recall is
-near ceiling in this task, with a split-half reliability of 0.45 against
-0.82 for orientation and 0.83 for colour, so it does not support
-individual-differences claims.
+near ceiling in this task and its split-half reliability is far below the
+other two features', so it does not support individual-differences claims.
+The [task validity](task-validity.html) page computes all three and is
+where those figures live.
 
 ```{r recall-scores}
 recall_score_variables <- tibble::tribble(
   ~Variable,          ~Description,
-  "score_word",       "Word recall similarity, 1 = exact match. Edit-distance scoring [@gonthierEasyWayImprove2022]: Damerau-Levenshtein distance capped at the target's length, subtracted from it and divided by it. Reliability 0.45; see the caveat above.",
-  "score_angle",      "Orientation recall similarity, 1 = exact match. Cosine of the angular error on a 180-degree period, since a rectangle's tilt is symmetric under 180-degree rotation. Reliability 0.82.",
+  "score_word",       "Word recall similarity, 1 = exact match. Edit-distance scoring [@gonthierEasyWayImprove2022]: Damerau-Levenshtein distance capped at the target's length, subtracted from it and divided by it. See the reliability caveat above.",
+  "score_angle",      "Orientation recall similarity, 1 = exact match. Cosine of the angular error on a 180-degree period, since a rectangle's tilt is symmetric under 180-degree rotation.",
   "score_color",      "Colour recall similarity, 1 = exact match. Cosine of the angular error on the 360-degree hue wheel. Reliability 0.83.",
-  "score_word_z",     "`score_word`, z-scored within task version using experimental-block rows only. Raw and standardised are both kept: raw for absolute performance, standardised for cross-feature comparison.",
+  "score_word_z",     "`score_word`, z-scored within task version using experimental-block rows only. Retained for provenance: no analysis in this package uses it, since the compositional coordinates handle cross-feature comparison and per-version standardisation is unstable in v2 (see the version scope page).",
   "score_angle_z",    "`score_angle`, z-scored within task version.",
   "score_color_z",    "`score_color`, z-scored within task version.",
   "responded_word",   "Whether the participant entered a word at all.",
@@ -218,7 +219,7 @@ feedback_variables <- tibble::tribble(
   "feedback_score_word",         "Points shown for the word response (0, 0.5 or 1), thresholded from `live_diff_word`.",
   "feedback_score_angle",        "Points shown for the orientation response (0, 0.5 or 1).",
   "feedback_score_color",        "Points shown for the colour response (0, 0.5 or 1).",
-  "feedback_trial_score",        "Points shown for the whole trial: the three per-feature scores summed, minus 0.5 per incorrect parity judgement, floored at 0. Trial-level, so constant across a trial's three item rows.",
+  "feedback_trial_score",        "Points shown for the whole trial: the three per-feature scores summed, minus 0.5 per incorrect parity judgement, floored at 0. **The parity deduction applies in v2 and v3 only** - v1 has no penalty, so there it is exactly the sum of the three feature scores. Trial-level, so constant across a trial's three item rows.",
   "feedback_total_score_word",   "Cumulative word points shown at the end of the task.",
   "feedback_total_score_angle",  "Cumulative orientation points shown at the end of the task.",
   "feedback_total_score_color",  "Cumulative colour points shown at the end of the task.",
@@ -288,7 +289,7 @@ demographic_variables <- tibble::tribble(
   "education",     "Self-reported education level.",
   "field",         "Self-reported field of study or work.",
   "where_from",    "Self-reported source of how the participant heard about the study.",
-  "prognosis",     "Self-reported aphantasia status/prognosis, where collected.",
+  "prognosis",     "Free-text self-report on aphantasia status, collected at sign-up in some versions and never harmonised into categories. No analysis uses it; the VVIQ is what defines imagery group throughout.",
   "treatment",     "Self-reported relevant treatment. NA throughout for v3 (not asked in that version's demographics form).",
   "neuro_trouble", "Self-reported neurological condition, freely typed. NA throughout for v3 (not asked in that version's demographics form)."
 )

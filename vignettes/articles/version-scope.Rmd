@@ -149,14 +149,49 @@ dplyr::bind_rows(
                caption = "v1 only: responders-only recall accuracy against VVIQ")
 ```
 
+Orientation has one participant fewer than the other two features: one
+person answered **zero** orientation items, so they have no responders-only
+mean to correlate. They are not missing at random, and the [joint
+model](joint-model.html) is the analysis that can see them.
+
 Analysed on its own, v1 gives an interpretable pattern rather than a
 mixture. The [task validity](task-validity.html) page covers what those
 associations do and do not support.
 
 There is a second, quieter argument. Per-version standardisation needs each
-version to be able to carry its own scale, and v2 cannot: removing any
-single participant moves its z-scores by a median of 0.13 SD and by up to
-0.945 SD. A scale that unstable is not a scale.
+version to be able to carry its own scale, and v2 cannot. Drop one
+participant at a time, restandardise, and see how far everyone else's
+z-score moves:
+
+```{r loo-standardisation}
+# How much does one participant's presence move everyone else's z-score?
+leave_one_out_shift <- function(x) {
+  x <- x[!is.na(x)]
+  full <- as.numeric(scale(x))
+  purrr::map_dbl(seq_along(x), function(i) {
+    without <- as.numeric(scale(x[-i]))
+    max(abs(without - full[-i]))
+  })
+}
+
+block_trials |>
+  compose_features(id, version) |>
+  dplyr::filter(stats::complete.cases(dplyr::pick(tidyselect::starts_with("mean_")))) |>
+  dplyr::summarise(
+    participants = dplyr::n(),
+    median_shift = stats::median(leave_one_out_shift(mean_angle)),
+    max_shift = max(leave_one_out_shift(mean_angle)),
+    .by = version
+  ) |>
+  dplyr::arrange(version) |>
+  knitr::kable(digits = 3,
+               caption = "Largest z-score shift caused by removing one participant, orientation")
+```
+
+v2's median shift is roughly five times v1's: on nine participants, one
+person's presence routinely moves everyone else's z-score by an
+appreciable fraction of a standard deviation. That is not a scale, and it
+is why standardising within version was abandoned.
 
 ## 4. What this means for every other page
 

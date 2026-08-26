@@ -72,7 +72,7 @@
 #' \describe{
 #'   \item{age, gender, country, job, education, field, where_from}{
 #'     Self-reported demographics.}
-#'   \item{prognosis}{Self-reported aphantasia status/prognosis, where
+#'   \item{prognosis}{Free-text self-report on aphantasia status, never
 #'     collected.}
 #'   \item{treatment}{Self-reported relevant treatment. `NA` throughout for
 #'     v3 (not asked in that version's demographics form).}

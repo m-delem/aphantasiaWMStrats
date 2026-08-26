@@ -417,56 +417,17 @@ coefficients say.
 
 ## 7. For a future version of the task
 
-The task was designed to force a three-way trade-off. Whether it achieves
-one is harder to answer than it first appeared, and the honest version of
-that story is worth showing.
+The design goal was a three-way trade-off. Correlations between the three
+features, after removing each participant's overall level, once looked like
+a **two-way** one: orientation and colour trading off against each other
+while word sat out at ceiling. That reading is withdrawn. It was six
+participants who answered very few orientation items, and the [what was
+tried and withdrawn](lessons.html) page owns that withdrawal and shows both
+tables side by side.
 
-```{r tradeoff}
-v1_scores_wide <- v1_participant_means |>
-  dplyr::select(id, feature, mean_score) |>
-  tidyr::pivot_wider(names_from = feature, values_from = mean_score) |>
-  tidyr::drop_na()
-
-# Residualise each feature on overall level, then correlate the residuals,
-# on every participant with all three parts and again on those clearing
-# the engagement thresholds of the task validity page.
-all_parts <- block_trials |>
-  dplyr::filter(version == "v1") |>
-  compose_features(id) |>
-  dplyr::filter(stats::complete.cases(dplyr::pick(tidyselect::everything())))
-
-engaged_parts <- dplyr::filter(
-  all_parts, id %in% engaged_ids(dplyr::filter(block_trials, version == "v1"))
-)
-
-feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
-
-knitr::kable(
-  centred_correlations(all_parts, labels = feature_labels), digits = 3,
-  caption = paste0("All participants with three parts (n = ",
-                   nrow(all_parts), ")"))
-
-knitr::kable(
-  centred_correlations(engaged_parts, labels = feature_labels), digits = 3,
-  caption = paste0("Participants clearing the engagement thresholds (n = ",
-                   nrow(engaged_parts), ")"))
-```
-
-Residualising three variables on their own mean induces a negative
-correlation of roughly -0.5 by construction, so the baseline is -0.5 and
-not zero. Only departures from it carry information.
-
-On the first table, orientation and colour appear to trade off against
-each other more strongly than either does against word, which is what a
-two-way trade-off would look like. On the second it disappears: all three
-pairs sit close to the -0.5 that closure produces on its own.
-
-**The difference between the two tables is six participants**, all of whom
-answered very few orientation items. The apparent two-way trade-off was a
-description of them, not of the task, and it is withdrawn. What survives
-is weaker and still worth acting on: word is far too easy, with
-`r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])` of
-responded items at ceiling and a reliability that does not support
+What survives is weaker and still worth acting on: word is far too easy,
+with `r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])`
+of responded items at ceiling and a reliability that does not support
 individual-differences use, so it cannot be carrying much of a trade-off
 whatever the correlations say.
 

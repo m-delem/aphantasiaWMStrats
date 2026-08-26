@@ -287,11 +287,14 @@ block_trials |>
   knitr::kable(digits = 3, caption = "Exact matches among answered items, v1")
 ```
 
-Nine in ten answered word items are exact matches. The consequences run through
-the whole project: word's split-half reliability is 0.45 against 0.82 and 0.83
-for the other two features, and the verbal arm of the compositional analysis
-rests on the least informative measure. The [scoring](scoring.html) page works
-through what that does and does not permit.
+Nine in ten answered word items are exact matches. The consequence runs
+through the whole project: **word barely discriminates between
+participants**, so the verbal arm of the compositional analysis rests on the
+least informative of the three measures. The [task
+validity](task-validity.html) page puts a number on that with split-half
+reliability, computed there rather than quoted here, and the
+[scoring](scoring.html) page works through what it does and does not
+permit.
 
 This is the kind of thing a paradigm can only learn from its own data, which is
 also the theme of the two version changes that came before it. A fourth version

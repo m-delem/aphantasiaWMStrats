@@ -141,8 +141,9 @@ inheriting it.
 Not withdrawn so much as **demoted**, and it constrains every page that
 reports a word coefficient.
 
-Word's split-half reliability is 0.45, against 0.82 and 0.83 for the other
-two features. The metric is not at fault: single-word recall at this
+Word's split-half reliability is far below the other two features', which
+the [task validity](task-validity.html) page computes. The metric is not at
+fault: single-word recall at this
 exposure is simply too easy to discriminate between people. The
 [performance](performance.html) page shows what that looks like from the
 model's side, with every participant's estimate collapsing to nearly the
