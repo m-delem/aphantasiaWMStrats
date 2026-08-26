@@ -82,7 +82,7 @@ remains. That is a decision about which quantity is interesting, not a
 neutral preprocessing step.
 
 There is also a statistical problem with filtering it out. Analysing only
-responded trials conditions on a selected subsample. If the participants
+responded items conditions on a selected subsample. If the participants
 who abstain more also perform differently when they do answer, the
 conditional estimates are biased in a way **no responders-only analysis can
 detect**, because the information needed to detect it has been removed.
@@ -194,7 +194,7 @@ Two models sit around it, both using the form set out in section 3.
   interest.
 
 The joint model is not a bigger version of the composition. It exists
-because the composition is computed from **responded trials only**, and
+because the composition is computed from **responded items only**, and
 whether that conditioning was innocent cannot be checked from inside a
 responders-only analysis. The joint model checks it.
 

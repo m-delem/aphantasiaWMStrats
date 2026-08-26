@@ -77,7 +77,7 @@ trials_by_feature <- block_trials |>
 # 3. v1 alone is the primary analysis sample; see section 4.
 v1_trials <- dplyr::filter(trials_by_feature, version == "v1")
 
-# 4. One mean per participant per feature, over answered trials only.
+# 4. One mean per participant per feature, over answered items only.
 v1_participant_means <- v1_trials |>
   dplyr::filter(responded) |>
   dplyr::summarise(
@@ -164,7 +164,7 @@ word_reproduction <- all_data |>
 
 reproduction_summary <- word_reproduction |>
   dplyr::summarise(
-    trials = dplyr::n(),
+    items = dplyr::n(),
     matched_by_broken_code = sum(from_broken_code == stored_value),
     matched_by_correct_code = sum(from_correct_code == stored_value)
   )
@@ -174,7 +174,7 @@ knitr::kable(reproduction_summary,
 ```
 
 The broken port reproduces the stored column for every one of the
-`r reproduction_summary$trials` trials. Correct Levenshtein reproduces
+`r reproduction_summary$items` items. Correct Levenshtein reproduces
 `r reproduction_summary$matched_by_correct_code`. A worked example:
 
 ```{r bug-example}
@@ -189,7 +189,7 @@ tibble::tibble(
     dplyr::pull(live_diff_word) |>
     dplyr::first()
 ) |>
-  knitr::kable(caption = "One trial, scored three ways")
+  knitr::kable(caption = "One item, scored three ways")
 ```
 
 The practical consequence is small: in-task feedback was more generous on
@@ -233,25 +233,25 @@ word_formula_decomposition <- tibble::tribble(
   "The cap that floors the score at 0",               "without_the_cap"
 ) |>
   dplyr::mutate(
-    trials_changed = purrr::map_int(column, \(variant)
+    items_changed = purrr::map_int(column, \(variant)
       sum(abs(word_score_variants$as_adopted - word_score_variants[[variant]]) > 1e-9)),
-    of_trials = nrow(word_score_variants)
+    of_items = nrow(word_score_variants)
   ) |>
-  dplyr::select(design_choice, trials_changed, of_trials)
+  dplyr::select(design_choice, items_changed, of_items)
 
 knitr::kable(word_formula_decomposition,
-             caption = "Trials whose score changes if one choice is reversed")
+             caption = "Items whose score changes if one choice is reversed")
 ```
 
 ```{r decompose-values, include = FALSE}
 changed_by <- function(choice) {
-  word_formula_decomposition$trials_changed[
+  word_formula_decomposition$items_changed[
     grepl(choice, word_formula_decomposition$design_choice)]
 }
 ```
 
 The transposition rule that gives the metric its name changes
-`r changed_by("Metric")` trials; the denominator changes
+`r changed_by("Metric")` items; the denominator changes
 `r changed_by("Denominator")`; the cap changes `r changed_by("cap")`, and
 without it scores fall as low as
 `r fmt(min(word_score_variants$without_the_cap), 2)`. The least famous of
@@ -303,11 +303,11 @@ non_response_rates <- v1_trials |>
   dplyr::summarise(non_response_rate = 1 - mean(responded), .by = feature)
 
 knitr::kable(non_response_rates, digits = 3,
-             caption = "Share of v1 trials with no response, by feature")
+             caption = "Share of v1 items with no response, by feature")
 ```
 
 Between `r as_pct(min(non_response_rates$non_response_rate))` and
-`r as_pct(max(non_response_rates$non_response_rate))` of v1 trials are
+`r as_pct(max(non_response_rates$non_response_rate))` of v1 items are
 non-responses. These are scored 0 and flagged, rather than set to `NA`.
 
 `NA` would be the more cautious-looking choice and is the worse one.
@@ -322,12 +322,12 @@ feature at all, and how accurately they did so given that they tried.
 vviq_association <- v1_trials |>
   dplyr::summarise(
     counting_non_responses_as_zero = mean(score),
-    responded_trials_only = mean(score[responded]),
+    responded_items_only = mean(score[responded]),
     vviq = dplyr::first(vviq),
     .by = c(id, feature)
   ) |>
   dplyr::summarise(
-    dplyr::across(c(counting_non_responses_as_zero, responded_trials_only),
+    dplyr::across(c(counting_non_responses_as_zero, responded_items_only),
                   \(x) cor(x, vviq, method = "spearman", use = "complete.obs")),
     .by = feature
   )
@@ -359,7 +359,7 @@ v1_trials |>
   ggplot(aes(score)) +
   geom_histogram(bins = 40) +
   facet_wrap(~feature, scales = "free_y") +
-  labs(x = "Similarity score, responded trials", y = "Trials")
+  labs(x = "Similarity score, responded items", y = "Items")
 ```
 
 ```{r boundaries}
@@ -370,13 +370,13 @@ boundary_mass <- v1_trials |>
                    .by = feature)
 
 knitr::kable(boundary_mass, digits = 3,
-             caption = "Mass at the boundaries, responded trials only")
+             caption = "Mass at the boundaries, responded items only")
 ```
 
 Conditional on responding, orientation is well spread with no mass at
 either boundary at all. Word is not:
 `r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])` of
-responded word trials are exact matches, and
+responded word items are exact matches, and
 `r as_pct(boundary_mass$share_at_zero[boundary_mass$feature == "Word"])` are
 exact misses. Colour has a trace of mass at one and none at zero.
 
@@ -393,7 +393,7 @@ follows from what the boundary means rather than from convenience.
   similarity on a continuous wheel, so an exact 1 is an error of exactly
   zero degrees, which is pixel resolution rather than a behaviour.
   Modelling it as an inflation component would estimate a process
-  parameter for a rounding effect on a couple of dozen trials, so it is
+  parameter for a rounding effect on a couple of dozen items, so it is
   handled with a Smithson-Verkuilen squeeze instead
   (`squeeze_boundaries()`), which moves every value by about one
   ten-thousandth.
@@ -462,11 +462,11 @@ two-way trade-off would look like. On the second it disappears: all three
 pairs sit close to the -0.5 that closure produces on its own.
 
 **The difference between the two tables is six participants**, all of whom
-answered very few orientation trials. The apparent two-way trade-off was a
+answered very few orientation items. The apparent two-way trade-off was a
 description of them, not of the task, and it is withdrawn. What survives
 is weaker and still worth acting on: word is far too easy, with
 `r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])` of
-responded trials at ceiling and a reliability that does not support
+responded items at ceiling and a reliability that does not support
 individual-differences use, so it cannot be carrying much of a trade-off
 whatever the correlations say.
 

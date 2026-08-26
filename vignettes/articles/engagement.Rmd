@@ -238,7 +238,7 @@ imagery vividness in this sample.**
 
 Between `r pct(min(c(mean(1 - block_trials$responded_word), mean(1 - block_trials$responded_angle), mean(1 - block_trials$responded_color))))`
 and `r pct(max(c(mean(1 - block_trials$responded_word), mean(1 - block_trials$responded_angle), mean(1 - block_trials$responded_color))))`
-of v1 recall trials receive no response at all. The task encodes these with
+of v1 recall items receive no response at all. The task encodes these with
 sentinels rather than missing values, and the
 [Scoring](scoring.html) page covers how they are handled.
 

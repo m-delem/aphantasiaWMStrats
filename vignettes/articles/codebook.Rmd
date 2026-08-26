@@ -39,9 +39,9 @@ data. WM-FTT and CFA-WM refer to the same task.
 
 The tables below are computed directly from `all_data` rather than typed out
 by hand, so they cannot drift out of sync with the data itself. `all_data`
-has one row per stimulus (three per trial), so a given participant's
+has one row per item (three per trial), so a given participant's
 demographic and questionnaire-score values repeat across their rows; the
-counts and ranges below reflect that (`N missing` counts stimulus rows, not
+counts and ranges below reflect that (`N missing` counts item rows, not
 participants).
 
 The five nested list-columns holding raw questionnaire items are described
@@ -96,14 +96,14 @@ identifier_variables |>
   knitr::kable()
 ```
 
-## Trial and stimulus structure
+## Trial and item structure
 
 ```{r trial-structure}
 trial_structure_variables <- tibble::tribble(
   ~Variable,        ~Description,
-  "trial_number",   "Trial index (1 tutorial + 3 training + 21 test trials per participant).",
+  "trial_number",   "Trial index. A trial is one encode-distract-recall cycle: 21 test trials in three blocks of seven, numbered 1-21, preceded by 3 training trials numbered 1-3 and one tutorial trial numbered 0.",
   "response_order", "Order in which the three response modalities were collected for this trial. Fixed in v1/v2 (always word/angle/colour); randomised per trial in v3.",
-  "item_number",    "Stimulus index within the trial (1-3: word, orientation, colour).",
+  "item_number",    "Item index, running 1-63 across the three test blocks (1-21, 22-42, 43-63) and 1-9 in training. Three items per trial; each item is one word shown at one orientation in one colour, so an item row carries all three features rather than one of them.",
   "expe_phase",     "Task phase: tutorial, training, or one of the three test blocks."
 )
 
@@ -218,7 +218,7 @@ feedback_variables <- tibble::tribble(
   "feedback_score_word",         "Points shown for the word response (0, 0.5 or 1), thresholded from `live_diff_word`.",
   "feedback_score_angle",        "Points shown for the orientation response (0, 0.5 or 1).",
   "feedback_score_color",        "Points shown for the colour response (0, 0.5 or 1).",
-  "feedback_trial_score",        "Points shown for the whole trial: the three per-feature scores summed, minus 0.5 per incorrect parity judgement, floored at 0. Trial-level, so constant across a trial's three stimulus rows.",
+  "feedback_trial_score",        "Points shown for the whole trial: the three per-feature scores summed, minus 0.5 per incorrect parity judgement, floored at 0. Trial-level, so constant across a trial's three item rows.",
   "feedback_total_score_word",   "Cumulative word points shown at the end of the task.",
   "feedback_total_score_angle",  "Cumulative orientation points shown at the end of the task.",
   "feedback_total_score_color",  "Cumulative colour points shown at the end of the task.",

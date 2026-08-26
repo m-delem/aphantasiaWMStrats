@@ -19,7 +19,7 @@ split_half_reliability(
 
 \item{n_splits}{Number of random splits.}
 
-\item{thresholds}{Minimum responded trials per feature, defaulting to
+\item{thresholds}{Minimum responded items per feature, defaulting to
 \code{\link[=wm_thresholds]{wm_thresholds()}}.}
 
 \item{trial_col}{Name of the column identifying a trial.}
@@ -33,6 +33,6 @@ Splits at the \strong{trial} level rather than by odd and even items, because
 items within a trial share a memory load: an odd-even split would
 correlate two halves of the same trial and overstate reliability.
 
-Participants are included per feature, on their own responded-trial
+Participants are included per feature, on their own responded-item
 count, since someone can be measurable on colour and not on orientation.
 }

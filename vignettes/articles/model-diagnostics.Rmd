@@ -140,7 +140,7 @@ brms::pp_check(joint_model, resp = "scoreword", ndraws = 60) +
   theme_pdf(base_size = 16)
 ```
 
-Word is the interesting one. About 91% of responded word trials score
+Word is the interesting one. About 91% of responded word items score
 exactly 1 and 3% exactly 0, because a recalled word either matches the
 target or does not. Those are genuine point masses, not rounding, and the
 inflation components are what let the model put mass exactly there. A plain
@@ -157,7 +157,7 @@ has a trace of mass at 1, but colour score is cosine similarity on a
 continuous wheel, so an exact 1 means an error of exactly zero degrees:
 pixel resolution, not behaviour. Modelling that with an inflation component
 would estimate a process parameter for a rounding artifact on a couple of
-dozen trials. The squeeze moves every value by about one ten-thousandth
+dozen items. The squeeze moves every value by about one ten-thousandth
 instead, and `squeeze_boundaries()` documents the trade.
 
 ```{r ppc-gates, fig.alt="Posterior predictive check for the response gates."}
@@ -172,7 +172,7 @@ patchwork::wrap_plots(
 ```
 
 The three gates are Bernoulli, where the check reduces to whether the model
-reproduces the proportion of trials answered. It does.
+reproduces the proportion of items answered. It does.
 
 ## 3. The compositional model {#composition-diagnostics}
 

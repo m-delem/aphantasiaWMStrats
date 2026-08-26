@@ -28,7 +28,7 @@ which also carries candidate terms the backward pass discarded: reading
 runs on \strong{one row per participant}, because the question is the shape
 of a between-person relationship. Run on items, each participant
 contributes about 63 rows carrying the same VVIQ value, which inflates
-the sample 63-fold and places knots in trial-level noise while the
+the sample 63-fold and places knots in item-level noise while the
 cross-validated fit stays near zero.
 
 Note what silence means: no knot survives GCV pruning, not that the

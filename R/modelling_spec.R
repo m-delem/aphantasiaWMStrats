@@ -15,7 +15,7 @@
 #' follows from what the boundary of that feature's scale means rather
 #' than from convenience.
 #'
-#' * **Word: zero-one-inflated Beta.** About 91% of responded word trials
+#' * **Word: zero-one-inflated Beta.** About 91% of responded word items
 #'   score exactly 1, because a recalled word either matches the target or
 #'   does not. That is a genuine point mass and earns an inflation
 #'   component, as do the 3% scoring exactly 0.
@@ -274,7 +274,7 @@ lkj_marginal <- function(n, eta, dimension) {
 #'
 #' @description
 #' Three accuracy responses with a per-feature family and correlated
-#' participant random intercepts, fitted on responded trials only. The
+#' participant random intercepts, fitted on responded items only. The
 #' `(1 | p | id)` term carries the cross-feature dependency, delivered as
 #' three named pairwise correlations rather than random slopes read
 #' relative to whichever feature happens to be the reference.

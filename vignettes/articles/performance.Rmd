@@ -33,7 +33,7 @@ and absolute accuracy cannot separate a deliberate choice from an
 inability.
 
 This page is the same data read the other way. Like the composition it
-conditions on responded trials, and whether that is innocent is tested on
+conditions on responded items, and whether that is innocent is tested on
 the [joint model](joint-model.html) page.
 
 Same data through a simpler lens, so agreement with the joint model is not
@@ -84,7 +84,7 @@ measurements, and unlike the joint model this analysis does form them.
 ## 1. Three features, three response families
 
 Nothing about these scores makes a single response family appropriate, and
-the [scoring](scoring.html) page shows why: on responded trials, word piles
+the [scoring](scoring.html) page shows why: on responded items, word piles
 at 1, orientation has no boundary mass at all, and colour has a trace of
 mass at 1 that is pixel resolution rather than behaviour.
 
@@ -101,7 +101,7 @@ gates, for the same reason, so the two pages estimate the same quantity.
 
 Word takes a zero-one-inflated Beta because its ceiling is a real point
 mass, orientation a plain Beta, and colour a Beta after a
-Smithson-Verkuilen squeeze. `subset()` restricts each arm to the trials
+Smithson-Verkuilen squeeze. `subset()` restricts each arm to the items
 that feature was reported on, which is what lets one row carry three
 responses with independent non-response.
 
@@ -401,7 +401,7 @@ dplyr::inner_join(observed_means, fitted_means, by = c("id", "feature")) |>
   geom_point(size = 1.6, alpha = 0.7, show.legend = FALSE) +
   facet_wrap(~feature) +
   scale_discrete_feature(aesthetics = "colour") +
-  labs(x = "Observed mean, responded trials", y = "Model-implied mean",
+  labs(x = "Observed mean, responded items", y = "Model-implied mean",
        caption = "Points off the diagonal have been pulled toward the group.")
 ```
 

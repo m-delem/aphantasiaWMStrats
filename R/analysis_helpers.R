@@ -5,7 +5,7 @@
 # of an ILR transform and a per-feature mean that were superseded by
 # `ilr_coords()` and `compose_features()`, and `mars_knots()` existed in
 # two versions across two scripts, one of which ran on items rather than
-# participants and found knots in trial-level noise.
+# participants and found knots in item-level noise.
 
 #' Spearman-Brown correction
 #'
@@ -21,13 +21,13 @@ spearman_brown <- function(r) 2 * r / (1 + r)
 #' items within a trial share a memory load: an odd-even split would
 #' correlate two halves of the same trial and overstate reliability.
 #'
-#' Participants are included per feature, on their own responded-trial
+#' Participants are included per feature, on their own responded-item
 #' count, since someone can be measurable on colour and not on orientation.
 #'
 #' @param data Item-level data for one version, test blocks only.
 #' @param feature One of `"word"`, `"angle"`, `"color"`.
 #' @param n_splits Number of random splits.
-#' @param thresholds Minimum responded trials per feature, defaulting to
+#' @param thresholds Minimum responded items per feature, defaulting to
 #'   [wm_thresholds()].
 #' @param trial_col Name of the column identifying a trial.
 #'
@@ -106,7 +106,7 @@ cronbach_alpha <- function(items) {
 #' runs on **one row per participant**, because the question is the shape
 #' of a between-person relationship. Run on items, each participant
 #' contributes about 63 rows carrying the same VVIQ value, which inflates
-#' the sample 63-fold and places knots in trial-level noise while the
+#' the sample 63-fold and places knots in item-level noise while the
 #' cross-validated fit stays near zero.
 #'
 #' Note what silence means: no knot survives GCV pruning, not that the
@@ -122,7 +122,7 @@ cronbach_alpha <- function(items) {
 mars_knots <- function(data, outcome, predictor = "vviq") {
   rlang::check_installed("earth", reason = "to search for knots.")
 
-  # earth() defaults to na.fail, and a participant with no responded trials
+  # earth() defaults to na.fail, and a participant with no responded items
   # on a feature has an NA mean
   usable <- data[!is.na(data[[outcome]]) & !is.na(data[[predictor]]), ,
                  drop = FALSE]

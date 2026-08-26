@@ -24,7 +24,7 @@ A \code{brmsformula} object.
 }
 \description{
 Three accuracy responses with a per-feature family and correlated
-participant random intercepts, fitted on responded trials only. The
+participant random intercepts, fitted on responded items only. The
 \code{(1 | p | id)} term carries the cross-feature dependency, delivered as
 three named pairwise correlations rather than random slopes read
 relative to whichever feature happens to be the reference.

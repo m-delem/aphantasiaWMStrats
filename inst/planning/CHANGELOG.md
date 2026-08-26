@@ -9,6 +9,65 @@ analytic dependency, which is stable. Sequence lives here instead.
 
 ---
 
+## 2026-08-26 — "trial" swept, and the codebook was wrong about `item_number`
+
+The word meant two units. `task-design` used it for the 21 encode-distract-
+recall cycles; every page downstream used it for the 63 rows. Both readings
+were load-bearing, and they sat two paragraphs apart in `composition`
+("63 trials of behaviour" in §6, "a mean over 21 trials" in §8).
+
+**The convention, verified against the data rather than assumed:**
+
+- A **trial** is one encode-distract-recall cycle. 21 per participant, in
+  three blocks of seven.
+- An **item** is one word shown at one orientation in one colour. Three per
+  trial, 63 per participant, one row of `all_data` each.
+
+`item` rather than `stimulus`, because the column is already called
+`item_number` and `analysis_helpers.R` and `task-validity` were already
+using it that way ("items within a trial share an encoding episode"). The
+sweep propagates the project's own usage rather than imposing a new one.
+
+### The codebook was wrong, and so was `R/data.R`
+
+Both described `item_number` as *"Stimulus index within the trial (1-3:
+word, orientation, colour)"*. Neither part is true:
+
+- It runs **1-63**, not 1-3 — 1-21 in block 1, 22-42 in block 2, 43-63 in
+  block 3, and 1-9 in training.
+- It does **not** index the features. An item row carries `target_word`,
+  `target_angle` and `target_color` together, which is what lets one row
+  carry three responses with independent non-response.
+
+This misdescribes the shape of the data, so it is the most consequential
+thing in this pass. `trial_number` was also imprecise: the tutorial trial
+is numbered 0, not counted as the first of a running index.
+
+### Scope
+
+Prose, captions, figure labels and roxygen. Column names inside chunks were
+renamed only where the name itself asserted the wrong unit and every
+reference sat in the same file: `trials_needed` → `items_needed` and
+`trials_available` → `items_available` in `task-validity`; `trials_changed`
+→ `items_changed`, `of_trials` → `of_items` and `responded_trials_only` →
+`responded_items_only` in `scoring`.
+
+Left alone: `block_trials`, `v1_trials`, `trials_by_feature`,
+`trials_per_feature`. These are frame names spanning several chunks; the
+gain is cosmetic and the risk of a half-finished rename is not.
+
+Correct uses that were **not** touched, since the sweep is about the unit
+and not the word: `trial_number`, `trial_uid`, `trial_c`, the trial-level
+compositional model, "a mean over 21 trials", "points are traded across
+features within a trial", "the trial score", "randomised per trial in v3",
+and `task-validity`'s split logic, which already contrasted the two units
+correctly.
+
+`task-design` §5 now states both units once, in the paragraph that defines
+the block structure, so every later page has something to point at.
+
+---
+
 ## 2026-08-26 — parity_rate added to every accuracy model
 
 Resolves the open item left by phase 2. `performance_formula(parity =

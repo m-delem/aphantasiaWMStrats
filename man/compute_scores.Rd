@@ -69,7 +69,7 @@ invisible one in the inference.
 
 \code{responded_angle} is an \strong{inference} (\code{response_angle != 90}), not an
 observation, unlike the other two. Max \code{target_angle} is 61°, and no
-block trial has a target within 20° of 90°, so a 90° response is never
+block item has a target within 20° of 90°, so a 90° response is never
 near-correct — but a genuine deliberate 90° cannot be distinguished
 from an untouched slider.
 }

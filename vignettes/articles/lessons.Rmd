@@ -67,7 +67,7 @@ does against word. On the second all three pairs sit close to the closure
 baseline.
 
 **The difference between the two tables is six participants**, all of whom
-answered very few orientation trials. The apparent trade-off described
+answered very few orientation items. The apparent trade-off described
 them, not the task.
 
 The [joint model](joint-model.html) later settled the question from the

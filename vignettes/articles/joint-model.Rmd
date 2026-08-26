@@ -26,7 +26,7 @@ refit <- "never"
 ```
 
 The [composition](composition.html) page reports this study's primary
-result, and it computes it from **responded trials only**. Whether that
+result, and it computes it from **responded items only**. Whether that
 conditioning was innocent cannot be checked from inside a responders-only
 analysis, because the information needed to check it has been removed.
 
@@ -154,14 +154,14 @@ sets out the whole chain in one table.
 The thresholds exist to stop imprecise participant *means* being treated as
 measurements, and this model forms no participant means. More to the point,
 the participants they exclude are the ones with the most to say about
-abstention: one answered **zero** orientation trials, which makes them
+abstention: one answered **zero** orientation items, which makes them
 invisible to every responders-only analysis and highly informative here.
 
 ```{r specification}
 joint_formula()
 ```
 
-The `subset()` terms are what let one trial carry six responses with
+The `subset()` terms are what let one item carry six responses with
 independent non-response, and what let a participant contribute to a gate
 whether or not they ever answered that feature. `parity_rate` is on the
 accuracy arms only: it is the dual-task load a participant actually
@@ -182,7 +182,7 @@ that choosing among fifteen after seeing them is not possible. The six in
 the first two families were pre-specified; the nine in §5 were not, and
 are labelled exploratory there.
 
-## 2. Was analysing responded trials only legitimate?
+## 2. Was analysing responded items only legitimate?
 
 Three correlations answer that, one per feature. The rule for reading them
 was fixed before they existed: near zero everywhere would mean
@@ -247,7 +247,7 @@ strategy](analysis-strategy.html) page gives the orientation-only figure as
 second digit. Same parameter, two summaries.) And orientation is the one feature whose gate is
 *inferred* rather than observed: an untouched widget returns 90 degrees, so
 genuine 90-degree responses are miscoded as non-responses. That miscoding
-removes guaranteed-wrong trials from the accuracy of exactly the
+removes guaranteed-wrong items from the accuracy of exactly the
 participants with low measured response rates, which pushes the correlation
 **negative**. Finding it positive despite that makes it conservative.
 
@@ -316,7 +316,7 @@ fixed |>
 **On willingness to report, there is no result.** Not a null: no result. On
 the probability scale the orientation gate's interval runs from about 0.84
 to 0.99, which is consistent with a large difference and with none.
-Non-response is rare, between 7% and 14% of trials, and the floor group is
+Non-response is rare, between 7% and 14% of items, and the floor group is
 20 people. This is the analysis that could in principle have shown
 aphantasic participants declining to report differently, and it does not
 have the precision to.

@@ -77,7 +77,7 @@ trials_by_feature <- block_trials |>
 # 3. v1 alone is the primary analysis sample; see section 4.
 v1_trials <- dplyr::filter(trials_by_feature, version == "v1")
 
-# 4. One mean per participant per feature, over answered trials only.
+# 4. One mean per participant per feature, over answered items only.
 v1_participant_means <- v1_trials |>
   dplyr::filter(responded) |>
   dplyr::summarise(
@@ -129,15 +129,15 @@ engagement_thresholds <- v1_trials |>
     .by = feature
   ) |>
   dplyr::mutate(
-    trials_needed = ceiling(
+    items_needed = ceiling(
       (sd_within_participant / (0.5 * sd_between_participants))^2),
-    trials_available = trials_per_feature,
-    # Fall back to half the trials where the target is unreachable.
-    threshold_used = pmin(trials_needed, 32L)
+    items_available = trials_per_feature,
+    # Fall back to half the items where the target is unreachable.
+    threshold_used = pmin(items_needed, 32L)
   )
 
 knitr::kable(engagement_thresholds, digits = 3,
-             caption = "Trials needed for a participant mean worth comparing")
+             caption = "Items needed for a participant mean worth comparing")
 ```
 
 ```{r threshold-values, include = FALSE}
@@ -145,11 +145,11 @@ word_row <- dplyr::filter(engagement_thresholds, feature == "Word")
 ```
 
 **Word's requirement cannot be met.** It asks for
-`r word_row$trials_needed` trials of the `r trials_per_feature` that exist,
+`r word_row$items_needed` items of the `r trials_per_feature` that exist,
 because its between-person SD among responders
 (`r fmt(word_row$sd_between_participants)`) is small relative to
-within-person trial noise (`r fmt(word_row$sd_within_participant)`). A
-floor of 32 trials is used instead, recorded as a data-sufficiency rule
+within-person item noise (`r fmt(word_row$sd_within_participant)`). A
+floor of 32 items is used instead, recorded as a data-sufficiency rule
 and not a precision guarantee.
 
 ```{r reliability}

@@ -23,7 +23,7 @@ dropped, so the caller decides what to do with them.
 }
 \description{
 Builds the three-part composition (word, orientation, colour) from
-\strong{responded trials only}. Scores of 0 recorded for non-responses do not
+\strong{responded items only}. Scores of 0 recorded for non-responses do not
 measure allocation, they measure which features a participant declined.
 That is a separate quantity, and mixing the two would make the
 composition partly an index of who answered what. Non-response rates

@@ -17,7 +17,7 @@ The three features need three different families, and each choice
 follows from what the boundary of that feature's scale means rather
 than from convenience.
 \itemize{
-\item \strong{Word: zero-one-inflated Beta.} About 91\% of responded word trials
+\item \strong{Word: zero-one-inflated Beta.} About 91\% of responded word items
 score exactly 1, because a recalled word either matches the target or
 does not. That is a genuine point mass and earns an inflation
 component, as do the 3\% scoring exactly 0.

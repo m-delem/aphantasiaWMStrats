@@ -5,7 +5,7 @@
 \alias{all_data}
 \title{Working memory strategies experiment (CFA-WM) combined dataset (v1, v2, v3)}
 \format{
-A tibble with one row per stimulus and the following columns:
+A tibble with one row per item and the following columns:
 
 \strong{Identifiers and version}
 \describe{
@@ -14,15 +14,17 @@ A tibble with one row per stimulus and the following columns:
 \item{language}{UI language of the experiment in the browser.}
 }
 
-\strong{Trial and stimulus structure}
+\strong{Trial and item structure}
 \describe{
-\item{trial_number}{Trial index (1 tutorial + 3 training + 21 test
-trials per participant).}
+\item{trial_number}{Trial index. 21 test trials in three blocks of
+seven, numbered 1-21, preceded by 3 training trials numbered 1-3 and
+one tutorial trial numbered 0.}
 \item{response_order}{Order in which the three response modalities were
 collected for this trial, e.g. \code{"word_angle_color"}. Fixed in v1/v2
 (always word/angle/colour); randomised per trial in v3.}
-\item{item_number}{Stimulus index within the trial (1-3: word,
-orientation, colour).}
+\item{item_number}{Item index, running 1-63 across the three test
+blocks (1-21, 22-42, 43-63) and 1-9 in training. Three items per
+trial; an item row carries all three features, not one of them.}
 \item{expe_phase}{Task phase, e.g. tutorial/training/test.}
 }
 
@@ -35,7 +37,7 @@ response_color}{Participant's recall response.}
 \item{rt_word, rt_angle, rt_color}{Response times.}
 \item{parity_1_stim, parity_1_resp, parity_1_acc, parity_1_rt,
 parity_2_stim, parity_2_resp, parity_2_acc, parity_2_rt}{The two
-parity-judgement distractor trials embedded in this trial: stimulus
+parity-judgement distractor probes embedded in this trial: stimulus
 shown, response given, accuracy, response time. v2/v3 only carry a
 real parity-error penalty in the task design; the columns exist for
 v1 too but the penalty was not applied at recall.}
@@ -83,7 +85,7 @@ Stimulus-level. Take values 0, 0.5, 1.}
 \item{feedback_trial_score}{Points shown for the whole trial: the sum of
 the three per-modality scores, minus 0.5 per incorrect parity
 judgement, floored at 0. Trial-level, i.e. constant across the three
-stimulus rows of a trial. The parity penalty is applied in v2/v3 only.}
+item rows of a trial. The parity penalty is applied in v2/v3 only.}
 \item{feedback_total_score_word, feedback_total_score_angle,
 feedback_total_score_color, feedback_total_score}{Cumulative points
 shown at the end of the task. Participant-level, i.e. constant across
@@ -122,8 +124,10 @@ all_data
 \description{
 Stimulus-level data from the CFA-WM working memory task (word/orientation/
 colour recall under a parity-judgement distractor), combining all three
-study versions into one tibble. One row per stimulus (three stimuli per
-trial, plus one tutorial trial). Built from raw/processed data by the
+study versions into one tibble. One row per \strong{item}, where an item is one
+word shown at one orientation in one colour. Three items make up a
+\strong{trial}, the encode-distract-recall cycle: 21 test trials and therefore
+63 items per participant, plus training and one tutorial trial. Built from raw/processed data by the
 scripts in \verb{data-raw/} - see \code{data-raw/README.md} for the full pipeline,
 and \verb{data-raw/review/} for the exclusion decisions applied before this
 object was created.
@@ -159,7 +163,7 @@ the target costs nothing, and the function returns a value that is
 systematically lower than the true Levenshtein distance (in 313 of 8496
 non-tutorial rows it differs; it is never higher). \code{feedback_score_word}
 inherits this, since it is thresholded from \code{live_diff_word}.
-\item \strong{They mix three granularities} under one prefix: stimulus, trial and
+\item \strong{They mix three granularities} under one prefix: item, trial and
 participant, as noted per column above.
 \item \strong{Tutorial rows carry placeholders, not computed values.} For every
 \code{expe_phase == "tutorial"} row all three \verb{live_diff_*} are exactly 1

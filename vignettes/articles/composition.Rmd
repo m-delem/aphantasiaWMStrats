@@ -40,7 +40,7 @@ participants' own accounts of what they were doing all bear on the same
 coordinate, in sections 4 to 6.
 
 Everything here is v1 ([version scope](version-scope.html)) and uses
-responded trials only, which carries a caveat set out in section 8.
+responded items only, which carries a caveat set out in section 8.
 
 ```{r data}
 v1 <- get_data("v1") |>
@@ -181,7 +181,7 @@ There is a second, quieter lesson in that table. On the looser sample the
 orientation-first partition appears to carry far more of the variance,
 which would look like a reason to prefer it. On the engaged sample the
 three are close. **The apparent asymmetry was six participants**, all of
-whom answered very few orientation trials, and choosing a partition on
+whom answered very few orientation items, and choosing a partition on
 that basis would have meant choosing it on an artifact.
 
 ## 3. The composition barely varies
@@ -505,7 +505,7 @@ correlation_test(convergence$ilr1, convergence$kept) |>
 concentrate on words; those who said they kept all three really did spread
 their effort, monotonically across the three levels.
 
-That matters more than its p-value. The composition comes from 63 trials of
+That matters more than its p-value. The composition comes from 63 items of
 behaviour and the report comes from one question afterwards, so they are
 **independent measurements of the same construct**, and their agreement
 corroborates the coordinate as measuring what it claims. No amount of
@@ -664,7 +664,7 @@ close to the 0.77 the [task validity](task-validity.html) page finds by
 split-half. They are consistent, not contradictory.
 
 **The caveat, now resolved and narrower than expected.** Every composition
-here is built from trials a participant chose to answer, which conditions
+here is built from items a participant chose to answer, which conditions
 on a selected subsample. The [joint model](joint-model.html) tested
 whether that mattered, and the answer is **feature-specific**: willingness
 and accuracy are related on orientation and unrelated on word and colour.

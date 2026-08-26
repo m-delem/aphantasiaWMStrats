@@ -1,13 +1,13 @@
-#' Minimum responded trials per feature
+#' Minimum responded items per feature
 #'
 #' @description
 #' A participant contributes to a feature only if the standard error of
 #' their mean is at most half the between-person SD. That criterion needs 22
-#' responded trials for orientation and 29 for colour. For word it asks for
-#' 93 of the 63 trials that exist, because word's between-person variance is
-#' small relative to its trial-level noise, so word falls back to a floor of
-#' 32 responded trials. That floor is a data-sufficiency rule and **not** a
-#' precision guarantee: no achievable trial count makes a participant's word
+#' responded items for orientation and 29 for colour. For word it asks for
+#' 93 of the 63 items that exist, because word's between-person variance is
+#' small relative to its item-level noise, so word falls back to a floor of
+#' 32 responded items. That floor is a data-sufficiency rule and **not** a
+#' precision guarantee: no achievable item count makes a participant's word
 #' mean precise enough to rank against another's.
 #'
 #' Hard-coded rather than recomputed, because the rule was fixed before any
@@ -51,7 +51,7 @@ engaged_ids <- function(data, thresholds = wm_thresholds()) {
 #'
 #' @description
 #' Builds the three-part composition (word, orientation, colour) from
-#' **responded trials only**. Scores of 0 recorded for non-responses do not
+#' **responded items only**. Scores of 0 recorded for non-responses do not
 #' measure allocation, they measure which features a participant declined.
 #' That is a separate quantity, and mixing the two would make the
 #' composition partly an index of who answered what. Non-response rates

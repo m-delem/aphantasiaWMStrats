@@ -94,7 +94,12 @@ points-per-feature incentive is what turns uniform effort into a suboptimal
 strategy and makes the trade-off worth measuring.
 
 Twenty-one experimental trials in three blocks of seven, preceded by three
-training trials, drawing on 63 distinct colours and 63 distinct angles so that
+training trials. **Each trial presents three items**, and each item is a
+word shown at an orientation in a colour, so a participant sees 63 items in
+all. Those two units are used strictly throughout this report: a *trial* is
+one encode-distract-recall cycle and there are 21 of them; an *item* is one
+of the three objects inside a trial and there are 63. The task draws on 63
+distinct colours and 63 distinct angles so that
 no value repeats.
 
 ## 3. v1: what the first version's own data exposed
@@ -278,11 +283,11 @@ block_trials |>
     `Colour` = mean(score_color[responded_color] == 1)
   ) |>
   tidyr::pivot_longer(dplyr::everything(), names_to = "Feature",
-                      values_to = "Share of answered trials at ceiling") |>
-  knitr::kable(digits = 3, caption = "Exact matches among answered trials, v1")
+                      values_to = "Share of answered items at ceiling") |>
+  knitr::kable(digits = 3, caption = "Exact matches among answered items, v1")
 ```
 
-Nine in ten answered word trials are exact matches. The consequences run through
+Nine in ten answered word items are exact matches. The consequences run through
 the whole project: word's split-half reliability is 0.45 against 0.82 and 0.83
 for the other two features, and the verbal arm of the compositional analysis
 rests on the least informative measure. The [scoring](scoring.html) page works
