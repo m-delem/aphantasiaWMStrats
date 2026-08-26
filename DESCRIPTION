@@ -1,6 +1,6 @@
 Package: aphantasiaWMStrats
 Title: Data Analysis for a Working Memory Strategies Study on Aphantasia
-Version: 0.0.0.9000
+Version: 0.1
 Authors@R: c(
     person("Maël", "Delem", , "mael.delem@pm.me", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0005-8518-1991"))
