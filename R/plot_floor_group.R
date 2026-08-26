@@ -116,8 +116,8 @@ plot_floor_group <- function(
   floor_summary <- tibble::tibble(
     x = floor_x,
     estimate = stats::median(floor_draws),
-    lower = stats::quantile(floor_draws, 0.025),
-    upper = stats::quantile(floor_draws, 0.975)
+    lower = unname(stats::quantile(floor_draws, 0.025)),
+    upper = unname(stats::quantile(floor_draws, 0.975))
   )
 
   plot <- ggplot2::ggplot()

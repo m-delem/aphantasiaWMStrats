@@ -283,8 +283,11 @@ posterior_correlations <- function(
         response_a = parts[1],
         response_b = parts[2],
         median = stats::median(values),
-        lower  = stats::quantile(values, 0.025),
-        upper  = stats::quantile(values, 0.975),
+        # unname(): quantile() returns a named value, and the name rides
+        # along into the column, so anyone pulling a bound out gets a
+        # named vector labelled '2.5%'
+        lower  = unname(stats::quantile(values, 0.025)),
+        upper  = unname(stats::quantile(values, 0.975)),
         pd     = max(mean(values > 0), mean(values < 0)),
         moved  = stats::sd(values) < prior_sd
       )

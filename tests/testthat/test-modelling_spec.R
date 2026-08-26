@@ -36,6 +36,7 @@ test_that("response_priors only names coefficients the model contains", {
   skip_if_not_installed("brms")
   full <- response_priors("scoreangle")
   lean <- response_priors("scoreangle", terms = "vviq")
+  img  <- response_priors("scoreangle", terms = "imagery_group")
   expect_true("parity_rate" %in% full$coef)
   expect_false("parity_rate" %in% lean$coef)
   expect_false("complete_aphantfloor" %in% lean$coef)

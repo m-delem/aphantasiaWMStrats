@@ -92,6 +92,8 @@ test_that("save_ggplot locks the width to the two column widths", {
               verbose = FALSE)
   save_ggplot(file.path(dir, "two.pdf"), plot, ncol = 2, height = 60,
               verbose = FALSE)
+  save_ggplot(file.path(dir, "custom.pdf"), plot, width = 60, height = 60,
+              verbose = TRUE, return = TRUE) |> suppressMessages()
   expect_true(file.exists(file.path(dir, "one.pdf")))
   expect_true(file.exists(file.path(dir, "two.pdf")))
   # A one-column figure is narrower on the page than a two-column one.
@@ -164,6 +166,128 @@ test_that("plot_floor_group builds from tidy frames alone", {
                                    floor_observed = c(0.15, 0.22)), "ggplot")
 })
 
+# Shared fixtures for the floor-group option tests below.
+floor_group_fitted <- function() {
+  data.frame(
+    x = 16:80,
+    estimate = seq(0.10, 0.20, length.out = 65),
+    lower = seq(0.05, 0.15, length.out = 65),
+    upper = seq(0.15, 0.25, length.out = 65)
+  )
+}
+floor_group_observed <- function() {
+  data.frame(x = c(20, 40, 60), y = c(0.10, 0.15, 0.20))
+}
+layer_geoms <- function(plot) {
+  vapply(plot$layers, \(layer) class(layer$geom)[1], character(1))
+}
+layer_data_for <- function(plot, geom) {
+  Filter(\(layer) inherits(layer$geom, geom), plot$layers)
+}
+
+test_that("floor_observed adds the half violin and the points it summarises", {
+  # The floor group has no x variance, so it cannot be shown as a cloud of
+  # points on the fitted line. It gets a density drawn against the axis
+  # plus the values that density came from.
+  skip_if_not_installed("ggplot2")
+  draws <- stats::rnorm(500, 0.19, 0.03)
+
+  without <- plot_floor_group(floor_group_observed(), floor_group_fitted(),
+                              draws)
+  with_values <- plot_floor_group(floor_group_observed(), floor_group_fitted(),
+                                  draws,
+                                  floor_observed = stats::rnorm(20, 0.2, 0.05))
+
+  expect_false("GeomPolygon" %in% layer_geoms(without))
+  expect_true("GeomPolygon" %in% layer_geoms(with_values))
+  # one extra point layer for the jittered floor values
+  expect_equal(sum(layer_geoms(with_values) == "GeomPoint"),
+               sum(layer_geoms(without) == "GeomPoint") + 1)
+})
+
+test_that("the floor violin sits beside floor_x, not on it", {
+  # The raw values belong at their real score; only the density is nudged
+  # aside, so the two are readable rather than overplotted.
+  skip_if_not_installed("ggplot2")
+  values <- stats::rnorm(30, 0.2, 0.04)
+  plot <- plot_floor_group(floor_group_observed(), floor_group_fitted(),
+                           stats::rnorm(500, 0.19, 0.03),
+                           floor_observed = values, floor_x = 16,
+                           violin_nudge = -1.2, violin_width = 2.4)
+
+  violin <- layer_data_for(plot, "GeomPolygon")[[1]]$data
+  expect_true(all(violin$x < 16))
+  # and it does not run past its stated width
+  expect_gte(min(violin$x), 16 - 1.2 - 2.4 - 1e-8)
+
+  jittered <- layer_data_for(plot, "GeomPoint")[[1]]$data
+  expect_true(all(jittered$x == 16))
+  expect_equal(nrow(jittered), length(values))
+})
+
+test_that("floor_observed too small for a density still shows its points", {
+  # A kernel density over two points runs without complaint and means
+  # nothing, so the violin is skipped below three. The points are the data
+  # and must not disappear with the curve.
+  skip_if_not_installed("ggplot2")
+  plot <- plot_floor_group(floor_group_observed(), floor_group_fitted(),
+                           stats::rnorm(500, 0.19, 0.03),
+                           floor_observed = c(0.15, 0.22))
+  expect_false("GeomPolygon" %in% layer_geoms(plot))
+  expect_equal(nrow(layer_data_for(plot, "GeomPoint")[[1]]$data), 2)
+})
+
+test_that("floor_observed drops missing values from both layers", {
+  skip_if_not_installed("ggplot2")
+  plot <- plot_floor_group(floor_group_observed(), floor_group_fitted(),
+                           stats::rnorm(500, 0.19, 0.03),
+                           floor_observed = c(stats::rnorm(20, 0.2, 0.04),
+                                              NA, NA))
+  expect_equal(nrow(layer_data_for(plot, "GeomPoint")[[1]]$data), 20)
+  expect_false(anyNA(layer_data_for(plot, "GeomPolygon")[[1]]$data$y))
+})
+
+test_that("effect_label is drawn only when given", {
+  skip_if_not_installed("ggplot2")
+  draws <- stats::rnorm(500, 0.19, 0.03)
+
+  expect_false("GeomText" %in%
+                 layer_geoms(plot_floor_group(floor_group_observed(),
+                                              floor_group_fitted(), draws)))
+
+  labelled <- plot_floor_group(floor_group_observed(), floor_group_fitted(),
+                               draws, effect_label = "0.09\n[0.02, 0.16]")
+  expect_true("GeomText" %in% layer_geoms(labelled))
+  # annotate() carries the text in aes_params, not in the layer data
+  text_layer <- layer_data_for(labelled, "GeomText")[[1]]
+  expect_equal(text_layer$aes_params$label, "0.09\n[0.02, 0.16]")
+})
+
+test_that("effect_label sits on the arrow and is rotated by default", {
+  # Rotated so a two-line label does not force the panel wider, and placed
+  # at the arrow rather than floating, since an arrow between two features
+  # is otherwise ambiguous about which two.
+  skip_if_not_installed("ggplot2")
+  plot <- plot_floor_group(floor_group_observed(), floor_group_fitted(),
+                           stats::rnorm(500, 0.19, 0.03),
+                           effect_label = "0.09", floor_x = 16,
+                           arrow_nudge = -4)
+  text_layer <- layer_data_for(plot, "GeomText")[[1]]
+  expect_equal(text_layer$data$x, 12)
+  expect_equal(text_layer$aes_params$angle, 90)
+})
+
+test_that("the effect label's rotation and spacing are adjustable", {
+  skip_if_not_installed("ggplot2")
+  plot <- plot_floor_group(floor_group_observed(), floor_group_fitted(),
+                           stats::rnorm(500, 0.19, 0.03),
+                           effect_label = "0.09", label_angle = 0,
+                           label_lineheight = 1.4)
+  text_layer <- layer_data_for(plot, "GeomText")[[1]]
+  expect_equal(text_layer$aes_params$angle, 0)
+  expect_equal(text_layer$aes_params$lineheight, 1.4)
+})
+
 test_that("plot_floor_group colours by the predictor, not by group", {
   # The figure's claim is that above-floor participants are one continuum
   # and the floor group is not part of it, so the points take a continuous
@@ -215,4 +339,8 @@ test_that("plot_vviq_histogram draws the floor bar as its own layer", {
   above_layer <- plot$layers[[1]]$data
   expect_equal(sum(above_layer$count), 6)
   expect_true(all(above_layer$midpoint > 16))
+})
+
+test_that("ignore_unused_imports works properly", {
+  expect_null(ignore_unused_imports())
 })
