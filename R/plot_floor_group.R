@@ -240,12 +240,22 @@ plot_floor_group <- function(
 #' Stacked above [plot_floor_group()] with `patchwork`, sharing an x axis,
 #' it makes the case for the model before the model is shown.
 #'
+#' Bins are computed directly and drawn as two `geom_col()` layers rather
+#' than by `geom_histogram()` with a fill aesthetic. Mapping fill to a
+#' floor indicator stacks two groups inside whichever bin straddles the
+#' boundary, which colours part of the floor bar as above-floor.
+#'
 #' @param vviq A numeric vector of vividness scores.
-#' @param floor_x The scale minimum, coloured separately.
-#' @param binwidth Histogram bin width. Defaults to 1 so the floor score
-#'   occupies a bin of its own rather than sharing one with the score above
-#'   it, which would colour part of the floor bar as above-floor.
-#' @param fill,floor_fill Colours for the above-floor and floor bars.
+#' @param floor_x The scale minimum, drawn as its own bar.
+#' @param binwidth Histogram bin width for the above-floor bars. The floor
+#'   bar is drawn separately and is not affected by it.
+#' @param floor_fill,floor_colour,floor_alpha Fill, outline and opacity of
+#'   the floor bar. Match them to [plot_floor_group()]'s violin so stacked
+#'   panels read as one figure.
+#' @param gradient Continuous fill scale for the above-floor bars, coloured
+#'   by bin midpoint, or `NULL` for a plain fill.
+#' @param left_expansion Fraction of the x range added on the left. Share
+#'   it with [plot_floor_group()] so stacked panels align.
 #' @param base_size Passed to [theme_pdf()].
 #'
 #' @returns A ggplot object with the x axis stripped, for stacking.

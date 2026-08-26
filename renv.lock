@@ -365,13 +365,6 @@
       ],
       "Hash": "71778c0b60bbf439ac64e6a8be695917"
     },
-    "brew": {
-      "Package": "brew",
-      "Version": "1.0-10",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "8f4a384e19dccd8c65356dc096847b76"
-    },
     "bridgesampling": {
       "Package": "bridgesampling",
       "Version": "1.2-1",
@@ -760,37 +753,6 @@
       ],
       "Hash": "99b79fcbd6c4d1ce087f5c5c758b384f"
     },
-    "devtools": {
-      "Package": "devtools",
-      "Version": "2.5.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "cli",
-        "desc",
-        "ellipsis",
-        "fs",
-        "lifecycle",
-        "memoise",
-        "miniUI",
-        "pak",
-        "pkgbuild",
-        "pkgdown",
-        "pkgload",
-        "profvis",
-        "rcmdcheck",
-        "rlang",
-        "roxygen2",
-        "rversions",
-        "sessioninfo",
-        "testthat",
-        "urlchecker",
-        "usethis",
-        "withr"
-      ],
-      "Hash": "e7c4d8b7b663c5932b46686f015dc7c6"
-    },
     "diceR": {
       "Package": "diceR",
       "Version": "3.2.0",
@@ -936,17 +898,6 @@
         "plotmo"
       ],
       "Hash": "ecd65dd5197f5047ab820dd3becea62f"
-    },
-    "ellipsis": {
-      "Package": "ellipsis",
-      "Version": "0.3.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "rlang"
-      ],
-      "Hash": "f2b8d4af34b658ba7abc3496dfadb3ad"
     },
     "evaluate": {
       "Package": "evaluate",
@@ -1313,21 +1264,6 @@
         "utils"
       ],
       "Hash": "102298e238c14eb830cc4b5edd23c3e8"
-    },
-    "htmlwidgets": {
-      "Package": "htmlwidgets",
-      "Version": "1.6.4",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "grDevices",
-        "htmltools",
-        "jsonlite",
-        "knitr",
-        "rmarkdown",
-        "yaml"
-      ],
-      "Hash": "04291cc45198225444a397606810ac37"
     },
     "httpcode": {
       "Package": "httpcode",
@@ -1768,18 +1704,6 @@
       ],
       "Hash": "627d6993db1043703c0b084fa432f21f"
     },
-    "pak": {
-      "Package": "pak",
-      "Version": "0.10.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "tools",
-        "utils"
-      ],
-      "Hash": "7609642cb3bd5caa0984cb41911c2f05"
-    },
     "parallelly": {
       "Package": "parallelly",
       "Version": "1.48.0",
@@ -2026,19 +1950,6 @@
       ],
       "Hash": "188d6caf38e81bf15b5e918726a6fd3d"
     },
-    "profvis": {
-      "Package": "profvis",
-      "Version": "0.4.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "htmlwidgets",
-        "rlang",
-        "vctrs"
-      ],
-      "Hash": "bffa126bf92987e677c12cfb5651fc1d"
-    },
     "progress": {
       "Package": "progress",
       "Version": "1.2.3",
@@ -2151,28 +2062,6 @@
       ],
       "Hash": "f146a5bfc94db048309712535d4d0aee"
     },
-    "rcmdcheck": {
-      "Package": "rcmdcheck",
-      "Version": "1.4.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R6",
-        "callr",
-        "cli",
-        "curl",
-        "desc",
-        "digest",
-        "pkgbuild",
-        "prettyunits",
-        "rprojroot",
-        "sessioninfo",
-        "utils",
-        "withr",
-        "xopen"
-      ],
-      "Hash": "8f25ebe2ec38b1f2aef3b0d2ef76f6c4"
-    },
     "readr": {
       "Package": "readr",
       "Version": "2.2.0",
@@ -2255,30 +2144,6 @@
       ],
       "Hash": "f34039d57d861d2869cbf9be813ed08e"
     },
-    "roxygen2": {
-      "Package": "roxygen2",
-      "Version": "8.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "R6",
-        "brew",
-        "cli",
-        "commonmark",
-        "cpp11",
-        "desc",
-        "knitr",
-        "lifecycle",
-        "methods",
-        "pkgload",
-        "rlang",
-        "utils",
-        "withr",
-        "xml2"
-      ],
-      "Hash": "726b105343767ad1dbe7c3cae0986138"
-    },
     "rprojroot": {
       "Package": "rprojroot",
       "Version": "2.1.1",
@@ -2333,16 +2198,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "db86914207e4e0f112b60ebbc3e1793c"
-    },
-    "rversions": {
-      "Package": "rversions",
-      "Version": "3.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "curl"
-      ],
-      "Hash": "e1ebbf6f3ffcf42e12f84d4ebab350d0"
     },
     "sass": {
       "Package": "sass",
@@ -2694,20 +2549,6 @@
       ],
       "Hash": "09e3961e87b7bafa4a9340bbb34aeda8"
     },
-    "urlchecker": {
-      "Package": "urlchecker",
-      "Version": "1.0.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "cli",
-        "curl",
-        "tools",
-        "xml2"
-      ],
-      "Hash": "409328b8e1253c8d729a7836fe7f7a16"
-    },
     "urltools": {
       "Package": "urltools",
       "Version": "1.7.3.1",
@@ -2872,17 +2713,6 @@
         "rlang"
       ],
       "Hash": "568fe669c645b2007e4e8fcf5cde40e7"
-    },
-    "xopen": {
-      "Package": "xopen",
-      "Version": "1.0.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "processx"
-      ],
-      "Hash": "423df1e86d5533fcb73c6b02b4923b49"
     },
     "xtable": {
       "Package": "xtable",
