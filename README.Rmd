@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 
 <a href="https://osf.io/3649s/" target="_blank"><img src="https://img.shields.io/badge/OSF-https://osf.io/3649s/-337AB7?logo=osf" alt="OSF badge"/></a>
 <a href="https://m-delem.github.io/aphantasiaWMStrats/" target="_blank"><img alt="Docs badge" src="https://img.shields.io/badge/Documentation-website-009e73?style=flat&logo=Google%20Docs&logoColor=009e73&logoSize=auto"/></a>
+[![Codecov test coverage](https://codecov.io/gh/m-delem/aphantasiaWMStrats/graph/badge.svg)](https://app.codecov.io/gh/m-delem/aphantasiaWMStrats)
 <!-- badges: end -->
 
 aphantasiaWMStrats is a data analysis project and an *Extended Online Report*
