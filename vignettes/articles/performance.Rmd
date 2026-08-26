@@ -68,7 +68,11 @@ feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
 
 This page uses the `r dplyr::n_distinct(model_data$id)` participants who
 clear the engagement thresholds of the [task
-validity](task-validity.html) page, not the 86 the joint model uses. The
+validity](task-validity.html) page **and** have a vividness score, not the
+86 the [joint model](joint-model.html) uses. The
+`r dplyr::n_distinct(engaged_ids(v1))` who clear the thresholds include two
+with no VVIQ, and every page that reports a floor-group offset needs one;
+[the analysis](analysis-strategy.html#samples) sets out the whole chain. The
 thresholds are there to stop imprecise participant means being treated as
 measurements, and unlike the joint model this analysis does form them.
 
@@ -80,8 +84,16 @@ at 1, orientation has no boundary mass at all, and colour has a trace of
 mass at 1 that is pixel resolution rather than behaviour.
 
 ```{r families}
-performance_formula(parity = FALSE)
+performance_formula(parity = TRUE)
 ```
+
+`parity = FALSE` is worth naming, because it is an exception. The
+[composition](composition.html) and [joint model](joint-model.html) pages
+both carry `parity_rate`, and [task engagement](engagement.html) §5 argues
+it belongs in the accuracy models as a strategy variable. Every model on
+*this* page omits it, which keeps the right-hand side constant across the
+comparison section 2 runs, but no reason was recorded for resolving the
+divergence this way round rather than the other. It is a known loose end.
 
 Word takes a zero-one-inflated Beta because its ceiling is a real point
 mass, orientation a plain Beta, and colour a Beta after a
@@ -94,15 +106,24 @@ responses with independent non-response.
 Start with what looks obvious: fit each feature on its own.
 
 ```{r option-a}
+# Built from the same exported `response_priors()` the script calls, rather
+# than left to brms' defaults. `resp` is omitted for a univariate model,
+# where coefficients belong to no response.
+univariate_priors <- function(rhs) {
+  terms <- c("vviq", "complete_aphant", "imagery_group", "parity_rate")
+  response_priors(NULL, terms = terms[vapply(terms, grepl, logical(1), rhs)])
+}
+
 fit_feature <- function(feature, family, file) {
+  rhs <- "vviq + complete_aphant + (1 | id)"
   fit_brms_model(
     formula = brms::bf(
       stats::as.formula(paste0(
-        "score_", feature, " | subset(responded_", feature, ") ~ ",
-        "vviq + complete_aphant + (1 | id)")),
+        "score_", feature, " | subset(responded_", feature, ") ~ ", rhs)),
       family = family
     ),
     data = model_data,
+    prior = univariate_priors(rhs),
     file = system.file("models", file, package = pkg),
     file_refit = refit
   )
@@ -121,9 +142,23 @@ effort they could not spend elsewhere. Three independent models cannot
 represent that, and more importantly they cannot **measure** it.
 
 ```{r c-prime}
+# lkj(2) mildly favours the identity, so the cross-feature correlations
+# have to be earned from the data rather than assumed. It is passed here
+# rather than left to brms' default lkj(1), because section 3 reads the
+# posteriors against this prior and a different one would make that read
+# wrong.
+c_prime_priors <- c(
+  do.call(c, lapply(
+    c("scoreword", "scoreangle", "scorecolor"),
+    response_priors, terms = c("vviq", "complete_aphant")
+  )),
+  brms::prior("lkj(2)", class = "cor")
+)
+
 correlated <- fit_brms_model(
   formula = performance_formula(parity = FALSE),
   data    = model_data,
+  prior   = c_prime_priors,
   file    = system.file("models", "perf-c-prime.rds", package = pkg),
   file_refit = refit
 )
@@ -206,6 +241,7 @@ form_models <- list(
     formula = brms::bf(score_angle | subset(responded_angle) ~ 1 + (1 | id),
                        family = brms::Beta()),
     data = model_data,
+    prior = univariate_priors("1 + (1 | id)"),
     file = system.file("models", "perf-form-null.rds", package = pkg),
     file_refit = refit),
   "Two-group split" = fit_brms_model(
@@ -213,12 +249,14 @@ form_models <- list(
       score_angle | subset(responded_angle) ~ imagery_group + (1 | id),
       family = brms::Beta()),
     data = model_data,
+    prior = univariate_priors("imagery_group + (1 | id)"),
     file = system.file("models", "perf-form-group.rds", package = pkg),
     file_refit = refit),
   "Linear vividness" = fit_brms_model(
     formula = brms::bf(score_angle | subset(responded_angle) ~ vviq + (1 | id),
                        family = brms::Beta()),
     data = model_data,
+    prior = univariate_priors("vviq + (1 | id)"),
     file = system.file("models", "perf-form-linear.rds", package = pkg),
     file_refit = refit),
   "Floor-group additive" = independent$Orientation

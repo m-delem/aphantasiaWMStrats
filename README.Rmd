@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 
 <a href="https://osf.io/3649s/" target="_blank"><img src="https://img.shields.io/badge/OSF-https://osf.io/3649s/-337AB7?logo=osf" alt="OSF badge"/></a>
 <a href="https://m-delem.github.io/aphantasiaWMStrats/" target="_blank"><img alt="Docs badge" src="https://img.shields.io/badge/Documentation-website-009e73?style=flat&logo=Google%20Docs&logoColor=009e73&logoSize=auto"/></a>
+[![Codecov test coverage](https://codecov.io/gh/m-delem/aphantasiaWMStrats/graph/badge.svg)](https://app.codecov.io/gh/m-delem/aphantasiaWMStrats)
 <!-- badges: end -->
 
 aphantasiaWMStrats is a data analysis project and an *Extended Online Report*
@@ -148,10 +149,11 @@ Groups not fixed in advance, and labelled exploratory throughout.
 
 - [**Beyond vividness**](https://m-delem.github.io/aphantasiaWMStrats/articles/beyond-vividness.html):
   whether the questionnaires contain structure the imagery split misses.
-  As a group structure, no. On one dimension, yes: participants reporting
-  no voluntary imagery describe markedly more *unsymbolised thinking*,
-  which is a claim about what aphantasic experience is rather than what it
-  lacks.
+  As a group structure, no. On one dimension, yes: reported *unsymbolised
+  thinking* rises steadily as imagery vividness falls, across the whole
+  range rather than at the floor. That is a claim about what low-vividness
+  experience is rather than what it lacks — and a gradient, not a property
+  of aphantasia specifically.
 
 **Technical**
 

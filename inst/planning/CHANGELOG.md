@@ -9,6 +9,194 @@ analytic dependency, which is stable. Sequence lives here instead.
 
 ---
 
+## 2026-08-26 — cold review, phase 2 (the [A] items)
+
+Wrong or contradictory sentences, in file order. Most are one-line
+corrections and are not recorded individually; what follows is the subset
+where a judgement was made, a claim was *removed* rather than fixed, or the
+outside claim was wrong.
+
+### Counting people and counting sessions
+
+The review asked for `group_by(id, version)` in place of `distinct(id)` on
+`participants`. **Applied wholesale that is wrong**: it double-counts the
+repeat participant in the age, gender and education tables, where the unit
+is a person. The page now carries both frames explicitly —
+`participants` (117 people) and `sessions` (118 person-sessions) — and
+states in prose that one participant completed both v1 and v3. Person
+tables use the first; version tables use the second. That is the reason two
+totals circulate on this site, and it is now documented rather than
+inferable only from a code comment in `scoring` and `task-validity`.
+
+**A second error, not in the review.** `participants` §3 read "v2 has nine
+participants and v3 has twenty, with four and one typical imagers
+respectively". The typical-imager counts are transposed (v2 has one, v3
+has four) and twenty should be twenty-one. Replaced with a computed
+column.
+
+### Three groupings, two called "aphantasia"
+
+`vviq_group_4$aphantasia` is VVIQ = 16 exactly; `vviq_group_2$aphantasia`
+is ≤ 32; the models use a third split. `participants` §2 now tabulates all
+three with their cutoffs, matching what `R/data.R` and the `codebook`
+already document, and says plainly that the two columns share a level name
+and do not share its members. @reederNonvisualSpatialStrategies2024 added
+to `vignettes/references.bib` (Cognition, 251, 105907) as the source for
+dividing the low end at the floor, matching `general_intro.tex` l. 70.
+
+### Claims removed rather than corrected
+
+- **"Strategy questionnaire responses skewed toward prioritising colour"**
+  named the wrong feature *and* asserted a dissociation the data
+  contradict. v1 first-named is words 78, none 6, colours 3, orientations
+  1; words are also the highest-scoring feature (0.934 against 0.855 and
+  0.754). The surviving claim is the one `task-validity` §2 supports:
+  *which* feature someone named barely moves their composition, so the two
+  measures agree in aggregate without being interchangeable per person.
+- **"Roughly 70% of them ... stopped doing it properly"** has no support at
+  any cut. 25 of 88 answered no probe, 39 of 88 fewer than half, and none
+  answered all. The 70% is almost certainly the median parity response
+  rate of 0.694 — a proportion of *probes*, read as a proportion of
+  *participants*.
+- **"Imagery-group differences ... are absent among those who kept doing
+  it"** and **"among those who did engage, word recall was worse"**: no
+  support anywhere on the site or in the scripts. Deleted rather than
+  hedged.
+
+### Restored: the `moved` column
+
+`posterior_correlations()` computes it under `lkj(4)` and `joint-model`'s
+three tables were dropping it in `select()` — on exactly the fifteen
+correlations the `lkj(4)` argument exists for. Restored, with a paragraph
+saying what it is. `implementation-notes` §3's claim that every correlation
+carries the flag is now true.
+
+### Left open, deliberately: the parity covariate
+
+`inst/scripts/10` calls `performance_formula(parity = FALSE)` and **no
+reason is recorded anywhere** — `10-performance-modelling.md` §11.9
+discusses only the old, wrong parity variable. The composition carries
+`parity_rate`; the joint model carries it on the accuracy arms; `03` §11.6
+argues for it.
+
+A rationale was drafted for the vignettes and then withdrawn, because it
+was invented: "for comparability with the joint model" is not only
+undocumented but backwards, since the joint model does carry it. Both
+`engagement` §5 and `performance` §1 now state the divergence and label it
+an open inconsistency rather than a decision. **This needs an analytic
+answer** — either a reason from the modelling sessions that never reached
+a planning file, or a refit of `perf-c-prime` with parity — not a sentence.
+
+### The gradient, not the group
+
+`beyond-vividness` §3 was headed as a group difference and argued itself
+out of one two paragraphs later; `README.Rmd` stated the version the page
+rejects. Retitled to the gradient reading, with the group contrast marked
+as superseded by the models below it, and the README bullet rewritten. This
+is the finding a thesis reader carries away, so the framing was worth more
+than its severity rating suggested.
+
+---
+
+## 2026-08-26 — cold review, phases 0 and 1
+
+An outside reader with no prior contact with the project read the rendered
+site and produced a numbered fix list. What follows records the two
+structural decisions taken in response, and the reasoning, so that neither
+is silently re-opened. Findings that were checked and **rejected** are
+recorded here too, because a wrong outside claim costs more if it is acted
+on than if it is refused.
+
+### The root cause: vignettes were fitting nothing
+
+Pages load cached fits with `file_refit = "never"`, and brms returns the
+cached object **without checking** that the `data`, `prior` or control
+arguments it was handed match the ones the fit was built with.
+`R/modelling_spec.R` diagnosed this for *formulas* and solved it by
+exporting the builders. Nothing protected the other three arguments, and
+all three had drifted:
+
+| Page | Displayed | Fitted (`inst/scripts/`) |
+|---|---|---|
+| `composition` §4 | `data = model_data` (78 rows) | 79, pre-questionnaire-join (`11`) |
+| `composition` §5 | scales z-scored on the pooled 114 | z-scored on the 78 that enter (`15`) |
+| `composition` §6 | the 78-row frame | 81, not filtered on VVIQ (`14`) |
+| `composition` §8 | participant-level frame, no `trial_c`, no prior | trial-level, `composition_priors()`, `save_pars` (`11`) |
+| `performance` §2 | no `prior` | `c_prime_priors`, incl. `lkj(2)` (`10` l. 524) |
+| `model-diagnostics` §1 | wrapper defaults | `adapt_delta = 0.99`, `max_treedepth = 15` (`09`) |
+
+**Decision: make the calls true, and check them.** The alternative — a
+visible line per page saying the call is illustrative — was rejected. The
+report's whole claim is that its pages are executable, and a disclaimer
+leaves wrong code on display on the four most load-bearing pages.
+
+The check is one line per participant-level model:
+
+```r
+stopifnot(nrow(model_data) == nrow(composition_model$data))
+```
+
+This is the part that matters. Making a call true is a claim; the
+`stopifnot()` is what turns it into something that fails loudly. It is
+deliberately **not** applied to the joint model, where `subset()` makes
+the stored model frame hard to predict without running it.
+
+`composition`'s single reassigned `model_data` is replaced by three named
+frames — `reported` (81), `model_data` (79), `style_data` (78) — plus a
+table that counts all four live. One live count would have caught the
+whole family.
+
+**Two knock-ons that change reported numbers**, both flagged for the next
+knit rather than assumed:
+
+- §6's convergence result moves from n = 73 to n = 76, because `14`
+  states in a comment that it is deliberately not filtered on VVIQ and the
+  vignette was filtering. Spearman rho goes from about −0.30 to about
+  −0.33; monotone and in the same direction either way.
+- §7's raw-accuracy table moves from 18 + 60 to 18 + 61.
+
+### The primary analysis: settled by looking it up, not by taste
+
+The review found three answers on the site to "which analysis is primary".
+It is not a judgement call: `EOR-OUTLINE.md` ("Reordered 2026-08-26") and
+`09` §8.8 already settled it — **the composition is primary for
+allocation**, the joint model is authoritative on selection and on
+willingness to report. What survived on the site was pre-reorder text.
+
+`analysis-strategy` §4 was headed "The primary analysis: allocation" and
+showed `joint_formula()`, which made §5 list the joint model among the two
+models sitting around itself. §4 now shows `composition_formula()`. §4's
+four-family correlation table and its three-tier pre-specification
+statement existed **nowhere else on the site**, so they were moved to
+`joint-model` §1 rather than deleted.
+
+`README.Rmd` already carries the corrected framing; `README.md` and
+`docs/` are stale renders of the pre-reorder version. Re-knit and rebuild.
+
+### Added: one canonical sample table
+
+`analysis-strategy` §6, computed live, covering 88 / 86 / 87 / 81 / 79 /
+78. Every modelling page links to it instead of restating a number. The
+two facts most often got wrong are stated in words beside it: the joint
+model uses *more* participants than the others, and the drop from 81 to 79
+is the two participants with no VVIQ.
+
+### Checked and rejected
+
+- **"Repoint the broken sample link, reorder the confirmatory block,
+  rewrite the joint-model description."** Already correct in `README.Rmd`.
+  The defects are in the generated `README.md` and `docs/index.*`. No
+  source edit; re-render.
+- **"Replace 'skewed toward prioritising colour' with 'words'."** The
+  feature is wrong — v1 first-named is words 78, colours 3 — but swapping
+  the noun leaves a *false* claim standing. Words are also the
+  highest-scoring feature (0.934 against 0.855 and 0.754), so
+  "self-reported priority and measured performance disagreed" is
+  contradicted by the data and collides with `composition` §6's "they
+  converge". Deferred to phase 2 as a rewrite, not a substitution.
+
+---
+
 ## 2026-08-24 — parity resolved, and it was not the variable we thought
 
 `parity_*_acc` scores unanswered probes as 0, the same convention `02`

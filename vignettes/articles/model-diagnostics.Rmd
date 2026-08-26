@@ -55,6 +55,10 @@ joint_model <- fit_brms_model(
   formula = joint_formula(),
   data    = model_data,
   prior   = joint_priors(),
+  # Not the wrapper's defaults of 0.95 and 10: this model was fitted with
+  # these from the start, for the reason section 1 gives.
+  adapt_delta = 0.99,
+  max_treedepth = 15,
   file    = system.file("models", "joint-full.rds", package = pkg),
   file_refit = refit
 )
@@ -62,8 +66,16 @@ joint_model <- fit_brms_model(
 
 ## 1. Convergence {#convergence}
 
-Four chains, 2000 iterations each with half discarded as warmup, giving
-8000 draws across 571 parameters.
+Four chains, 3000 iterations each with the first 1000 discarded as warmup,
+giving 2000 kept per chain and 8000 draws in total. `fit_brms_model()`'s
+`iterations` argument is post-warmup draws per chain rather than a total,
+which is why the call reads `iterations = 2000, warmup = 1000`.
+
+Those draws cover every parameter in the fitted object, which is the count
+the table below reports. Most of them are the per-participant deviations;
+the model's *structural* size is the 54 parameters section 4 refers to —
+the population-level coefficients, the standard deviations and the fifteen
+correlations.
 
 ```{r convergence}
 tibble::tibble(

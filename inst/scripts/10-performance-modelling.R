@@ -513,7 +513,7 @@ rule("5. Option C-prime")
 # Built by performance_formula() in R/ rather than written out here, so
 # that the vignette reporting this model shows the object that produced it.
 # Print it to see all three responses.
-c_prime_formula <- performance_formula(parity = FALSE)
+c_prime_formula <- performance_formula(parity = TRUE)
 
 # `subset()` on each response is what lets one row carry three features
 # with independent non-response. Without it a row missing any one feature

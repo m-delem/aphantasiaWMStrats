@@ -27,9 +27,17 @@ analyses, and two of them turned out to need caveats. This page reports how
 each behaves in this sample rather than citing the reliabilities from their
 manuals, because one of them does not reproduce.
 
-The task's own reliabilities are on the [Scoring](scoring.html) page, where
-the split-half machinery lives. Everything below is computed when this page
-is built.
+The task's own reliabilities are on the [task
+validity](task-validity.html) page, where the split-half machinery lives.
+Everything below is computed when this page is built.
+
+**This page stays on v1**, where the [beyond
+vividness](beyond-vividness.html) page pools all three versions. The two
+are asking different questions. Pooling is right when the aim is to
+describe the instruments in as many people as possible; here the aim is to
+say whether the scales are trustworthy *in the sample the modelling pages
+use*, and that sample is v1. Where a claim below rests on the other
+versions, it says so.
 
 ```{r data}
 participants <- get_data("v1") |> dplyr::distinct(id, .keep_all = TRUE)
@@ -95,8 +103,9 @@ participants |>
 
 Roughly a quarter of the sample sits at exactly 16, the scale minimum, and
 the middle of the range is nearly empty. That is why VVIQ is not treated as
-a plain continuous predictor everywhere downstream; see the floor-group
-model in the planning documentation.
+a plain continuous predictor everywhere downstream; [the analysis
+strategy](analysis-strategy.html) page §3 sets out the floor-group form
+every model uses and the caution that comes with it.
 
 ## 2. OSIVQ, and a scoring inconsistency worth knowing about
 

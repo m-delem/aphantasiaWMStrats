@@ -138,7 +138,7 @@ The rest being largely independent also means dimension reduction should
 stop there. Reducing further would destroy exactly the distinctions the
 clustering is meant to find.
 
-## 3. The finding: aphantasic participants report more unsymbolised thinking
+## 3. The finding: unsymbolised thinking rises as vividness falls
 
 Before any clustering, the simplest question. The NIEQ asks about five
 modes of inner experience. How do the two imagery groups differ on each?
@@ -176,10 +176,14 @@ nieq_contrast |>
 ```
 
 **Unsymbolised thinking is the only dimension where the floor group scores
-higher**, and the effect is large. Participants who report no voluntary
-visual imagery recognise themselves more in what the NIEQ, following
-Hurlburt's descriptive experience sampling work, calls thinking that
-proceeds without words or images.
+higher**, and the group effect is large. Participants who report no
+voluntary visual imagery recognise themselves more in what the NIEQ,
+following Hurlburt's descriptive experience sampling work, calls thinking
+that proceeds without words or images.
+
+That is the group contrast. The models below replace it with something
+more precise, and the replacement is not a group difference at all — read
+to the end of this section before carrying the heading away.
 
 ```{r nieq-models, fig.alt="Floor-group models for four NIEQ dimensions.", fig.height = 8}
 nieq_data <- dplyr::mutate(
@@ -295,10 +299,12 @@ d = -0.42 at p = .12 and would have been set aside.
 Both readings changed when the dichotomy was dropped, which is the
 argument for fitting these at all.
 
-This is a positive claim about what aphantasic experience *is*, from an
+This is a positive claim about what low-vividness experience *is*, from an
 instrument built to ask, and it needs no clustering at all. It is worth
-saying plainly because the rest of this page is a null. The models below
-sharpen it into something more specific than a group difference.
+saying plainly because the rest of this page is a null. But it is a claim
+about a **gradient**: it describes the low end of a continuum, and nothing
+here isolates participants with no imagery at all from those with a
+little.
 
 Two cautions. It is a group contrast that was **not** pre-declared, so it
 is a hypothesis for a future study rather than a test passed. And the

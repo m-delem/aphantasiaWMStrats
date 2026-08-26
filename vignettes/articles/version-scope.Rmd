@@ -89,10 +89,13 @@ by_participant |>
   knitr::kable(digits = 3, caption = "Mean non-response rate by version")
 ```
 
-v3 has roughly three times v1's orientation non-response. It is also the
-most aphantasia-heavy version. Those two facts together are enough to
-create an association between imagery and non-response in a pooled sample
-where none exists within any version.
+v3 has roughly three times v1's orientation non-response. It is also
+heavily aphantasic — 17 of its 21 participants, against 31 of 88 in v1.
+Those two facts together are enough to create an association between
+imagery and non-response in a pooled sample where none exists within any
+version. (v2 is more aphantasic still in proportion, at 8 of 9, but with
+nine participants it moves a pooled estimate very little; v3 has both the
+composition and the weight.)
 
 ```{r simpsons}
 propensity <- by_participant |>
@@ -114,10 +117,11 @@ dplyr::bind_rows(
                caption = "Orientation non-response against VVIQ, pooled and within version")
 ```
 
-Pooled, the association looks clear and significant. Within v1, which is 80%
-of the participants, it is absent. The pooled estimate is a mixture of
-strata rather than an effect, and the version that drives it is the one
-with 21 participants.
+Pooled, the association looks clear and significant. Within v1, which is
+`r round(100 * mean(propensity$version == "v1"))`% of the participants with
+a vividness score, it is absent. The pooled estimate is a mixture of strata
+rather than an effect, and the version that drives it is the one with 21
+participants.
 
 This is the concrete reason the scope decision is not bureaucratic. Pooling
 here produced a finding that stratification removed.
@@ -146,7 +150,7 @@ dplyr::bind_rows(
 ```
 
 Analysed on its own, v1 gives an interpretable pattern rather than a
-mixture. The [task validity](scoring.html) material covers what those
+mixture. The [task validity](task-validity.html) page covers what those
 associations do and do not support.
 
 There is a second, quieter argument. Per-version standardisation needs each
@@ -156,7 +160,11 @@ single participant moves its z-scores by a median of 0.13 SD and by up to
 
 ## 4. What this means for every other page
 
-- **All modelling pages are v1 only**, N = `r nrow(v1)`, and say so.
+- **All modelling pages are v1 only.** v1 has `r nrow(v1)` participants;
+  no model uses all of them, because each applies further filters for
+  vividness, engagement or questionnaire completeness. [The
+  analysis](analysis-strategy.html#samples) lists every resulting sample in
+  one table.
 - **v2 and v3 are described, not modelled.** They appear in `all_data`, in
   the [codebook](codebook.html), and in descriptive comparisons.
 - **Version is treated as a structural feature, not a nuisance covariate.**

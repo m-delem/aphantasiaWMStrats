@@ -109,10 +109,12 @@ knitr::include_graphics("figures/cfa_wm_trial_overview_v1v2.png")
 Two problems surfaced, both visible in the data rather than anticipated.
 
 **The parity task had no consequence, and the sample split on that.** Because
-parity performance did not affect the score participants saw, roughly 70% of
-them worked this out within a few trials and stopped doing it properly, treating
-it as free time to rehearse instead. That the penalty was genuinely absent is
-checkable directly:
+parity performance did not affect the score participants saw, a large part of
+the sample worked this out and stopped doing it properly, treating it as free
+time to rehearse instead. The [task engagement](engagement.html) page puts
+numbers on it: 25 of 88 answered no parity probe at all, and 39 of 88 answered
+fewer than half. Not one participant answered every probe. That the penalty was
+genuinely absent is checkable directly:
 
 ```{r parity-check, echo = TRUE}
 block_trials |>
@@ -134,19 +136,26 @@ block_trials |>
 Every trial. No deduction was ever applied.
 
 The consequence was not that the distractor did nothing. It was that it was not
-experienced uniformly. Imagery-group differences that appear among participants
-who disengaged from parity are absent among those who kept doing it, so the
-group comparison the study set out to make depended on which subgroup a
-participant happened to fall into. And among those who did engage, word recall
-was worse, specifically word and not colour or orientation, which is what
-phonological-loop accounts predict: parity judgements are verbal, so doing them
-properly competes with the rehearsal that word recall relies on.
+experienced uniformly: some participants carried a dual-task load throughout and
+others carried none, and nothing in the design records which. That is a problem
+for any group comparison drawn from v1, because the two subgroups were doing
+materially different tasks. The [task engagement](engagement.html) page shows
+that abandoning parity is not a proxy for disengaging from the task as a whole,
+which is why v2 added the penalty rather than excluding anyone.
 
-**Self-reported priority and measured performance disagreed.** Strategy
-questionnaire responses skewed toward prioritising colour. Recall scores did
-not. That dissociation has held up under later analysis and is treated as a
-finding rather than a defect; the [engagement](engagement.html) and
-[scoring](scoring.html) pages return to it.
+**Self-reported priority and measured allocation are not the same
+measurement.** Asked afterwards which features they had tried to keep for
+points, v1 participants named **words** far more than anything else: 78 of 88
+named words first, against three for colours and one for orientations. Words
+are also the feature they scored highest on, so the report and the behaviour
+are not in conflict here — the [composition](composition.html) page shows the
+two converging.
+
+What does not follow is that the report can stand in for the behaviour.
+*Which* feature someone named barely moves their behavioural composition, and
+the [task validity](task-validity.html) page tabulates that directly. The two
+measures agree in aggregate and are not interchangeable at the level of an
+individual, which is the reason the task exists at all.
 
 ## 4. v2: fixing the incentive, not the order
 

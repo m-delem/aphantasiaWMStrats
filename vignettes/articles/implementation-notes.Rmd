@@ -28,8 +28,11 @@ Every model is fitted through `fit_brms_model()`, a thin wrapper over
 `brms::brm()` that fixes the conventions below so they cannot drift between
 scripts.
 
-Four chains, 2000 iterations each with the first 1000 discarded as warmup,
-giving 8000 post-warmup draws. The joint model additionally uses
+Four chains, 2000 **post-warmup** draws each after 1000 warmup iterations,
+so `brm()` receives `iter = 3000, warmup = 1000` and keeps 8000 draws in
+total. The argument below is named `iterations` rather than `iter` for
+exactly that reason: it is draws per chain, not a total, and reading it as
+brms' `iter` gives 4000. The joint model additionally uses
 `adapt_delta = 0.99` and `max_treedepth = 15`, set from the start rather
 than in response to warnings: a model with fifteen correlated random
 intercepts from 86 participants is expected to need them.
@@ -87,8 +90,10 @@ tibble::tibble(
 ```
 
 Every correlation reported on the [joint model](joint-model.html) page
-carries a flag for whether its posterior is narrower than that marginal. A
-correlation that did not move off its prior is not a finding.
+carries a `moved` flag for whether its posterior is narrower than that
+marginal. A correlation that did not move off its prior is not a finding.
+The [performance](performance.html) page carries the same flag against the
+`lkj(2)` marginal, which is the weaker comparison of the two.
 
 ## 4. ROPE conventions {#rope}
 
@@ -163,8 +168,9 @@ from are hyperparameters, not group-level draws, and they survive.
 
 One model is deliberately excluded from that: the per-feature performance
 model, because the shrinkage figure on the
-[performance](performance.html) page calls `ranef()` on it and needs
-exactly what would be discarded.
+[performance](performance.html) page calls `brms::posterior_epred()` on it
+at the default `re_formula`, which needs exactly the group-level draws
+that would be discarded.
 
 ## 8. Two recurring hazards {#hazards}
 

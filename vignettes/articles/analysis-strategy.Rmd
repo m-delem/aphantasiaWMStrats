@@ -21,9 +21,13 @@ library(aphantasiaWMStrats)
 The preceding pages establish [who took
 part](participants.html), what was measured, on which sample, and
 whether it measures anything. This page says what is done with it, and in
-what order. It contains no results: it is the reasoning a reader needs
-before the modelling pages make sense, and it is deliberately written so
-that it could have been written before any model was fitted.
+what order. It reports no findings — every result on this site belongs to
+a later page — and it is deliberately written so that it could have been
+written before any model was fitted. Two numbers do appear, both because a
+decision on this page turns on them: the selection correlation in section
+2, which is why the joint model exists at all, and the outcome of the
+functional-form comparison in section 3, which is why the floor-group form
+survived being pre-declared.
 
 Everything it describes runs on **task version v1**, for the reasons the
 [version scope](version-scope.html) page sets out. The one exception is
@@ -78,10 +82,18 @@ conditional estimates are biased in a way **no responders-only analysis can
 detect**, because the information needed to detect it has been removed.
 
 That was tested rather than assumed. Fitting response and accuracy jointly
-on orientation gives a participant-level correlation between the two of
-0.51, with 95% of the posterior between 0.26 and 0.72. The rule for what
-that would mean was written down before the number existed: conditioning
-was not innocent, and the joint model becomes the primary analysis.
+on orientation — in a bivariate model of that feature alone, not the
+six-response model of section 5 — gives a participant-level correlation
+between the two of 0.51, with 95% of the posterior between 0.26 and 0.72.
+That figure is a posterior **mean**; the [joint
+model](joint-model.html) page reports the same parameter as a median,
+0.52, which is why the two differ in the second digit.
+
+The rule for what that would mean was written down before the number
+existed: conditioning was not innocent, so a model that does not condition
+on it is needed. What it is needed *for* is set out in section 5 — it
+settles whether the composition was computable, not what the composition
+found.
 
 ## 3. How imagery enters every model
 
@@ -100,9 +112,11 @@ Every model on this site therefore takes the same form:
 - a single **offset** for the group at it.
 
 Rather than assume that form, several were compared, with this one
-pre-declared as primary regardless of which fit best. The
-[performance](performance.html) page reports the comparison; the data do
-not separate the candidates, which was predicted in advance.
+pre-declared as primary regardless of which fit best. Two comparisons were
+run: four candidates on orientation accuracy
+([performance](performance.html) §4) and five on the first compositional
+coordinate ([composition](composition.html) §8). Neither separates the
+candidates, which was predicted in advance.
 
 **This is not a side decision, it is the spine.** The floor-group offset is
 what every result on this site reports: the compositional shift, the
@@ -118,8 +132,9 @@ handful below 40, so that relationship is anchored by a dense group at 50
 to 80 plus a scatter, and extending it down to 16 rests on a linearity
 assumption this sample barely constrains. The sibling study
 [`aphantasiaEmotions`](https://m-delem.github.io/aphantasiaEmotions/) makes
-the same move with 1478 participants across five studies; there are 86
-here. On every figure, that stretch of the line is drawn **dashed** to mark
+the same move with 1478 participants across five studies; there are at most
+86 here — every v1 participant with a vividness score, and fewer on the
+pages that also require an engaged composition (section 6). On every figure, that stretch of the line is drawn **dashed** to mark
 it as extrapolation rather than fit.
 
 Two further things belong on the record. The model was first fitted *after*
@@ -132,31 +147,33 @@ read as low power rather than as evidence of absence.
 
 ## 4. The primary analysis: allocation
 
-Six responses. Three gates, one per feature, for whether it was reported at
-all. Three accuracies, one per feature, for how well it was reported when
-it was. All six share a participant-level correlation matrix.
+Divide each participant's three feature scores by their sum and what
+remains is a **composition**: three parts summing to one, carrying only
+relative information. Overall ability is gone; only where the effort went
+survives.
+
+Three parts summing to a constant cannot vary independently, so the
+composition is moved off the simplex into two unconstrained isometric
+log-ratio coordinates before anything is modelled: `ilr1` contrasts words
+against the geometric mean of the two non-verbal features, `ilr2`
+contrasts colour against orientation. Which contrast comes first is a
+substantive choice rather than a statistical one, and the
+[composition](composition.html) page shows that the omnibus test does not
+depend on it.
 
 ```{r formula}
-joint_formula()
+composition_formula("vviq + complete_aphant + parity_rate")
 ```
 
-The `subset()` terms are what let a single trial carry six responses with
-independent non-response, and what let a participant contribute to a gate
-whether or not they ever answered that feature. One participant answered
-**zero** orientation trials: invisible to every responders-only analysis,
-and highly informative here.
+Both coordinates are modelled together with the residual correlation
+between them estimated. That is not cosmetic: the invariance above holds
+for a genuine multivariate model, and two separate univariate fits would
+lose it.
 
-The fifteen correlations are the object of interest, in four families:
-
-| Family | Question |
-|---|---|
-| Response and accuracy, within a feature | Was conditioning on responding legitimate, and is the effect feature-specific or a general engagement trait? |
-| Accuracy and accuracy, across features | Does doing well on one feature cost another, between people? |
-| Response and response, across features | Do people who skip one feature skip others? |
-| The six cross terms | Everything else |
-
-Which of them are foregrounded was fixed in advance, in three tiers, so
-that choosing among fifteen after seeing them is not possible.
+This is the analysis the study was **designed** around. The thesis's
+prediction is about allocation; it is the coordinate on which vividness,
+inner experience and participants' own accounts of what they were doing
+all bear; and it is the result that clears its pre-declared threshold.
 
 ## 5. The other models, and what they are for
 
@@ -181,7 +198,75 @@ to report, the joint model is authoritative and the composition is silent.
 Where the joint model bears on allocation, it speaks to whether the
 composition was *computable*, not to what it found.
 
-## 6. Confirmatory and exploratory
+## 6. The samples, once {#samples}
+
+Six numbers circulate on the modelling pages and they are easy to
+conflate, so they are computed here in one place and referred to rather
+than restated. Every one of them is a filter on v1, applied for a reason
+given on an earlier page.
+
+```{r samples}
+v1 <- get_data("v1") |>
+  dplyr::filter(grepl("^expe_block", expe_phase))
+
+vividness <- dplyr::summarise(
+  v1, vviq = dplyr::first(vviq_total_score), .by = id
+)
+
+parts <- compose_features(v1, id) |>
+  dplyr::filter(stats::complete.cases(dplyr::pick(tidyselect::everything())))
+
+engaged <- dplyr::filter(parts, id %in% engaged_ids(v1))
+
+with_vviq <- engaged |>
+  dplyr::left_join(vividness, by = "id") |>
+  dplyr::filter(!is.na(vviq))
+
+with_scales <- dplyr::filter(
+  with_vviq, id %in% questionnaire_scales(all_data)$id
+)
+
+tibble::tibble(
+  sample = c(
+    "v1 participants",
+    "With a vividness score",
+    "All three compositional parts present",
+    "Also clearing the engagement thresholds",
+    "Also with a vividness score",
+    "Also with every questionnaire scale"
+  ),
+  n = c(
+    dplyr::n_distinct(v1$id),
+    sum(!is.na(vividness$vviq)),
+    nrow(parts), nrow(engaged), nrow(with_vviq), nrow(with_scales)
+  ),
+  used_by = c(
+    "Descriptives",
+    "The joint model",
+    "Composition §2",
+    "Composition §§2, 3, 6",
+    "Composition §§4, 7, 8; performance",
+    "Composition §5"
+  )
+) |>
+  knitr::kable(caption = "Every modelling sample on this site")
+```
+
+Two things follow from the table that are worth stating in words, because
+both have been misreported at some point in this project's history.
+
+The **joint model uses more participants than anything else**, not fewer.
+The engagement thresholds exist to stop imprecise participant *means*
+being treated as measurements; the joint model forms no participant means,
+so it does not need them, and the participants they exclude are precisely
+the ones with the most to say about abstention.
+
+The **modelling sample is smaller than the engaged sample**, by the two
+participants with no VVIQ score. Every model on this site reports a
+floor-group offset, and a participant with no vividness score cannot be
+placed on either side of the floor.
+
+## 7. Confirmatory and exploratory
 
 Everything above uses groups defined by imagery vividness, **fixed before
 any model was fitted**. That is the confirmatory strand.
@@ -197,7 +282,7 @@ of complete aphantasics, since that is a distinction the confirmatory
 strand cannot make at all. Clusters that merely recover the vividness
 grouping would be a reportable null.
 
-## 7. What was fixed in advance, and where to check
+## 8. What was fixed in advance, and where to check
 
 Pre-declaration only means anything if it is checkable, so the planning
 documents that record each decision ship with the package, in

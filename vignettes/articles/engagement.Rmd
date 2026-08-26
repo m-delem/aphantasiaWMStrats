@@ -60,8 +60,22 @@ by_participant <- block_trials |>
     parity_accuracy_naive = parity_correct / parity_probes
   )
 
+# The per-feature recall engagement thresholds. A participant contributes
+# to a feature only if the standard error of their mean is at most half
+# the between-person SD; `wm_thresholds()` holds the resulting counts,
+# hard-coded so they cannot drift with the sample. The task validity page
+# derives them.
 engaged <- engaged_ids(block_trials)
 ```
+
+Two of those objects are used before the page that defines them, so they are
+stated here rather than left implicit. `engaged_ids()` keeps the participants
+who answered at least `r wm_thresholds()[["word"]]` word,
+`r wm_thresholds()[["angle"]]` orientation and
+`r wm_thresholds()[["color"]]` colour items of the 63 presented. The
+[task validity](task-validity.html) page derives those numbers and explains
+what they are for; here they serve only to separate *abandoning the
+distractor* from *abandoning the task*.
 
 ## 1. The parity task had no consequence in v1
 
@@ -296,7 +310,14 @@ stats::wilcox.test(parity_rate ~ floor, data = floor_split, exact = FALSE)
 
 It is still worth carrying in the accuracy models, but as the **dual-task
 load a participant actually incurred**, which is a strategy variable in its
-own right, rather than as a control for something it does not predict.
+own right, rather than as a control for something it does not predict. The
+[composition](composition.html) page carries it, and the [joint
+model](joint-model.html) carries it on its accuracy arms. The
+[performance](performance.html) page does **not**: every model there is
+fitted without it, so that page's internal comparison holds the
+right-hand side constant, but no argument was recorded for dropping it
+rather than adding it to both. That is an open inconsistency rather than a
+decision, and it is flagged here rather than smoothed over.
 
 **Non-response is the substantive one.** It is folded into the recall
 scores as zeros, so any analysis of accuracy that ignores the `responded_*`

@@ -23,8 +23,10 @@ claimed. This page says what they were and what removed them, because an
 Extended Online Report that only shows what survived is a longer methods
 section rather than a more honest one.
 
-Each of these was caught by the same move: **check whether a pooled result
-holds within each stratum before reporting it.**
+Three of them were caught by the same move: **check whether a pooled result
+holds within each stratum before reporting it.** The other two are
+different in kind, and are included because a page of near-misses that all
+share one cause would misrepresent how the errors actually arrived.
 
 ## 1. A two-way trade-off between colour and orientation
 
@@ -106,10 +108,11 @@ dplyr::bind_rows(
                caption = "Orientation non-response against vividness")
 ```
 
-v1 is 80% of the participants and shows nothing. The pooled estimate is
-driven by v3, which is simultaneously the most aphantasia-heavy version and
-the one with by far the highest non-response, so pooling manufactured an
-association that neither version contains.
+v1 is `r round(100 * mean(by_participant$version == "v1"))`% of the
+participants with a vividness score and shows nothing. The pooled estimate
+is driven by v3, which is both heavily aphantasic — 17 of its 21
+participants — and by far the highest in non-response, so pooling
+manufactured an association that neither version contains.
 
 This one did more than get withdrawn: it is the concrete reason the
 [version scope](version-scope.html) decision is not bureaucratic.

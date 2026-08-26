@@ -74,9 +74,23 @@ joint_model <- fit_brms_model(
 
 ## 1. The sample is larger here, deliberately
 
-Every other modelling page uses the `r length(engaged_ids(v1))` participants
-who clear the engagement thresholds. This one uses all
-`r dplyr::n_distinct(model_data$id)` with a vividness score.
+```{r sample}
+engaged <- engaged_ids(v1)
+
+# `model_data` already excludes participants with no vividness score, so
+# this is "clears the thresholds AND has a VVIQ" -- the sample the
+# composition and performance pages model.
+comparison_sample <- dplyr::n_distinct(
+  dplyr::filter(model_data, id %in% engaged)$id
+)
+```
+
+`r length(engaged)` participants clear the engagement thresholds, and
+`r comparison_sample` of those also have a vividness score: that is the
+sample every other modelling page uses. This one uses all
+`r dplyr::n_distinct(model_data$id)` v1 participants with a vividness
+score, thresholds or no. [The analysis](analysis-strategy.html#samples)
+sets out the whole chain in one table.
 
 The thresholds exist to stop imprecise participant *means* being treated as
 measurements, and this model forms no participant means. More to the point,
@@ -89,10 +103,25 @@ joint_formula()
 ```
 
 The `subset()` terms are what let one trial carry six responses with
-independent non-response. `parity_rate` is on the accuracy arms only: it is
-the dual-task load a participant actually incurred, and the [task
-engagement](engagement.html) page shows it does not predict whether they
-respond.
+independent non-response, and what let a participant contribute to a gate
+whether or not they ever answered that feature. `parity_rate` is on the
+accuracy arms only: it is the dual-task load a participant actually
+incurred, and the [task engagement](engagement.html) page shows it does
+not predict whether they respond.
+
+The fifteen correlations are the object of interest, in four families:
+
+| Family | Question | Reported in |
+|---|---|---|
+| Response and accuracy, within a feature | Was conditioning on responding legitimate, and is the effect feature-specific or a general engagement trait? | §2 |
+| Accuracy and accuracy, across features | Does doing well on one feature cost another, between people? | §3 |
+| Response and response, across features | Do people who skip one feature skip others? | §5 |
+| The six cross terms | Everything else | §5 |
+
+Which of them are foregrounded was fixed in advance, in three tiers, so
+that choosing among fifteen after seeing them is not possible. The six in
+the first two families were pre-specified; the nine in §5 were not, and
+are labelled exploratory there.
 
 ## 2. Was analysing responded trials only legitimate?
 
@@ -124,12 +153,19 @@ correlations <- posterior_correlations(
 
 correlations |>
   dplyr::filter(family == "Selection") |>
-  dplyr::select(pair, median, lower, upper, pd) |>
+  dplyr::select(pair, median, lower, upper, pd, moved) |>
   knitr::kable(digits = 3, caption = "Reporting against accuracy, within a feature")
 ```
 
 Neither. It is **feature-specific**: substantial for orientation, absent for
 word and colour.
+
+The `moved` column is the prior check. These correlations are estimated
+under `lkj(4)`, which is informative on a 6×6 matrix, so a posterior no
+narrower than the marginal that prior implies has not learned anything
+from the data. `TRUE` means it did. The [implementation
+notes](implementation-notes.html#priors) give the marginal standard
+deviations the comparison uses.
 
 That is a third case the rule did not anticipate, and it is recorded as one
 rather than filed under whichever branch it resembles. What follows from it
@@ -143,7 +179,11 @@ Two things make the orientation result more credible rather than less.
 It replicates: estimated from orientation alone it is 0.52, and with all
 six responses in the model 0.56, so it is not an artifact of the smaller
 specification. Both numbers in the table below are read from the fitted
-models rather than transcribed. And orientation is the one feature whose gate is
+models rather than transcribed. (The [analysis
+strategy](analysis-strategy.html) page gives the orientation-only figure as
+0.51: `posterior_correlations()` returns posterior **medians** and
+`report_rope()` returns **means**, and on this posterior they differ in the
+second digit. Same parameter, two summaries.) And orientation is the one feature whose gate is
 *inferred* rather than observed: an untouched widget returns 90 degrees, so
 genuine 90-degree responses are miscoded as non-responses. That miscoding
 removes guaranteed-wrong trials from the accuracy of exactly the
@@ -155,7 +195,7 @@ participants with low measured response rates, which pushes the correlation
 ```{r tradeoff}
 correlations |>
   dplyr::filter(family == "Trade-off") |>
-  dplyr::select(pair, median, lower, upper, pd) |>
+  dplyr::select(pair, median, lower, upper, pd, moved) |>
   knitr::kable(digits = 3, caption = "Accuracy against accuracy, across features")
 ```
 
@@ -276,11 +316,6 @@ values, the cross is where the above-floor relationship predicts they
 would be, and the arrow is the gap between them. Here there is barely a
 gap, which is the visual form of the row in the table above.
 
-The violin on the left is the model's estimate for the floor group; the
-points at 16 are those participants' own rates. The estimate sits exactly
-where the above-floor relationship predicts, which is the visual form of
-the row in the table.
-
 **On accuracy the picture is the one the other pages found.** Word's offset
 is positive and excludes zero, colour's is negative and touches it, and
 orientation's is centred near zero. Word's accuracy row is excluded from
@@ -300,7 +335,7 @@ correlations |>
   dplyr::mutate(family = factor(
     family, levels = c("Reporting, across features", "Cross terms"))) |>
   dplyr::arrange(family, -abs(median)) |>
-  dplyr::select(family, pair, median, lower, upper, pd) |>
+  dplyr::select(family, pair, median, lower, upper, pd, moved) |>
   knitr::kable(digits = 3, caption = "The nine remaining correlations")
 ```
 
@@ -318,8 +353,10 @@ consistent within participants is not noise.
 
 The simpler models, reported in full on the
 [performance](performance.html) page, are the same data through a simpler
-lens, so agreement is a robustness check and not independent evidence. They also run on 79
-participants against this model's `r dplyr::n_distinct(model_data$id)`.
+lens, so agreement is a robustness check and not independent evidence. They
+also run on `r comparison_sample` participants against this model's
+`r dplyr::n_distinct(model_data$id)`, so the comparison below is
+approximate by construction.
 
 ```{r sanity}
 # Loaded rather than transcribed: the comparison stays true if either

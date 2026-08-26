@@ -7,8 +7,6 @@
 
 <a href="https://osf.io/3649s/" target="_blank"><img src="https://img.shields.io/badge/OSF-https://osf.io/3649s/-337AB7?logo=osf" alt="OSF badge"/></a>
 <a href="https://m-delem.github.io/aphantasiaWMStrats/" target="_blank"><img alt="Docs badge" src="https://img.shields.io/badge/Documentation-website-009e73?style=flat&logo=Google%20Docs&logoColor=009e73&logoSize=auto"/></a>
-[![Codecov test
-coverage](https://codecov.io/gh/m-delem/aphantasiaWMStrats/graph/badge.svg)](https://app.codecov.io/gh/m-delem/aphantasiaWMStrats)
 <!-- badges: end -->
 
 aphantasiaWMStrats is a data analysis project and an *Extended Online
@@ -62,7 +60,7 @@ listed without a link.
 **What was measured**
 
 - [**The
-  sample**](https://m-delem.github.io/aphantasiaWMStrats/articles/sample-description.html):
+  participants**](https://m-delem.github.io/aphantasiaWMStrats/articles/participants.html):
   who took part, and the recruitment difference between task versions
   that constrains every analysis after it.
 - [**Task
@@ -109,24 +107,24 @@ Imagery groups fixed in advance.
 - [**The analysis: what is modelled, and
   why**](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.html):
   why declining to report a feature is treated as a behaviour rather
-  than missing data, what the primary model is, and what was fixed
+  than missing data, how imagery enters every model, and what was fixed
   before any model was fitted.
+- [**Composition**](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.html):
+  **the primary analysis.** Relative allocation across the three
+  features, independently of overall performance. Participants at the
+  imagery floor divide effort differently; cognitive style does not
+  predict it, one dimension of inner experience does, and participants’
+  own accounts of what they were doing converge with the behaviour.
+- [**Performance**](https://m-delem.github.io/aphantasiaWMStrats/articles/performance.html):
+  the same data read as absolute per-feature accuracy. Includes the
+  clearest picture of why one of the three features cannot carry an
+  individual-differences claim.
 - [**The joint
   model**](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.html):
-  the centre of the report. Whether a feature was reported and how well
-  it was reported, modelled together across all three features, with the
-  fifteen correlations between those six quantities as the object of
-  interest. Willingness to report turns out to be a strong
-  participant-level trait, and it links to accuracy on one feature only.
-- [**Performance**](https://m-delem.github.io/aphantasiaWMStrats/articles/performance.html):
-  absolute per-feature accuracy, as a robustness check on the joint
-  model. Includes the clearest picture of why one of the three features
-  cannot carry an individual-differences claim.
-- [**Composition**](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.html):
-  relative allocation across the three features, independently of
-  overall performance. Participants at the imagery floor divide effort
-  differently, and the page is explicit about what a ratio can and
-  cannot tell you.
+  whether the primary analysis was entitled to condition on responded
+  trials, plus two findings no other page can reach — willingness to
+  report is a strong individual trait, and there is no between-person
+  trade-off between features.
 
 **Exploratory modelling**
 
@@ -135,10 +133,11 @@ Groups not fixed in advance, and labelled exploratory throughout.
 - [**Beyond
   vividness**](https://m-delem.github.io/aphantasiaWMStrats/articles/beyond-vividness.html):
   whether the questionnaires contain structure the imagery split misses.
-  As a group structure, no. On one dimension, yes: participants
-  reporting no voluntary imagery describe markedly more *unsymbolised
-  thinking*, which is a claim about what aphantasic experience is rather
-  than what it lacks.
+  As a group structure, no. On one dimension, yes: reported
+  *unsymbolised thinking* rises steadily as imagery vividness falls,
+  across the whole range rather than at the floor. That is a claim about
+  what low-vividness experience is rather than what it lacks — and a
+  gradient, not a property of aphantasia specifically.
 
 **Technical**
 

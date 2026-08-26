@@ -1,5 +1,5 @@
 ---
-title: "The sample: who took part"
+title: "The participants: who took part"
 output: rmarkdown::html_vignette
 bibliography: ../references.bib
 csl: ../apa.csl
@@ -23,12 +23,23 @@ theme_set(theme_pdf(base_size = 16))
 Who these participants are, and one thing about how they were recruited
 that constrains what any analysis here can claim.
 
-This page describes **all `r nrow(all_data |> dplyr::distinct(id))`
-participants across the three task versions**. The behavioural analyses
-use v1 alone and the questionnaire analyses pool all three; section 3 is
-where that split comes from.
+This page describes **all `r dplyr::n_distinct(all_data$id)` people who
+took part across the three task versions**. The behavioural analyses use
+v1 alone and the questionnaire analyses pool all three; section 3 is where
+that split comes from.
+
+One caveat about counting, because two totals circulate on this site and
+both are correct. **One participant completed the task twice, once in v1
+and once in v3**, so there are `r dplyr::n_distinct(all_data$id)` people
+and `r nrow(dplyr::distinct(all_data, id, version))` person-sessions.
+Anything about a *person* — age, gender, education, imagery group — is
+counted per person below. Anything about a *version* is counted per
+session, because that participant did two different versions of the task
+and each one is a separate observation of the design.
 
 ```{r data}
+# One row per person, for the demographic and imagery-group tables. The
+# repeat participant's v1 session is the one kept.
 participants <- all_data |>
   dplyr::distinct(id, .keep_all = TRUE) |>
   dplyr::mutate(
@@ -44,6 +55,9 @@ participants <- all_data |>
       TRUE ~ "Non-binary or self-described"
     )
   )
+
+# One row per person-session, for anything counted by version.
+sessions <- dplyr::distinct(all_data, id, version, .keep_all = TRUE)
 
 extra <- dplyr::bind_rows(participants$extra_demographics)
 ```
@@ -91,10 +105,28 @@ extra |>
 
 ## 2. By imagery group
 
-Imagery vividness is measured by the VVIQ, and the four-way split below is
-the conventional one. The modelling pages use a **two-way** split instead,
-between participants at the scale floor and everyone above it, and the
-[analysis strategy](analysis-strategy.html) page explains why.
+Imagery vividness is measured by the VVIQ [@marksVisualImageryDifferences1973],
+whose sixteen items give a total between 16 and 80. **Three different
+groupings of that score appear on this site**, and they are not
+interchangeable, so they are set out together here.
+
+| Grouping | Column | Definition |
+|---|---|---|
+| Four-way, used below | `vviq_group_4` | aphantasia = 16 (the scale floor), hypophantasia 17–32, typical 33–74, hyperphantasia ≥ 75 |
+| Two-way, descriptive | `vviq_group_2` | aphantasia ≤ 32, typical ≥ 33 |
+| Floor split, used by every model | not stored | at the floor (16) against everyone above it |
+
+The four-way split divides the low end of the scale at the floor itself,
+following @reederNonvisualSpatialStrategies2024. That is **narrower than
+the convention a reader may assume**: the widely used aphantasia cutoff of
+32 is what `vviq_group_2` applies, and it corresponds here to
+aphantasia *plus* hypophantasia. The two columns therefore both have a
+level called `aphantasia` and the two levels are not the same people.
+
+The modelling pages use the third grouping, between participants at the
+scale floor and everyone above it, and the [analysis
+strategy](analysis-strategy.html) page explains why. It coincides with
+`vviq_group_4`'s aphantasia level and not with `vviq_group_2`'s.
 
 ```{r groups}
 participants |>
@@ -107,6 +139,13 @@ participants |>
   ) |>
   knitr::kable(caption = "By VVIQ group")
 ```
+
+That table counts `r sum(!is.na(participants$vviq_total_score))` people
+rather than `r nrow(participants)`:
+`r sum(is.na(participants$vviq_total_score))` did not complete the VVIQ.
+They are absent from every model on this site as well, since every model
+reports a floor-group offset and neither can be placed on either side of
+the floor.
 
 ```{r vviq-distribution, fig.alt="Distribution of VVIQ scores, with the floor group highlighted."}
 plot_vviq_histogram(participants$vviq_total_score, base_size = 16) +
@@ -126,16 +165,17 @@ A model fitting one slope through all of it would describe neither part.
 This is the constraint worth carrying into every other page.
 
 ```{r recruitment}
-participants |>
+sessions |>
   dplyr::summarise(
     n = dplyr::n(),
     at_vviq_floor = sum(vviq_total_score == 16, na.rm = TRUE),
     percent_floor = round(100 * mean(vviq_total_score == 16, na.rm = TRUE)),
+    typical_imagers = sum(vviq_group_2 == "typical", na.rm = TRUE),
     median_age = stats::median(age),
     .by = version
   ) |>
   dplyr::arrange(version) |>
-  knitr::kable(caption = "By task version")
+  knitr::kable(caption = "By task version, counted per person-session")
 ```
 
 The three versions recruited **different populations**. v1 is roughly a
@@ -146,17 +186,19 @@ partly through aphantasia community channels.
 Two consequences run through the whole site.
 
 **The behavioural analyses use v1 only.** Not because v2 and v3 are worse
-data, but because a group comparison needs both groups: v2 has nine
-participants and v3 has twenty, with four and one typical imagers
-respectively. The [version scope](version-scope.html) page sets out the
-full argument, including a case where pooling the three produced an
-association that stratification removed.
+data, but because a group comparison needs both groups, and the
+`typical_imagers` column above is where that fails: v2 and v3 have single
+figures. The [version scope](version-scope.html) page sets out the full
+argument, including a case where pooling the three produced an association
+that stratification removed.
 
-**The questionnaire analyses pool all three**, because the instruments are
-identical and were administered identically in every version, so version
-is a property of the task rather than of the scales. That decision is
-checked rather than assumed on the [beyond
-vividness](beyond-vividness.html) page.
+**Most questionnaire analyses pool all three**, because the instruments
+are identical and were administered identically in every version, so
+version is a property of the task rather than of the scales. That decision
+is checked rather than assumed on the [beyond
+vividness](beyond-vividness.html) page. The exception is
+[psychometrics](psychometrics.html), which stays on v1 so that its
+reliabilities describe the sample the modelling pages use.
 
 ## 4. What was administered
 

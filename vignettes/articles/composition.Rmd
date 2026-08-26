@@ -62,33 +62,66 @@ all_parts <- compose_features(v1, id) |>
 
 engaged_parts <- dplyr::filter(all_parts, id %in% engaged_ids(v1))
 
-model_data <- engaged_parts |>
-  dplyr::left_join(participant_info, by = "id") |>
-  dplyr::filter(!is.na(vviq))
-
-model_data <- model_data |>
-  dplyr::bind_cols(
-    ilr_coords(dplyr::select(model_data, tidyselect::starts_with("part_")))
-  ) |>
-  dplyr::mutate(
-    complete_aphant = factor(
-      dplyr::if_else(vviq == 16, "floor", "above_floor"),
-      levels = c("above_floor", "floor")
+add_coordinates <- function(parts) {
+  parts |>
+    dplyr::bind_cols(
+      ilr_coords(dplyr::select(parts, tidyselect::starts_with("part_")))
+    ) |>
+    dplyr::left_join(participant_info, by = "id") |>
+    dplyr::mutate(
+      complete_aphant = factor(
+        dplyr::if_else(vviq == 16, "floor", "above_floor"),
+        levels = c("above_floor", "floor")
+      )
     )
-  ) |>
-  # The questionnaire scales, for section 5. Standardised because the
-  # instruments sit on incompatible ranges: OSIVQ runs 1-5, NIEQ 0-100.
-  #
-  # An inner join, so participants missing any questionnaire scale drop
-  # out here. Section 5 says how many and section 4 is unaffected: it is
-  # fitted on its own frame, not this one.
+}
+
+# Three frames, named separately rather than one object reassigned. Each
+# section states which it uses, and each is the frame the corresponding
+# script fitted on. A single reassigned `model_data` is how a page ends up
+# describing one sample and displaying another.
+#
+# Section 6 needs a composition and a strategy report and nothing else, so
+# it keeps every engaged participant, with or without a vividness score.
+# `inst/scripts/14-strategy-convergence.R` does the same, deliberately.
+reported <- add_coordinates(engaged_parts)
+
+# Sections 4, 7 and 8 additionally need vividness. This is the frame
+# `inst/scripts/11-compositional-analysis.R` fits `comp-floor` on.
+model_data <- dplyr::filter(reported, !is.na(vviq))
+
+# Section 5 additionally needs the questionnaire scales. Standardised
+# because the instruments sit on incompatible ranges (OSIVQ runs 1-5,
+# NIEQ 0-100) -- and standardised **after** the join, on the participants
+# who enter that model, exactly as
+# `inst/scripts/15-allocation-and-style.R` does. A z-score computed on a
+# different sample is a different predictor.
+style_data <- model_data |>
   dplyr::inner_join(
     questionnaire_scales(all_data) |>
       dplyr::select(id, tidyselect::starts_with("osivq_"),
-                    tidyselect::starts_with("nieq_")) |>
-      dplyr::mutate(dplyr::across(-id, \(x) as.numeric(scale(x)))),
+                    tidyselect::starts_with("nieq_")),
     by = "id"
+  ) |>
+  dplyr::mutate(
+    dplyr::across(
+      c("osivq_object", "osivq_spatial", "osivq_verbal",
+        "nieq_inner_voice", "nieq_unsymbolised"),
+      \(x) as.numeric(scale(x))
+    )
   )
+```
+
+```{r samples}
+tibble::tibble(
+  frame = c("All three parts present", "Clearing the thresholds",
+            "With a vividness score", "With the questionnaire scales"),
+  used_in = c("Section 2", "Sections 2, 3 and 6",
+              "Sections 4, 7 and 8", "Section 5"),
+  participants = c(nrow(all_parts), nrow(engaged_parts),
+                   nrow(model_data), nrow(style_data))
+) |>
+  knitr::kable(caption = "The frames this page uses, counted rather than stated")
 ```
 
 ## 1. What a composition is, and why proportions will not do
@@ -194,7 +227,15 @@ composition_model <- fit_brms_model(
   file    = system.file("models", "comp-floor.rds", package = pkg),
   file_refit = refit
 )
+
+# `file_refit = "never"` returns the cached fit without checking that the
+# data it was handed matches the data it was fitted on, so the check is
+# made here instead of assumed.
+stopifnot(nrow(model_data) == nrow(composition_model$data))
 ```
+
+This runs on the `r nrow(model_data)` participants who clear the
+engagement thresholds **and** have a vividness score.
 
 Imagery vividness enters in the form the [analysis
 strategy](analysis-strategy.html) page describes: a slope among everyone
@@ -241,11 +282,16 @@ spatialiser the orientation.
 Section 4 tests only the vividness axis, which is the one the prediction
 names as insufficient. This section tests the prediction itself.
 
-This section runs on `r nrow(model_data)` participants rather than the
-`r nrow(engaged_parts)` of section 4: it needs the questionnaire scales,
-and `r nrow(engaged_parts) - nrow(model_data)` participants are missing at
-least one of them. Section 4's result is unaffected, being fitted on the
-larger frame.
+This section runs on `r nrow(style_data)` participants rather than the
+`r nrow(model_data)` of section 4: it needs the questionnaire scales, and
+the `r nrow(model_data) - nrow(style_data)` participant dropped here has
+NIEQ scores but no OSIVQ ones. Section 4's result is unaffected, being
+fitted on the larger frame.
+
+The step before that one is worth naming too, because both are easy to
+conflate. `r nrow(engaged_parts)` participants clear the engagement
+thresholds; `r nrow(engaged_parts) - nrow(model_data)` of them have no
+VVIQ score, which is what takes section 4 to `r nrow(model_data)`.
 
 **The predictor set was chosen from the questionnaires alone**, never from
 how any of them relates to allocation, which is what keeps the choice
@@ -262,11 +308,13 @@ style_model <- fit_brms_model(
   formula = composition_formula(
     paste("vviq + complete_aphant + osivq_spatial + osivq_verbal +",
           "nieq_inner_voice + nieq_unsymbolised")),
-  data    = model_data,
+  data    = style_data,
   prior   = composition_priors(),
   file    = system.file("models", "alloc-full.rds", package = pkg),
   file_refit = refit
 )
+
+stopifnot(nrow(style_data) == nrow(style_model$data))
 
 knitr::kable(
   brms::fixef(style_model)[, c("Estimate", "Q2.5", "Q97.5")],
@@ -294,11 +342,11 @@ draws <- brms::as_draws_df(style_model)
 dplyr::bind_rows(
   dplyr::mutate(
     report_rope(draws$b_ilr1_nieq_inner_voice,
-                outcome_sd = stats::sd(model_data$ilr1)),
+                outcome_sd = stats::sd(style_data$ilr1)),
     term = "Inner voice"),
   dplyr::mutate(
     report_rope(draws$b_ilr1_nieq_unsymbolised,
-                outcome_sd = stats::sd(model_data$ilr1)),
+                outcome_sd = stats::sd(style_data$ilr1)),
     term = "Unsymbolised thinking")
 ) |>
   dplyr::relocate(term) |>
@@ -329,7 +377,7 @@ no relationship.
 
 Comparing the two predictor sets formally leans toward the simpler one
 without settling it, by 3.8 elpd against a standard error of 3.0. At that
-separation the data do not distinguish them, which is what `r nrow(model_data)` participants
+separation the data do not distinguish them, which is what `r nrow(style_data)` participants
 and four extra predictors should be expected to produce.
 
 ## 6. Do participants know they are doing it?
@@ -344,17 +392,20 @@ composition can offer is **convergence**: an independent measurement that
 either tracks the same distinctions or does not.
 
 ```{r convergence}
+participants <- dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)
+
 prioritisation <-
-  dplyr::bind_rows(
-    dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)$strategy_items
-  ) |>
-  dplyr::mutate(id = dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)$id) |>
+  dplyr::bind_rows(participants$strategy_items) |>
+  dplyr::mutate(id = participants$id) |>
   dplyr::select(id, tidyselect::starts_with("strats_cfa_q04")) |>
   tidyr::pivot_longer(-id, names_to = "slot", values_to = "feature") |>
   dplyr::filter(!is.na(feature)) |>
   dplyr::summarise(kept = sum(feature != "none"), .by = id)
 
-convergence <- dplyr::inner_join(model_data, prioritisation, by = "id") |>
+# `reported`, not `model_data`: this question needs a composition and a
+# report, not a vividness score, and restricting it would publish a
+# different number from the one `inst/scripts/14` computes.
+convergence <- dplyr::inner_join(reported, prioritisation, by = "id") |>
   dplyr::filter(kept > 0)
 
 convergence |>
@@ -454,19 +505,64 @@ The forms with a discontinuity sit above those without one, by roughly one
 to one and a half standard errors. That is weak, it was predicted to be
 weak in advance, and it is reported rather than converted into a claim.
 
-**The result survives at trial level.** Each trial is itself a composition,
-and 96% of them are usable without any zero replacement, so the same
-question can be asked with within-person noise separated from
-between-person signal rather than averaged into it.
+**The result survives at trial level.** Each trial is itself a
+composition, so the same question can be asked with within-person noise
+separated from between-person signal rather than averaged into it. Whether
+that is possible at all is an empirical question about zeros, since a
+log-ratio transform needs every part strictly positive:
+
+```{r trial-frame}
+trial_parts <- v1 |>
+  dplyr::filter(id %in% model_data$id) |>
+  dplyr::mutate(trial_uid = paste(expe_phase, trial_number, sep = "_")) |>
+  compose_features(id, trial_uid, trial_number)
+
+usable <- trial_parts |>
+  dplyr::filter(
+    stats::complete.cases(dplyr::pick(tidyselect::starts_with("part_"))),
+    dplyr::if_all(tidyselect::starts_with("part_"), \(x) x > 0)
+  )
+
+tibble::tibble(
+  compositions = nrow(trial_parts),
+  usable = nrow(usable),
+  share = nrow(usable) / nrow(trial_parts)
+) |>
+  knitr::kable(digits = 3,
+               caption = "Trial-level compositions usable without zero replacement")
+```
+
+Dropped rather than imputed: there is no zero-replacement strategy worth
+defending for that share of rows, and an unbalanced multilevel model
+handles the loss natively.
 
 ```{r trial-level}
+trial_data <- usable |>
+  dplyr::bind_cols(
+    ilr_coords(dplyr::select(usable, tidyselect::starts_with("part_")))
+  ) |>
+  dplyr::left_join(participant_info, by = "id") |>
+  dplyr::mutate(
+    complete_aphant = factor(
+      dplyr::if_else(vviq == 16, "floor", "above_floor"),
+      levels = c("above_floor", "floor")
+    ),
+    trial_c = as.numeric(scale(trial_number, scale = FALSE))
+  )
+
 trial_model <- fit_brms_model(
   formula = composition_formula(
     "vviq + complete_aphant + parity_rate + trial_c + (1 | p | id)"),
-  data    = model_data,
+  data    = trial_data,
+  prior   = composition_priors(),
+  # The per-participant deviations are discarded; the `sd` and `sigma`
+  # hyperparameters the intraclass correlation below needs are kept.
+  save_pars = brms::save_pars(group = FALSE),
   file    = system.file("models", "comp-trial-multilevel.rds", package = pkg),
   file_refit = refit
 )
+
+stopifnot(nrow(trial_data) == nrow(trial_model$data))
 
 knitr::kable(brms::fixef(trial_model)[, c("Estimate", "Q2.5", "Q97.5")],
              digits = 4, caption = "Trial-level model, population-level effects")
