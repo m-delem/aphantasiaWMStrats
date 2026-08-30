@@ -51,7 +51,7 @@ see the codebook that ships alongside `all_data_surveys` and
 `all_data_full` on [OSF](https://osf.io/3649s/files/osfstorage), the two flat 
 exports built for sharing this data outside the package.
 
-## Identifiers and version
+## Identifiers and version {#code-identifiers}
 
 ```{r core-summary-fn}
 summarise_column <- function(data, colname) {
@@ -96,7 +96,7 @@ identifier_variables |>
   knitr::kable()
 ```
 
-## Trial and item structure
+## Trial and item structure {#code-structure}
 
 ```{r trial-structure}
 trial_structure_variables <- tibble::tribble(
@@ -117,7 +117,7 @@ trial_structure_variables |>
   knitr::kable()
 ```
 
-## Stimulus content and response
+## Stimulus content and response {#code-stimulus}
 
 ```{r stimulus-content}
 stimulus_variables <- tibble::tribble(
@@ -156,7 +156,7 @@ stimulus_variables |>
 v2/v3 carry a real parity-error penalty in the task design; the parity
 columns exist for v1 too, but the penalty was not applied at recall.
 
-## Recall scores
+## Recall scores {#code-scores}
 
 These are the analysis variables. They are computed in R from the raw
 target and response values by `compute_scores()`, not derived from the
@@ -196,7 +196,7 @@ recall_score_variables |>
   knitr::kable()
 ```
 
-## Live feedback from the task display
+## Live feedback from the task display {#code-feedback}
 
 **Not analysis variables.** These drove the feedback screen participants
 saw between trials, and are kept for provenance and reproducibility only.
@@ -240,7 +240,7 @@ Tutorial rows carry placeholder values in these columns: every
 `live_diff_*` is exactly 1 and every `feedback_score_*` exactly 0,
 regardless of what the participant did.
 
-## Questionnaire scores
+## Questionnaire scores {#code-questionnaires}
 
 Raw questionnaire items are in the nested list-columns described at the end
 of this page, not here: these are the derived, cross-version-comparable
@@ -277,7 +277,7 @@ item text is copyrighted by their respective authors - see
 @marksVisualImageryDifferences1973, @blazhenkovaNewObjectSpatialVerbal2009,
 and @heaveyMeasuringFrequencyInnerExperience2019 for the original items.
 
-## Demographics
+## Demographics {#code-demographics}
 
 ```{r demographics}
 demographic_variables <- tibble::tribble(
@@ -314,7 +314,7 @@ demographic_variables |>
 table above lists the observed values as-is rather than collapsing them
 into fixed categories.
 
-## Nested item list-columns
+## Nested item list-columns {#code-nested}
 
 Five list-columns hold the raw questionnaire and strategy-report items,
 kept nested rather than forced into a common wide schema, because v1/v2 and
@@ -352,7 +352,7 @@ vignettes. Get back to the [home page](https://m-delem.github.io/aphantasiaWMStr
 
 ---
 
-## References
+## References {#code-refs}
 
 <div id="refs"></div>
 

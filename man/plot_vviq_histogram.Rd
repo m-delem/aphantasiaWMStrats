@@ -13,7 +13,7 @@ plot_vviq_histogram(
   floor_alpha = 0.5,
   gradient = ggplot2::scale_fill_viridis_c(option = "viridis", guide = "none"),
   left_expansion = 0.09,
-  base_size = 7
+  ...
 )
 }
 \arguments{
@@ -34,7 +34,8 @@ by bin midpoint, or \code{NULL} for a plain fill.}
 \item{left_expansion}{Fraction of the x range added on the left. Share
 it with \code{\link[=plot_floor_group]{plot_floor_group()}} so stacked panels align.}
 
-\item{base_size}{Passed to \code{\link[=theme_pdf]{theme_pdf()}}.}
+\item{...}{Additional arguments passed to the \code{\link[=theme_pdf]{theme_pdf()}} function for
+further customization of the plot theme.}
 }
 \value{
 A ggplot object with the x axis stripped, for stacking.

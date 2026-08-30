@@ -11,31 +11,33 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 4.5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
   error = FALSE
 )
-library(aphantasiaWMStrats)
+# library(aphantasiaWMStrats)
+devtools::load_all()
 library(ggplot2)
 theme_set(theme_pdf(base_size = 16))
 ```
 
-Who these participants are, and one thing about how they were recruited
-that constrains what any analysis here can claim.
+This page describes **all `r dplyr::n_distinct(all_data$id)` people who took
+part across the three task versions**. The behavioural analyses use v1 alone and
+the questionnaire analyses pool all three; section 3 is where that split comes
+from.
 
-This page describes **all `r dplyr::n_distinct(all_data$id)` people who
-took part across the three task versions**. The behavioural analyses use
-v1 alone and the questionnaire analyses pool all three; section 3 is where
-that split comes from.
-
-One caveat about counting, because two totals circulate on this site and
-both are correct. **One participant completed the task twice, once in v1
-and once in v3**, so there are `r dplyr::n_distinct(all_data$id)` people
-and `r nrow(dplyr::distinct(all_data, id, version))` person-sessions.
-Anything about a *person* — age, gender, education, imagery group — is
-counted per person below. Anything about a *version* is counted per
-session, because that participant did two different versions of the task
-and each one is a separate observation of the design.
+One caveat about counting, because two totals circulate on this site and both
+are correct. **One participant completed the task twice, once in v1 and once in
+v3**, so there are `r dplyr::n_distinct(all_data$id)` people and
+`r nrow(dplyr::distinct(all_data, id, version))` person-sessions. Anything about
+a *person* (age, gender, education, imagery group) is counted per person below.
+Anything about a *version* is counted per session, because that participant did
+two different versions of the task and each one is a separate observation of the
+design.
 
 ```{r data}
 # One row per person, for the demographic and imagery-group tables. The
@@ -62,7 +64,7 @@ sessions <- dplyr::distinct(all_data, id, version, .keep_all = TRUE)
 extra <- dplyr::bind_rows(participants$extra_demographics)
 ```
 
-## 1. Overall
+## 1. Overall {#part-overall}
 
 ```{r overall}
 # Named `n_participants`, not `participants`: inside tibble() later
@@ -87,10 +89,9 @@ participants |>
 ```
 
 A predominantly French, predominantly women sample, skewed toward higher
-education: `r sum(grepl("master|doctorat", extra$education))` of
-`r nrow(extra)` hold a master's degree or a doctorate. That matters mainly
-for generalisation, and it is the usual profile for online volunteer
-studies of this kind.
+education: `r sum(grepl("master|doctorat", extra$education))` of `r nrow(extra)`
+hold a master's degree or a doctorate. That matters mainly for generalisation,
+and it is the usual profile for online volunteer studies of this kind.
 
 ```{r education}
 extra |>
@@ -103,30 +104,30 @@ extra |>
   knitr::kable(caption = "Highest completed education (ISCED)")
 ```
 
-## 2. By imagery group
+## 2. By imagery group {#part-groups}
 
 Imagery vividness is measured by the VVIQ [@marksVisualImageryDifferences1973],
-whose sixteen items give a total between 16 and 80. **Three different
-groupings of that score appear on this site**, and they are not
-interchangeable, so they are set out together here.
+whose sixteen items give a total between 16 and 80. **Three different groupings
+of that score appear on this site**, and they are not interchangeable, so they
+are set out together here.
 
 | Grouping | Column | Definition |
-|---|---|---|
+|----|----|----|
 | Four-way, used below | `vviq_group_4` | aphantasia = 16 (the scale floor), hypophantasia 17–32, typical 33–74, hyperphantasia ≥ 75 |
 | Two-way, descriptive | `vviq_group_2` | aphantasia ≤ 32, typical ≥ 33 |
 | Floor split, used by every model | not stored | at the floor (16) against everyone above it |
 
 The four-way split divides the low end of the scale at the floor itself,
-following @reederNonvisualSpatialStrategies2024. That is **narrower than
-the convention a reader may assume**: the widely used aphantasia cutoff of
-32 is what `vviq_group_2` applies, and it corresponds here to
-aphantasia *plus* hypophantasia. The two columns therefore both have a
-level called `aphantasia` and the two levels are not the same people.
+following @reederNonvisualSpatialStrategies2024. That is **narrower than the
+convention a reader may assume**: the widely used aphantasia cutoff of 32 is
+what `vviq_group_2` applies, and it corresponds here to aphantasia *plus*
+hypophantasia. The two columns therefore both have a level called `aphantasia`
+and the two levels are not the same people.
 
-The modelling pages use the third grouping, between participants at the
-scale floor and everyone above it, and the [analysis
-strategy](analysis-strategy.html) page explains why. It coincides with
-`vviq_group_4`'s aphantasia level and not with `vviq_group_2`'s.
+The modelling pages use the third grouping, between participants at the scale
+floor and everyone above it, and the [analysis strategy](analysis-strategy.html)
+page explains why. It coincides with `vviq_group_4`'s aphantasia level and not
+with `vviq_group_2`'s.
 
 ```{r groups}
 participants |>
@@ -140,29 +141,26 @@ participants |>
   knitr::kable(caption = "By VVIQ group")
 ```
 
-That table counts `r sum(!is.na(participants$vviq_total_score))` people
-rather than `r nrow(participants)`:
-`r sum(is.na(participants$vviq_total_score))` did not complete the VVIQ.
-They are absent from every model on this site as well, since every model
-reports a floor-group offset and neither can be placed on either side of
-the floor.
+That table counts `r sum(!is.na(participants$vviq_total_score))` people rather
+than `r nrow(participants)`: `r sum(is.na(participants$vviq_total_score))` did
+not complete the VVIQ. They are absent from every model on this site as well,
+since every model reports a floor-group offset and neither can be placed on
+either side of the floor.
 
 ```{r vviq-distribution, fig.alt="Distribution of VVIQ scores, with the floor group highlighted."}
 plot_vviq_histogram(participants$vviq_total_score, base_size = 16) +
   labs(x = "VVIQ total score",
-       caption = "The floor group is coloured separately.") +
-  theme(axis.text.x = element_text(), axis.ticks.x = element_line(),
-        axis.line.x = element_line())
+       caption = "The floor group is coloured separately.")
 ```
 
-The distribution is the reason the modelling pages treat vividness the way
-they do. It is not a smooth continuum with a low tail: it is a sharp,
-isolated spike at the scale minimum plus an irregular remainder above it.
-A model fitting one slope through all of it would describe neither part.
+The distribution is the reason the modelling pages treat vividness the way they
+do. It is not a smooth continuum with a low tail: it is a sharp, isolated spike
+at the scale minimum plus an irregular remainder above it. A model fitting one
+slope through all of it would describe neither part.
 
-## 3. Recruitment, and why the versions are not interchangeable
+## 3. Recruitment, and why the versions are not interchangeable {#part-recruitment}
 
-This is the constraint worth carrying into every other page.
+This is a constraint carried into every other page.
 
 ```{r recruitment}
 sessions |>
@@ -178,39 +176,37 @@ sessions |>
   knitr::kable(caption = "By task version, counted per person-session")
 ```
 
-The three versions recruited **different populations**. v1 is roughly a
-quarter floor group; v2 and v3 are around two thirds, because later
-recruitment deliberately targeted participants with no visual imagery,
-partly through aphantasia community channels.
+The three versions recruited **different populations**. v1 is roughly a quarter
+floor group; v2 and v3 are around two thirds, because later recruitment
+deliberately targeted participants with no visual imagery, partly through
+aphantasia community channels.
 
 Two consequences run through the whole site.
 
-**The behavioural analyses use v1 only.** Not because v2 and v3 are worse
-data, but because a group comparison needs both groups, and the
-`typical_imagers` column above is where that fails: v2 and v3 have single
-figures. The [version scope](version-scope.html) page sets out the full
-argument, including a case where pooling the three produced an association
-that stratification removed.
+**The behavioural analyses use v1 only.** Not because v2 and v3 are worse data,
+but because a group comparison needs both groups, and the `typical_imagers`
+column above is where that fails: v2 and v3 have single figures. The [version
+scope](version-scope.html) page sets out the full argument, including a case
+where pooling the three produced an association that stratification removed.
 
-**Most questionnaire analyses pool all three**, because the instruments
-are identical and were administered identically in every version, so
-version is a property of the task rather than of the scales. That decision
-is checked rather than assumed on the [beyond
-vividness](beyond-vividness.html) page. The exception is
-[psychometrics](psychometrics.html), which stays on v1 so that its
+**Most questionnaire analyses pool all three**, because the instruments are
+identical and were administered identically in every version, so version is a
+property of the task rather than of the scales. That decision is checked rather
+than assumed on the [beyond vividness](beyond-vividness.html) page. The
+exception is [psychometrics](psychometrics.html), which stays on v1 so that its
 reliabilities describe the sample the modelling pages use.
 
-## 4. What was administered
+## 4. What was administered {#part-measures}
 
-Every participant completed the same battery in the same session: the
-WM-FTT itself, then the VVIQ, the OSIVQ and the NIEQ. The
-[psychometrics](psychometrics.html) page reports how those instruments
-behave in this sample, including one subscale that does not reach its
-reliability threshold and one scoring inconsistency between versions.
+Every participant completed the same battery in the same session: the VVIQ, the
+OSIVQ, the NIEQ, then the WM-FTT itself. The [psychometrics](psychometrics.html)
+page reports how those instruments behave in this sample, including one subscale
+that does not reach its reliability threshold and one scoring inconsistency
+between versions.
 
 Field of study, occupation and recruitment route are recorded in
 `extra_demographics` and are not analysed anywhere: they were collected for
-description rather than as variables.
+description and possible exploratory analyses (not conducted yet).
 
 ```{r fields}
 extra |>
@@ -222,11 +218,15 @@ extra |>
   knitr::kable(caption = "Field of study or work, six most common")
 ```
 
----
+--------------------------------------------------------------------------------
 
-**Continuing through the Extended Online Report:** this is the first page of the report. To keep reading in order, continue to [task design](task-design.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+**Continuing through the Extended Online Report:** this page follows [task
+design](task-design.html). To keep reading in order, continue to
+[scoring](scoring.html) next. Or skip ahead to [the
+analysis](analysis-strategy.html), which explains what the modelling pages do
+and why.
 
----
+--------------------------------------------------------------------------------
 
 ```{r}
 #| label: session_info

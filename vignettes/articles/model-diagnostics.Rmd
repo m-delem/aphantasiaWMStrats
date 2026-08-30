@@ -11,8 +11,12 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 4.5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
   error = FALSE
 )
 library(aphantasiaWMStrats)
@@ -23,10 +27,9 @@ refit <- "never"
 ```
 
 The modelling pages report estimates. This page asks whether the models
-producing them sampled properly and whether their response families
-describe the data. Both questions are usually answered in a sentence; here
-they get the space to be checked, because three of the family choices are
-not obvious.
+producing them sampled properly and whether their response families describe the
+data. Both questions get the space to be checked, because three of the family
+choices are not obvious. The most complex model in the project, the [joint model](joint-model.html), is checked first.
 
 ```{r data}
 v1 <- get_data("v1") |>
@@ -64,18 +67,17 @@ joint_model <- fit_brms_model(
 )
 ```
 
-## 1. Convergence {#convergence}
+## 1. Convergence {#diag-convergence}
 
-Four chains, 3000 iterations each with the first 1000 discarded as warmup,
+The model was fitted with four chains, 3000 iterations each with the first 1000 discarded as warmup,
 giving 2000 kept per chain and 8000 draws in total. `fit_brms_model()`'s
-`iterations` argument is post-warmup draws per chain rather than a total,
-which is why the call reads `iterations = 2000, warmup = 1000`.
+`iterations` argument is post-warmup draws per chain rather than a total, which
+is why the call reads `iterations = 2000, warmup = 1000`.
 
-Those draws cover every parameter in the fitted object, which is the count
-the table below reports. Most of them are the per-participant deviations;
-the model's *structural* size is the 54 parameters section 4 refers to —
-the population-level coefficients, the standard deviations and the fifteen
-correlations.
+Those draws cover every parameter in the fitted object, which is the count the
+table below reports. Most of them are the per-participant deviations; the joint
+model's *structural* size is the 54 main parameters: the population-level
+coefficients, the standard deviations and the fifteen correlations.
 
 ```{r convergence}
 tibble::tibble(
@@ -93,15 +95,14 @@ tibble::tibble(
   knitr::kable(digits = 4, caption = "The joint model")
 ```
 
-Nothing to report, which is the point of reporting it. R-hat below 1.004
-everywhere, no divergent transitions, no saturated treedepths, and the
-worst-sampled parameter still has an effective sample size ratio above
+R-hat below 1.004 everywhere, no divergent transitions, no saturated treedepths,
+and the worst-sampled parameter still has an effective sample size ratio above
 0.12.
 
-That was not guaranteed. A six-response model with fifteen correlated
-random intercepts estimated from 86 participants is the kind of model that
-diverges, which is why it was fitted with `adapt_delta = 0.99` and
-`max_treedepth = 15` from the start.
+That was not guaranteed. A six-response model with fifteen correlated random
+intercepts estimated from 86 participants is the kind of model that diverges,
+which is why it was fitted with `adapt_delta = 0.99` and `max_treedepth = 15`
+from the start.
 
 ```{r rhat-spread, fig.alt="Distribution of R-hat values across all parameters."}
 tibble::tibble(rhat = brms::rhat(joint_model)) |>
@@ -113,15 +114,15 @@ tibble::tibble(rhat = brms::rhat(joint_model)) |>
        caption = "Dashed line marks the conventional 1.01 threshold.")
 ```
 
-## 2. Do the families fit? {#ppc}
+## 2. Do the families fit? {#diag-ppc}
 
 The three recall features get three different response families, and the
 [scoring](scoring.html) page argues for each from what the boundary of that
-feature's scale means. An argument is not a check.
+feature's scale means.
 
-A posterior predictive check draws replicate datasets from the fitted model
-and compares them to the real one. If the family is wrong, the replicates
-look wrong in a visible way.
+A posterior predictive check draws replicate datasets from the fitted model and
+compares them to the real one. If the chosen family is wrong, the replicates look wrong
+in a visible way.
 
 ```{r ppc-orientation, fig.alt="Posterior predictive check for orientation accuracy."}
 brms::pp_check(joint_model, resp = "scoreangle", ndraws = 60) +
@@ -130,9 +131,9 @@ brms::pp_check(joint_model, resp = "scoreangle", ndraws = 60) +
   theme_pdf(base_size = 16)
 ```
 
-Orientation has no boundary mass at all once non-responders are removed,
-so a plain Beta is unremarkable and the replicates track the observed
-density closely.
+Orientation has no boundary mass at all once non-responders are removed, so a
+plain Beta is unremarkable and the replicates track the observed density
+closely.
 
 ```{r ppc-word, fig.alt="Posterior predictive check for word accuracy."}
 brms::pp_check(joint_model, resp = "scoreword", ndraws = 60) +
@@ -140,11 +141,11 @@ brms::pp_check(joint_model, resp = "scoreword", ndraws = 60) +
   theme_pdf(base_size = 16)
 ```
 
-Word is the interesting one. About 91% of responded word items score
-exactly 1 and 3% exactly 0, because a recalled word either matches the
-target or does not. Those are genuine point masses, not rounding, and the
-inflation components are what let the model put mass exactly there. A plain
-Beta cannot: it has zero density at both boundaries.
+Word is the interesting one. About 91% of responded word items score exactly 1
+and 3% exactly 0, because a recalled word either matches the target or does not.
+Those are genuine point masses, not rounding, and the inflation components are
+what let the model put mass exactly there. A plain Beta cannot: it has zero
+density at both boundaries.
 
 ```{r ppc-colour, fig.alt="Posterior predictive check for colour accuracy."}
 brms::pp_check(joint_model, resp = "scorecolor", ndraws = 60) +
@@ -152,13 +153,13 @@ brms::pp_check(joint_model, resp = "scorecolor", ndraws = 60) +
   theme_pdf(base_size = 16)
 ```
 
-Colour is the case where the same reasoning gives the opposite answer. It
-has a trace of mass at 1, but colour score is cosine similarity on a
-continuous wheel, so an exact 1 means an error of exactly zero degrees:
-pixel resolution, not behaviour. Modelling that with an inflation component
-would estimate a process parameter for a rounding artifact on a couple of
-dozen items. The squeeze moves every value by about one ten-thousandth
-instead, and `squeeze_boundaries()` documents the trade.
+Colour is the case where the same reasoning gives the opposite answer. It has a
+trace of mass at 1, but colour score is cosine similarity on a continuous wheel,
+so an exact 1 means an error of exactly zero degrees: pixel resolution, not
+behaviour. Modelling that with an inflation component would estimate a process
+parameter for a rounding artifact on a couple of dozen items. The squeeze moves
+every value by about one ten-thousandth instead, and `squeeze_boundaries()`
+documents the trade.
 
 ```{r ppc-gates, fig.alt="Posterior predictive check for the response gates."}
 patchwork::wrap_plots(
@@ -174,7 +175,7 @@ patchwork::wrap_plots(
 The three gates are Bernoulli, where the check reduces to whether the model
 reproduces the proportion of items answered. It does.
 
-## 3. The compositional model {#composition-diagnostics}
+## 3. The compositional model {#diag-composition}
 
 The [composition](composition.html) page fits both log-ratio coordinates
 together with the residual correlation estimated, which is what makes the
@@ -227,35 +228,19 @@ patchwork::wrap_plots(
 )
 ```
 
-Gaussian is appropriate here for a reason worth stating: log-ratio
-coordinates are unbounded by construction. That is the whole point of
-leaving the simplex, and it is why the [composition](composition.html)
-page can use an ordinary linear model where the accuracy pages cannot.
+Gaussian is appropriate here: log-ratio coordinates
+are unbounded by construction. That is the whole point of leaving the simplex,
+and it is why the [composition](composition.html) page can use an ordinary
+linear model where the accuracy pages cannot.
 
-## 4. What is not checked here
+--------------------------------------------------------------------------------
 
-**Prior sensitivity.** The joint model's priors were chosen per
-coefficient and are documented on the [analysis
-strategy](analysis-strategy.html) page, but no alternative-prior refit was
-run. For the correlations there is a partial substitute: each posterior is
-compared against the marginal implied by the `lkj(4)` prior, and a
-posterior no narrower than its prior is flagged rather than reported.
+**Continuing through the Extended Online Report:** this page follows [beyond
+vividness](beyond-vividness.html). To keep reading in order, continue to
+[implementation notes](implementation-notes.html) next. Or return to [the
+analysis](analysis-strategy.html) for what the models were built to do.
 
-**Cross-validation of the joint model.** Model comparison was run on
-functional form for one feature ([performance](performance.html) §4) and
-on the compositional coordinates ([composition](composition.html) §5 and
-§8), not on the joint model as a whole. With 54 parameters and 86
-participants, a LOO comparison against alternatives would mostly report its
-own uncertainty.
-
-Both are limitations of scope rather than oversights, and both are the kind
-of thing a larger sample would make worth doing.
-
----
-
-**Continuing through the Extended Online Report:** this page follows [beyond vividness](beyond-vividness.html). To keep reading in order, continue to [implementation notes](implementation-notes.html) next. Or return to [the analysis](analysis-strategy.html) for what the models were built to do.
-
----
+--------------------------------------------------------------------------------
 
 ```{r}
 #| label: session_info

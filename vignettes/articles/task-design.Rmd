@@ -11,9 +11,14 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
-  echo = FALSE
+  echo = FALSE,
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
+  error = FALSE
 )
 library(aphantasiaWMStrats)
 library(ggplot2)
@@ -25,37 +30,36 @@ block_trials <- all_data |>
 ```
 
 Underneath the WM-FTT's aim of studying individual differences in mental
-representation is a narrower and more awkward question: does an original
-paradigm actually measure what it was built to measure? The task ran in three
-versions. The differences between them are not incidental fixes. Each version
-exists because the previous one's own data showed a specific way the design was
-undermining its own validity.
+representation is a narrower question: does an original paradigm actually
+measure what it was built to measure? The task ran in three versions. The
+differences between them are not incidental fixes. Each version exists because
+the previous one's own data showed a specific way the design was undermining its
+own purpose.
 
 This page tells that story, and shows the task as participants met it.
 
-## 1. The question the task was built for
+## 1. The question the task was built for {#task-question}
 
 Aphantasic individuals perform about as well as typical imagers on visual
 working memory tasks, despite reporting no voluntary visual imagery. Asked how,
 they say they compensate: verbal labels, spatial relations, anything but
 pictures.
 
-That answer is not the thing under suspicion. A strategy is what a person
-takes themselves to be doing, and no behavioural pattern can overrule their
-own account of it. The difficulty is narrower: **raw per-feature accuracy
-cannot tell a deliberate choice from an inability**. A low colour score is
-equally consistent with being worse at colour and with having given colour
-up to protect something else, and those are different claims about the same
-number.
+That answer is not the thing under suspicion. A strategy is what a person takes
+themselves to be doing, and no behavioural pattern can overrule their own
+account of it. The difficulty is narrower: **raw per-feature accuracy cannot
+tell a deliberate choice from an inability**. A low colour score is equally
+consistent with being worse at colour and with having given colour up to protect
+something else, and those are different claims about the same number.
 
-WM-FTT is built to separate them, and to offer the reports something to
-converge with. Every stimulus carries three features at once, and scoring
-gives partial credit for each, so a participant who divides effort unevenly
-across features leaves a trace in the pattern of their scores rather than in
-any one of them. The question stops being "which strategy do you use"
-and becomes "where did the effort go".
+WM-FTT is built to separate them, and to offer the reports something to converge
+with. Every stimulus carries three features at once, and scoring gives partial
+credit for each, so a participant who divides effort unevenly across features
+may leave a trace in the pattern of their three scores rather than in any one of
+them. Its purpose is to try to relate the response to "which strategy do you
+use" with the behavioural allocation of "where did the effort go".
 
-## 2. What a trial looks like
+## 2. What a trial looks like {#task-trial}
 
 Each stimulus is a coloured rectangle containing a written word, shown at some
 rotation. Three independent features to remember, in one object: a **word**
@@ -73,8 +77,8 @@ gap and to force active encoding.
 knitr::include_graphics("figures/cfa_wm_screen_parity.png")
 ```
 
-One full encoding cycle, fixation through stimulus through the parity
-judgements that follow it, repeats once per stimulus:
+One full encoding cycle, fixation through stimulus through the parity judgements
+that follow it, repeats once per stimulus:
 
 ```{r encoding, fig.alt="One encoding cycle: fixation, stimulus, then two parity judgements."}
 knitr::include_graphics("figures/cfa_wm_encoding_cycle.png")
@@ -90,19 +94,18 @@ knitr::include_graphics("figures/cfa_wm_screen_colorwheel.png")
 
 Scoring is feature by feature with partial credit, and participants are told to
 aim for the highest score. That instruction is the manipulation. A
-points-per-feature incentive is what turns uniform effort into a suboptimal
-strategy and makes the trade-off worth measuring.
+points-per-feature incentive is what is meant to turn uniform effort into a
+suboptimal strategy and make the trade-off worth measuring.
 
 Twenty-one experimental trials in three blocks of seven, preceded by three
-training trials. **Each trial presents three items**, and each item is a
-word shown at an orientation in a colour, so a participant sees 63 items in
-all. Those two units are used strictly throughout this report: a *trial* is
-one encode-distract-recall cycle and there are 21 of them; an *item* is one
-of the three objects inside a trial and there are 63. The task draws on 63
-distinct colours and 63 distinct angles so that
-no value repeats.
+training trials. **Each trial presents three items**, and each item is a word
+shown at an orientation in a colour, so a participant sees 63 items in all.
+Those two units are used strictly throughout this report: a *trial* is one
+encode-distract-recall cycle and there are 21 of them; an *item* is one of the
+three objects inside a trial and there are 63. The task draws on 63 distinct
+colours and 63 distinct angles so that no value repeats.
 
-## 3. v1: what the first version's own data exposed
+## 3. v1: what the first version's own data exposed {#task-v1}
 
 The first version ran as designed: no penalty on the parity task, and a fixed
 recall order, word then orientation then colour, on every trial.
@@ -140,39 +143,25 @@ block_trials |>
 
 Every trial. No deduction was ever applied.
 
-The consequence was not that the distractor did nothing. It was that it was not
-experienced uniformly: some participants carried a dual-task load throughout and
-others carried none, and nothing in the design records which. That is a problem
-for any group comparison drawn from v1, because the two subgroups were doing
-materially different tasks. The [task engagement](engagement.html) page shows
-that abandoning parity is not a proxy for disengaging from the task as a whole,
-which is why v2 added the penalty rather than excluding anyone.
+The consequence was **not** that the distractor did nothing. It was that it was
+not experienced uniformly: some participants carried a dual-task load throughout
+and others carried none, and nothing in the design records which (besides raw
+parity engagement). That is a problem for any group comparison drawn from v1,
+because the two "parity subgroups" were doing materially different tasks. The
+[task engagement](engagement.html) page shows that abandoning parity is not a
+proxy for disengaging from the task as a whole, which is why v2 added the
+penalty.
 
-**Self-reported priority and measured allocation are not the same
-measurement.** Asked afterwards which features they had tried to keep for
-points, v1 participants named **words** far more than anything else: 78 of 88
-named words first, against three for colours and one for orientations. Words
-are also the feature they scored highest on, so the report and the behaviour
-are not in conflict here — the [composition](composition.html) page shows the
-two converging.
-
-What does not follow is that the report can stand in for the behaviour.
-*Which* feature someone named barely moves their behavioural composition, and
-the [task validity](task-validity.html) page tabulates that directly. The two
-measures agree in aggregate and are not interchangeable at the level of an
-individual, which is the reason the task exists at all.
-
-## 4. v2: fixing the incentive, not the order
+## 4. v2: fixing the incentive, not the order {#task-v2}
 
 A June 2025 internship added the **parity penalty**: each incorrect judgement
 subtracts 0.5 points from the trial's running score, floored at zero so parity
 errors alone cannot make a trial negative. Recall order stayed fixed.
 
-v2 is a genuine partial fix. It closes the gap between engaged and disengaged
-participants that drove the imagery-group inconsistency, and it leaves the
-order confound untouched. Its own sample is small.
+v2 is a partial fix. It closes the gap between parity-engaged and disengaged
+participants, but its own sample is small.
 
-## 5. Why v2 stopped
+## 5. Why v2 stopped {#task-v2-stopped}
 
 Two things happened that had nothing to do with WM-FTT. A sibling reasoning
 study concluded, and a false-memory study's recruitment was halted after its own
@@ -188,14 +177,14 @@ knitr::include_graphics("figures/aphantasia_hosting_overview.png")
 So the task became independent: the cross-experiment lookup was removed, and
 data collection became self-contained.
 
-## 6. v3: independent, randomised, live
+## 6. v3: independent, randomised, live {#task-v3}
 
 v3 carries the parity penalty over from v2 and adds **response-order
 randomisation**: one of the six possible orderings of word, orientation and
-colour is drawn per trial. This does not target the parity split, which v2
+colour is drawn per trial. This is added to the parity incentive fix, which v2
 already addressed. It removes recall order as a fixed structural feature, and
-with it a class of confounds that any order-related finding would otherwise
-have to rule out.
+with it a class of confounds that any order-related finding would otherwise have
+to rule out.
 
 ```{r trial-v3, fig.alt="Full trial structure for v3: randomised recall order and a live parity penalty."}
 knitr::include_graphics("figures/cfa_wm_trial_overview_v3.png")
@@ -205,7 +194,7 @@ knitr::include_graphics("figures/cfa_wm_trial_overview_v3.png")
 knitr::include_graphics("figures/cfa_wm_version_timeline.png")
 ```
 
-## 7. Where that leaves the three versions
+## 7. Where that leaves the three versions {#task-versions}
 
 ```{r versions, echo = TRUE}
 block_trials |>
@@ -216,8 +205,8 @@ block_trials |>
   knitr::kable(caption = "Participants per version and imagery group")
 ```
 
-| | v1 | v2 | v3 |
-|---|---|---|---|
+|   | v1 | v2 | v3 |
+|--------------------|--------------------|--------------------|--------------------|
 | Parity penalty | none | −0.5 per error, floored at 0 | −0.5 per error, floored at 0 |
 | Recall order | fixed | fixed | randomised per trial |
 | Cross-study ID lookup | active | active | removed |
@@ -228,7 +217,7 @@ data-supported reasons to affect performance and strategy measures, so version
 has to be treated as a structural feature of the design rather than a nuisance
 covariate.
 
-In practice this project goes further. **v1 is the primary analysis sample**,
+For the time being (as of 2026-09-03), **v1 is the primary analysis sample**,
 and v2 and v3 are described rather than modelled. v1 is the only version with a
 usable imagery-group split, and pooling the three actively produced a false
 result: an apparent association between non-response and imagery vividness that
@@ -258,16 +247,10 @@ tibble::tibble(
                caption = "Non-response against imagery vividness, pooled and within v1")
 ```
 
-The pooled figure looks like a finding. It is an artefact of mixing three
-samples that differ in both composition and behaviour, and it is the clearest
-argument in this project for the position the version history had already
-arrived at on other grounds.
+The pooled figure looks like a finding. It is actually an artefact of mixing
+three samples that differ in both composition and behaviour.
 
-v3 keeps one job that only it can do: it is the only version with randomised
-recall order, so it is the only data that can estimate how much the fixed order
-in v1 confounds feature comparisons.
-
-## 8. What the task achieved, and what it did not
+## 8. What the task achieved, and what it did not {#task-verdict}
 
 The design goal was a three-way trade-off between word, orientation and colour.
 What it produced is a two-way one. Word recall turns out to be too easy to
@@ -287,14 +270,12 @@ block_trials |>
   knitr::kable(digits = 3, caption = "Exact matches among answered items, v1")
 ```
 
-Nine in ten answered word items are exact matches. The consequence runs
-through the whole project: **word barely discriminates between
-participants**, so the verbal arm of the compositional analysis rests on the
-least informative of the three measures. The [task
-validity](task-validity.html) page puts a number on that with split-half
-reliability, computed there rather than quoted here, and the
-[scoring](scoring.html) page works through what it does and does not
-permit.
+Nine in ten answered word items are exact matches. The consequence runs through
+the whole project: **word barely discriminates between participants**, so the
+verbal arm of the compositional analysis rests on the least informative of the
+three measures. The [task validity](task-validity.html) page puts a number on
+that with split-half reliability, and the [scoring](scoring.html) page works
+through what it does and does not permit.
 
 This is the kind of thing a paradigm can only learn from its own data, which is
 also the theme of the two version changes that came before it. A fourth version
@@ -302,11 +283,15 @@ would need to make the word feature harder, distinguish a deliberate
 non-response from an untouched widget, and vary the points per feature so that
 strategic skipping can be told apart from an absent representation.
 
----
+--------------------------------------------------------------------------------
 
-**Continuing through the Extended Online Report:** this page follows [the participants](participants.html). To keep reading in order, continue to [scoring](scoring.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+**Continuing through the Extended Online Report:** this is the first page of the
+report. To keep reading in order, continue to [the
+participants](participants.html) next. Or skip ahead to [the
+analysis](analysis-strategy.html), which explains what the modelling pages do
+and why.
 
----
+--------------------------------------------------------------------------------
 
 ```{r}
 #| label: session_info

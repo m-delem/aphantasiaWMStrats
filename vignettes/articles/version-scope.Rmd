@@ -11,8 +11,13 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
+  error = FALSE
 )
 library(aphantasiaWMStrats)
 library(ggplot2)
@@ -20,20 +25,18 @@ theme_set(theme_pdf(base_size = 16))
 fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
 ```
 
-The WM-FTT ran in three versions, and the [task design](task-design.html)
-page explains why each replaced the last; the
-[participants](participants.html) page describes who took part in each. This page answers a narrower
-question with a consequence for everything after it: **which versions enter
-the inferential analyses.**
+The WM-FTT ran in three versions, and the [task design](task-design.html) page
+explains why each replaced the last; the [participants](participants.html) page
+describes who took part in each. This page answers a narrower question with a
+consequence for everything after it: **which versions enter the inferential
+analyses.**
 
-The answer is **v1 only**. Every modelling page on this site inherits that
-restriction, so the reasoning belongs somewhere a reader can check it
-rather than in a sentence inside a methods section.
-
-Framed deliberately as *v1 is primary* rather than *v2 and v3 are
-excluded*. Both are kept in `all_data`, described here, and available to
-anyone. The pipeline built on v1 is a template to be re-applied when the
-later versions have the sample to support it.
+As of 2026-09-03, the answer is **v1 only**. Every modelling page on this site
+inherits that restriction, and that rule may change (e.g., if v3 ever recruits a
+bigger sample) so the reasoning deserves its own page that can be checked from
+anywhere. All versions are kept in `all_data`, described in the package, and
+available to anyone. The pipeline built on v1 is a template to be re-applied
+when the later versions have the sample to support it.
 
 ```{r data}
 block_trials <- all_data |>
@@ -50,11 +53,11 @@ by_participant <- block_trials |>
   )
 ```
 
-## 1. The versions are not interchangeable samples
+## 1. The versions are not interchangeable samples {#ver-samples}
 
-Pooling would be reasonable if the three versions were the same task run
-three times. They are not: each changed the task in a way that could plausibly
-change behaviour, and they recruited different populations.
+Pooling would be reasonable if the three versions were the same task run three
+times. They are not: each changed the task in a way that could plausibly change
+behaviour, and they recruited different populations.
 
 ```{r group-balance}
 by_participant |>
@@ -67,15 +70,16 @@ by_participant |>
 ```
 
 **Group balance is the decisive number.** v1 is 31 aphantasic to 55 typical
-imagers. v2 is 8 to 1, and v3 is 17 to 4. In v2 and v3 a group comparison
-is not merely underpowered: with one and four typical imagers respectively,
-it is structurally impossible. No amount of modelling recovers a
+imagers. v2 is 8 to 1, and v3 is 17 to 4 (as of 2026-09-03). In v2 and v3 a
+group comparison is not merely underpowered: with one and four typical imagers
+respectively, it is structurally impossible. No amount of modelling recovers a
 contrast that the recruitment never sampled.
 
-The later versions are also aphantasia-heavy *because* recruitment shifted,
-which matters for the next section.
+The later versions are also aphantasia-heavy *because* no recruitment in the
+general population had been conducted yet, only targeted communication in
+aphantasia communities.
 
-## 2. Pooling did not just add noise, it manufactured a result
+## 2. Pooling can create spurious results {#ver-pooling}
 
 Non-response differs sharply by version.
 
@@ -89,13 +93,12 @@ by_participant |>
   knitr::kable(digits = 3, caption = "Mean non-response rate by version")
 ```
 
-v3 has roughly three times v1's orientation non-response. It is also
-heavily aphantasic — 17 of its 21 participants, against 31 of 88 in v1.
-Those two facts together are enough to create an association between
-imagery and non-response in a pooled sample where none exists within any
-version. (v2 is more aphantasic still in proportion, at 8 of 9, but with
-nine participants it moves a pooled estimate very little; v3 has both the
-composition and the weight.)
+v3 has roughly three times v1's orientation non-response. It is also heavily
+aphantasic — 17 of its 21 participants, against 31 of 88 in v1. Those two facts
+together are enough to create an association between imagery and non-response in
+a pooled sample where none exists within any version. (v2 is more aphantasic
+still in proportion, at 8 of 9, but with nine participants it moves a pooled
+estimate very little; v3 has both the composition and the weight.)
 
 ```{r simpsons}
 propensity <- by_participant |>
@@ -118,15 +121,14 @@ dplyr::bind_rows(
 ```
 
 Pooled, the association looks clear and significant. Within v1, which is
-`r round(100 * mean(propensity$version == "v1"))`% of the participants with
-a vividness score, it is absent. The pooled estimate is a mixture of strata
-rather than an effect, and the version that drives it is the one with 21
-participants.
+`r round(100 * mean(propensity$version == "v1"))`% of the participants, it is
+absent. The pooled estimate is a mixture of strata rather than an effect, and
+the version that drives it is the one with 21 participants.
 
-This is the concrete reason the scope decision is not bureaucratic. Pooling
-here produced a finding that stratification removed.
+This is the concrete reason behind the scoping decision. Pooling here produced a
+finding that stratification removed.
 
-## 3. v1 is also the cleanest stratum, not just the largest
+## 3. v1 is also the cleanest sample, not just the largest {#ver-v1}
 
 ```{r v1-associations}
 v1 <- dplyr::filter(by_participant, version == "v1")
@@ -149,19 +151,18 @@ dplyr::bind_rows(
                caption = "v1 only: responders-only recall accuracy against VVIQ")
 ```
 
-Orientation has one participant fewer than the other two features: one
-person answered **zero** orientation items, so they have no responders-only
-mean to correlate. They are not missing at random, and the [joint
+Orientation has one participant fewer than the other two features: one person
+answered **zero** orientation items, so they have no responders-only mean to
+correlate. They are not missing at random, and the [joint
 model](joint-model.html) is the analysis that can see them.
 
-Analysed on its own, v1 gives an interpretable pattern rather than a
-mixture. The [task validity](task-validity.html) page covers what those
-associations do and do not support.
+Analysed on its own, v1 gives an interpretable pattern. The [task
+validity](task-validity.html) page covers what those associations do and do not
+support.
 
 There is a second, quieter argument. Per-version standardisation needs each
-version to be able to carry its own scale, and v2 cannot. Drop one
-participant at a time, restandardise, and see how far everyone else's
-z-score moves:
+version to be able to carry its own scale, and v2 cannot. Drop one participant
+at a time, re-standardise, and see how far everyone else's z-score moves:
 
 ```{r loo-standardisation}
 # How much does one participant's presence move everyone else's z-score?
@@ -188,48 +189,50 @@ block_trials |>
                caption = "Largest z-score shift caused by removing one participant, orientation")
 ```
 
-v2's median shift is roughly five times v1's: on nine participants, one
-person's presence routinely moves everyone else's z-score by an
-appreciable fraction of a standard deviation. That is not a scale, and it
-is why standardising within version was abandoned.
+v2's median shift is roughly five times v1's: on nine participants, one person's
+presence routinely moves everyone else's z-score by an appreciable fraction of a
+standard deviation. That is not a scale, and it is why standardising within
+version was abandoned.
 
-## 4. What this means for every other page
+## 4. What this means for every other page {#ver-scope}
 
-- **All modelling pages are v1 only.** v1 has `r nrow(v1)` participants;
-  no model uses all of them, because each applies further filters for
-  vividness, engagement or questionnaire completeness. [The
-  analysis](analysis-strategy.html#samples) lists every resulting sample in
-  one table.
-- **v2 and v3 are described, not modelled.** They appear in `all_data`, in
-  the [codebook](codebook.html), and in descriptive comparisons.
+- **All modelling pages are v1 only.** v1 has `r nrow(v1)` participants; no
+  model uses all of them, because each applies further filters for vividness,
+  engagement or questionnaire completeness. [The
+  analysis](analysis-strategy.html#strat-samples) lists every resulting sample in one
+  table.
+- **v2 and v3 are described, not modelled.** They appear in `all_data`, in the
+  [codebook](codebook.html), and in descriptive comparisons.
 - **Version is treated as a structural feature, not a nuisance covariate.**
-  Adding a version term to a pooled model would assume the versions differ
-  by an additive constant, which section 2 shows is exactly what they do
-  not do.
-- **The restriction is a sample size, not a methodological ceiling.** The
-  same pipeline applies to v3 once it recruits, and it is written to be
-  re-run rather than rewritten.
+  Adding a version term to a pooled model would assume the versions differ by an
+  additive constant, which section 2 shows is exactly what they do not do.
+- **The restriction is a sample size, not a methodological ceiling.** The same
+  pipeline applies to v3 once it recruits, and it is written to be re-run rather
+  than rewritten.
 
-## 5. What the excluded versions are still for
+## 5. What the excluded versions are still for {#ver-excluded}
 
-v3 retains one job it uniquely enables. **v1 has a fixed recall order**,
-word then orientation then colour, so feature differences there are
-confounded with output position. v3 randomised the order, and it is the
-only version that can estimate that effect. Any claim about differences
-between features carries that caveat, and v3 is where it can be checked.
+v3 retains one job it uniquely enables. **v1 has a fixed recall order**, word
+then orientation then colour, so feature differences there are confounded with
+output position. v3 randomised the order, and it is the only version that can
+estimate that effect. Any claim about differences between features carries that
+caveat, and v3 is where it can be checked.
 
-Two costs of the choice are worth stating plainly rather than leaving to
-be discovered. **v1 has no parity penalty**, so the distractor there was
-free, which shapes what the [task engagement](engagement.html) page can
-conclude. And **v1 has the lowest non-response of the three versions**, so
-it is the version where declining to report is least common, which is
-worth remembering when reading how much weight that behaviour carries.
+The choice of v1 has two costs. **v1 has no parity penalty**, so the distractor
+there was free, which shapes what the [task engagement](engagement.html) page
+can conclude. And **v1 has the lowest non-response of the three versions**, so
+it is the version where declining to report is least common, which is worth
+remembering when reading how much weight that behaviour carries.
 
----
+--------------------------------------------------------------------------------
 
-**Continuing through the Extended Online Report:** this page follows [task engagement](engagement.html). To keep reading in order, continue to [task validity](task-validity.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+**Continuing through the Extended Online Report:** this page follows [task
+engagement](engagement.html). To keep reading in order, continue to [task
+validity](task-validity.html) next. Or skip ahead to [the
+analysis](analysis-strategy.html), which explains what the modelling pages do
+and why.
 
----
+--------------------------------------------------------------------------------
 
 ```{r}
 #| label: session_info

@@ -18,8 +18,8 @@ articles:
       The paradigm, and how a response becomes a number. Everything after
       this depends on it.
     contents:
-      - articles/participants
       - articles/task-design
+      - articles/participants
       - articles/scoring
       - articles/engagement
   - title: Scope
@@ -164,14 +164,13 @@ navbar:
     eor:
       text: "Extended Online Report"
       # Same order as the `articles` groups above and as
-      # inst/planning/EOR-OUTLINE.md. Pages that do not exist yet are
-      # simply absent; the outline is the record of what is missing.
+      # inst/planning/EOR-OUTLINE.md.
       menu:
         - text: "What was measured"
-        - text: "The participants"
-          href: articles/participants.html
         - text: "Task design"
           href: articles/task-design.html
+        - text: "The participants"
+          href: articles/participants.html
         - text: "Scoring"
           href: articles/scoring.html
         - text: "Task engagement"

@@ -11,8 +11,12 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
   error = FALSE
 )
 library(aphantasiaWMStrats)
@@ -30,17 +34,17 @@ Two participants can score the same overall and have divided their effort
 completely differently. This page is about that difference: **relative
 allocation across the three features, with overall performance removed.**
 
-This is the study's **primary analysis**, and the one it was designed
-around. A composition is a different object from an accuracy score, with
-its own geometry, and it answers the question the task was built to ask:
-not *how well*, but *where*.
+This is the study's **primary analysis**, and the one it was designed around. A
+composition is a different object from an accuracy score, with its own geometry,
+and it answers the question the task was built to ask: not *how well people
+performed*, but *where did their effort go to*.
 
-It is also where the strands meet. Imagery vividness, inner experience and
-participants' own accounts of what they were doing all bear on the same
-coordinate, in sections 4 to 6.
+It is also where the strands meet. Imagery vividness, cognitive style, inner
+experience and participants' own accounts of what they were doing all bear on
+the same coordinate, in sections 4 to 6.
 
-Everything here is v1 ([version scope](version-scope.html)) and uses
-responded items only, which carries a caveat set out in section 8.
+Everything here is v1 ([version scope](version-scope.html)) and uses responded
+items only, which carries a caveat set out in section 8.
 
 ```{r data}
 v1 <- get_data("v1") |>
@@ -76,14 +80,12 @@ add_coordinates <- function(parts) {
     )
 }
 
-# Three frames, named separately rather than one object reassigned. Each
-# section states which it uses, and each is the frame the corresponding
-# script fitted on. A single reassigned `model_data` is how a page ends up
-# describing one sample and displaying another.
+# Three frames, named separately. Each section states which it uses, 
+# and each is the frame the corresponding script fitted on.
 #
 # Section 6 needs a composition and a strategy report and nothing else, so
 # it keeps every engaged participant, with or without a vividness score.
-# `inst/scripts/14-strategy-convergence.R` does the same, deliberately.
+# `inst/scripts/14-strategy-convergence.R` does the same.
 reported <- add_coordinates(engaged_parts)
 
 # Sections 4, 7 and 8 additionally need vividness. This is the frame
@@ -124,18 +126,17 @@ tibble::tibble(
   knitr::kable(caption = "The frames this page uses, counted rather than stated")
 ```
 
-## 1. What a composition is, and why proportions will not do
+## 1. What a composition is, and why proportions will not do {#comp-what}
 
-Each participant has three responders-only mean scores. Divide each by
-their sum and you have a **composition**: three parts that sum to one,
-carrying only relative information.
+Each participant has three responders-only mean scores. Divide each by their sum
+and you have a **composition**: three parts that sum to one, carrying only
+relative information.
 
-That closure is not a technicality. Three proportions summing to a
-constant cannot vary independently, so a rise in one forces a fall in the
-others, and ordinary correlations between them are not interpretable. The
-[scoring](scoring.html) page shows what that does in practice:
-residualising three parts on their own mean induces a correlation of about
--0.5 whatever the data says.
+Three proportions summing to a constant cannot vary independently, so a rise in
+one forces a fall in the others, and ordinary correlations between them are not
+interpretable. The [scoring](scoring.html) page shows what that does in
+practice: residualising three parts on their own mean induces a correlation of
+about -0.5 whatever the data says.
 
 The standard solution is to leave the simplex. `ilr_coords()` applies an
 isometric log-ratio transform, turning three constrained parts into two
@@ -149,16 +150,16 @@ head(model_data[, c("part_word", "part_angle", "part_color", "ilr1", "ilr2")],
 
 The two coordinates are contrasts, and **which contrasts is a choice**:
 
-- `ilr1` is words against the geometric mean of orientations and colours,
-  the verbal versus non-verbal balance.
+- `ilr1` is words against the geometric mean of orientations and colours, the
+  verbal versus non-verbal balance.
 - `ilr2` is colours against orientations.
 
-## 2. The partition is a substantive choice, not a statistical one
+## 2. The partition is a substantive choice, not a statistical one {#comp-partition}
 
-Any two-coordinate log-ratio basis is a rotation of the same geometry. The
-total variance, the distances between participants and the omnibus test are
-**identical** whichever feature is contrasted first. Only the split between
-the two coordinates moves.
+Any two-coordinate log-ratio basis is a rotation of the same geometry. The total
+variance, the distances between participants and the omnibus test are
+**identical** whichever feature is contrasted first. Only the split between the
+two coordinates moves.
 
 ```{r partition}
 dplyr::bind_rows(
@@ -173,27 +174,27 @@ dplyr::bind_rows(
                caption = "Variance by partition, and the invariant total")
 ```
 
-Within each sample the total is constant, which is the invariance made
-visible. So a partition should be chosen for the contrast it names, and
-the verbal versus non-verbal one is what this study argues about.
+Within each sample the total is constant, which is the invariance made visible.
+So a partition should be chosen for the contrast it names, and the verbal versus
+non-verbal one is what this study argues about.
 
 There is a second, quieter lesson in that table. On the looser sample the
-orientation-first partition appears to carry far more of the variance,
-which would look like a reason to prefer it. On the engaged sample the
-three are close. **The apparent asymmetry was six participants**, all of
-whom answered very few orientation items, and choosing a partition on
-that basis would have meant choosing it on an artifact.
+orientation-first partition appears to carry far more of the variance, which
+would look like a reason to prefer it. On the engaged sample the three are
+close. **The apparent asymmetry was six participants**, all of whom answered
+very few orientation items, and choosing a partition on that basis would have
+meant choosing it on an artifact.
 
-## 3. The composition barely varies
+## 3. The composition barely varies {#comp-variation}
 
 ```{r spread}
 composition_summary(engaged_parts, "Clearing thresholds") |>
   knitr::kable(digits = 3, caption = "The three parts")
 ```
 
-Allocation is close to even and remarkably tight: each part sits near a
-third with a standard deviation of about 0.025. Whatever this analysis
-finds, it finds inside that range.
+Allocation is close to even and remarkably tight: each part sits near a third
+with a standard deviation of about 0.025. Whatever this analysis finds, it finds
+inside that range.
 
 ```{r ternary, fig.alt="Ternary diagram of the three-part composition, coloured by imagery group.", fig.height = 6}
 ternary_data <- engaged_parts |>
@@ -210,12 +211,11 @@ plot_composition_ternary(
   labs(caption = "Centred and scaled: the raw spread is very small.")
 ```
 
-## 4. Does imagery predict allocation?
+## 4. Does imagery predict allocation? {#comp-imagery}
 
-Both coordinates are modelled together, with the residual correlation
-between them estimated. That is not cosmetic: the invariance in section 2
-holds for a genuine multivariate model, and two separate fits would lose
-it.
+Both coordinates are modelled together, with the residual correlation between
+them estimated. That is not cosmetic: the invariance in section 2 holds for a
+genuine multivariate model, and two separate fits would lose it.
 
 ```{r model}
 composition_formula("vviq + complete_aphant + parity_rate")
@@ -234,21 +234,21 @@ composition_model <- fit_brms_model(
 stopifnot(nrow(model_data) == nrow(composition_model$data))
 ```
 
-This runs on the `r nrow(model_data)` participants who clear the
-engagement thresholds **and** have a vividness score.
+This runs on the `r nrow(model_data)` participants who clear the engagement
+thresholds **and** have a vividness score.
 
 Imagery vividness enters in the form the [analysis
-strategy](analysis-strategy.html) page describes: a slope among everyone
-above the scale floor, plus a single offset for participants at it, who
-have no vividness variance among themselves.
+strategy](analysis-strategy.html) page describes: a slope among everyone above
+the scale floor, plus a single offset for participants at it, who have no
+vividness variance among themselves.
 
 ```{r results}
 knitr::kable(brms::fixef(composition_model), digits = 4,
              caption = "Population-level effects")
 ```
 
-Read against a region of practical equivalence of a tenth of the outcome's
-own standard deviation:
+Read against a region of practical equivalence of a tenth of the outcome's own
+standard deviation:
 
 ```{r rope}
 comp_rope <- readRDS(system.file("results", "comp-rope.rds", package = pkg))
@@ -268,48 +268,78 @@ stopifnot(nrow(floor_ilr1) == 1)
 coordinate.** The offset is `r fmt(floor_ilr1$Estimate)`, with 95% of the
 posterior in `r floor_ilr1[["95% CrI"]]`, a standardised effect of
 `r fmt(floor_ilr1$d, 2)` outcome SD, and
-`r fmt(100 * floor_ilr1[["Above ROPE"]], 1)`% of the posterior above the
-ROPE. In interpretable terms, their ratio of word allocation to the
-geometric mean of the two non-verbal features is roughly
-`r round(100 * (exp(floor_ilr1$Estimate / sqrt(2 / 3)) - 1))`% higher.
+`r fmt(100 * floor_ilr1[["Above ROPE"]], 1)`% of the posterior above the ROPE.
+In interpretable terms, their ratio of word allocation to the geometric mean of
+the two non-verbal features is roughly
+`r round(100 * (exp(floor_ilr1$Estimate / sqrt(2 / 3)) - 1))`% higher. Let's
+represent this result graphically:
+
+```{r floor-plot}
+grid <- tibble::tibble(
+  vviq = seq(16, 80, length.out = 200),
+  complete_aphant = factor("above_floor", levels = c("above_floor", "floor")),
+  parity_rate = stats::median(model_data$parity_rate)
+)
+above_floor <- 
+  brms::posterior_epred(composition_model, newdata = grid, resp = "ilr1")
+
+floor_row <- grid[1, ]
+floor_row$complete_aphant <- 
+  factor("floor", levels = c("above_floor", "floor"))
+floor_draws <- as.vector(brms::posterior_epred(
+  composition_model, newdata = floor_row, resp = "ilr1"))
+effect <- brms::fixef(composition_model)["ilr1_complete_aphantfloor", ]
+
+plot_floor_group(
+  observed = 
+    dplyr::filter(model_data, vviq > 16) |> 
+    dplyr::transmute(x = vviq, y = ilr1),
+  fitted = tibble::tibble(
+    x = grid$vviq,
+    estimate = apply(above_floor, 2, stats::median),
+    lower = apply(above_floor, 2, stats::quantile, 0.025),
+    upper = apply(above_floor, 2, stats::quantile, 0.975)
+  ),
+  floor_draws = floor_draws,
+  floor_observed = dplyr::filter(model_data, vviq == 16)$ilr1,
+  effect_label = sprintf("%.2f\n[%.2f, %.2f]", effect[["Estimate"]],
+                         effect[["Q2.5"]], effect[["Q97.5"]]),
+  y_lab = "Share of effort on WORDS,\nrelative to colour and orientation",
+  base_size = 16, point_size = 2.2,
+  left_expansion = 0.09, arrow_nudge = -5.5
+)
+```
+
 
 **Vividness above the floor does nothing at all.** Its slope lies entirely
-inside the ROPE on both coordinates. Whatever is happening is a property of
-the floor group rather than a gradient.
+inside the ROPE on both coordinates. Whatever is happening is a property of the
+floor group rather than a gradient.
 
-**On the colour versus orientation coordinate there is no result**, and it
-is worth being precise about which kind of no result. The floor offset has
-52% of its posterior below the ROPE, 19% inside and 30% above. That is not
-evidence of absence, it is an uninformative posterior, and it should be
-reported as such.
+**On the colour versus orientation coordinate there is no result**. The floor
+offset has 52% of its posterior below the ROPE, 19% inside and 30% above. That
+is an uninformative posterior, not evidence of absence.
 
-## 5. Is it imagery, or is it cognitive style?
+## 5. Is it imagery, or is it cognitive style? {#comp-style}
 
 The study was designed around a prediction from the Object-Spatial-Verbal
-framework: that allocation should track **cognitive style**, and not
-imagery vividness alone. A verbaliser should protect the word feature, a
-spatialiser the orientation.
+framework: that allocation should track **cognitive style**
+[@blazhenkovaNewObjectSpatialVerbal2009], and not imagery vividness alone. A
+verbaliser should protect the word feature, a spatialiser the orientation.
 
-Section 4 tests only the vividness axis, which is the one the prediction
-names as insufficient. This section tests the prediction itself.
+Section 4 tests only the vividness axis. This section tests the cognitive style
+axis.
 
 This section runs on `r nrow(style_data)` participants rather than the
-`r nrow(model_data)` of section 4: it needs the questionnaire scales, and
-the `r nrow(model_data) - nrow(style_data)` participant dropped here has
-NIEQ scores but no OSIVQ ones. Section 4's result is unaffected, being
-fitted on the larger frame.
+`r nrow(model_data)` of section 4: it needs the questionnaire scales, and the
+`r nrow(model_data) - nrow(style_data)` participant dropped here has NIEQ scores
+but no OSIVQ ones.
 
-The step before that one is worth naming too, because both are easy to
-conflate. `r nrow(engaged_parts)` participants clear the engagement
-thresholds; `r nrow(engaged_parts) - nrow(model_data)` of them have no
-VVIQ score, which is what takes section 4 to `r nrow(model_data)`.
-
-**The predictor set was chosen from the questionnaires alone**, never from
-how any of them relates to allocation, which is what keeps the choice
-independent of the result. Two rules, both fixed before any allocation
-model was fitted: a scale correlating above 0.6 with VVIQ is excluded as
-re-entering vividness under another name, and a scale with no hypothesis
-attached is excluded whatever its correlation.
+**The predictor set was chosen from the questionnaires alone**, never from how
+any of them relates to allocation, which is what keeps the choice independent of
+the result. Two rules, both fixed before any allocation model was fitted: a
+scale correlating above 0.6 with VVIQ is excluded as re-entering vividness under
+another name, and a scale with no hypothesis attached is excluded whatever its
+correlation.
 
 ```{r predictor-selection}
 questionnaire_scales(all_data) |>
@@ -376,13 +406,13 @@ knitr::kable(style_rope,
              caption = "The two coefficients the prediction names")
 ```
 
-**The prediction is not supported.** OSIVQ verbal on the verbal coordinate
-is `r fmt(style_rope$Estimate[1])` with
-`r fmt(100 * style_rope[["Inside ROPE"]][1], 0)`% of its posterior inside
-the ROPE; OSIVQ spatial on the colour-orientation coordinate is
+**The prediction is not supported.** OSIVQ verbal on the verbal coordinate is
+`r fmt(style_rope$Estimate[1])` with
+`r fmt(100 * style_rope[["Inside ROPE"]][1], 0)`% of its posterior inside the
+ROPE; OSIVQ spatial on the colour-orientation coordinate is
 `r fmt(style_rope$Estimate[2])` with
-`r fmt(100 * style_rope[["Inside ROPE"]][2], 0)`% inside. A verbaliser does
-not measurably protect words, and a spatialiser does not measurably protect
+`r fmt(100 * style_rope[["Inside ROPE"]][2], 0)`% inside. A verbaliser does not
+measurably protect words, and a spatialiser does not measurably protect
 orientations.
 
 ```{r offset-comparison}
@@ -407,16 +437,15 @@ knitr::kable(
   caption = "The floor-group offset on the verbal coordinate, with and without the style predictors")
 ```
 
-**The imagery effect is untouched by adding them.** The floor-group offset
-is `r fmt(floor_offsets$Estimate[2])` `r floor_offsets[["95% CrI"]][2]`
-here against `r fmt(floor_offsets$Estimate[1])`
-`r floor_offsets[["95% CrI"]][1]` in section 4, with
-`r fmt(100 * floor_offsets[["Above ROPE"]][2], 1)`% of the posterior beyond
-the ROPE. Whatever drives allocation, it is not a style effect wearing a
-vividness label — which is the outcome that would have required every
+**The imagery effect is untouched by adding them.** The floor-group offset is
+`r fmt(floor_offsets$Estimate[2])` `r floor_offsets[["95% CrI"]][2]` here
+against `r fmt(floor_offsets$Estimate[1])` `r floor_offsets[["95% CrI"]][1]` in
+section 4, with `r fmt(100 * floor_offsets[["Above ROPE"]][2], 1)`% of the
+posterior beyond the ROPE. Whatever drives allocation, it is not a style effect
+wearing a vividness label — which is the outcome that would have required every
 result on this site to be reread.
 
-**One predictor does something, and the prediction did not name it.**
+**One predictor does something that was not predicted:**
 
 ```{r inner-voice}
 draws <- brms::as_draws_df(style_model)
@@ -435,30 +464,21 @@ dplyr::bind_rows(
   knitr::kable(caption = "The two inner-experience dimensions, on the verbal coordinate")
 ```
 
-Reported **inner speech** predicts allocation on the verbal coordinate at
-the same evidential standard the floor group clears, and in the opposite
-direction to the obvious guess: more inner speech goes with **less**
-allocation to words.
+Reported **inner speech** predicts allocation on the verbal coordinate at the
+same evidential standard the floor group clears, and in the opposite direction
+to the obvious guess: more inner speech goes with **less** allocation to words.
 
-One reading, offered as a hypothesis rather than a conclusion: someone
-whose inner speech is habitually occupied may have less phonological
-capacity free for the memoranda, which would make this a competition effect
-rather than a style effect. It is **exploratory** — the thesis's own
-inner-experience prediction is labelled exploratory in the strict sense,
-since the sample was not sized for it.
-
-**Unsymbolised thinking, by contrast, contributes nothing here**, and that
-is informative rather than empty. It correlates
+**Unsymbolised thinking, by contrast, contributes nothing here**, and that is
+more informative than it looks. It correlates
 `r fmt(stats::cor(style_data$nieq_unsymbolised, style_data$vviq, method = "spearman"), 2)`
 with VVIQ and
 `r fmt(stats::cor(style_data$nieq_unsymbolised, as.numeric(style_data$complete_aphant == "floor"), method = "spearman"), 2)`
-with the floor indicator, so once vividness is in the model it has nothing
-left to explain. It was kept in deliberately so the model could show that
-rather than have it assumed. Note what this does *not* say: unsymbolised is
-related to allocation marginally, and the [beyond
-vividness](beyond-vividness.html) page shows it declining steadily across
-the vividness range. Redundancy given vividness is a different claim from
-no relationship.
+with the floor indicator, so once vividness is in the model it has nothing left
+to explain. It was kept in deliberately so the model could show that rather than
+have it assumed. Note what this does *not* say: unsymbolised is related to
+allocation marginally, and the [beyond vividness](beyond-vividness.html) page
+shows it declining steadily across the vividness range. "Redundancy given
+vividness" is a different claim from "no relationship".
 
 ```{r allocation-loo}
 allocation_loo <- readRDS(
@@ -475,21 +495,20 @@ allocation_loo |>
 ```
 
 Comparing the two predictor sets formally leans toward one of them without
-settling it: the elpd difference is smaller than its own standard error.
-At that separation the data do not distinguish them, which is what
-`r nrow(style_data)` participants and four extra predictors should be
-expected to produce.
+settling it: the elpd difference is close to its own standard error. At that
+separation the data do not distinguish them, which is what `r nrow(style_data)`
+participants and four extra predictors should be expected to produce.
 
-## 6. Does the behaviour agree with what participants report?
+## 6. Does the behaviour agree with what participants report? {#comp-convergence}
 
-Everything above is behaviour. After the task, participants were asked
-which features they had tried to keep for points — a question about what
-they were doing, not about what it felt like.
+Everything above is behaviour. After the task, participants were asked which
+features they had tried to keep for points; a question about what they were
+doing, not about what it felt like.
 
-A strategy is by definition what someone takes themselves to be doing, so
-no behavioural pattern can overrule their own account of it. What the
-composition can offer is **convergence**: an independent measurement that
-either tracks the same distinctions or does not.
+A strategy is by definition what someone takes themselves to be doing, so no
+behavioural pattern can overrule their own account of it. What the composition
+can offer is **convergence**: an independent measurement that either tracks the
+same distinctions or does not.
 
 ```{r convergence}
 participants <- dplyr::distinct(get_data("v1"), id, .keep_all = TRUE)
@@ -525,24 +544,24 @@ correlation_test(convergence$ilr1, convergence$kept) |>
 ```
 
 **They converge.** Participants who said they kept one feature really did
-concentrate on words; those who said they kept all three really did spread
-their effort, monotonically across the three levels.
+concentrate on words; those who said they kept all three really did spread their
+effort, monotonically across the three levels.
 
 That matters more than its p-value. The composition comes from 63 items of
 behaviour and the report comes from one question afterwards, so they are
 **independent measurements of the same construct**, and their agreement
-corroborates the coordinate as measuring what it claims. No amount of
-internal reliability could establish that.
+corroborates the coordinate as measuring what it claims. No amount of internal
+reliability could establish that.
 
-It also bears on a worry about the whole enterprise. If self-report about
-one's own cognition were simply unreliable here, this is where it would
-show. It does not — though note what was asked: *which features did you try
-to keep* is a question about behaviour, which people can answer.
+It also bears on a worry about the whole enterprise. If self-report about one's
+own cognition were simply unreliable here, this is where it would show. It does
+not. Though note what was asked: *which features did you try to keep* is a
+question about behaviour, which people can answer.
 
-The same questionnaire asked something harder. For each feature, *how did
-you memorise it*, with mental imagery among the options. Naming imagery
-there is a claim about **experience**, not about behaviour, and it is the
-kind of report aphantasia research treats as least trustworthy.
+The same questionnaire asked something harder. For each feature, *how did you
+memorise it*, with mental imagery among the options. Naming imagery there is a
+claim about **experience**, not about behaviour, and it is the kind of
+self-report aphantasia research treats as least trustworthy.
 
 ```{r phenomenology}
 strategy_profile <- dplyr::bind_rows(
@@ -584,41 +603,39 @@ knitr::kable(strategy_table,
              caption = "Strategies named, as a percentage of each group")
 ```
 
-**No participant at the imagery floor named mental imagery, for any
-feature.** Above the floor,
-`r percent_of("Word", "mental_image", "Above floor")`% named it for words,
-`r percent_of("Colour", "mental_image", "Above floor")`% for colours and
-`r percent_of("Orientation", "mental_image", "Above floor")`% for
+**No participant at the imagery floor named mental imagery, for any feature.**
+Above the floor, `r percent_of("Word", "mental_image", "Above floor")`% named it
+for words, `r percent_of("Colour", "mental_image", "Above floor")`% for colours
+and `r percent_of("Orientation", "mental_image", "Above floor")`% for
 orientations.
 
-That is a **coherence check**, and it passes. Someone who reports no
-voluntary imagery on the VVIQ also declines to name imagery as a memory
-strategy when asked in different words, about a specific task, with no
-mention of aphantasia anywhere in the question. Consistency across
-instruments and contexts is what you would expect if the reports track
-something real, and not what you would expect if they were noise.
+That is a **coherence check**, and it passes. Someone who reports no voluntary
+imagery on the VVIQ also declines to name imagery as a memory strategy when
+asked in different words, about a specific task, with no mention of aphantasia
+anywhere in the question. Consistency across instruments and contexts is what
+you would expect if the reports track something real, and not what you would
+expect if they were noise.
 
 It is **not** evidence that introspective report is accurate. Two reports
 agreeing with each other is a weaker property than either being right, and
-nothing here reaches the stronger claim. No model is fitted either: one
-cell is a structural zero, so a logistic model of the group contrast would
-not converge, and the table already says what the data support.
+nothing here reaches the stronger claim. No model is fitted either: one cell is
+a structural zero, so a logistic model of the group contrast would not converge,
+and the table already says what the data support.
 
-Two further things in that table, neither about imagery. On orientation,
-**`r percent_of("Orientation", "none", "VVIQ floor")`% of the floor group
-named no strategy at all**, against
-`r percent_of("Orientation", "none", "Above floor")`% above it —
-orientation is the feature they abandon, which converges with its being the
-feature with the highest non-response rate
-([task engagement](engagement.html)). And they named body-centred spatial
-strategies **less** often than typical imagers,
+Two further things in that table. On orientation,
+**`r percent_of("Orientation", "none", "VVIQ floor")`% of the floor group named
+no strategy at all**, against
+`r percent_of("Orientation", "none", "Above floor")`% above it: orientation is
+the feature they abandon, which converges with its being the feature with the
+highest non-response rate ([task engagement](engagement.html)). And they named
+body-centred spatial strategies **less** often than typical imagers,
 `r percent_of("Orientation", "spatial_body", "VVIQ floor")`% against
 `r percent_of("Orientation", "spatial_body", "Above floor")`%, which cuts
-against a simple compensation account in which the missing visual strategy
-is replaced by a spatial one.
+against a simple compensation account in which the missing visual strategy is
+replaced by a spatial one.
 
-**The agreement holds on the parts, not only on the summary coordinate.**
-The one contrast with enough participants to look at is words alone against
+**The agreement holds on the parts, not only on the summary coordinate.** The
+one contrast with enough participants to look at is words alone against
 words-and-colours:
 
 ```{r convergence-parts}
@@ -644,9 +661,8 @@ dplyr::inner_join(reported, priority_set, by = "id") |>
                caption = "Naming colours as well as words, against what they did")
 ```
 
-**And prioritisation is unrelated to imagery group**, which is what makes
-the report an independent measurement rather than a restatement of section
-4:
+**And prioritisation is unrelated to imagery group**, which is what makes the
+report an independent measurement rather than a restatement of section 4:
 
 ```{r convergence-independence}
 dplyr::inner_join(reported, prioritisation, by = "id") |>
@@ -657,7 +673,7 @@ dplyr::inner_join(reported, prioritisation, by = "id") |>
   knitr::kable(caption = "Features named, by imagery group")
 ```
 
-## 7. What the coordinate cannot tell you
+## 7. What the coordinate cannot tell you {#comp-limits}
 
 A ratio moved. It cannot say which part moved it.
 
@@ -675,29 +691,28 @@ model_data |>
                caption = "Raw responders-only accuracy, not shares")
 ```
 
-In levels, the floor group is marginally better on words and clearly worse
-on orientations and colours. **The balance shifts toward words because the
-non-verbal side falls, not because the verbal side rises.**
+In levels, the floor group is marginally better on words and worse on
+orientations and colours. **The balance shifts toward words more due to the
+non-verbal side falling than to the verbal side rising.**
 
-That distinction matters more than it might appear. "Aphantasic
-participants rely more on verbal encoding" and "aphantasic participants are
-worse at the non-verbal features" predict the same compositional result,
-and this analysis cannot separate them. Doing so needs the absolute
-accuracy models, which is exactly why the two framings are complementary
-rather than competing.
+That distinction matters. "Aphantasic participants rely more on verbal encoding"
+and "aphantasic participants are worse at the non-verbal features" predict the
+same compositional result, and this analysis cannot separate them. Doing so
+needs the absolute accuracy models, which is exactly why the two framings
+(composition and performance) are complementary rather than competing.
 
 One further caution. `ilr1` rests partly on word, and the [task
-validity](task-validity.html) page shows word does not function as an
-individual-differences measure. The *ratio* is stable where the *level* is
-not, which is not a contradiction, but no claim here may treat word as a
-well-measured quantity. Measurement noise in an outcome widens intervals
-rather than biasing estimates, so if anything this result is conservative.
+validity](task-validity.html) page shows word does not function well as an
+individual-differences measure. The *ratio* is stable where the *level* is not,
+which is not a contradiction, but no claim here may treat word as a
+well-measured quantity. Measurement noise in an outcome widens intervals rather
+than biasing estimates, so if anything this result is conservative.
 
-## 8. Two checks, and one caveat that is still open
+## 8. Two checks, and one caveat {#comp-checks}
 
-**The functional form was not assumed.** Five ways of entering imagery were
-compared, with the floor-group form pre-declared as primary regardless of
-which won.
+**1) The functional form was not assumed.** Five ways of entering imagery were
+compared, with the floor-group form pre-declared as primary in case of equal
+model performances.
 
 ```{r comparison}
 comparison <- readRDS(system.file("results", "comp-loo.rds", package = pkg))
@@ -709,15 +724,16 @@ comparison |>
   knitr::kable(digits = 2, caption = "Model comparison, first coordinate")
 ```
 
-The forms with a discontinuity sit above those without one, by roughly one
-to one and a half standard errors. That is weak, it was predicted to be
-weak in advance, and it is reported rather than converted into a claim.
+The forms with a discontinuity (floor-group and segmented) sit above those
+without one, by roughly one to one and a half standard errors. That is weak and
+cannot be converted into a claim, so the floor-group model was selected based on
+pre-declaration.
 
-**The result survives at trial level.** Each trial is itself a
-composition, so the same question can be asked with within-person noise
-separated from between-person signal rather than averaged into it. Whether
-that is possible at all is an empirical question about zeros, since a
-log-ratio transform needs every part strictly positive:
+**2) The result survives at trial level.** Each trial is itself a composition,
+so the same question can be asked with within-person noise separated from
+between-person signal rather than averaged into it. Whether that is possible at
+all is an empirical question about zeros, since a log-ratio transform needs
+every part strictly positive:
 
 ```{r trial-frame}
 trial_parts <- v1 |>
@@ -731,10 +747,6 @@ usable <- trial_parts |>
     dplyr::if_all(tidyselect::starts_with("part_"), \(x) x > 0)
   )
 
-# Counted before the tibble, not inside it: `usable = nrow(usable)` makes
-# every later expression see the count instead of the frame, which is the
-# masking hazard the implementation notes describe. It produced an empty
-# table here rather than an error.
 n_compositions <- nrow(trial_parts)
 n_usable <- nrow(usable)
 
@@ -748,8 +760,8 @@ tibble::tibble(
 ```
 
 Dropped rather than imputed: there is no zero-replacement strategy worth
-defending for that share of rows, and an unbalanced multilevel model
-handles the loss natively.
+defending for that share of rows, and an unbalanced multilevel model handles the
+loss natively.
 
 ```{r trial-level}
 trial_data <- usable |>
@@ -788,40 +800,43 @@ still excludes zero. These are **different estimands**, not one quantity
 measured twice: the log-ratio of a mean is not the mean of the log-ratios.
 Agreement between them is convergence rather than replication.
 
-That model also gives a reliability estimate from the same fit as the
-effects:
+That model also gives a reliability estimate from the same fit as the effects:
 
 ```{r icc}
 readRDS(system.file("results", "comp-icc.rds", package = pkg)) |>
   knitr::kable(digits = 3, caption = "Between-person share of trial-level variance")
 ```
 
-An intraclass correlation near 0.09 sounds alarming until it is aggregated:
-at that level, a mean over 21 trials has a reliability near 0.70, which is
-close to the 0.77 the [task validity](task-validity.html) page finds by
-split-half. They are consistent, not contradictory.
+An intraclass correlation near 0.09 sounds alarming until it is aggregated: at
+that level, a mean over 21 trials has a reliability near 0.70, which is close to
+the 0.77 the [task validity](task-validity.html) page finds by split-half. They
+are consistent, not contradictory.
 
-**The caveat, now resolved and narrower than expected.** Every composition
-here is built from items a participant chose to answer, which conditions
-on a selected subsample. The [joint model](joint-model.html) tested
-whether that mattered, and the answer is **feature-specific**: willingness
-and accuracy are related on orientation and unrelated on word and colour.
+**The caveat, now resolved and narrower than expected.** Every composition here
+is built from items a participant chose to answer, which conditions on a
+selected sub-sample. The [joint model](joint-model.html) tested whether that
+mattered, and the answer is **feature-specific**: willingness to respond and
+accuracy are related on orientation, and unrelated on word and colour.
 
-So one of the three parts is built on a selected subsample and the other
-two are not. Both coordinates mix all three parts, so both carry the
-caveat, but through one part rather than three. That is weaker than the
-blanket warning this section used to carry, and it is a constraint on
+So one of the three parts is built on a selected sub-sample and the other two
+are not. Both coordinates mix all three parts, so both carry the caveat, but
+through one part rather than three. That is small, and it is a constraint on
 interpretation rather than a reason to discount the result.
 
-The same model also settles the question §1 raised about closure: between
-people, accuracy on orientation and colour correlates **positively**, so
-there is no between-person trade-off for closure to have been hiding.
+--------------------------------------------------------------------------------
 
----
+**Continuing through the Extended Online Report:** this page follows [the
+analysis](analysis-strategy.html). To keep reading in order, continue to
+[performance](performance.html) next. Or see [model
+diagnostics](model-diagnostics.html) and [implementation
+notes](implementation-notes.html) for the technical detail behind these models.
 
-**Continuing through the Extended Online Report:** this page follows [the analysis](analysis-strategy.html). To keep reading in order, continue to [performance](performance.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+--------------------------------------------------------------------------------
 
----
+## References {#comp-refs}
+
+::: {#refs}
+:::
 
 ```{r}
 #| label: session_info

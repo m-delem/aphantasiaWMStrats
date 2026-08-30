@@ -256,7 +256,8 @@ plot_floor_group <- function(
 #'   by bin midpoint, or `NULL` for a plain fill.
 #' @param left_expansion Fraction of the x range added on the left. Share
 #'   it with [plot_floor_group()] so stacked panels align.
-#' @param base_size Passed to [theme_pdf()].
+#' @param ... Additional arguments passed to the [theme_pdf()] function for
+#' further customization of the plot theme.
 #'
 #' @returns A ggplot object with the x axis stripped, for stacking.
 #' @export
@@ -270,7 +271,7 @@ plot_vviq_histogram <- function(
     gradient = ggplot2::scale_fill_viridis_c(option = "viridis",
                                              guide = "none"),
     left_expansion = 0.09,
-    base_size = 7
+    ...
 ) {
   rlang::check_installed("ggplot2", reason = "to draw figures.")
 
@@ -305,10 +306,5 @@ plot_vviq_histogram <- function(
     scale_x_vviq(
       expand = ggplot2::expansion(mult = c(left_expansion, 0.02))) +
     ggplot2::labs(x = NULL, y = "n") +
-    theme_pdf(base_size = base_size) +
-    ggplot2::theme(
-      axis.text.x = ggplot2::element_blank(),
-      axis.ticks.x = ggplot2::element_blank(),
-      axis.line.x = ggplot2::element_blank()
-    )
+    theme_pdf(...)
 }

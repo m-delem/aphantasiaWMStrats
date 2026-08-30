@@ -11,8 +11,13 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
+  error = FALSE
 )
 library(aphantasiaWMStrats)
 library(ggplot2)
@@ -32,22 +37,20 @@ trials_per_feature <- 63L
 feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
 ```
 
-The [scoring](scoring.html) page defines the three recall scores. This page
-asks the prior question every result on this site depends on: **are they
-reliable enough to carry an individual-differences claim?**
+The [scoring](scoring.html) page defines the three recall scores. This page asks
+the prior question every result on this site depends on: **are they reliable
+enough to carry an individual-differences claim?**
 
-For two of the three features the answer is yes. For the third it is no,
-and that is a fact about the task rather than about the metric. The
-[questionnaire psychometrics](psychometrics.html) page asks the same
-question of the instruments.
+For two of the three features the answer is yes. For the third it is no, and
+that is a fact about the task rather than about the metric. The [questionnaire
+psychometrics](psychometrics.html) page asks the same question of the
+instruments.
 
-Everything here is v1 only, per the [version scope](version-scope.html)
-page.
+Everything here is v1 only, per the [version scope](version-scope.html) page.
 
-## The data this page works from
+## The data this page works from {#valid-data}
 
-The same frames the scoring page builds, reproduced so this page stands
-alone.
+The same frames the scoring page builds, reproduced so this page stands alone.
 
 ```{r data}
 # 1. Experimental-block rows only. Tutorial rows carry placeholder values,
@@ -96,11 +99,10 @@ dplyr::slice_head(trials_by_feature, n = 6) |>
   knitr::kable(digits = 3, caption = "trials_by_feature: first six rows")
 ```
 
-## 1. Reliability
+## 1. Reliability {#valid-reliability}
 
-Splits are drawn over trials rather than items, because items within a
-trial share an encoding episode and there is a within-trial primacy
-effect:
+Splits are drawn over trials rather than items, because items within a trial
+share an encoding episode and there is a within-trial primacy effect:
 
 ```{r primacy}
 v1_trials |>
@@ -114,13 +116,12 @@ v1_trials |>
                caption = "Mean score by serial position within the trial")
 ```
 
-Each trial's three items therefore stay together, and the split is
-repeated `r n_splits` times rather than relying on one arbitrary odd/even
-partition.
+Each trial's three items therefore stay together, and the split is repeated
+`r n_splits` times rather than relying on one arbitrary odd/even partition.
 
 The engagement threshold is derived rather than chosen: a participant
-contributes to a feature only if their mean has a standard error of at
-most half the between-person SD.
+contributes to a feature only if their mean has a standard error of at most half
+the between-person SD.
 
 ```{r thresholds}
 engagement_thresholds <- v1_trials |>
@@ -149,28 +150,27 @@ knitr::kable(engagement_thresholds, digits = 3,
 word_row <- dplyr::filter(engagement_thresholds, feature == "Word")
 ```
 
-**Word's requirement cannot be met.** It asks for
-`r word_row$items_needed` items of the `r trials_per_feature` that exist,
-because its between-person SD among responders
-(`r fmt(word_row$sd_between_participants)`) is small relative to
-within-person item noise (`r fmt(word_row$sd_within_participant)`). A
-floor of 32 items is used instead, recorded as a data-sufficiency rule
-and not a precision guarantee. The `pmin()` above applies it as a **cap on
-the requirement**, not as a minimum: where the precision target asks for
-more items than exist, 32 is substituted.
+**Word's requirement cannot be met.** It asks for `r word_row$items_needed`
+items of the `r trials_per_feature` that exist, because its between-person SD
+among responders (`r fmt(word_row$sd_between_participants)`) is small relative
+to within-person item noise (`r fmt(word_row$sd_within_participant)`). A floor
+of 32 items is used instead, recorded as a data-sufficiency rule and not a
+precision guarantee. The `pmin()` above applies it as a **cap on the
+requirement**, not as a minimum: where the precision target asks for more items
+than exist, 32 is substituted.
 
-One thing about what happens downstream. The derivation above is recomputed
-live on this page, but the filter every modelling page applies is
-`engaged_ids()`, which reads the **hard-coded** `wm_thresholds()`:
+One thing about what happens downstream. The derivation above is recomputed live
+on this page, but the filter every modelling page applies is `engaged_ids()`,
+which reads the **hard-coded** `wm_thresholds()`:
 
 ```{r hard-coded-thresholds}
 wm_thresholds()
 ```
 
-They agree today. They are hard-coded deliberately, because the rule was
-fixed before any contact with VVIQ and must not drift with the sample it is
-applied to — so if this page's recomputation ever diverges from that vector,
-the vector is what the analyses used, and the divergence is the finding.
+They agree today. They are hard-coded deliberately, because the rule was fixed
+before any contact with VVIQ and must not drift with the sample it is applied
+to. If this page's re-computation ever diverges from that vector, the vector is
+what the analyses used, and the divergence is the finding.
 
 ```{r reliability}
 eligible_participants <- v1_participant_means |>
@@ -228,17 +228,16 @@ plot_split_half(split_half_draws, base_size = 16)
 ```
 
 Orientation (`r fmt(reliability_of("Orientation"), 2)`) and colour
-(`r fmt(reliability_of("Colour"), 2)`) clear the conventional 0.80 mark
-for individual-level interpretation. Word
-(`r fmt(reliability_of("Word"), 2)`) does not clear the 0.70 floor for
-group-level use. That is the same fact as the threshold failure, seen from
-the other side.
+(`r fmt(reliability_of("Colour"), 2)`) clear the conventional 0.80 mark for
+individual-level interpretation. Word (`r fmt(reliability_of("Word"), 2)`) does
+not clear the 0.70 floor for group-level use. That is the same fact as the
+threshold failure, seen from the other side.
 
-**Word does not function as an individual-differences measure in this
-sample.** The metric is not at fault; Gonthier's formula works exactly as
-designed. Single-word recall at this exposure is simply too easy to
-discriminate between people. No downstream model should make an
-individual-differences claim about word, whatever its coefficients say.
+**Word does not function as an individual-differences measure in this sample.**
+The metric is not at fault; Gonthier's formula works exactly as designed.
+Single-word recall at this exposure is simply too easy to discriminate between
+people. No downstream model should make an individual-differences claim about
+word, whatever its coefficients say.
 
 ```{r composition-stability}
 ids_clearing_all_features <- eligible_participants |>
@@ -286,21 +285,20 @@ knitr::kable(composition_stability, digits = 3,
              caption = "Split-half stability of the compositional profile")
 ```
 
-The compositional profile fares better than its parts would suggest, on
-the `r length(ids_clearing_all_features)` participants clearing all three
-thresholds. A ratio can carry information a level does not, though the
-first coordinate rests partly on word, and its interpretation should not
-lean on word as a well-measured quantity.
+The compositional profile fares better than its parts would suggest, on the
+`r length(ids_clearing_all_features)` participants clearing all three
+thresholds. A ratio can carry information a level does not, though the first
+coordinate rests partly on word, and its interpretation should not lean on word
+as a well-measured quantity.
 
-## 2. What this supports
+## 2. What this supports {#valid-supports}
 
-Orientation and colour scores support individual-differences analysis.
-Word scores do not, and should be reported with the measurement caveat
-attached. The compositional profile is stable enough to interpret, with
-the same caveat on its verbal coordinate.
+Orientation and colour scores support individual-differences analysis. Word
+scores do not, and should be reported with the measurement caveat attached. The
+compositional profile is stable enough to interpret, with the same caveat on its
+verbal coordinate.
 
-Self-reported strategy and behavioural allocation are not the same
-construct:
+Self-reported strategy and behavioural allocation are not the same construct:
 
 ```{r self-report}
 self_reported_priority <- block_trials |>
@@ -334,18 +332,21 @@ v1_compositions |>
                caption = "Behavioural composition by self-reported priority")
 ```
 
-Behavioural compositions barely differ between participants who named
-different priorities. This table is the evidence behind [task
-design](task-design.html) §3's claim that the report and the behaviour are
-not interchangeable per person. This is a dissociation to report, not a validity
-failure. But "preference" language should not be used as though the two
-measures were interchangeable.
+Behavioural compositions barely differ between participants who named different
+priorities, showing that the report and the behaviour are not interchangeable
+per person. This is not a validity failure in itself, but this dissociation
+shows that the behaviour and self-report reflect "preferences" in different ways
+and cannot be used as substitutes for each other yet.
 
----
+--------------------------------------------------------------------------------
 
-**Continuing through the Extended Online Report:** this page follows [versions](version-scope.html). To keep reading in order, continue to [questionnaire psychometrics](psychometrics.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+**Continuing through the Extended Online Report:** this page follows
+[versions](version-scope.html). To keep reading in order, continue to
+[questionnaire psychometrics](psychometrics.html) next. Or skip ahead to [the
+analysis](analysis-strategy.html), which explains what the modelling pages do
+and why.
 
----
+--------------------------------------------------------------------------------
 
 ```{r}
 #| label: session_info

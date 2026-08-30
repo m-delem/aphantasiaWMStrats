@@ -11,8 +11,13 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
+  error = FALSE
 )
 library(aphantasiaWMStrats)
 library(ggplot2)
@@ -27,22 +32,21 @@ fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
 ```
 
 The Working Memory Feature Trade-off Task asks participants to hold three
-features of each stimulus (a word, the orientation of the rectangle
-containing it, and its colour) and to report all three at recall. Scoring
-it is less obvious than it looks. This page documents how the scores in
-`all_data` are computed, what the distributions look like, how reliable
-they are, and which claims they will and will not support.
+features of each stimulus (a word, the orientation of the rectangle containing
+it, and its colour) and to report all three at recall. Scoring it is less
+obvious than it looks. This page documents how the scores in `all_data` are
+computed, what the distributions look like, how reliable they are, and which
+claims they will and will not support.
 
-Every number below is computed from `all_data` when this page is built,
-not transcribed from an analysis run elsewhere.
+Every number below is computed from `all_data` when this page is built, not
+transcribed from an analysis run elsewhere.
 
-## The data this page works from
+## The data this page works from {#score-data}
 
-`all_data` is stimulus-level: one row per presented stimulus, with all
-three recalled features side by side in separate columns. Almost every
-question below is about *features*, so the first step is to reshape to one
-row per stimulus per feature. Three frames are built once here and reused
-throughout.
+`all_data` is stimulus-level: one row per presented stimulus, with all three
+recalled features side by side in separate columns. Almost every question below
+is about *features*, so the first step is to reshape to one row per stimulus per
+feature. Three frames are built once here and reused throughout.
 
 ```{r data}
 # 1. Experimental-block rows only. Tutorial rows carry placeholder values,
@@ -91,13 +95,13 @@ dplyr::slice_head(trials_by_feature, n = 6) |>
   knitr::kable(digits = 3, caption = "trials_by_feature: first six rows")
 ```
 
-## 1. Why the task's own scores are not the analysis scores
+## 1. Why the task's own scores are not the analysis scores {#score-why}
 
-WM-FTT computes scores in the browser, to display feedback between trials.
-Those columns survive in `all_data` under a `feedback_` prefix, alongside
-the intermediate dissimilarities they derive from under `live_diff_`.
-Neither should be analysed. The reason is not that in-task feedback is
-coarse, though it is. It is that one of the three metrics is wrong.
+WM-FTT computes scores in the browser, to display feedback between trials. Those
+columns survive in `all_data` under a `feedback_` prefix, alongside the
+intermediate dissimilarities they derive from under `live_diff_`. Neither should
+be analysed. The reason is not that in-task feedback is coarse, though it is. It
+is that one of the three metrics is wrong.
 
 ```{r utils-bug, eval = FALSE}
 # js/jspsych/utils.js, lines 20-22
@@ -106,19 +110,18 @@ for (let i = 0; (i = 0); i--) {
 }
 ```
 
-The loop *condition* is an assignment. `i = 0` evaluates to `0`, which is
-falsy, so the body never runs and the first column of the
-dynamic-programming matrix is never initialised. It keeps its `fill(0)`
-value, which makes deleting any prefix of the target free. The function is
-named `levenshteinDistance` and does not compute Levenshtein distance; it
-returns something closer to an approximate-substring distance,
-systematically smaller and never larger. The paired loop initialising the
-first *row* is correct, so only one boundary is broken. That is why exact
-matches still score 0, and why the error survived three versions of the
-task undetected.
+The loop *condition* is an assignment. `i = 0` evaluates to `0`, which is falsy,
+so the body never runs and the first column of the dynamic-programming matrix is
+never initialised. It keeps its `fill(0)` value, which makes deleting any prefix
+of the target free. The function is named `levenshteinDistance` and does not
+compute Levenshtein distance; it returns something closer to an
+approximate-substring distance, systematically smaller and never larger. The
+paired loop initialising the first *row* is correct, so only one boundary is
+broken. That is why exact matches still score 0, and why the error survived
+three versions of the task undetected.
 
-The claim is testable. Below is a faithful R port of the broken function,
-dead loop included, compared against the correct distance.
+The claim is testable. Below is a faithful R port of the broken function, dead
+loop included, compared against the correct distance.
 
 ```{r bug-repro}
 broken_levenshtein <- function(target, response) {
@@ -192,20 +195,20 @@ tibble::tibble(
   knitr::kable(caption = "One item, scored three ways")
 ```
 
-The practical consequence is small: in-task feedback was more generous on
-word recall than intended. The methodological one is not. It is why every
-score in this package is computed from raw target and response values in R
-rather than transformed from the front end's output.
+The practical consequence is small: in-task feedback was more generous on word
+recall than intended. The methodological one is not. It is why every score in
+this package is computed from raw target and response values in R rather than
+transformed from the front end's output.
 
-## 2. The three metrics
+## 2. The three metrics {#score-metrics}
 
 **Word** uses the edit-distance scoring of @gonthierEasyWayImprove2022:
-Damerau-Levenshtein distance, capped at the target's length, subtracted
-from that length and divided by it. Bounded on [0, 1] and floored at 0 by
+Damerau-Levenshtein distance, capped at the target's length, subtracted from
+that length and divided by it. Bounded on [0, 1] and floored at 0 by
 construction.
 
-Decomposing that formula against a naive normalised distance, one design
-choice at a time:
+Decomposing that formula against a naive normalised distance, one design choice
+at a time:
 
 ```{r decompose}
 word_score_variants <- block_trials |>
@@ -254,15 +257,15 @@ The transposition rule that gives the metric its name changes
 `r changed_by("Metric")` items; the denominator changes
 `r changed_by("Denominator")`; the cap changes `r changed_by("cap")`, and
 without it scores fall as low as
-`r fmt(min(word_score_variants$without_the_cap), 2)`. The least famous of
-the three decisions does the most work.
+`r fmt(min(word_score_variants$without_the_cap), 2)`. The least famous of the
+three decisions does the most work.
 
 **Colour and orientation** both use a cosine of the angular error, with
-**different periods**. Colour is a hue wheel: period 360. Orientation is
-the tilt of a plain rectangle, which has 180° rotational symmetry. A
-rectangle at +80° and one at −80° differ by 160° arithmetically but are
-20° apart as orientations, and both look near-horizontal. The response
-widget clamps to [−90, 90], exactly one period.
+**different periods**. Colour is a hue wheel: period 360. Orientation is the
+tilt of a plain rectangle, which has 180° rotational symmetry. A rectangle at
++80° and one at −80° differ by 160° arithmetically but are 20° apart as
+orientations, and both look near-horizontal. The response widget clamps to [−90,
+90], exactly one period.
 
 ```{r period}
 orientation_period_comparison <- block_trials |>
@@ -285,14 +288,13 @@ orientation_period_comparison |>
   knitr::kable(caption = "How far participants move between the two periods")
 ```
 
-Using 360 for orientation would score a perpendicular error, the most
-wrong an orientation can be, as 0.5 rather than 0, and no response could
-score 0 at all. The choice is structural rather than empirical, but it is
-not cosmetic: participant rankings move by up to
+Using 360 for orientation would score a perpendicular error, the most wrong an
+orientation can be, as 0.5 rather than 0, and no response could score 0 at all.
+The choice is not cosmetic: participant rankings move by up to
 `r max(orientation_period_comparison$rank_shift)` places out of
 `r nrow(orientation_period_comparison)` between the two conventions.
 
-## 3. What counts as a response
+## 3. What counts as a response {#score-response}
 
 The task encodes non-response with sentinels rather than missing values: an
 empty word box, a colour wheel never touched (999, rendered grey), and an
@@ -311,12 +313,12 @@ Between `r as_pct(min(non_response_rates$non_response_rate))` and
 non-responses. These are scored 0 and flagged, rather than set to `NA`.
 
 `NA` would be the more cautious-looking choice and is the worse one.
-Non-response here is unlikely to be missing-at-random, so listwise
-deletion would silently drop a non-random subset. Scoring 0 produces a
-visible distortion in the distribution instead of an invisible one in the
-inference. The `responded_*` flags then let any analysis separate the two
-quantities the score column combines: whether a participant reported a
-feature at all, and how accurately they did so given that they tried.
+Non-response here is unlikely to be missing-at-random, so list-wise deletion
+would silently drop a non-random subset. Scoring 0 produces a visible distortion
+in the distribution instead of an invisible one in the inference. The
+`responded_*` flags then let any analysis separate the two quantities the score
+column combines: whether a participant reported a feature at all, and how
+accurately they did so given that they tried.
 
 ```{r circularity}
 vviq_association <- v1_trials |>
@@ -336,22 +338,21 @@ knitr::kable(vviq_association, digits = 3,
              caption = "Spearman correlation with VVIQ, scored two ways")
 ```
 
-The gap between those two columns is why the distinction matters:
-including non-responses as zeros inflates the apparent association between
-score and imagery vividness. Every analysis downstream states which of the
-two quantities it means.
+The gap between those two columns is why the distinction matters: including
+non-responses as zeros inflates the apparent association between score and
+imagery vividness. Every analysis downstream states which of the two quantities
+it means.
 
-## 4. Which sample
+## 4. Which sample {#score-sample}
 
-v1 is the primary analysis sample. v2 and v3 are described but do not enter
-the inferential analyses, and the [version scope](version-scope.html) page
-sets out the procedure that resolved to that, including the case where
-pooling the three versions produced an association that stratification
-removed.
+v1 is the primary analysis sample. v2 and v3 are described but do not enter the
+inferential analyses, and the [version scope](version-scope.html) page sets out
+the procedure that resolved to that, including the case where pooling the three
+versions produced an association that stratification removed.
 
 Everything below is v1 unless stated otherwise.
 
-## 5. Distributions
+## 5. Distributions {#score-distributions}
 
 ```{r distributions}
 v1_trials |>
@@ -373,86 +374,48 @@ knitr::kable(boundary_mass, digits = 3,
              caption = "Mass at the boundaries, responded items only")
 ```
 
-Conditional on responding, orientation is well spread with no mass at
-either boundary at all. Word is not:
+Conditional on responding, orientation is well spread with no mass at either
+boundary at all. Word is not:
 `r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])` of
 responded word items are exact matches, and
 `r as_pct(boundary_mass$share_at_zero[boundary_mass$feature == "Word"])` are
 exact misses. Colour has a trace of mass at one and none at zero.
 
-**Those three patterns need three different treatments**, and each choice
-follows from what the boundary means rather than from convenience.
+**Those three patterns need three different treatments**, i.e. different
+**distributional families** to model the responses, and each choice follows from
+what the boundary means rather than from convenience.
 
-- **Word's boundaries are real.** A recalled word either matches the target
-  or it does not, so the pile at one is a genuine point mass, and the
-  zeros here are wrong answers rather than absent ones: this table is
-  already conditional on responding. Both earn an inflation component, so
-  word is modelled with a zero-one-inflated Beta.
-- **Orientation needs nothing.** Plain Beta.
-- **Colour's mass at one is an artifact.** Colour score is cosine
-  similarity on a continuous wheel, so an exact 1 is an error of exactly
-  zero degrees, which is pixel resolution rather than a behaviour.
-  Modelling it as an inflation component would estimate a process
-  parameter for a rounding effect on a couple of dozen items, so it is
-  handled with a Smithson-Verkuilen squeeze instead
-  (`squeeze_boundaries()`), which moves every value by about one
-  ten-thousandth.
+- **Word's boundaries are real.** A recalled word either matches the target or
+  it does not, so the pile at one is a genuine point mass, and the zeros here
+  are wrong answers rather than absent ones: this table is already conditional
+  on responding. Both earn an inflation component, so word is modelled with a
+  zero-one-inflated Beta distribution.
+- **Orientation needs nothing.** Plain Beta distribution.
+- **Colour's mass at one is an artifact.** Colour score is cosine similarity on
+  a continuous wheel, so an exact 1 is an error of exactly zero degrees, which
+  is pixel resolution rather than a behaviour. Modelling it as an inflation
+  component would estimate a process parameter for a rounding effect on a couple
+  of dozen items, so it is handled with a Smithson-Verkuilen squeeze instead
+  (`squeeze_boundaries()`), which moves every value by about one ten-thousandth.
 
-Separately from all of that, the mass at zero in the **unfiltered** columns
-is non-response, which is a different quantity again and is modelled as
-such: see [task engagement](engagement.html).
+Separately from all of that, the mass at zero in the **unfiltered** columns is
+non-response, which is a different quantity again and is modelled as such: see
+[task engagement](engagement.html).
 
-## 6. Reliability, and what these scores support
+--------------------------------------------------------------------------------
 
-Both questions have moved to their own page: [task
-validity](task-validity.html). It covers the trial-level split-half
-procedure, the derived engagement thresholds, the finding that word does
-not function as an individual-differences measure in this sample, and the
-stability of the compositional coordinates.
+**Continuing through the Extended Online Report:** this page follows [task
+design](task-design.html). To keep reading in order, continue to [task
+engagement](engagement.html) next. Or skip ahead to [the
+analysis](analysis-strategy.html), which explains what the modelling pages do
+and why.
 
-The short version: orientation and colour clear the conventional marks for
-individual-level interpretation, word does not, and no downstream model
-should make an individual-differences claim about word whatever its
-coefficients say.
+--------------------------------------------------------------------------------
 
-## 7. For a future version of the task
+## References {#score-refs}
 
-The design goal was a three-way trade-off. Correlations between the three
-features, after removing each participant's overall level, once looked like
-a **two-way** one: orientation and colour trading off against each other
-while word sat out at ceiling. That reading is withdrawn. It was six
-participants who answered very few orientation items, and the [what was
-tried and withdrawn](lessons.html) page owns that withdrawal and shows both
-tables side by side.
-
-What survives is weaker and still worth acting on: word is far too easy,
-with `r as_pct(boundary_mass$share_at_one[boundary_mass$feature == "Word"])`
-of responded items at ceiling and a reliability that does not support
-individual-differences use, so it cannot be carrying much of a trade-off
-whatever the correlations say.
-
-Three changes would address what this analysis could not:
-
-- **Make word harder**, with longer words, more items per trial, or
-  shorter exposure, so the verbal feature enters the trade-off and
-  discriminates.
-- **Distinguish abstention from a default**, via an explicit "I don't know"
-  control, separate from an untouched widget, and a confidence rating.
-  Abstention is currently far faster than responding, which rules out
-  effortful-but-failed search but cannot separate "nothing to report" from
-  "not worth the effort".
-- **Vary the points per feature**, since strategic abstention should
-  respond to incentive and representational absence should not.
-
-## References
-
-<div id="refs"></div>
-
----
-
-**Continuing through the Extended Online Report:** this page follows [task design](task-design.html). To keep reading in order, continue to [task engagement](engagement.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
-
----
+::: {#refs}
+:::
 
 ```{r}
 #| label: session_info

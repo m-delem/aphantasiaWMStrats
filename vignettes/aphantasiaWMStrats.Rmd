@@ -27,7 +27,7 @@ Report. This page is about *using the package*.
 library(aphantasiaWMStrats)
 ```
 
-## The data
+## The data {#start-data}
 
 One built-in dataset, `all_data`, holds every version of the task in one
 item-level table: one row per presented item, so three rows per trial. An
@@ -65,7 +65,7 @@ browser to show participants feedback. They are kept for provenance and should
 never be analysed. One of them is derived from a defective edit-distance
 implementation, which the [scoring](scoring.html) page demonstrates.
 
-## A first look
+## A first look {#start-look}
 
 Experimental blocks only, answered items only:
 
@@ -81,7 +81,7 @@ all_data |>
   knitr::kable(digits = 3, caption = "Word recall by block, v1")
 ```
 
-## The scoring functions
+## The scoring functions {#start-scoring}
 
 The score columns are not read from the raw data; they are computed from raw
 target and response values by `compute_scores()`, which is exported so the
@@ -126,7 +126,7 @@ damerau_levenshtein("chien", "chein")  # one adjacent transposition
 normalise_word("  Fen\u00eatre ")      # lowercase, strip spaces and accents
 ```
 
-## Beyond scoring
+## Beyond scoring {#start-beyond}
 
 The package also exports the machinery the analyses run on, so that a
 script and a documentation page compute the same quantity with the same
@@ -157,14 +157,13 @@ and not a statistical one.
 `centred_correlations()` are the estimators behind the numbers on the
 documentation pages.
 
-**Model specifications.** The formulas and priors are exported objects,
-not code buried in a script:
+**Model specifications.** The formulas and priors are exported objects:
 
 ```{r model-spec}
 joint_formula()
 ```
 
-This matters for reproducibility rather than tidiness. Documentation pages
+This matters for reproducibility. Documentation pages
 load fitted models with `file_refit = "never"`, and brms returns a cached
 fit **without checking** that the formula it was handed matches the one the
 model was fitted with. A page that re-typed its formula could display
@@ -179,11 +178,11 @@ with the sibling package `aphantasiaEmotions`, so imagery groups are the
 same colours across both. Analysis scripts render vector PDFs at printed
 size; these pages render the same figures at `base_size = 16`.
 
-## Where to go next
+## Where to go next {#start-next}
 
-The documentation is an [Extended Online
-Report](https://m-delem.github.io/aphantasiaWMStrats/): pages ordered so
-that no quantity appears before the page that defines it.
+The documentation is an Extended Online
+Report: interlinked pages ordered so
+that no quantity appears before the page that defines it. To dive in:
 
 - [**Task design**](task-design.html) for what participants did and why the
   task changed twice.

@@ -11,8 +11,12 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
   error = FALSE
 )
 library(aphantasiaWMStrats)
@@ -25,17 +29,13 @@ pkg <- "aphantasiaWMStrats"
 refit <- "never"
 ```
 
-**Everything on this page is exploratory.** The groups are not fixed in
-advance, nothing here licenses a confirmatory claim, and the parts that
-were run after seeing a result say so.
+**Everything on this page is exploratory.** The confirmatory strand divides
+participants by imagery vividness. This page asks whether the questionnaires
+contain anything that division misses: first by looking at how the scales relate
+to each other, then by asking an algorithm to find groups without being told
+about vividness at all.
 
-The confirmatory strand divides participants by imagery vividness. This
-page asks whether the questionnaires contain anything that division misses:
-first by looking at how the scales relate to each other, then by asking an
-algorithm to find groups without being told about vividness at all.
-
-The short answer is **yes on one dimension and no as a group structure**,
-and the two halves are worth reading together.
+The short answer is **yes on one dimension and no as a group structure**.
 
 ```{r data}
 scales <- questionnaire_scales(all_data)
@@ -49,23 +49,24 @@ scales <- dplyr::mutate(
 )
 ```
 
-## 1. Pooling across versions, which is allowed here and nowhere else
+## 1. Pooling across versions, which is allowed here and nowhere else {#bv-pooling}
 
-Every modelling page on this site runs on v1 alone. This one uses all
-`r nrow(scales)` participants with complete questionnaire data.
+Every modelling page on this site currently (2026-09-03) runs on v1 alone. This
+one uses all `r nrow(scales)` participants with complete questionnaire data
+across all versions.
 
-Counted **per person**, as the [participants](participants.html) page
-counts them: one participant completed both v1 and v3, and is counted once,
-under v1. That is why the version table below gives v3 twenty rather than
-the twenty-one that pages counting task sessions report.
+Counted **per person**, as the [participants](participants.html) page counts
+them: one participant completed both v1 and v3, and is counted once, under v1.
+That is why the version table below gives v3 twenty rather than the twenty-one
+that pages counting task sessions report.
 
-The reasoning in the [version scope](version-scope.html) page is entirely
-about **task** comparability: group balance for a behavioural contrast,
-non-response differing three-fold, per-version standardisation being
+The reasoning in the [version scope](version-scope.html) page is entirely about
+**task** comparability: group balance for a behavioural contrast, non-response
+differing between the three versions, per-version standardisation being
 unstable. None of it touches a questionnaire score. The instruments are
-identical and were administered identically in all three versions, so
-version is a property of the task rather than of the scales, and pooling
-recovers a third more participants for the analysis that most needs them.
+identical and were administered identically in all three versions, so version is
+a property of the task rather than of the scales, and pooling recovers a third
+more participants for the analysis that most needs them.
 
 ```{r versions}
 scales |>
@@ -79,18 +80,17 @@ scales |>
   knitr::kable(caption = "Participants by task version")
 ```
 
-What pooling changes is the sample's **composition**: later recruitment
-targeted aphantasic participants, so the pooled sample is about a third
-floor group where v1 alone is a quarter. That matters for clustering,
-because centroids are fitted to whatever sample they are given, and
-section 4 tests it rather than assuming it away.
+What pooling changes is the sample's **composition**: later recruitment targeted
+more aphantasic participants, so the pooled sample is about a third floor group
+where v1 alone is a quarter. That matters for clustering, because centroids are
+fitted to whatever sample they are given. Section 4 tests this.
 
-## 2. The scales are largely independent, and three of them are one thing
+## 2. The scales are largely independent, and three of them are one thing {#bv-structure}
 
 Raw correlations among overlapping instruments are close to unreadable:
 everything correlates with everything, because everything shares a general
-factor. The partial structure is what says whether a scale carries anything
-the others do not.
+factor. The partial structure is what says whether a scale carries anything the
+others do not.
 
 ```{r partial, fig.alt="Partial correlations among the questionnaire scales.", fig.height = 6}
 standardised <- standardise_scales(scales) |>
@@ -127,26 +127,24 @@ knitr::kable(round(stats::cor(components, method = "spearman"), 3),
              caption = "The three imagery measures, raw correlations")
 ```
 
-Cronbach's alpha of the three is
-`r fmt(cronbach_alpha(components), 3)`, against correlations of 0.15 to
-0.38 with the other OSIVQ subscales. **Three instruments, three response
-formats, one construct.**
+Cronbach's alpha of the three is `r fmt(cronbach_alpha(components), 3)`, against
+correlations of 0.15 to 0.38 with the other OSIVQ subscales. **Three
+instruments, three response formats, one construct.**
 
-That has a consequence for anything that comes next. Left as three
-features, imagery would be **triple-weighted** in any distance metric, so a
-clustering would recover imagery groups by construction and could not
-possibly find anything else. They are collapsed into one standardised
-composite, which is what makes the question in this page's title
-answerable.
+That has a consequence for anything that comes next. Left as three features,
+imagery would be **triple-weighted** in any distance metric, so a clustering
+would recover imagery groups by construction and could not possibly find
+anything else. I've collapsed them into one standardised composite, which is
+what makes the question in this page's title answerable.
 
-The rest being largely independent also means dimension reduction should
-stop there. Reducing further would destroy exactly the distinctions the
-clustering is meant to find.
+The rest being largely independent also means dimension reduction should stop
+there. Reducing further would destroy exactly the distinctions the clustering is
+meant to find.
 
-## 3. The finding: unsymbolised thinking rises as vividness falls
+## 3. The finding: unsymbolised thinking rises as vividness falls {#bv-unsymbolised}
 
-Before any clustering, the simplest question. The NIEQ asks about five
-modes of inner experience. How do the two imagery groups differ on each?
+Before any clustering, the simplest question. The NIEQ asks about five modes of
+inner experience. How do the two imagery groups differ on each?
 
 ```{r nieq-contrast}
 nieq_contrast <- purrr::map(
@@ -181,29 +179,22 @@ nieq_contrast |>
 ```
 
 **Unsymbolised thinking is the only dimension where the floor group scores
-higher**, and the group effect is large. Participants who report no
-voluntary visual imagery recognise themselves more in what the NIEQ,
-following Hurlburt's descriptive experience sampling work, calls thinking
-that proceeds without words or images.
+higher**, and the group effect is large. Participants who report no voluntary
+visual imagery recognise themselves more in what the NIEQ, following Hurlburt's
+descriptive experience sampling work, calls thinking that proceeds without words
+or images.
 
-One row in that table reads like a mistake and is not. **Inner voice** has
-a moderate negative effect size next to a p value of almost exactly 1,
-which looks impossible beside a smaller effect at p = .05. It is genuine:
-`d` is computed from group means and a pooled SD, while `p` comes from a
-two-sided Mann-Whitney test on ranks, and the two answer different
-questions. A distribution can be shifted in its mean and almost perfectly
-overlapping in its ranks, which is what a heavy tail on one side does. The
-test is the one to trust for a group claim here, and it says nothing is
-happening.
+One row in that table reads like a mistake and is not. **Inner voice** has a
+moderate negative effect size next to a p value of almost exactly 1, which looks
+impossible beside a smaller effect at p = .05. It is genuine: `d` is computed
+from group means and a pooled SD, while `p` comes from a two-sided Mann-Whitney
+test on ranks, and the two answer different questions. A distribution can be
+shifted in its mean and almost perfectly overlapping in its ranks, which is what
+a heavy tail on one side does. The test is the one to trust for a group claim
+here, and it says nothing is happening.
 
-(This is *not* the `tibble()` masking bug the [implementation
-notes](implementation-notes.html#hazards) describe. That one produced p
-values of exactly 1, and the test above is computed before the `tibble()`
-for exactly that reason.)
-
-That is the group contrast. The models below replace it with something
-more precise, and the replacement is not a group difference at all — read
-to the end of this section before carrying the heading away.
+That is the group contrast. The models below replace it with something more
+precise:
 
 ```{r nieq-models, fig.alt="Floor-group models for four NIEQ dimensions.", fig.height = 8}
 nieq_data <- dplyr::mutate(
@@ -277,10 +268,10 @@ nieq_panel <- function(dimension, model_only = FALSE) {
 patchwork::wrap_plots(purrr::map(nieq_dimensions, nieq_panel), ncol = 2)
 ```
 
-Fitted in the same floor-group form as every other model on this site: a
-slope among everyone above the vividness floor, plus a single offset for
-the group at it. That separates two things a group comparison cannot, and
-here it reverses the reading of both.
+Fitted in the same floor-group form as every other model on this site: a slope
+among everyone above the vividness floor, plus a single offset for the group at
+it. That separates two things a group comparison cannot, and here it reverses
+the reading of both.
 
 ```{r nieq-estimates}
 purrr::map(nieq_dimensions, function(dimension) {
@@ -300,17 +291,17 @@ purrr::map(nieq_dimensions, function(dimension) {
   knitr::kable(digits = 3, caption = "Offset and slope, separated")
 ```
 
-**Not one floor offset excludes zero.** Whatever distinguishes the groups
-on these dimensions is not a discontinuity at the floor.
+**Not one floor offset excludes zero.** Whatever distinguishes the groups on
+these dimensions is not a discontinuity at the floor.
 
-**Unsymbolised thinking is a gradient, not a floor effect.** Its slope is
-the informative estimate, running downward across the whole vividness
-range, while its offset is uninformative. The group contrast in the table
-above was real, but it describes the low end of a continuum rather than
-something specific to participants with no imagery at all. That is the
-same fact as its partial correlation with the imagery **composite**, which
-the §2 heatmap cannot show because the composite does not exist until the
-three imagery scales are collapsed:
+**Unsymbolised thinking is a gradient, not a floor effect.** Its slope is the
+informative estimate, running downward across the whole vividness range, while
+its offset is uninformative. The group contrast in the table above was real, but
+it describes the low end of a continuum rather than something specific to
+participants with no imagery at all. That is the same fact as its partial
+correlation with the imagery **composite**, which the §2 heatmap cannot show
+because the composite does not exist until the three imagery scales are
+collapsed:
 
 ```{r unsymbolised-composite}
 composite_partials <- standardise_scales(scales) |>
@@ -331,43 +322,35 @@ knitr::kable(composite_partials, digits = 3,
 
 It behaves like an inverse imagery measure, consistently, all the way up.
 
-**And a dimension the group contrast missed.** NIEQ emotions has the only
-slope clearly excluding zero, and it is positive: more vivid imagers
-report more emotional inner experience. Dichotomised, that dimension gave
-d = -0.42 at p = .12 and would have been set aside.
+**And a dimension the group contrast missed.** NIEQ emotions has the only slope
+clearly excluding zero, and it is positive: more vivid imagers report more
+emotional inner experience. Dichotomised, that dimension gave d = -0.42 at p =
+.12 and would have been set aside.
 
-Both readings changed when the dichotomy was dropped, which is the
-argument for fitting these at all.
+Both readings changed when the dichotomy was dropped, which is the argument for
+fitting these at all.
 
 This is a positive claim about what low-vividness experience *is*, from an
-instrument built to ask, and it needs no clustering at all. It is worth
-saying plainly because the rest of this page is a null. But it is a claim
-about a **gradient**: it describes the low end of a continuum, and nothing
-here isolates participants with no imagery at all from those with a
-little.
+instrument built to ask it. It is worth saying plainly because the rest of this
+page is a null. But it is a claim about a **gradient**: it describes the low end
+of a continuum, and nothing here isolates participants with no imagery at all
+from those with a little.
 
-Two cautions. It is a group contrast that was **not** pre-declared, so it
-is a hypothesis for a future study rather than a test passed. And the
-[psychometrics](psychometrics.html) page records that NIEQ's sensory-focus
-dimension does not reach its reliability threshold in this sample, which is
-a reason for care with the instrument as a whole even though it is not the
-dimension at issue here.
+## 4. The clustering, and what it was asked to find {#bv-clustering}
 
-## 4. The clustering, and what it was asked to find
-
-The criterion was fixed before the clustering ran, so that the outcome
-could not be described as whatever it turned out to be:
+The criterion was fixed before the clustering ran, so that the outcome could not
+be described as whatever it turned out to be:
 
 - **Success**: clusters that **split** the floor group. That would be a
   distinction the confirmatory strand cannot make at all.
 - **Null**: clusters that recover the vividness grouping. The structure is
   imagery, and there is nothing else.
 
-Consensus clustering rather than one algorithm, because the central risk in
+Consensus clustering was preferred to a algorithm, because the central risk in
 this kind of analysis is finding groups that do not exist. A partition that
-survives three algorithms and three consensus functions is less likely to
-be an artifact of any one of them. The number of clusters is **selected,
-not assumed**.
+survives three algorithms and three consensus functions is less likely to be an
+artifact of any one of them. The number of clusters is **selected** by
+algorithms, not pre-specified.
 
 ```{r clustering}
 features <- standardise_scales(dplyr::select(scales, -"imagery_group")) |>
@@ -392,9 +375,8 @@ tibble::tibble(
   knitr::kable(digits = 3, caption = "Cluster separation by k")
 ```
 
-Two clusters, on the silhouette and on the proportion of ambiguous
-clustering alike, and all three consensus functions returned two
-independently.
+Two clusters, on the silhouette and on the proportion of ambiguous clustering
+alike, and all three consensus functions returned two independently.
 
 ```{r verdict}
 scales$cluster <- factor(clustering$clusters[, "CSPA"])
@@ -407,9 +389,9 @@ table(cluster = scales$cluster, imagery = scales$imagery_group) |>
 ```
 
 The adjusted Rand index against the vividness grouping is
-`r fmt(adjusted_rand_index(scales$cluster, scales$imagery_group))`, and
-**every participant at the vividness floor falls in one cluster.** By the
-criterion above, that is the null.
+`r fmt(adjusted_rand_index(scales$cluster, scales$imagery_group))`, and **every
+participant at the vividness floor falls in one cluster.** By the criterion
+above, that is the null.
 
 ```{r profiles, fig.alt="The two clusters on the imagery composite and unsymbolised thinking."}
 features |>
@@ -426,20 +408,20 @@ features |>
        caption = "Two clouds, separated along one axis.")
 ```
 
-The solution is **one axis, dichotomised**. Every feature separates in the
-same direction except unsymbolised thinking, which separates in the
-opposite one, and section 2 explains why: it is an inverse imagery measure
-rather than a second dimension.
+The solution is **one axis, dichotomised**. Every feature separates in the same
+direction except unsymbolised thinking, which separates in the opposite one, and
+section 2 explains why: it is an inverse imagery measure rather than a second
+dimension.
 
-One respect in which this is not purely a relabelling: the boundary is not
-the scale floor. The low-imagery cluster holds the floor participants
-**plus** several low-vividness participants above it, so the line is drawn
-at a vividness threshold rather than at the floor.
+One respect in which this is not purely a relabelling: the boundary is not the
+scale floor. The low-imagery cluster holds the floor participants **plus**
+several low-vividness participants above it, so the line is drawn at a vividness
+threshold rather than at the floor.
 
-## 5. Is the pooling innocent?
+## 5. Is the pooling innocent? {#bv-pooling-check}
 
 Section 1 flagged that v1 participants' labels are partly determined by
-participants from versions that enter no other analysis. Refit on v1 alone
+participants from versions that enter no other analysis. Let's refit on v1 alone
 and compare.
 
 ```{r stability}
@@ -465,21 +447,20 @@ tibble::tibble(
   knitr::kable(digits = 3, caption = "Pooled fit against a v1-only fit")
 ```
 
-The v1 partition is essentially the same either way, so the pooling is
-innocent and the larger sample is kept. Had it not been, the pooled
-solution would have been describing the versions excluded from everything
-else, and it would have been dropped.
+The v1 partition is essentially the same either way, so the pooling is innocent
+and the larger sample is kept. Had it not been, the pooled solution would have
+been describing the versions excluded from everything else, and it would have
+been dropped.
 
-## 6. Two things tried afterwards, and reported as such
+## 6. Two things tried afterwards {#bv-afterwards}
 
-Everything below was run **after** seeing the null, which makes it
-exploration of a null rather than a second attempt at the same test.
+Everything below was run **after** seeing the null, which makes it exploration
+of a null rather than a second attempt at the same test.
 
-**Is there structure inside the floor group?** A better question than
-forcing more clusters on the whole sample, because restricting to the floor
-group removes the axis that dominated, so anything found there is
-necessarily beyond vividness. Features re-standardised within the
-subsample, imagery scales dropped since they barely vary in it.
+**1) Is there structure inside the floor group?** Restricting to the floor group
+removes the axis that dominated, so anything found there is necessarily beyond
+vividness. Features were re-standardised within the sub-sample and imagery
+scales were dropped since they barely vary in it.
 
 ```{r floor-clustering}
 floor_features <- scales |>
@@ -501,53 +482,42 @@ knitr::kable(floor_clustering$indices$pac, digits = 3,
              caption = "Proportion of ambiguous clustering, floor group only")
 ```
 
-The consensus functions returned a partition and agreed with each other.
-**The stability indices say not to believe it.** The proportion of
-ambiguous clustering runs from about 0.22 to 0.76 across algorithms,
-meaning a large share of participant pairs cluster together inconsistently
-across resamples. With `r nrow(floor_matrix)` participants and
-`r ncol(floor_matrix)` features, an algorithm that always returns a
-partition has returned one.
+The consensus functions returned a partition and agreed with each other. **The
+stability indices say not to believe it.** The proportion of ambiguous
+clustering runs from about 0.22 to 0.76 across algorithms, meaning a large share
+of participant pairs cluster together inconsistently across resamples.
 
 Had the indices supported it, the claim would have been a contrast between
-participants high on both inner voice and unsymbolised thinking and
-participants low on both. That deserves a properly powered study, and it is
-recorded here so the question is visibly closed rather than left for
-someone to retry with a different seed.
+participants high on both inner voice and unsymbolised thinking and participants
+low on both. That deserves a properly powered study of its own.
 
-**Forcing three clusters** on the full sample splits off two above-floor
-participants and leaves the floor group otherwise intact. It changes
-nothing.
+**2) Forcing three clusters** on the full sample splits off two above-floor
+participants and leaves the floor group otherwise intact. It changes nothing.
 
-## 7. The validation step is not run, and that is the result
+## 7. The validation step is not run {#bv-validation}
 
-The plan was to refit the [joint model](joint-model.html) on the cluster
-labels, using task behaviour that had been held out throughout. Its stated
-precondition was clusters that are not simply imagery groups.
+The plan was to refit the main [composition](composition.html) model on the
+cluster labels, using task behaviour that had been held out throughout. Its
+stated precondition was clusters that are not simply imagery groups. That
+precondition is not met. Refitting anyway would reproduce the floor-group
+analysis with the boundary moved slightly.
 
-That precondition is not met. Refitting anyway would reproduce the
-floor-group analysis with the boundary moved slightly, and reporting that
-as validation of a cluster solution would be the kind of overstatement this
-project has made before and does not intend to repeat.
+So the exploratory strand ends here, with two results of unequal weight. The
+clustering finds nothing that vividness does not already capture. The
+questionnaires themselves do: **unsymbolised thinking rises steadily as imagery
+vividness falls**, which points at a description of what inner experience is
+like at that end of the scale. It is more a gradient than a property of complete
+aphantasia specifically, as shown by the models in section 3.
 
-So the exploratory strand ends here, with two results of unequal weight.
-The clustering finds nothing that vividness does not already capture. The
-questionnaires themselves do: **unsymbolised thinking rises steadily as
-imagery vividness falls**, which points at a description of what inner
-experience is like at that end of the scale rather than at a deficit. It
-is a gradient rather than a property of aphantasia specifically, and the
-models in section 3 are what distinguish those two readings.
+--------------------------------------------------------------------------------
 
-One question is left deliberately open. The cluster boundary sits above the
-vividness floor, so it is a different dichotomy of the same axis. Whether
-it predicts task behaviour better than the floor split is answerable and
-cheap, and would need declaring before it is run.
+**Continuing through the Extended Online Report:** this page follows [the joint
+model](joint-model.html). To keep reading in order, continue to [model
+diagnostics](model-diagnostics.html) next. Or see [model
+diagnostics](model-diagnostics.html) and [implementation
+notes](implementation-notes.html) for the technical detail behind these models.
 
----
-
-**Continuing through the Extended Online Report:** this page follows [the joint model](joint-model.html). To keep reading in order, continue to [model diagnostics](model-diagnostics.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
-
----
+--------------------------------------------------------------------------------
 
 ```{r}
 #| label: session_info

@@ -11,8 +11,13 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
+  error = FALSE
 )
 library(aphantasiaWMStrats)
 library(ggplot2)
@@ -20,24 +25,23 @@ theme_set(theme_minimal(base_size = 16))
 fmt <- function(x, digits = 2) formatC(x, format = "f", digits = digits)
 ```
 
-Three questionnaires accompany the WM-FTT: the VVIQ [@marksVisualImageryDifferences1973],
-the OSIVQ [@blazhenkovaNewObjectSpatialVerbal2009] and the NIEQ
+Three questionnaires accompany the WM-FTT: the VVIQ
+[@marksVisualImageryDifferences1973], the OSIVQ
+[@blazhenkovaNewObjectSpatialVerbal2009] and the NIEQ
 [@heaveyMeasuringFrequencyInnerExperience2019]. All three feed downstream
-analyses, and two of them turned out to need caveats. This page reports how
-each behaves in this sample rather than citing the reliabilities from their
-manuals, because one of them does not reproduce.
+analyses, and two of them turned out to need caveats. This page reports how each
+behaves in this sample.
 
-The task's own reliabilities are on the [task
-validity](task-validity.html) page, where the split-half machinery lives.
-Everything below is computed when this page is built.
+The task's own reliabilities are on the [task validity](task-validity.html)
+page, where the split-half machinery lives. Everything below is computed when
+this page is built.
 
-**This page stays on v1**, where the [beyond
-vividness](beyond-vividness.html) page pools all three versions. The two
-are asking different questions. Pooling is right when the aim is to
-describe the instruments in as many people as possible; here the aim is to
-say whether the scales are trustworthy *in the sample the modelling pages
-use*, and that sample is v1. Where a claim below rests on the other
-versions, it says so.
+**This page stays on v1**, where the [beyond vividness](beyond-vividness.html)
+page pools all three versions. The two are asking different questions. Pooling
+is right when the aim is to describe the instruments in as many people as
+possible; here the aim is to say whether the scales are trustworthy *in the
+sample the modelling pages use*, and that sample is v1. Where a claim below
+rests on the other versions, it says so.
 
 ```{r data}
 participants <- get_data("v1") |> dplyr::distinct(id, .keep_all = TRUE)
@@ -60,7 +64,7 @@ item_total <- function(items) {
 }
 ```
 
-## 1. VVIQ
+## 1. VVIQ {#psy-vviq}
 
 Sixteen items, no reverse-keyed items, single dimension.
 
@@ -78,11 +82,11 @@ tibble::tibble(
 ```
 
 Nothing to report, which is the useful result: alpha is high, every item
-correlates positively with the rest, and the weakest item still exceeds
-0.75. The VVIQ is doing its job here.
+correlates positively with the rest, and the weakest item still exceeds 0.75.
+The VVIQ is doing its job here.
 
-The distribution is another matter, and matters more for modelling than
-the reliability does:
+The distribution is another matter, and matters more for modelling than the
+reliability does:
 
 ```{r vviq-distribution}
 participants |>
@@ -101,25 +105,24 @@ participants |>
   knitr::kable(caption = "VVIQ distribution: a floor spike and a sparse middle")
 ```
 
-Roughly a quarter of the sample sits at exactly 16, the scale minimum, and
-the middle of the range is nearly empty. That is why VVIQ is not treated as
-a plain continuous predictor everywhere downstream; [the analysis
-strategy](analysis-strategy.html) page §3 sets out the floor-group form
-every model uses and the caution that comes with it.
+Roughly a quarter of the sample sits at exactly 16, the scale minimum, and the
+middle of the range is sparsely populated. That is why VVIQ is not treated as a
+plain continuous predictor everywhere downstream; [the analysis
+strategy](analysis-strategy.html) page §3 sets out the floor-group form every
+model uses and the caution that comes with it.
 
-## 2. OSIVQ, and a scoring inconsistency worth knowing about
+## 2. OSIVQ {#psy-osivq}
 
-Three subscales: object, spatial, verbal. **Four items are reverse-keyed,
-and they are stored inconsistently across task versions.** v1 and v2 store
-`osivq_q02v`, `osivq_q09v`, `osivq_q41v` and `osivq_q42s` unreversed; v3
-stores them already reversed. The `object_mean`, `spatial_mean` and
-`verbal_mean` columns are correct in both cases. Only the raw items in
-`osivq_items` differ.
+Three subscales: object, spatial, verbal. **Four items are reverse-keyed, and
+they are stored inconsistently across task versions.** v1 and v2 store
+`osivq_q02v`, `osivq_q09v`, `osivq_q41v` and `osivq_q42s` un-reversed; v3 stores
+them already reversed. The `object_mean`, `spatial_mean` and `verbal_mean`
+columns are correct in both cases. Only the raw items in `osivq_items` differ.
 
-That claim spans versions while the rest of this page is v1, so it is
-checked directly rather than asserted: if v3 really does store them
-reversed, its item-total correlations for those items should be **positive**
-where v1's are negative.
+That claim spans versions while the rest of this page is v1, so it is checked
+directly rather than asserted: if v3 really does store them reversed, its
+item-total correlations for those items should be **positive** where v1's are
+negative.
 
 ```{r reversal-across-versions}
 reverse_keyed <- c("osivq_q02v", "osivq_q09v", "osivq_q41v", "osivq_q42s")
@@ -147,7 +150,7 @@ tibble::tibble(item = reverse_keyed) |>
 Negative in v1, positive in v3. The items are the same; only the storage
 convention differs.
 
-The consequence within v1 is silent, so it is worth showing too:
+The consequence within v1:
 
 ```{r osivq-reversal}
 osivq_raw <- purrr::list_rbind(participants$osivq_items)
@@ -185,20 +188,20 @@ tibble::tibble(item = names(verbal_raw),
                caption = "OSIVQ verbal items: negative correlations mark the unreversed ones")
 ```
 
-Anyone recomputing OSIVQ scores from the item columns needs to reverse
-those four for v1 and v2, and not for v3. The subscale mean columns already
-handle it.
+Anyone recomputing OSIVQ scores from the item columns needs to reverse those
+four for v1 and v2, and not for v3. The subscale mean columns already handle it.
 
-## 3. NIEQ
+## 3. NIEQ {#psy-nieq}
 
 Ten items: five dimensions, each measured by a "frequently" item and a
 "generally" item, scored as the pair's mean.
 
 **A total across all ten items is meaningless**, since the dimensions are
-not facets of one construct. Someone with frequent inner speech need not
-have frequent imagery. So Cronbach's alpha over the full instrument is not
-the right statistic, and computing it would produce a number that looks
-like a defect but is not one. The right check is whether each pair agrees.
+different constructs, not facets of a single construct. Someone with frequent
+inner speech need not have frequent imagery. So Cronbach's alpha over the full
+instrument is not the right statistic, and computing it would produce a number
+that looks like a defect but is not one. The right check is whether each pair
+agrees.
 
 ```{r nieq}
 nieq_items <- purrr::list_rbind(participants$nieq_items)
@@ -235,19 +238,17 @@ reliability_of <- function(d) nieq_pairs$reliability[nieq_pairs$dimension == d]
 
 Four of the five dimensions are adequate. **Sensory focus is not**, at
 `r fmt(reliability_of("Sensory focus"))`, well below the conventional 0.70
-floor: its two items barely agree, so the subscale mean is not measuring
-one thing. That is consistent with sensory awareness being the weakest
-dimension in the instrument's own validation, and it means sensory focus
-should not carry the same weight as the others wherever NIEQ subscales are
-used as inputs.
+floor: its two items barely agree, so the subscale mean is not measuring one
+thing. That is consistent with sensory awareness being the weakest dimension in
+the instrument's own validation, and it means sensory focus should not carry the
+same weight as the others wherever NIEQ subscales are used as inputs.
 
-Unsymbolised thinking, at `r fmt(reliability_of("Unsymbolised thinking"))`,
-is adequate. That matters more than it might appear: it is the dimension
-with the clearest theoretical stake in this project, and a two-item
-subscale is exactly the kind of measure that can quietly fail to support
-the weight placed on it.
+Unsymbolised thinking, at `r fmt(reliability_of("Unsymbolised thinking"))`, is
+adequate. It is the dimension with the clearest theoretical stake in this
+project, so it is important to assess whether it can legitimately support the
+weight placed on it.
 
-## 4. Summary
+## 4. Summary {#psy-summary}
 
 ```{r summary}
 dplyr::bind_rows(
@@ -267,20 +268,23 @@ dplyr::bind_rows(
   knitr::kable(digits = 3, caption = "All questionnaire scales, v1")
 ```
 
-One scale of nine falls below the threshold. The OSIVQ reverse-coding
-inconsistency does not affect any stored score, but does affect anyone
-recomputing from items. Neither problem is visible without checking, which
-is the argument for this page existing.
+One scale of nine falls below the threshold. Whether the others enter the models
+and how was decided based on our hypotheses on each scale, which is detailed 
+further in the [composition](composition.html) analyses page.
 
-## References
+--------------------------------------------------------------------------------
 
-<div id="refs"></div>
+**Continuing through the Extended Online Report:** this page follows [task
+validity](task-validity.html). To keep reading in order, continue to [the
+analysis](analysis-strategy.html) next, which lays out the bases of all further
+analyses in this project.
 
----
+--------------------------------------------------------------------------------
 
-**Continuing through the Extended Online Report:** this page follows [task validity](task-validity.html). To keep reading in order, continue to [the analysis](analysis-strategy.html) next. Or skip ahead to [the analysis](analysis-strategy.html), which explains what the modelling pages do and why.
+## References {#psy-refs}
 
----
+::: {#refs}
+:::
 
 ```{r}
 #| label: session_info

@@ -70,7 +70,7 @@ fit_brms_model <- function(
 #' Kruschke's 0.1 SD convention, which is what `bayestestR::rope_range()`
 #' applies to a Gaussian model. Stating "no effect established" through the
 #' proportion of the posterior inside a region of practical equivalence is
-#' more honest than a non-significant p-value, and matters here because
+#' more informative than a non-significant p-value, and matters here because
 #' several of this study's models are fitted at sample sizes where that is
 #' the likely outcome.
 #'

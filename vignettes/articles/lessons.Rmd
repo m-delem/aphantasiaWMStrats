@@ -11,33 +11,32 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
   error = FALSE
 )
 library(aphantasiaWMStrats)
 ```
 
 Several findings on this site were reported at some point and are no longer
-claimed. This page says what they were and what removed them, because an
-Extended Online Report that only shows what survived is a longer methods
-section rather than a more honest one.
+claimed. This page says what they were and what removed them.
 
 Three of them were caught by the same move: **check whether a pooled result
-holds within each stratum before reporting it.** The other two are
-different in kind, and are included because a page of near-misses that all
-share one cause would misrepresent how the errors actually arrived.
+holds within each version before reporting it.**
 
-## 1. A two-way trade-off between colour and orientation
+## 1. A two-way trade-off between colour and orientation {#less-tradeoff}
 
-**Claimed:** the task was designed to force a three-way trade-off but
-achieves a two-way one, because word is easy enough that participants can
-max it and then divide effort between colour and orientation. Supported by
-correlations between features after removing each participant's overall
-level.
+**Claimed:** the task was designed to force a three-way trade-off but achieves a
+two-way one, because word is easy enough that participants can max it and then
+divide effort between colour and orientation. Supported by correlations between
+features after removing each participant's overall level.
 
-**Withdrawn** when the same correlations were computed on participants who
-clear the engagement thresholds:
+**Withdrawn** when the same correlations were computed on participants who clear
+the engagement thresholds:
 
 ```{r tradeoff}
 v1 <- get_data("v1") |>
@@ -60,22 +59,21 @@ knitr::kable(
                    nrow(engaged_parts), ")"))
 ```
 
-Residualising three parts on their own mean induces a correlation near
--0.5 by construction, so that is the reference and not zero. On the first
-table orientation and colour appear to trade off more strongly than either
-does against word. On the second all three pairs sit close to the closure
-baseline.
+Residualising three parts on their own mean induces a correlation near -0.5 by
+construction, so that is the reference and not zero. On the first table
+orientation and colour appear to trade off more strongly than either does
+against word. On the second all three pairs sit close to the closure baseline.
 
 **The difference between the two tables is six participants**, all of whom
-answered very few orientation items. The apparent trade-off described
-them, not the task.
+answered very few orientation items. The apparent trade-off described them, not
+the task.
 
-The [joint model](joint-model.html) later settled the question from the
-other direction: between people, orientation and colour accuracy correlate
-**positively**. There is no between-person trade-off for closure to have
-been hiding.
+The [joint model](joint-model.html) later settled the question from the other
+direction: between people, orientation and colour accuracy correlate
+**positively**. There is no between-person trade-off for closure to have been
+hiding.
 
-## 2. Reporting propensity is related to imagery vividness
+## 2. Reporting propensity is related to imagery vividness {#less-propensity}
 
 **Claimed:** participants with lower imagery vividness decline to report
 features more often, with a pooled correlation around -0.30.
@@ -108,82 +106,55 @@ dplyr::bind_rows(
                caption = "Orientation non-response against vividness")
 ```
 
-v1 is `r round(100 * mean(by_participant$version == "v1"))`% of the
-participants with a vividness score and shows nothing. The pooled estimate
-is driven by v3, which is both heavily aphantasic — 17 of its 21
-participants — and by far the highest in non-response, so pooling
-manufactured an association that neither version contains.
+v1 is `r round(100 * mean(by_participant$version == "v1"))`% of the participants
+with a vividness score and shows nothing. The pooled estimate is driven by v3,
+which is both heavily aphantasic — 17 of its 21 participants — and by far the
+highest in non-response, so pooling manufactured an association that neither
+version contains.
 
-This one did more than get withdrawn: it is the concrete reason the
-[version scope](version-scope.html) decision is not bureaucratic.
+## 3. Parity accuracy predicts imagery vividness {#less-parity}
 
-## 3. Parity accuracy predicts imagery vividness
+**Claimed**, on an earlier version of the [task engagement](engagement.html)
+page: parity engagement is not independent of imagery, and this is what stops
+parity accuracy being usable as a nuisance covariate.
 
-**Claimed**, on an earlier version of the [task
-engagement](engagement.html) page: parity engagement is not independent of
-imagery, and this is what stops parity accuracy being usable as a nuisance
-covariate.
+**Withdrawn** for two reasons at once. The correlation was rho = -0.154 at p =
+.157, reported as a finding when the interval comfortably contains zero. And the
+variable was not what its name said: `parity_*_acc` scores an unanswered probe
+as 0, and 92% of its zeros in v1 are unanswered rather than wrong, so a
+participant mean of it correlates 0.99 with the proportion of probes answered
+and 0.22 with accuracy among those answered.
 
-**Withdrawn** for two reasons at once. The correlation was rho = -0.154 at
-p = .157, reported as a finding when the interval comfortably contains
-zero. And the variable was not what its name said: `parity_*_acc` scores an
-unanswered probe as 0, and 92% of its zeros in v1 are unanswered rather
-than wrong, so a participant mean of it correlates 0.99 with the proportion
-of probes answered and 0.22 with accuracy among those answered.
+Corrected, parity engagement does not differ by imagery group at all (p = .93).
+The fix added `responded_parity_1` and `responded_parity_2` to the data, and the
+engagement page now shows the conflation rather than inheriting it.
 
-Corrected, parity engagement does not differ by imagery group at all
-(p = .93). The fix added `responded_parity_1` and `responded_parity_2` to
-the data, and the engagement page now shows the conflation rather than
-inheriting it.
+## 4. Word recall as an individual-differences measure {#less-word}
 
-## 4. Word recall as an individual-differences measure
+Not withdrawn so much as **demoted**, and it constrains every page that reports
+a word coefficient.
 
-Not withdrawn so much as **demoted**, and it constrains every page that
-reports a word coefficient.
-
-Word's split-half reliability is far below the other two features', which
-the [task validity](task-validity.html) page computes. The metric is not at
-fault: single-word recall at this
-exposure is simply too easy to discriminate between people. The
-[performance](performance.html) page shows what that looks like from the
-model's side, with every participant's estimate collapsing to nearly the
+Word's split-half reliability is far below the other two features', which the
+[task validity](task-validity.html) page computes. The metric is not at fault:
+single-word recall at this exposure is simply too easy to discriminate between
+people. The [performance](performance.html) page shows what that looks like from
+the model's side, with every participant's estimate collapsing to nearly the
 same value.
 
-Word's coefficients are still reported, because a group contrast is a
-different estimand and measurement error widens intervals rather than
-biasing them. But no individual-differences claim about word is made
-anywhere, whatever its coefficients say.
+Word's coefficients are still reported, because a group contrast is a different
+estimand and measurement error widens intervals rather than biasing them. But no
+strong individual-differences claim about word should be made, whatever its
+coefficients say.
 
-## 5. Two claims about this project's own history
+--------------------------------------------------------------------------------
 
-**A published clustering study was described here as circular in design.**
-It was not: it included a genuine held-out validation attempt that returned
-a null. What went wrong was the framing, which oversold a descriptive
-result under co-author pressure. Recording it accurately matters more than
-recording it harshly.
+**Continuing through the Extended Online Report:** this page follows
+[implementation notes](implementation-notes.html). That is the end of the
+ordered sequence; the [codebook](codebook.html) documents every column in the
+data. Or return to [the analysis](analysis-strategy.html) for what the models
+were built to do.
 
-**A claim about a mislabelled sample was itself wrong.** An earlier version
-of the parity analysis asserted that the engagement page computed a pooled
-correlation while labelling it v1. It did not: the page filtered to v1
-correctly, and the claim came from reading one function call without
-reading the object it consumed. The planning documents keep the retraction
-rather than deleting it.
-
-## What these have in common
-
-Four of the five were produced by the same thing: **a statistic computed on
-one sample and interpreted as though it applied to another.** Pooled across
-versions, pooled across engagement levels, or pooled across a distinction
-the variable's name concealed.
-
-The habit that catches it is cheap. Before reporting an association,
-compute it again within each stratum you have, and see whether it survives.
-
----
-
-**Continuing through the Extended Online Report:** this page follows [implementation notes](implementation-notes.html). That is the end of the ordered sequence; the [codebook](codebook.html) documents every column in the data. Or return to [the analysis](analysis-strategy.html) for what the models were built to do.
-
----
+--------------------------------------------------------------------------------
 
 ```{r}
 #| label: session_info

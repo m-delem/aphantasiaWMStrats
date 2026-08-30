@@ -11,8 +11,12 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>", fig.width = 9, fig.height = 5,
-  dpi = 150, out.width = "100%", warning = FALSE, message = FALSE,
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 8, 
+  fig.height = 5,
+  warning = FALSE, 
+  message = FALSE,
   error = FALSE
 )
 library(aphantasiaWMStrats)
@@ -25,20 +29,15 @@ pkg <- "aphantasiaWMStrats"
 refit <- "never"
 ```
 
-How accurately is each feature recalled, and does imagery vividness predict
-it? This is the question the study started from, and it is no longer the
-main event: the [composition](composition.html) page reports the primary
-result, because *where* effort goes is what the task was built to measure
-and absolute accuracy cannot separate a deliberate choice from an
-inability.
+How accurately is each feature recalled, and does imagery vividness predict it?
+Although interesting, this question was only secondary and complementary to the
+[composition](composition.html) analysis: *where* effort goes is what the task
+was built to measure, and absolute accuracy cannot separate a deliberate choice
+from an inability.
 
 This page is the same data read the other way. Like the composition it
-conditions on responded items, and whether that is innocent is tested on
+conditions on responded items, and whether that choice is innocent is tested on
 the [joint model](joint-model.html) page.
-
-Same data through a simpler lens, so agreement with the joint model is not
-independent evidence. It is still worth having, because a result that
-appears only under the more complex model deserves suspicion.
 
 ```{r data}
 v1 <- get_data("v1") |>
@@ -71,41 +70,36 @@ model_data <- v1 |>
 feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
 ```
 
-This page uses the `r dplyr::n_distinct(model_data$id)` participants who
-clear the engagement thresholds of the [task
-validity](task-validity.html) page **and** have a vividness score, not the
-86 the [joint model](joint-model.html) uses. The
-`r dplyr::n_distinct(engaged_ids(v1))` who clear the thresholds include two
-with no VVIQ, and every page that reports a floor-group offset needs one;
-[the analysis](analysis-strategy.html#samples) sets out the whole chain. The
-thresholds are there to stop imprecise participant means being treated as
-measurements, and unlike the joint model this analysis does form them.
+This page uses the `r dplyr::n_distinct(model_data$id)` participants who clear
+the engagement thresholds of the [task validity](task-validity.html) page
+**and** have a vividness score. The thresholds are there to stop imprecise
+participant means being treated as measurements.
 
-## 1. Three features, three response families
+## 1. Three features, three response families {#perf-families}
 
-Nothing about these scores makes a single response family appropriate, and
-the [scoring](scoring.html) page shows why: on responded items, word piles
-at 1, orientation has no boundary mass at all, and colour has a trace of
-mass at 1 that is pixel resolution rather than behaviour.
+Nothing about these scores makes a single response family appropriate, and the
+[scoring](scoring.html) page shows why: on responded items, word piles at 1,
+orientation has no boundary mass at all, and colour has a trace of mass at 1
+that is more about pixel resolution than behaviour.
 
 ```{r families}
 performance_formula()
 ```
 
-Every accuracy model on this site carries `parity_rate`: it is the
-dual-task load a participant actually incurred, which [task
-engagement](engagement.html) §5 shows is a strategy variable in its own
-right rather than a control for something it does not predict. The [joint
-model](joint-model.html) puts it on its accuracy arms and not on its
-gates, for the same reason, so the two pages estimate the same quantity.
+Every accuracy model on this site carries `parity_rate`: it is the dual-task
+load a participant actually incurred, which [task engagement](engagement.html)
+§5 shows is a strategy variable in its own right rather than a control for
+something it does not predict. The [joint model](joint-model.html) puts it on
+its accuracy arms and not on its gates, for the same reason, so the two pages
+estimate the same quantity.
 
-Word takes a zero-one-inflated Beta because its ceiling is a real point
-mass, orientation a plain Beta, and colour a Beta after a
-Smithson-Verkuilen squeeze. `subset()` restricts each arm to the items
-that feature was reported on, which is what lets one row carry three
-responses with independent non-response.
+Word takes a zero-one-inflated Beta family because its ceiling is a real point
+mass, orientation a plain Beta family, and colour a Beta family after a
+Smithson-Verkuilen squeeze. `subset()` restricts each arm to the items that
+feature was reported on, which is what lets one row carry three responses with
+independent non-response.
 
-## 2. Modelling the features separately is the wrong thing to do
+## 2. Modelling the features separately? {#perf-separate}
 
 Start with what looks obvious: fit each feature on its own.
 
@@ -140,14 +134,14 @@ independent <- list(
 )
 ```
 
-The task makes that false by construction. Points are traded across
-features within a trial, so a participant who does well on one has spent
-effort they could not spend elsewhere. Three independent models cannot
-represent that, and more importantly they cannot **measure** it.
+The task makes that misleading by construction. Points are traded across
+features within a trial, so a participant who does well on one has spent effort
+they could not spend elsewhere. Three independent models cannot represent that,
+and more importantly they cannot **measure** it.
 
 ```{r c-prime}
 # lkj(2) mildly favours the identity, so the cross-feature correlations
-# have to be earned from the data rather than assumed. It is passed here
+# have to be earned from the data. It is passed here
 # rather than left to brms' default lkj(1), because section 3 reads the
 # posteriors against this prior and a different one would make that read
 # wrong.
@@ -169,9 +163,9 @@ correlated <- fit_brms_model(
 ```
 
 The correlated model adds `(1 | p | id)`, which gives the three features a
-shared participant-level correlation matrix. That is the whole difference,
-and it buys two things: a dependency structure the design implies, and
-three named correlations that are themselves the quantity of interest.
+shared participant-level correlation matrix. That is the whole difference, and
+it buys two things: a dependency structure the design implies, and three named
+correlations that are themselves quantities of interest.
 
 ```{r contrast, fig.alt="Floor-group offsets from independent and correlated models."}
 offsets <- dplyr::bind_rows(
@@ -201,12 +195,11 @@ ggplot(offsets, aes(x = estimate, y = feature, colour = model)) +
        caption = "The same quantity, estimated two ways.")
 ```
 
-**The coefficients barely move.** That is worth saying plainly rather than
-implying the simpler model was misleading: on these data, respecting the
-dependency structure changes the floor-group estimates very little. What it
-adds is not a correction but a measurement.
+**The coefficients barely move.** On these data, respecting the dependency
+structure changes the floor-group estimates very little. What it adds is not a
+correction but a measurement: the correlations between features.
 
-## 3. What the correlations say
+## 3. What the correlations say {#perf-correlations}
 
 ```{r correlations}
 posterior_correlations(brms::as_draws_df(correlated), lkj = 2, dimension = 3) |>
@@ -218,26 +211,18 @@ posterior_correlations(brms::as_draws_df(correlated), lkj = 2, dimension = 3) |>
   knitr::kable(digits = 3, caption = "Participant-level correlations between features")
 ```
 
-Orientation and colour correlate **positively**, and clearly. Between
-people, doing well on one non-verbal feature goes with doing well on the
-other: shared ability, not a trade-off.
-
-This matters because the raw data suggests the opposite. Working from
-proportions, orientation and colour appear to trade off, and the
-[scoring](scoring.html) page shows why that reading is an artifact:
-residualising three parts on their own mean induces negative correlation
-whatever the data says. Here the parts are not closed, so a negative
-correlation would have meant something. It is positive.
+Orientation and colour correlate **positively**, and clearly. Between people,
+doing well on one non-verbal feature goes with doing well on the other: shared
+ability, not a trade-off.
 
 **The trade-off the task imposes is a within-trial constraint, not a
 between-person one.** The [joint model](joint-model.html) reaches the same
 conclusion with the gates in place.
 
-## 4. How imagery enters
+## 4. How imagery enters {#perf-imagery}
 
-Vividness is not a smoothly continuous predictor here, so rather than
-assume a form, several were compared on orientation, which is the
-best-measured feature.
+Vividness is not a smoothly continuous predictor here, so rather than assume a
+form, several were compared on orientation, which is the best-measured feature.
 
 ```{r comparison}
 form_models <- list(
@@ -279,15 +264,15 @@ comparison |>
   knitr::kable(digits = 2, caption = "Functional form, compared on orientation")
 ```
 
-The differences sit inside their standard errors, so **the data do not
-separate these forms**. That was predicted in advance, and it is reported
-rather than converted into a claim: at this sample size, with this outcome,
-a comparison of four models was never going to be decisive.
+The differences sit inside their standard errors, so **the data do not separate
+these forms**. That was predicted in advance, and it is reported rather than
+converted into a claim: at this sample size, with this outcome, a comparison of
+four models was never going to be decisive.
 
-The floor-group form remains primary because it was declared so before
-fitting, not because it won. Its justification is structural: participants
-at the scale floor have no vividness variance among themselves, so a slope
-cannot be estimated for them, while an offset can.
+The floor-group form remains primary because it was declared so before fitting.
+Its justification is structural: participants at the scale floor have no
+vividness variance among themselves, so a slope cannot be estimated for them,
+while an offset can.
 
 ```{r floor-figure, fig.alt="Orientation accuracy against imagery vividness, with the floor group shown separately.", fig.height = 6}
 orientation <- independent$Orientation
@@ -330,7 +315,7 @@ main_panel <- plot_floor_group(
                          effect[["Q2.5"]], effect[["Q97.5"]]),
   y_lab = "Orientation recall accuracy",
   caption = "Offset in log-odds. Points coloured by vividness.",
-  base_size = 16, point_size = 2.2, left_expansion = 0.15,
+  base_size = 16, point_size = 2.2, left_expansion = 0.09,
   arrow_nudge = -5.5
 )
 
@@ -338,11 +323,11 @@ plot_vviq_histogram(observed$vviq, base_size = 16, left_expansion = 0.15) /
   main_panel + patchwork::plot_layout(heights = c(1, 4))
 ```
 
-The histogram is the argument for the model: vividness is a spike at the
-floor plus an irregular remainder, not a continuum. In the panel the arrow
-has almost nothing to span, which is the result.
+The histogram is the argument for the model: vividness is a spike at the floor
+plus an irregular remainder, not a continuum. In the panel the arrow has almost
+nothing to span, which is the result.
 
-## 5. Where the floor group does and does not differ
+## 5. Where the floor group does and does not differ {#perf-floor}
 
 ```{r floor-table}
 purrr::map(names(feature_labels), \(feature) {
@@ -360,20 +345,18 @@ Word is positive and excludes zero, colour is negative and touches it,
 orientation is centred near nothing.
 
 **Word's row must not be read as an individual-differences result.** Its
-split-half reliability is 0.45, and the [task
-validity](task-validity.html) page sets out why: single-word recall at this
-exposure is too easy to discriminate between people. A group contrast is a
-different estimand from an individual-differences claim, and measurement
-error widens intervals rather than biasing estimates, so the offset is not
-*wrong*. But this page is not where that claim should be made, and the
-[composition](composition.html) page reaches the same conclusion through a
-quantity that does clear its reliability gate.
+split-half reliability is 0.45, and the [task validity](task-validity.html) page
+sets out why: single-word recall at this exposure is too easy to discriminate
+between people. A group contrast is a different estimand from an
+individual-differences claim, and measurement error widens intervals rather than
+biasing estimates, so the offset is not *wrong*. But this page is not where that
+claim should be made, and the [composition](composition.html) page reaches the
+same conclusion through a quantity that does clear its reliability gate.
 
-## 6. Partial pooling, made visible
+## 6. Partial pooling {#perf-pooling}
 
-A multilevel model does not take each participant's mean at face value: it
-pulls imprecise estimates toward the group. Worth seeing rather than
-asserting, because on one feature it is dramatic.
+A multilevel model does not take each participant's mean at face value: it pulls
+imprecise estimates toward the group. On one feature, this pull is dramatic:
 
 ```{r shrinkage, fig.alt="Observed against model-implied participant means for the three features."}
 observed_means <- compose_features(model_data, id) |>
@@ -405,22 +388,26 @@ dplyr::inner_join(observed_means, fitted_means, by = c("id", "feature")) |>
        caption = "Points off the diagonal have been pulled toward the group.")
 ```
 
-Orientation and colour track the diagonal with modest shrinkage, which is
-what partial pooling normally looks like.
+Orientation and colour track the diagonal with modest shrinkage, which is what
+partial pooling normally looks like.
 
-**Word does not track it at all.** Observed means run from about 0.78 to
-1.00, and the model returns essentially the same estimate for everybody.
-That is not a bug: it is the model saying it cannot distinguish these
-participants, and it is the same fact as word's split-half reliability of
-0.45 seen from another angle. A figure of this shape is what an unusable
-individual-differences measure looks like, and it is the clearest reason on
-this page not to read word's coefficient as one.
+**Word does not track it at all.** Observed means run from about 0.78 to 1.00,
+and the model returns essentially the same estimate for everybody. That is not a
+bug: it is the model saying it cannot distinguish these participants, and it is
+the same fact as word's split-half reliability of 0.45 seen from another angle.
+A figure of this shape is what an unusable individual-differences measure looks
+like, and it is the clearest reason on this page not to read word's coefficient
+as one.
 
----
+--------------------------------------------------------------------------------
 
-**Continuing through the Extended Online Report:** this page follows [composition](composition.html). To keep reading in order, continue to [the joint model](joint-model.html) next. Or see [model diagnostics](model-diagnostics.html) and [implementation notes](implementation-notes.html) for the technical detail behind these models.
+**Continuing through the Extended Online Report:** this page follows
+[composition](composition.html). To keep reading in order, continue to [the
+joint model](joint-model.html) next. Or see [model
+diagnostics](model-diagnostics.html) and [implementation
+notes](implementation-notes.html) for the technical detail behind these models.
 
----
+--------------------------------------------------------------------------------
 
 ```{r}
 #| label: session_info
