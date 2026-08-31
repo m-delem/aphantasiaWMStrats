@@ -1,9 +1,6 @@
 # Implementation notes
 
-The conventions behind every model on this site, collected so they can
-be checked rather than inferred. None of it is a result; all of it is
-the kind of thing that determines whether the results mean what they
-appear to.
+This page gathers the conventions behind every model on this site.
 
 ## 1. Fitting defaults
 
@@ -15,12 +12,12 @@ fixes the conventions below so they cannot drift between scripts.
 
 Four chains, 2000 **post-warmup** draws each after 1000 warmup
 iterations, so `brm()` receives `iter = 3000, warmup = 1000` and keeps
-8000 draws in total. The argument below is named `iterations` rather
-than `iter` for exactly that reason: it is draws per chain, not a total,
-and reading it as brms’ `iter` gives 4000. The joint model additionally
-uses `adapt_delta = 0.99` and `max_treedepth = 15`, set from the start
-rather than in response to warnings: a model with fifteen correlated
-random intercepts from 86 participants is expected to need them.
+8000 draws in total. The argument below is named `iterations` instead of
+`iter` for that reason: it is draws per chain, not a total, and reading
+it as brms’ `iter` gives 4000. The joint model additionally uses
+`adapt_delta = 0.99` and `max_treedepth = 15`, set from the start: a
+model with fifteen correlated random intercepts from 86 participants is
+expected to need them.
 
 ``` r
 
@@ -48,19 +45,12 @@ joint_formula()
 #> score_color | subset(responded_color) ~ vviq + complete_aphant + parity_rate + (1 | p | id)
 ```
 
-This is not tidiness. Documentation pages load fitted models with
-`file_refit = "never"`, and brms then returns the cached fit **without
-checking** that the formula it was handed matches the one the model was
-fitted with. A page that re-typed its formula could display something
-that is not what produced its numbers, silently and permanently. Calling
-the same builder the script called makes that impossible.
-
-The response order matters for the same reason. It determines the
-generated Stan code, so a formula built in a different order is a
-different model as far as caching is concerned. An early version of the
-joint model appended word’s accuracy arm last, an artifact of a
-conditional block; that fit was discarded and refitted in the documented
-order.
+Documentation pages load fitted models with `file_refit = "never"`, and
+brms then returns the cached fit **without checking** that the formula
+it was handed matches the one the model was fitted with. A page that
+re-typed its formula could display something that is not what produced
+its numbers, silently and permanently. Calling the same builder the
+script called makes that impossible.
 
 ## 3. Priors are set per coefficient
 
@@ -79,16 +69,16 @@ response_priors("scoreangle")
 #>  <NA> <NA>       user
 ```
 
-Not per class. On the logit scale a vividness slope acts over a 64-point
-range and a binary group offset does not, so a single `class = "b"`
-prior would treat them as the same quantity. In a multivariate model
-`resp` is required as well: `class = "b"` alone matches no parameter,
-and recent brms versions reject it outright.
+… Not per class. On the logit scale a vividness slope acts over a
+64-point range and a binary group offset does not, so a single
+`class = "b"` prior would treat them as the same quantity. In a
+multivariate model `resp` is required as well: `class = "b"` alone
+matches no parameter, and recent brms versions reject it outright.
 
-`lkj(4)` for the joint model’s correlation matrix, against `lkj(2)`
-elsewhere, because fifteen correlations from 86 participants need more
-regularisation than three do. How strong that is depends on the
-dimension, which
+`lkj(4)` is used for the joint model’s correlation matrix, against
+`lkj(2)` elsewhere, because fifteen correlations from 86 participants
+need more regularisation than three do. How strong that is depends on
+the dimension, which
 [`lkj_marginal()`](https://m-delem.github.io/aphantasiaWMStrats/reference/lkj_marginal.md)
 makes checkable:
 
@@ -113,8 +103,7 @@ page carries a `moved` flag for whether its posterior is narrower than
 that marginal. A correlation that did not move off its prior is not a
 finding. The
 [performance](https://m-delem.github.io/aphantasiaWMStrats/articles/performance.md)
-page carries the same flag against the `lkj(2)` marginal, which is the
-weaker comparison of the two.
+page carries the same flag against the `lkj(2)` marginal.
 
 ## 4. ROPE conventions
 
@@ -152,7 +141,7 @@ tibble::tribble(
 | Orientation | Beta | No boundary mass once non-responders are removed |
 | Colour | Beta after a squeeze | Boundary mass is pixel resolution on a continuous wheel, not behaviour |
 
-The squeeze is Smithson and Verkuilen’s, implemented in
+The squeeze is Smithson and Verkuilen’s (2006), implemented in
 [`squeeze_boundaries()`](https://m-delem.github.io/aphantasiaWMStrats/reference/squeeze_boundaries.md).
 It moves every value by about one ten-thousandth at this sample size,
 which is the point: enough to make a Beta likelihood defined, small
@@ -169,7 +158,7 @@ Before fitting any segmented model,
 asks whether a hinge is identifiable at all, so that a model which would
 only report its own prior is not fitted.
 
-Two things it has to get right, both of which were got wrong first.
+Two things it has to get right:
 
 **Knots come off the pruned model**, not off `$cuts`, which also holds
 candidate terms the backward pass discarded. Reading `$cuts` whole
@@ -212,23 +201,6 @@ page calls
 on it at the default `re_formula`, which needs exactly the group-level
 draws that would be discarded.
 
-## 8. Two recurring hazards
-
-Both bit more than once, and both are silent.
-
-**Column masking inside `tibble()`.** Later expressions see earlier
-columns. Writing `participants = nrow(participants)` and then referring
-to `participants` gives the count, not the frame. This produced a table
-of p-values that were all exactly 1, because a Wilcoxon test was
-comparing two group means to each other rather than two samples. It
-never errors when the masked value happens to be a valid input.
-
-**Unanchored column selection.** A pattern like
-`score_(word|angle|color)` also matches `score_color_raw`, which
-silently poisoned a set of participant means to `NA`. The selectors in
-[`compose_features()`](https://m-delem.github.io/aphantasiaWMStrats/reference/compose_features.md)
-are anchored for that reason.
-
 ------------------------------------------------------------------------
 
 **Continuing through the Extended Online Report:** this page follows
@@ -242,6 +214,13 @@ for what the models were built to do.
 
 ------------------------------------------------------------------------
 
+## References
+
+Smithson, M., & Verkuilen, J. (2006). A better lemon squeezer?
+Maximum-likelihood regression with beta-distributed dependent variables.
+*Psychological Methods*, *11*, 54–71.
+<https://doi.org/10.1037/1082-989X.11.1.54>
+
     #> ─ Session info ───────────────────────────────────────────────────────────────
     #>  setting  value
     #>  version  R version 4.6.1 (2026-06-24)
@@ -252,14 +231,14 @@ for what the models were built to do.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  ! package            * version  date (UTC) lib source
     #>    abind                1.4-8    2024-09-12 [2] CRAN (R 4.6.1)
-    #>    aphantasiaWMStrats * 0.1      2026-08-26 [1] local
+    #>    aphantasiaWMStrats * 0.1      2026-08-31 [1] local
     #>    backports            1.5.1    2026-04-03 [2] CRAN (R 4.6.1)
     #>    bayesplot            1.16.0   2026-08-25 [2] CRAN (R 4.6.1)
     #>    bridgesampling       1.2-1    2025-11-19 [2] CRAN (R 4.6.1)
@@ -306,11 +285,11 @@ for what the models were built to do.
     #>    ragg                 1.5.2    2026-03-23 [2] CRAN (R 4.6.1)
     #>    RColorBrewer         1.1-3    2022-04-03 [2] CRAN (R 4.6.1)
     #>    Rcpp                 1.1.2    2026-07-05 [2] CRAN (R 4.6.1)
-    #>    RcppParallel         6.2.0    2026-07-30 [2] CRAN (R 4.6.1)
+    #>    RcppParallel         6.2.1    2026-08-27 [2] CRAN (R 4.6.1)
     #>    renv                 1.0.7    2024-04-11 [2] RSPM (R 4.6.1)
     #>    rlang                1.3.0    2026-07-05 [2] CRAN (R 4.6.1)
     #>    rmarkdown            2.31     2026-03-26 [2] CRAN (R 4.6.1)
-    #>    rstantools           2.7.0    2026-07-26 [2] CRAN (R 4.6.1)
+    #>    rstantools           2.7.1    2026-08-29 [2] CRAN (R 4.6.1)
     #>    S7                   0.2.2    2026-04-22 [2] CRAN (R 4.6.1)
     #>    sass                 0.4.10   2025-04-11 [2] CRAN (R 4.6.1)
     #>    scales               1.4.0    2025-04-24 [2] CRAN (R 4.6.1)
@@ -327,7 +306,7 @@ for what the models were built to do.
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 

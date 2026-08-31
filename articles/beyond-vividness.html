@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -102,16 +102,14 @@
 
     
     
-<p><strong>Everything on this page is exploratory.</strong> The groups
-are not fixed in advance, nothing here licenses a confirmatory claim,
-and the parts that were run after seeing a result say so.</p>
-<p>The confirmatory strand divides participants by imagery vividness.
-This page asks whether the questionnaires contain anything that division
-misses: first by looking at how the scales relate to each other, then by
-asking an algorithm to find groups without being told about vividness at
+<p><strong>Everything on this page is exploratory.</strong> The
+confirmatory strand divides participants by imagery vividness. This page
+asks whether the questionnaires contain anything that division misses:
+first by looking at how the scales relate to each other, then by asking
+an algorithm to find groups without being told about vividness at
 all.</p>
 <p>The short answer is <strong>yes on one dimension and no as a group
-structure</strong>, and the two halves are worth reading together.</p>
+structure</strong>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scales</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/questionnaire_scales.html">questionnaire_scales</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">)</span></span>
 <span></span>
@@ -123,22 +121,23 @@ structure</strong>, and the two halves are worth reading together.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="pooling-across-versions-which-is-allowed-here-and-nowhere-else">1. Pooling across versions, which is allowed here and nowhere
-else<a class="anchor" aria-label="anchor" href="#pooling-across-versions-which-is-allowed-here-and-nowhere-else"></a>
+<h2 id="bv-pooling">1. Pooling across versions, which is allowed here and nowhere
+else<a class="anchor" aria-label="anchor" href="#bv-pooling"></a>
 </h2>
-<p>Every modelling page on this site runs on v1 alone. This one uses all
-114 participants with complete questionnaire data.</p>
+<p>Every modelling page on this site currently (2026-09-03) runs on v1
+alone. This one uses all 114 participants with complete questionnaire
+data across all versions.</p>
 <p>Counted <strong>per person</strong>, as the <a href="participants.html">participants</a> page counts them: one
 participant completed both v1 and v3, and is counted once, under v1.
 That is why the version table below gives v3 twenty rather than the
 twenty-one that pages counting task sessions report.</p>
 <p>The reasoning in the <a href="version-scope.html">version scope</a>
 page is entirely about <strong>task</strong> comparability: group
-balance for a behavioural contrast, non-response differing three-fold,
-per-version standardisation being unstable. None of it touches a
-questionnaire score. The instruments are identical and were administered
-identically in all three versions, so version is a property of the task
-rather than of the scales, and pooling recovers a third more
+balance for a behavioural contrast, non-response differing between the
+three versions, per-version standardisation being unstable. None of it
+touches a questionnaire score. The instruments are identical and were
+administered identically in all three versions, so version is a property
+of the task rather than of the scales, and pooling recovers a third more
 participants for the analysis that most needs them.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scales</span> <span class="op">|&gt;</span></span>
@@ -180,14 +179,14 @@ participants for the analysis that most needs them.</p>
 </tbody>
 </table>
 <p>What pooling changes is the sample’s <strong>composition</strong>:
-later recruitment targeted aphantasic participants, so the pooled sample
-is about a third floor group where v1 alone is a quarter. That matters
-for clustering, because centroids are fitted to whatever sample they are
-given, and section 4 tests it rather than assuming it away.</p>
+later recruitment targeted more aphantasic participants, so the pooled
+sample is about a third floor group where v1 alone is a quarter. That
+matters for clustering, because centroids are fitted to whatever sample
+they are given. Section 4 tests this.</p>
 </div>
 <div class="section level2">
-<h2 id="the-scales-are-largely-independent-and-three-of-them-are-one-thing">2. The scales are largely independent, and three of them are one
-thing<a class="anchor" aria-label="anchor" href="#the-scales-are-largely-independent-and-three-of-them-are-one-thing"></a>
+<h2 id="bv-structure">2. The scales are largely independent, and three of them are one
+thing<a class="anchor" aria-label="anchor" href="#bv-structure"></a>
 </h2>
 <p>Raw correlations among overlapping instruments are close to
 unreadable: everything correlates with everything, because everything
@@ -214,7 +213,7 @@ scale carries anything the others do not.</p>
 <span>       caption <span class="op">=</span> <span class="st">"Bonferroni corrected; values shown where p &lt; .05."</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_pdf.html">theme_pdf</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">16</span>, axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>            legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="beyond-vividness_files/figure-html/partial-1.png" class="r-plt" alt="Partial correlations among the questionnaire scales." width="100%"></p>
+<p><img src="beyond-vividness_files/figure-html/partial-1.png" class="r-plt" alt="Partial correlations among the questionnaire scales." width="768"></p>
 <p>After partialling, the only strongly connected block is the three
 imagery measures: <strong>VVIQ, OSIVQ’s object subscale, and NIEQ’s
 mental-imagery dimension</strong>. Everything else is near zero.</p>
@@ -259,15 +258,15 @@ response formats, one construct.</strong></p>
 <p>That has a consequence for anything that comes next. Left as three
 features, imagery would be <strong>triple-weighted</strong> in any
 distance metric, so a clustering would recover imagery groups by
-construction and could not possibly find anything else. They are
-collapsed into one standardised composite, which is what makes the
-question in this page’s title answerable.</p>
+construction and could not possibly find anything else. I’ve collapsed
+them into one standardised composite, which is what makes the question
+in this page’s title answerable.</p>
 <p>The rest being largely independent also means dimension reduction
 should stop there. Reducing further would destroy exactly the
 distinctions the clustering is meant to find.</p>
 </div>
 <div class="section level2">
-<h2 id="the-finding-unsymbolised-thinking-rises-as-vividness-falls">3. The finding: unsymbolised thinking rises as vividness falls<a class="anchor" aria-label="anchor" href="#the-finding-unsymbolised-thinking-rises-as-vividness-falls"></a>
+<h2 id="bv-unsymbolised">3. The finding: unsymbolised thinking rises as vividness falls<a class="anchor" aria-label="anchor" href="#bv-unsymbolised"></a>
 </h2>
 <p>Before any clustering, the simplest question. The NIEQ asks about
 five modes of inner experience. How do the two imagery groups differ on
@@ -363,13 +362,8 @@ on ranks, and the two answer different questions. A distribution can be
 shifted in its mean and almost perfectly overlapping in its ranks, which
 is what a heavy tail on one side does. The test is the one to trust for
 a group claim here, and it says nothing is happening.</p>
-<p>(This is <em>not</em> the <code>tibble()</code> masking bug the <a href="implementation-notes.html#hazards">implementation notes</a>
-describe. That one produced p values of exactly 1, and the test above is
-computed before the <code>tibble()</code> for exactly that reason.)</p>
 <p>That is the group contrast. The models below replace it with
-something more precise, and the replacement is not a group difference at
-all — read to the end of this section before carrying the heading
-away.</p>
+something more precise:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nieq_data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>  <span class="va">scales</span>,</span>
@@ -440,7 +434,7 @@ away.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">nieq_dimensions</span>, <span class="va">nieq_panel</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="beyond-vividness_files/figure-html/nieq-models-1.png" class="r-plt" alt="Floor-group models for four NIEQ dimensions." width="100%"></p>
+<p><img src="beyond-vividness_files/figure-html/nieq-models-1.png" class="r-plt" alt="Floor-group models for four NIEQ dimensions." width="768"></p>
 <p>Fitted in the same floor-group form as every other model on this
 site: a slope among everyone above the vividness floor, plus a single
 offset for the group at it. That separates two things a group comparison
@@ -611,21 +605,14 @@ aside.</p>
 <p>Both readings changed when the dichotomy was dropped, which is the
 argument for fitting these at all.</p>
 <p>This is a positive claim about what low-vividness experience
-<em>is</em>, from an instrument built to ask, and it needs no clustering
-at all. It is worth saying plainly because the rest of this page is a
-null. But it is a claim about a <strong>gradient</strong>: it describes
-the low end of a continuum, and nothing here isolates participants with
-no imagery at all from those with a little.</p>
-<p>Two cautions. It is a group contrast that was <strong>not</strong>
-pre-declared, so it is a hypothesis for a future study rather than a
-test passed. And the <a href="psychometrics.html">psychometrics</a> page
-records that NIEQ’s sensory-focus dimension does not reach its
-reliability threshold in this sample, which is a reason for care with
-the instrument as a whole even though it is not the dimension at issue
-here.</p>
+<em>is</em>, from an instrument built to ask it. It is worth saying
+plainly because the rest of this page is a null. But it is a claim about
+a <strong>gradient</strong>: it describes the low end of a continuum,
+and nothing here isolates participants with no imagery at all from those
+with a little.</p>
 </div>
 <div class="section level2">
-<h2 id="the-clustering-and-what-it-was-asked-to-find">4. The clustering, and what it was asked to find<a class="anchor" aria-label="anchor" href="#the-clustering-and-what-it-was-asked-to-find"></a>
+<h2 id="bv-clustering">4. The clustering, and what it was asked to find<a class="anchor" aria-label="anchor" href="#bv-clustering"></a>
 </h2>
 <p>The criterion was fixed before the clustering ran, so that the
 outcome could not be described as whatever it turned out to be:</p>
@@ -638,11 +625,12 @@ make at all.</li>
 <strong>Null</strong>: clusters that recover the vividness grouping.
 The structure is imagery, and there is nothing else.</li>
 </ul>
-<p>Consensus clustering rather than one algorithm, because the central
-risk in this kind of analysis is finding groups that do not exist. A
-partition that survives three algorithms and three consensus functions
-is less likely to be an artifact of any one of them. The number of
-clusters is <strong>selected, not assumed</strong>.</p>
+<p>Consensus clustering was preferred to a algorithm, because the
+central risk in this kind of analysis is finding groups that do not
+exist. A partition that survives three algorithms and three consensus
+functions is less likely to be an artifact of any one of them. The
+number of clusters is <strong>selected</strong> by algorithms, not
+pre-specified.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardise_scales.html">standardise_scales</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">scales</span>, <span class="op">-</span><span class="st">"imagery_group"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/add_imagery_composite.html">add_imagery_composite</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -736,7 +724,7 @@ cluster.</strong> By the criterion above, that is the null.</p>
 <span>                     name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Imagery composite (z)"</span>, y <span class="op">=</span> <span class="st">"Unsymbolised thinking (z)"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Two clouds, separated along one axis."</span><span class="op">)</span></span></code></pre></div>
-<p><img src="beyond-vividness_files/figure-html/profiles-1.png" class="r-plt" alt="The two clusters on the imagery composite and unsymbolised thinking." width="100%"></p>
+<p><img src="beyond-vividness_files/figure-html/profiles-1.png" class="r-plt" alt="The two clusters on the imagery composite and unsymbolised thinking." width="768"></p>
 <p>The solution is <strong>one axis, dichotomised</strong>. Every
 feature separates in the same direction except unsymbolised thinking,
 which separates in the opposite one, and section 2 explains why: it is
@@ -748,11 +736,11 @@ above it, so the line is drawn at a vividness threshold rather than at
 the floor.</p>
 </div>
 <div class="section level2">
-<h2 id="is-the-pooling-innocent">5. Is the pooling innocent?<a class="anchor" aria-label="anchor" href="#is-the-pooling-innocent"></a>
+<h2 id="bv-pooling-check">5. Is the pooling innocent?<a class="anchor" aria-label="anchor" href="#bv-pooling-check"></a>
 </h2>
 <p>Section 1 flagged that v1 participants’ labels are partly determined
-by participants from versions that enter no other analysis. Refit on v1
-alone and compare.</p>
+by participants from versions that enter no other analysis. Let’s refit
+on v1 alone and compare.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v1_rows</span> <span class="op">&lt;-</span> <span class="va">features</span><span class="op">$</span><span class="va">version</span> <span class="op">==</span> <span class="st">"v1"</span></span>
 <span></span>
@@ -793,17 +781,16 @@ solution would have been describing the versions excluded from
 everything else, and it would have been dropped.</p>
 </div>
 <div class="section level2">
-<h2 id="two-things-tried-afterwards-and-reported-as-such">6. Two things tried afterwards, and reported as such<a class="anchor" aria-label="anchor" href="#two-things-tried-afterwards-and-reported-as-such"></a>
+<h2 id="bv-afterwards">6. Two things tried afterwards<a class="anchor" aria-label="anchor" href="#bv-afterwards"></a>
 </h2>
 <p>Everything below was run <strong>after</strong> seeing the null,
 which makes it exploration of a null rather than a second attempt at the
 same test.</p>
-<p><strong>Is there structure inside the floor group?</strong> A better
-question than forcing more clusters on the whole sample, because
-restricting to the floor group removes the axis that dominated, so
-anything found there is necessarily beyond vividness. Features
-re-standardised within the subsample, imagery scales dropped since they
-barely vary in it.</p>
+<p><strong>1) Is there structure inside the floor group?</strong>
+Restricting to the floor group removes the axis that dominated, so
+anything found there is necessarily beyond vividness. Features were
+re-standardised within the sub-sample and imagery scales were dropped
+since they barely vary in it.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">floor_features</span> <span class="op">&lt;-</span> <span class="va">scales</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">imagery_group</span> <span class="op">==</span> <span class="st">"VVIQ floor"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -855,41 +842,30 @@ barely vary in it.</p>
 other. <strong>The stability indices say not to believe it.</strong> The
 proportion of ambiguous clustering runs from about 0.22 to 0.76 across
 algorithms, meaning a large share of participant pairs cluster together
-inconsistently across resamples. With 39 participants and 6 features, an
-algorithm that always returns a partition has returned one.</p>
+inconsistently across resamples.</p>
 <p>Had the indices supported it, the claim would have been a contrast
 between participants high on both inner voice and unsymbolised thinking
-and participants low on both. That deserves a properly powered study,
-and it is recorded here so the question is visibly closed rather than
-left for someone to retry with a different seed.</p>
-<p><strong>Forcing three clusters</strong> on the full sample splits off
-two above-floor participants and leaves the floor group otherwise
+and participants low on both. That deserves a properly powered study of
+its own.</p>
+<p><strong>2) Forcing three clusters</strong> on the full sample splits
+off two above-floor participants and leaves the floor group otherwise
 intact. It changes nothing.</p>
 </div>
 <div class="section level2">
-<h2 id="the-validation-step-is-not-run-and-that-is-the-result">7. The validation step is not run, and that is the result<a class="anchor" aria-label="anchor" href="#the-validation-step-is-not-run-and-that-is-the-result"></a>
+<h2 id="bv-validation">7. The validation step is not run<a class="anchor" aria-label="anchor" href="#bv-validation"></a>
 </h2>
-<p>The plan was to refit the <a href="joint-model.html">joint model</a>
-on the cluster labels, using task behaviour that had been held out
-throughout. Its stated precondition was clusters that are not simply
-imagery groups.</p>
-<p>That precondition is not met. Refitting anyway would reproduce the
-floor-group analysis with the boundary moved slightly, and reporting
-that as validation of a cluster solution would be the kind of
-overstatement this project has made before and does not intend to
-repeat.</p>
+<p>The plan was to refit the main <a href="composition.html">composition</a> model on the cluster labels,
+using task behaviour that had been held out throughout. Its stated
+precondition was clusters that are not simply imagery groups. That
+precondition is not met. Refitting anyway would reproduce the
+floor-group analysis with the boundary moved slightly.</p>
 <p>So the exploratory strand ends here, with two results of unequal
 weight. The clustering finds nothing that vividness does not already
 capture. The questionnaires themselves do: <strong>unsymbolised thinking
 rises steadily as imagery vividness falls</strong>, which points at a
-description of what inner experience is like at that end of the scale
-rather than at a deficit. It is a gradient rather than a property of
-aphantasia specifically, and the models in section 3 are what
-distinguish those two readings.</p>
-<p>One question is left deliberately open. The cluster boundary sits
-above the vividness floor, so it is a different dichotomy of the same
-axis. Whether it predicts task behaviour better than the floor split is
-answerable and cheap, and would need declaring before it is run.</p>
+description of what inner experience is like at that end of the scale.
+It is more a gradient than a property of complete aphantasia
+specifically, as shown by the models in section 3.</p>
 <hr>
 <p><strong>Continuing through the Extended Online Report:</strong> this
 page follows <a href="joint-model.html">the joint model</a>. To keep
@@ -908,14 +884,14 @@ notes</a> for the technical detail behind these models.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">!</span> <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
 <span><span class="co">#&gt;    abind                1.4-8    <span style="color: #555555;">2024-09-12</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;    assertthat           0.2.1    <span style="color: #555555;">2019-03-21</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    backports            1.5.1    <span style="color: #555555;">2026-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bayesplot            1.16.0   <span style="color: #555555;">2026-08-25</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -997,12 +973,12 @@ notes</a> for the technical detail behind these models.</p>
 <span><span class="co">#&gt;    ragg                 1.5.2    <span style="color: #555555;">2026-03-23</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    RColorBrewer         1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    Rcpp                 1.1.2    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    RcppParallel         6.2.0    <span style="color: #555555;">2026-07-30</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    RcppParallel         6.2.1    <span style="color: #555555;">2026-08-27</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    renv                 1.0.7    <span style="color: #555555;">2024-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rlang                1.3.0    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rmarkdown            2.31     <span style="color: #555555;">2026-03-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rstan                2.32.7   <span style="color: #555555;">2025-03-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    rstantools           2.7.0    <span style="color: #555555;">2026-07-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    rstantools           2.7.1    <span style="color: #555555;">2026-08-29</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rstudioapi           0.19.0   <span style="color: #555555;">2026-06-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    S7                   0.2.2    <span style="color: #555555;">2026-04-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    sass                 0.4.10   <span style="color: #555555;">2025-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -1027,7 +1003,7 @@ notes</a> for the technical detail behind these models.</p>
 <span><span class="co">#&gt;    xtable               1.8-8    <span style="color: #555555;">2026-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    yaml                 2.3.12   <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt; </span></span>

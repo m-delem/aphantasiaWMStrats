@@ -1,8 +1,5 @@
 # The participants: who took part
 
-Who these participants are, and one thing about how they were recruited
-that constrains what any analysis here can claim.
-
 This page describes **all 117 people who took part across the three task
 versions**. The behavioural analyses use v1 alone and the questionnaire
 analyses pool all three; section 3 is where that split comes from.
@@ -10,7 +7,7 @@ analyses pool all three; section 3 is where that split comes from.
 One caveat about counting, because two totals circulate on this site and
 both are correct. **One participant completed the task twice, once in v1
 and once in v3**, so there are 117 people and 118 person-sessions.
-Anything about a *person* — age, gender, education, imagery group — is
+Anything about a *person* (age, gender, education, imagery group) is
 counted per person below. Anything about a *version* is counted per
 session, because that participant did two different versions of the task
 and each one is a separate observation of the design.
@@ -169,9 +166,7 @@ side of the floor.
 
 plot_vviq_histogram(participants$vviq_total_score, base_size = 16) +
   labs(x = "VVIQ total score",
-       caption = "The floor group is coloured separately.") +
-  theme(axis.text.x = element_text(), axis.ticks.x = element_line(),
-        axis.line.x = element_line())
+       caption = "The floor group is coloured separately.")
 ```
 
 ![Distribution of VVIQ scores, with the floor group
@@ -185,7 +180,7 @@ neither part.
 
 ## 3. Recruitment, and why the versions are not interchangeable
 
-This is the constraint worth carrying into every other page.
+This is a constraint carried into every other page.
 
 ``` r
 
@@ -238,7 +233,7 @@ modelling pages use.
 ## 4. What was administered
 
 Every participant completed the same battery in the same session: the
-WM-FTT itself, then the VVIQ, the OSIVQ and the NIEQ. The
+VVIQ, the OSIVQ, the NIEQ, then the WM-FTT itself. The
 [psychometrics](https://m-delem.github.io/aphantasiaWMStrats/articles/psychometrics.md)
 page reports how those instruments behave in this sample, including one
 subscale that does not reach its reliability threshold and one scoring
@@ -246,7 +241,7 @@ inconsistency between versions.
 
 Field of study, occupation and recruitment route are recorded in
 `extra_demographics` and are not analysed anywhere: they were collected
-for description rather than as variables.
+for description and possible exploratory analyses (not conducted yet).
 
 ``` r
 
@@ -272,9 +267,11 @@ Field of study or work, six most common {.table}
 
 ------------------------------------------------------------------------
 
-**Continuing through the Extended Online Report:** this is the first
-page of the report. To keep reading in order, continue to [task
-design](https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.md)
+**Continuing through the Extended Online Report:** this page follows
+[task
+design](https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.md).
+To keep reading in order, continue to
+[scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
 next. Or skip ahead to [the
 analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md),
 which explains what the modelling pages do and why.
@@ -291,13 +288,13 @@ which explains what the modelling pages do and why.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  package            * version date (UTC) lib source
-    #>  aphantasiaWMStrats * 0.1     2026-08-26 [1] local
+    #>  aphantasiaWMStrats * 0.1     2026-08-31 [1] local
     #>  bslib                0.12.0  2026-08-04 [2] CRAN (R 4.6.1)
     #>  cachem               1.1.0   2024-05-16 [2] CRAN (R 4.6.1)
     #>  cli                  3.6.6   2026-04-09 [2] CRAN (R 4.6.1)
@@ -348,7 +345,7 @@ which explains what the modelling pages do and why.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

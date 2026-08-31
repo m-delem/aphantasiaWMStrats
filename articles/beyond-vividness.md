@@ -1,17 +1,13 @@
 # Beyond vividness: what the questionnaires say
 
-**Everything on this page is exploratory.** The groups are not fixed in
-advance, nothing here licenses a confirmatory claim, and the parts that
-were run after seeing a result say so.
-
-The confirmatory strand divides participants by imagery vividness. This
-page asks whether the questionnaires contain anything that division
-misses: first by looking at how the scales relate to each other, then by
-asking an algorithm to find groups without being told about vividness at
-all.
+**Everything on this page is exploratory.** The confirmatory strand
+divides participants by imagery vividness. This page asks whether the
+questionnaires contain anything that division misses: first by looking
+at how the scales relate to each other, then by asking an algorithm to
+find groups without being told about vividness at all.
 
 The short answer is **yes on one dimension and no as a group
-structure**, and the two halves are worth reading together.
+structure**.
 
 ``` r
 
@@ -28,8 +24,9 @@ scales <- dplyr::mutate(
 
 ## 1. Pooling across versions, which is allowed here and nowhere else
 
-Every modelling page on this site runs on v1 alone. This one uses all
-114 participants with complete questionnaire data.
+Every modelling page on this site currently (2026-09-03) runs on v1
+alone. This one uses all 114 participants with complete questionnaire
+data across all versions.
 
 Counted **per person**, as the
 [participants](https://m-delem.github.io/aphantasiaWMStrats/articles/participants.md)
@@ -41,12 +38,12 @@ report.
 The reasoning in the [version
 scope](https://m-delem.github.io/aphantasiaWMStrats/articles/version-scope.md)
 page is entirely about **task** comparability: group balance for a
-behavioural contrast, non-response differing three-fold, per-version
-standardisation being unstable. None of it touches a questionnaire
-score. The instruments are identical and were administered identically
-in all three versions, so version is a property of the task rather than
-of the scales, and pooling recovers a third more participants for the
-analysis that most needs them.
+behavioural contrast, non-response differing between the three versions,
+per-version standardisation being unstable. None of it touches a
+questionnaire score. The instruments are identical and were administered
+identically in all three versions, so version is a property of the task
+rather than of the scales, and pooling recovers a third more
+participants for the analysis that most needs them.
 
 ``` r
 
@@ -70,10 +67,10 @@ scales |>
 Participants by task version {.table}
 
 What pooling changes is the sample’s **composition**: later recruitment
-targeted aphantasic participants, so the pooled sample is about a third
-floor group where v1 alone is a quarter. That matters for clustering,
-because centroids are fitted to whatever sample they are given, and
-section 4 tests it rather than assuming it away.
+targeted more aphantasic participants, so the pooled sample is about a
+third floor group where v1 alone is a quarter. That matters for
+clustering, because centroids are fitted to whatever sample they are
+given. Section 4 tests this.
 
 ## 2. The scales are largely independent, and three of them are one thing
 
@@ -137,7 +134,7 @@ formats, one construct.**
 That has a consequence for anything that comes next. Left as three
 features, imagery would be **triple-weighted** in any distance metric,
 so a clustering would recover imagery groups by construction and could
-not possibly find anything else. They are collapsed into one
+not possibly find anything else. I’ve collapsed them into one
 standardised composite, which is what makes the question in this page’s
 title answerable.
 
@@ -209,14 +206,8 @@ almost perfectly overlapping in its ranks, which is what a heavy tail on
 one side does. The test is the one to trust for a group claim here, and
 it says nothing is happening.
 
-(This is *not* the `tibble()` masking bug the [implementation
-notes](https://m-delem.github.io/aphantasiaWMStrats/articles/implementation-notes.html#hazards)
-describe. That one produced p values of exactly 1, and the test above is
-computed before the `tibble()` for exactly that reason.)
-
 That is the group contrast. The models below replace it with something
-more precise, and the replacement is not a group difference at all —
-read to the end of this section before carrying the heading away.
+more precise:
 
 ``` r
 
@@ -380,19 +371,10 @@ Both readings changed when the dichotomy was dropped, which is the
 argument for fitting these at all.
 
 This is a positive claim about what low-vividness experience *is*, from
-an instrument built to ask, and it needs no clustering at all. It is
-worth saying plainly because the rest of this page is a null. But it is
-a claim about a **gradient**: it describes the low end of a continuum,
-and nothing here isolates participants with no imagery at all from those
-with a little.
-
-Two cautions. It is a group contrast that was **not** pre-declared, so
-it is a hypothesis for a future study rather than a test passed. And the
-[psychometrics](https://m-delem.github.io/aphantasiaWMStrats/articles/psychometrics.md)
-page records that NIEQ’s sensory-focus dimension does not reach its
-reliability threshold in this sample, which is a reason for care with
-the instrument as a whole even though it is not the dimension at issue
-here.
+an instrument built to ask it. It is worth saying plainly because the
+rest of this page is a null. But it is a claim about a **gradient**: it
+describes the low end of a continuum, and nothing here isolates
+participants with no imagery at all from those with a little.
 
 ## 4. The clustering, and what it was asked to find
 
@@ -404,11 +386,11 @@ could not be described as whatever it turned out to be:
 - **Null**: clusters that recover the vividness grouping. The structure
   is imagery, and there is nothing else.
 
-Consensus clustering rather than one algorithm, because the central risk
-in this kind of analysis is finding groups that do not exist. A
+Consensus clustering was preferred to a algorithm, because the central
+risk in this kind of analysis is finding groups that do not exist. A
 partition that survives three algorithms and three consensus functions
 is less likely to be an artifact of any one of them. The number of
-clusters is **selected, not assumed**.
+clusters is **selected** by algorithms, not pre-specified.
 
 ``` r
 
@@ -501,8 +483,8 @@ the line is drawn at a vividness threshold rather than at the floor.
 ## 5. Is the pooling innocent?
 
 Section 1 flagged that v1 participants’ labels are partly determined by
-participants from versions that enter no other analysis. Refit on v1
-alone and compare.
+participants from versions that enter no other analysis. Let’s refit on
+v1 alone and compare.
 
 ``` r
 
@@ -539,16 +521,15 @@ innocent and the larger sample is kept. Had it not been, the pooled
 solution would have been describing the versions excluded from
 everything else, and it would have been dropped.
 
-## 6. Two things tried afterwards, and reported as such
+## 6. Two things tried afterwards
 
 Everything below was run **after** seeing the null, which makes it
 exploration of a null rather than a second attempt at the same test.
 
-**Is there structure inside the floor group?** A better question than
-forcing more clusters on the whole sample, because restricting to the
+**1) Is there structure inside the floor group?** Restricting to the
 floor group removes the axis that dominated, so anything found there is
-necessarily beyond vividness. Features re-standardised within the
-subsample, imagery scales dropped since they barely vary in it.
+necessarily beyond vividness. Features were re-standardised within the
+sub-sample and imagery scales were dropped since they barely vary in it.
 
 ``` r
 
@@ -583,46 +564,33 @@ The consensus functions returned a partition and agreed with each other.
 **The stability indices say not to believe it.** The proportion of
 ambiguous clustering runs from about 0.22 to 0.76 across algorithms,
 meaning a large share of participant pairs cluster together
-inconsistently across resamples. With 39 participants and 6 features, an
-algorithm that always returns a partition has returned one.
+inconsistently across resamples.
 
 Had the indices supported it, the claim would have been a contrast
 between participants high on both inner voice and unsymbolised thinking
-and participants low on both. That deserves a properly powered study,
-and it is recorded here so the question is visibly closed rather than
-left for someone to retry with a different seed.
+and participants low on both. That deserves a properly powered study of
+its own.
 
-**Forcing three clusters** on the full sample splits off two above-floor
-participants and leaves the floor group otherwise intact. It changes
-nothing.
+**2) Forcing three clusters** on the full sample splits off two
+above-floor participants and leaves the floor group otherwise intact. It
+changes nothing.
 
-## 7. The validation step is not run, and that is the result
+## 7. The validation step is not run
 
-The plan was to refit the [joint
-model](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md)
-on the cluster labels, using task behaviour that had been held out
+The plan was to refit the main
+[composition](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md)
+model on the cluster labels, using task behaviour that had been held out
 throughout. Its stated precondition was clusters that are not simply
-imagery groups.
-
-That precondition is not met. Refitting anyway would reproduce the
-floor-group analysis with the boundary moved slightly, and reporting
-that as validation of a cluster solution would be the kind of
-overstatement this project has made before and does not intend to
-repeat.
+imagery groups. That precondition is not met. Refitting anyway would
+reproduce the floor-group analysis with the boundary moved slightly.
 
 So the exploratory strand ends here, with two results of unequal weight.
 The clustering finds nothing that vividness does not already capture.
 The questionnaires themselves do: **unsymbolised thinking rises steadily
 as imagery vividness falls**, which points at a description of what
-inner experience is like at that end of the scale rather than at a
-deficit. It is a gradient rather than a property of aphantasia
-specifically, and the models in section 3 are what distinguish those two
-readings.
-
-One question is left deliberately open. The cluster boundary sits above
-the vividness floor, so it is a different dichotomy of the same axis.
-Whether it predicts task behaviour better than the floor split is
-answerable and cheap, and would need declaring before it is run.
+inner experience is like at that end of the scale. It is more a gradient
+than a property of complete aphantasia specifically, as shown by the
+models in section 3.
 
 ------------------------------------------------------------------------
 
@@ -649,14 +617,14 @@ for the technical detail behind these models.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  ! package            * version  date (UTC) lib source
     #>    abind                1.4-8    2024-09-12 [2] CRAN (R 4.6.1)
-    #>    aphantasiaWMStrats * 0.1      2026-08-26 [1] local
+    #>    aphantasiaWMStrats * 0.1      2026-08-31 [1] local
     #>    assertthat           0.2.1    2019-03-21 [2] CRAN (R 4.6.1)
     #>    backports            1.5.1    2026-04-03 [2] CRAN (R 4.6.1)
     #>    bayesplot            1.16.0   2026-08-25 [2] CRAN (R 4.6.1)
@@ -738,12 +706,12 @@ for the technical detail behind these models.
     #>    ragg                 1.5.2    2026-03-23 [2] CRAN (R 4.6.1)
     #>    RColorBrewer         1.1-3    2022-04-03 [2] CRAN (R 4.6.1)
     #>    Rcpp                 1.1.2    2026-07-05 [2] CRAN (R 4.6.1)
-    #>    RcppParallel         6.2.0    2026-07-30 [2] CRAN (R 4.6.1)
+    #>    RcppParallel         6.2.1    2026-08-27 [2] CRAN (R 4.6.1)
     #>    renv                 1.0.7    2024-04-11 [2] RSPM (R 4.6.1)
     #>    rlang                1.3.0    2026-07-05 [2] CRAN (R 4.6.1)
     #>    rmarkdown            2.31     2026-03-26 [2] CRAN (R 4.6.1)
     #>    rstan                2.32.7   2025-03-10 [2] CRAN (R 4.6.1)
-    #>    rstantools           2.7.0    2026-07-26 [2] CRAN (R 4.6.1)
+    #>    rstantools           2.7.1    2026-08-29 [2] CRAN (R 4.6.1)
     #>    rstudioapi           0.19.0   2026-06-11 [2] CRAN (R 4.6.1)
     #>    S7                   0.2.2    2026-04-22 [2] CRAN (R 4.6.1)
     #>    sass                 0.4.10   2025-04-11 [2] CRAN (R 4.6.1)
@@ -768,7 +736,7 @@ for the technical detail behind these models.
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 

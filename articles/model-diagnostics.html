@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -104,9 +104,10 @@
     
 <p>The modelling pages report estimates. This page asks whether the
 models producing them sampled properly and whether their response
-families describe the data. Both questions are usually answered in a
-sentence; here they get the space to be checked, because three of the
-family choices are not obvious.</p>
+families describe the data. Both questions get the space to be checked,
+because three of the family choices are not obvious. The most complex
+model in the project, the <a href="joint-model.html">joint model</a>, is
+checked first.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"v1"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^expe_block"</span>, <span class="va">expe_phase</span><span class="op">)</span><span class="op">)</span></span>
@@ -142,18 +143,18 @@ family choices are not obvious.</p>
 <span>  file_refit <span class="op">=</span> <span class="va">refit</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="convergence">1. Convergence<a class="anchor" aria-label="anchor" href="#convergence"></a>
+<h2 id="diag-convergence">1. Convergence<a class="anchor" aria-label="anchor" href="#diag-convergence"></a>
 </h2>
-<p>Four chains, 3000 iterations each with the first 1000 discarded as
-warmup, giving 2000 kept per chain and 8000 draws in total.
-<code><a href="../reference/fit_brms_model.html">fit_brms_model()</a></code>’s <code>iterations</code> argument is
-post-warmup draws per chain rather than a total, which is why the call
-reads <code>iterations = 2000, warmup = 1000</code>.</p>
+<p>The model was fitted with four chains, 3000 iterations each with the
+first 1000 discarded as warmup, giving 2000 kept per chain and 8000
+draws in total. <code><a href="../reference/fit_brms_model.html">fit_brms_model()</a></code>’s <code>iterations</code>
+argument is post-warmup draws per chain rather than a total, which is
+why the call reads <code>iterations = 2000, warmup = 1000</code>.</p>
 <p>Those draws cover every parameter in the fitted object, which is the
 count the table below reports. Most of them are the per-participant
-deviations; the model’s <em>structural</em> size is the 54 parameters
-section 4 refers to — the population-level coefficients, the standard
-deviations and the fifteen correlations.</p>
+deviations; the joint model’s <em>structural</em> size is the 54 main
+parameters: the population-level coefficients, the standard deviations
+and the fifteen correlations.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
 <span>  parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/posterior/reference/rhat.html" class="external-link">rhat</a></span><span class="op">(</span><span class="va">joint_model</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -195,10 +196,9 @@ deviations and the fifteen correlations.</p>
 <td align="right">0</td>
 </tr></tbody>
 </table>
-<p>Nothing to report, which is the point of reporting it. R-hat below
-1.004 everywhere, no divergent transitions, no saturated treedepths, and
-the worst-sampled parameter still has an effective sample size ratio
-above 0.12.</p>
+<p>R-hat below 1.004 everywhere, no divergent transitions, no saturated
+treedepths, and the worst-sampled parameter still has an effective
+sample size ratio above 0.12.</p>
 <p>That was not guaranteed. A six-response model with fifteen correlated
 random intercepts estimated from 86 participants is the kind of model
 that diverges, which is why it was fitted with
@@ -212,24 +212,23 @@ the start.</p>
 <span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">1.01</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, colour <span class="op">=</span> <span class="st">"#C44E52"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"R-hat"</span>, y <span class="op">=</span> <span class="st">"Parameters"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Dashed line marks the conventional 1.01 threshold."</span><span class="op">)</span></span></code></pre></div>
-<p><img src="model-diagnostics_files/figure-html/rhat-spread-1.png" class="r-plt" alt="Distribution of R-hat values across all parameters." width="100%"></p>
+<p><img src="model-diagnostics_files/figure-html/rhat-spread-1.png" class="r-plt" alt="Distribution of R-hat values across all parameters." width="768"></p>
 </div>
 <div class="section level2">
-<h2 id="ppc">2. Do the families fit?<a class="anchor" aria-label="anchor" href="#ppc"></a>
+<h2 id="diag-ppc">2. Do the families fit?<a class="anchor" aria-label="anchor" href="#diag-ppc"></a>
 </h2>
 <p>The three recall features get three different response families, and
 the <a href="scoring.html">scoring</a> page argues for each from what
-the boundary of that feature’s scale means. An argument is not a
-check.</p>
+the boundary of that feature’s scale means.</p>
 <p>A posterior predictive check draws replicate datasets from the fitted
-model and compares them to the real one. If the family is wrong, the
-replicates look wrong in a visible way.</p>
+model and compares them to the real one. If the chosen family is wrong,
+the replicates look wrong in a visible way.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/pp_check.html" class="external-link">pp_check</a></span><span class="op">(</span><span class="va">joint_model</span>, resp <span class="op">=</span> <span class="st">"scoreangle"</span>, ndraws <span class="op">=</span> <span class="fl">60</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Orientation: plain Beta"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Dark line is the observed density; light lines are replicates."</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_pdf.html">theme_pdf</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></code></pre></div>
-<p><img src="model-diagnostics_files/figure-html/ppc-orientation-1.png" class="r-plt" alt="Posterior predictive check for orientation accuracy." width="100%"></p>
+<p><img src="model-diagnostics_files/figure-html/ppc-orientation-1.png" class="r-plt" alt="Posterior predictive check for orientation accuracy." width="768"></p>
 <p>Orientation has no boundary mass at all once non-responders are
 removed, so a plain Beta is unremarkable and the replicates track the
 observed density closely.</p>
@@ -237,7 +236,7 @@ observed density closely.</p>
 <code class="sourceCode R"><span><span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/pp_check.html" class="external-link">pp_check</a></span><span class="op">(</span><span class="va">joint_model</span>, resp <span class="op">=</span> <span class="st">"scoreword"</span>, ndraws <span class="op">=</span> <span class="fl">60</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Word: zero-one-inflated Beta"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_pdf.html">theme_pdf</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></code></pre></div>
-<p><img src="model-diagnostics_files/figure-html/ppc-word-1.png" class="r-plt" alt="Posterior predictive check for word accuracy." width="100%"></p>
+<p><img src="model-diagnostics_files/figure-html/ppc-word-1.png" class="r-plt" alt="Posterior predictive check for word accuracy." width="768"></p>
 <p>Word is the interesting one. About 91% of responded word items score
 exactly 1 and 3% exactly 0, because a recalled word either matches the
 target or does not. Those are genuine point masses, not rounding, and
@@ -247,7 +246,7 @@ A plain Beta cannot: it has zero density at both boundaries.</p>
 <code class="sourceCode R"><span><span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/bayesplot/reference/pp_check.html" class="external-link">pp_check</a></span><span class="op">(</span><span class="va">joint_model</span>, resp <span class="op">=</span> <span class="st">"scorecolor"</span>, ndraws <span class="op">=</span> <span class="fl">60</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Colour: Beta after a Smithson-Verkuilen squeeze"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_pdf.html">theme_pdf</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></code></pre></div>
-<p><img src="model-diagnostics_files/figure-html/ppc-colour-1.png" class="r-plt" alt="Posterior predictive check for colour accuracy." width="100%"></p>
+<p><img src="model-diagnostics_files/figure-html/ppc-colour-1.png" class="r-plt" alt="Posterior predictive check for colour accuracy." width="768"></p>
 <p>Colour is the case where the same reasoning gives the opposite
 answer. It has a trace of mass at 1, but colour score is cosine
 similarity on a continuous wheel, so an exact 1 means an error of
@@ -265,12 +264,12 @@ value by about one ten-thousandth instead, and
 <span>  <span class="op">)</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="fl">3</span>, guides <span class="op">=</span> <span class="st">"collect"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="model-diagnostics_files/figure-html/ppc-gates-1.png" class="r-plt" alt="Posterior predictive check for the response gates." width="100%"></p>
+<p><img src="model-diagnostics_files/figure-html/ppc-gates-1.png" class="r-plt" alt="Posterior predictive check for the response gates." width="768"></p>
 <p>The three gates are Bernoulli, where the check reduces to whether the
 model reproduces the proportion of items answered. It does.</p>
 </div>
 <div class="section level2">
-<h2 id="composition-diagnostics">3. The compositional model<a class="anchor" aria-label="anchor" href="#composition-diagnostics"></a>
+<h2 id="diag-composition">3. The compositional model<a class="anchor" aria-label="anchor" href="#diag-composition"></a>
 </h2>
 <p>The <a href="composition.html">composition</a> page fits both
 log-ratio coordinates together with the residual correlation estimated,
@@ -332,29 +331,11 @@ partition.</p>
 <span>    <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"ilr2: colour vs orientation"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/theme_pdf.html">theme_pdf</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="fl">2</span>, guides <span class="op">=</span> <span class="st">"collect"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="model-diagnostics_files/figure-html/ppc-composition-1.png" class="r-plt" alt="Posterior predictive checks for both ILR coordinates." width="100%"></p>
-<p>Gaussian is appropriate here for a reason worth stating: log-ratio
-coordinates are unbounded by construction. That is the whole point of
-leaving the simplex, and it is why the <a href="composition.html">composition</a> page can use an ordinary linear
-model where the accuracy pages cannot.</p>
-</div>
-<div class="section level2">
-<h2 id="what-is-not-checked-here">4. What is not checked here<a class="anchor" aria-label="anchor" href="#what-is-not-checked-here"></a>
-</h2>
-<p><strong>Prior sensitivity.</strong> The joint model’s priors were
-chosen per coefficient and are documented on the <a href="analysis-strategy.html">analysis strategy</a> page, but no
-alternative-prior refit was run. For the correlations there is a partial
-substitute: each posterior is compared against the marginal implied by
-the <code>lkj(4)</code> prior, and a posterior no narrower than its
-prior is flagged rather than reported.</p>
-<p><strong>Cross-validation of the joint model.</strong> Model
-comparison was run on functional form for one feature (<a href="performance.html">performance</a> §4) and on the compositional
-coordinates (<a href="composition.html">composition</a> §5 and §8), not
-on the joint model as a whole. With 54 parameters and 86 participants, a
-LOO comparison against alternatives would mostly report its own
-uncertainty.</p>
-<p>Both are limitations of scope rather than oversights, and both are
-the kind of thing a larger sample would make worth doing.</p>
+<p><img src="model-diagnostics_files/figure-html/ppc-composition-1.png" class="r-plt" alt="Posterior predictive checks for both ILR coordinates." width="768"></p>
+<p>Gaussian is appropriate here: log-ratio coordinates are unbounded by
+construction. That is the whole point of leaving the simplex, and it is
+why the <a href="composition.html">composition</a> page can use an
+ordinary linear model where the accuracy pages cannot.</p>
 <hr>
 <p><strong>Continuing through the Extended Online Report:</strong> this
 page follows <a href="beyond-vividness.html">beyond vividness</a>. To
@@ -372,14 +353,14 @@ models were built to do.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">!</span> <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
 <span><span class="co">#&gt;    abind                1.4-8    <span style="color: #555555;">2024-09-12</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;    backports            1.5.1    <span style="color: #555555;">2026-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bayesplot            1.16.0   <span style="color: #555555;">2026-08-25</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bridgesampling       1.2-1    <span style="color: #555555;">2025-11-19</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -436,13 +417,13 @@ models were built to do.</p>
 <span><span class="co">#&gt;    ragg                 1.5.2    <span style="color: #555555;">2026-03-23</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    RColorBrewer         1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    Rcpp                 1.1.2    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    RcppParallel         6.2.0    <span style="color: #555555;">2026-07-30</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    RcppParallel         6.2.1    <span style="color: #555555;">2026-08-27</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    renv                 1.0.7    <span style="color: #555555;">2024-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    reshape2             1.4.5    <span style="color: #555555;">2025-11-12</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rlang                1.3.0    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rmarkdown            2.31     <span style="color: #555555;">2026-03-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rstan                2.32.7   <span style="color: #555555;">2025-03-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    rstantools           2.7.0    <span style="color: #555555;">2026-07-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    rstantools           2.7.1    <span style="color: #555555;">2026-08-29</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    S7                   0.2.2    <span style="color: #555555;">2026-04-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    sass                 0.4.10   <span style="color: #555555;">2025-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    scales               1.4.0    <span style="color: #555555;">2025-04-24</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -465,7 +446,7 @@ models were built to do.</p>
 <span><span class="co">#&gt;    xtable               1.8-8    <span style="color: #555555;">2026-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    yaml                 2.3.12   <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt; </span></span>

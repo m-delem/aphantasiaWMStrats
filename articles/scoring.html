@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -112,7 +112,7 @@ will and will not support.</p>
 <p>Every number below is computed from <code>all_data</code> when this
 page is built, not transcribed from an analysis run elsewhere.</p>
 <div class="section level2">
-<h2 id="the-data-this-page-works-from">The data this page works from<a class="anchor" aria-label="anchor" href="#the-data-this-page-works-from"></a>
+<h2 id="score-data">The data this page works from<a class="anchor" aria-label="anchor" href="#score-data"></a>
 </h2>
 <p><code>all_data</code> is stimulus-level: one row per presented
 stimulus, with all three recalled features side by side in separate
@@ -259,7 +259,7 @@ frames are built once here and reused throughout.</p>
 </table>
 </div>
 <div class="section level2">
-<h2 id="why-the-tasks-own-scores-are-not-the-analysis-scores">1. Why the task’s own scores are not the analysis scores<a class="anchor" aria-label="anchor" href="#why-the-tasks-own-scores-are-not-the-analysis-scores"></a>
+<h2 id="score-why">1. Why the task’s own scores are not the analysis scores<a class="anchor" aria-label="anchor" href="#score-why"></a>
 </h2>
 <p>WM-FTT computes scores in the browser, to display feedback between
 trials. Those columns survive in <code>all_data</code> under a
@@ -394,7 +394,7 @@ response values in R rather than transformed from the front end’s
 output.</p>
 </div>
 <div class="section level2">
-<h2 id="the-three-metrics">2. The three metrics<a class="anchor" aria-label="anchor" href="#the-three-metrics"></a>
+<h2 id="score-metrics">2. The three metrics<a class="anchor" aria-label="anchor" href="#score-metrics"></a>
 </h2>
 <p><strong>Word</strong> uses the edit-distance scoring of <span class="citation">Gonthier (2022)</span>: Damerau-Levenshtein distance,
 capped at the target’s length, subtracted from that length and divided
@@ -508,12 +508,11 @@ period.</p>
 </table>
 <p>Using 360 for orientation would score a perpendicular error, the most
 wrong an orientation can be, as 0.5 rather than 0, and no response could
-score 0 at all. The choice is structural rather than empirical, but it
-is not cosmetic: participant rankings move by up to 21 places out of 88
-between the two conventions.</p>
+score 0 at all. The choice is not cosmetic: participant rankings move by
+up to 21 places out of 88 between the two conventions.</p>
 </div>
 <div class="section level2">
-<h2 id="what-counts-as-a-response">3. What counts as a response<a class="anchor" aria-label="anchor" href="#what-counts-as-a-response"></a>
+<h2 id="score-response">3. What counts as a response<a class="anchor" aria-label="anchor" href="#score-response"></a>
 </h2>
 <p>The task encodes non-response with sentinels rather than missing
 values: an empty word box, a colour wheel never touched (999, rendered
@@ -550,7 +549,7 @@ grey), and an orientation widget left at its starting vertical position
 scored 0 and flagged, rather than set to <code>NA</code>.</p>
 <p><code>NA</code> would be the more cautious-looking choice and is the
 worse one. Non-response here is unlikely to be missing-at-random, so
-listwise deletion would silently drop a non-random subset. Scoring 0
+list-wise deletion would silently drop a non-random subset. Scoring 0
 produces a visible distortion in the distribution instead of an
 invisible one in the inference. The <code>responded_*</code> flags then
 let any analysis separate the two quantities the score column combines:
@@ -603,7 +602,7 @@ between score and imagery vividness. Every analysis downstream states
 which of the two quantities it means.</p>
 </div>
 <div class="section level2">
-<h2 id="which-sample">4. Which sample<a class="anchor" aria-label="anchor" href="#which-sample"></a>
+<h2 id="score-sample">4. Which sample<a class="anchor" aria-label="anchor" href="#score-sample"></a>
 </h2>
 <p>v1 is the primary analysis sample. v2 and v3 are described but do not
 enter the inferential analyses, and the <a href="version-scope.html">version scope</a> page sets out the procedure
@@ -612,7 +611,7 @@ versions produced an association that stratification removed.</p>
 <p>Everything below is v1 unless stated otherwise.</p>
 </div>
 <div class="section level2">
-<h2 id="distributions">5. Distributions<a class="anchor" aria-label="anchor" href="#distributions"></a>
+<h2 id="score-distributions">5. Distributions<a class="anchor" aria-label="anchor" href="#score-distributions"></a>
 </h2>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v1_trials</span> <span class="op">|&gt;</span></span>
@@ -621,7 +620,7 @@ versions produced an association that stratification removed.</p>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">feature</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Similarity score, responded items"</span>, y <span class="op">=</span> <span class="st">"Items"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scoring_files/figure-html/distributions-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="scoring_files/figure-html/distributions-1.png" class="r-plt" alt="" width="768"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">boundary_mass</span> <span class="op">&lt;-</span> <span class="va">v1_trials</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">responded</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -661,17 +660,20 @@ either boundary at all. Word is not: 90.7% of responded word items are
 exact matches, and 3.2% are exact misses. Colour has a trace of mass at
 one and none at zero.</p>
 <p><strong>Those three patterns need three different
-treatments</strong>, and each choice follows from what the boundary
-means rather than from convenience.</p>
+treatments</strong>, i.e. different <strong>distributional
+families</strong> to model the responses, and each choice follows from
+what the boundary means rather than from convenience.</p>
 <ul>
 <li>
 <strong>Word’s boundaries are real.</strong> A recalled word either
 matches the target or it does not, so the pile at one is a genuine point
 mass, and the zeros here are wrong answers rather than absent ones: this
 table is already conditional on responding. Both earn an inflation
-component, so word is modelled with a zero-one-inflated Beta.</li>
+component, so word is modelled with a zero-one-inflated Beta
+distribution.</li>
 <li>
-<strong>Orientation needs nothing.</strong> Plain Beta.</li>
+<strong>Orientation needs nothing.</strong> Plain Beta
+distribution.</li>
 <li>
 <strong>Colour’s mass at one is an artifact.</strong> Colour score
 is cosine similarity on a continuous wheel, so an exact 1 is an error of
@@ -685,54 +687,16 @@ one ten-thousandth.</li>
 <p>Separately from all of that, the mass at zero in the
 <strong>unfiltered</strong> columns is non-response, which is a
 different quantity again and is modelled as such: see <a href="engagement.html">task engagement</a>.</p>
+<hr>
+<p><strong>Continuing through the Extended Online Report:</strong> this
+page follows <a href="task-design.html">task design</a>. To keep reading
+in order, continue to <a href="engagement.html">task engagement</a>
+next. Or skip ahead to <a href="analysis-strategy.html">the
+analysis</a>, which explains what the modelling pages do and why.</p>
+<hr>
 </div>
 <div class="section level2">
-<h2 id="reliability-and-what-these-scores-support">6. Reliability, and what these scores support<a class="anchor" aria-label="anchor" href="#reliability-and-what-these-scores-support"></a>
-</h2>
-<p>Both questions have moved to their own page: <a href="task-validity.html">task validity</a>. It covers the trial-level
-split-half procedure, the derived engagement thresholds, the finding
-that word does not function as an individual-differences measure in this
-sample, and the stability of the compositional coordinates.</p>
-<p>The short version: orientation and colour clear the conventional
-marks for individual-level interpretation, word does not, and no
-downstream model should make an individual-differences claim about word
-whatever its coefficients say.</p>
-</div>
-<div class="section level2">
-<h2 id="for-a-future-version-of-the-task">7. For a future version of the task<a class="anchor" aria-label="anchor" href="#for-a-future-version-of-the-task"></a>
-</h2>
-<p>The design goal was a three-way trade-off. Correlations between the
-three features, after removing each participant’s overall level, once
-looked like a <strong>two-way</strong> one: orientation and colour
-trading off against each other while word sat out at ceiling. That
-reading is withdrawn. It was six participants who answered very few
-orientation items, and the <a href="lessons.html">what was tried and
-withdrawn</a> page owns that withdrawal and shows both tables side by
-side.</p>
-<p>What survives is weaker and still worth acting on: word is far too
-easy, with 90.7% of responded items at ceiling and a reliability that
-does not support individual-differences use, so it cannot be carrying
-much of a trade-off whatever the correlations say.</p>
-<p>Three changes would address what this analysis could not:</p>
-<ul>
-<li>
-<strong>Make word harder</strong>, with longer words, more items per
-trial, or shorter exposure, so the verbal feature enters the trade-off
-and discriminates.</li>
-<li>
-<strong>Distinguish abstention from a default</strong>, via an
-explicit “I don’t know” control, separate from an untouched widget, and
-a confidence rating. Abstention is currently far faster than responding,
-which rules out effortful-but-failed search but cannot separate “nothing
-to report” from “not worth the effort”.</li>
-<li>
-<strong>Vary the points per feature</strong>, since strategic
-abstention should respond to incentive and representational absence
-should not.</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 id="score-refs">References<a class="anchor" aria-label="anchor" href="#score-refs"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
 <div id="ref-gonthierEasyWayImprove2022" class="csl-entry">
@@ -742,13 +706,6 @@ serial position.”</span> <em>Behavior Research Methods</em>,
 <em>55</em>(4). <a href="https://doi.org/10.3758/s13428-022-01908-2" class="external-link">https://doi.org/10.3758/s13428-022-01908-2</a>
 </div>
 </div>
-<hr>
-<p><strong>Continuing through the Extended Online Report:</strong> this
-page follows <a href="task-design.html">task design</a>. To keep reading
-in order, continue to <a href="engagement.html">task engagement</a>
-next. Or skip ahead to <a href="analysis-strategy.html">the
-analysis</a>, which explains what the modelling pages do and why.</p>
-<hr>
 <pre><code><span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
 <span><span class="co">#&gt;  version  R version 4.6.1 (2026-06-24)</span></span>
@@ -759,13 +716,13 @@ analysis</a>, which explains what the modelling pages do and why.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;  bslib                0.12.0  <span style="color: #555555;">2026-08-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cachem               1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cli                  3.6.6   <span style="color: #555555;">2026-04-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -814,7 +771,7 @@ analysis</a>, which explains what the modelling pages do and why.</p>
 <span><span class="co">#&gt;  xfun                 0.60    <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  yaml                 2.3.12  <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>

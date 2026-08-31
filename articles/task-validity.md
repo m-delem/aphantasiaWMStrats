@@ -181,7 +181,7 @@ wm_thresholds()
 
 They agree today. They are hard-coded deliberately, because the rule was
 fixed before any contact with VVIQ and must not drift with the sample it
-is applied to — so if this page’s recomputation ever diverges from that
+is applied to. If this page’s re-computation ever diverges from that
 vector, the vector is what the analyses used, and the divergence is the
 finding.
 
@@ -371,12 +371,11 @@ v1_compositions |>
 Behavioural composition by self-reported priority {.table}
 
 Behavioural compositions barely differ between participants who named
-different priorities. This table is the evidence behind [task
-design](https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.md)
-§3’s claim that the report and the behaviour are not interchangeable per
-person. This is a dissociation to report, not a validity failure. But
-“preference” language should not be used as though the two measures were
-interchangeable.
+different priorities, showing that the report and the behaviour are not
+interchangeable per person. This is not a validity failure in itself,
+but this dissociation shows that the behaviour and self-report reflect
+“preferences” in different ways and cannot be used as substitutes for
+each other yet.
 
 ------------------------------------------------------------------------
 
@@ -400,13 +399,13 @@ which explains what the modelling pages do and why.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  package            * version date (UTC) lib source
-    #>  aphantasiaWMStrats * 0.1     2026-08-26 [1] local
+    #>  aphantasiaWMStrats * 0.1     2026-08-31 [1] local
     #>  bslib                0.12.0  2026-08-04 [2] CRAN (R 4.6.1)
     #>  cachem               1.1.0   2024-05-16 [2] CRAN (R 4.6.1)
     #>  cli                  3.6.6   2026-04-09 [2] CRAN (R 4.6.1)
@@ -458,7 +457,7 @@ which explains what the modelling pages do and why.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

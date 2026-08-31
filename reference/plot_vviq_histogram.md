@@ -27,7 +27,7 @@ plot_vviq_histogram(
   floor_alpha = 0.5,
   gradient = ggplot2::scale_fill_viridis_c(option = "viridis", guide = "none"),
   left_expansion = 0.09,
-  base_size = 7
+  ...
 )
 ```
 
@@ -63,10 +63,11 @@ plot_vviq_histogram(
   [`plot_floor_group()`](https://m-delem.github.io/aphantasiaWMStrats/reference/plot_floor_group.md)
   so stacked panels align.
 
-- base_size:
+- ...:
 
-  Passed to
-  [`theme_pdf()`](https://m-delem.github.io/aphantasiaWMStrats/reference/theme_pdf.md).
+  Additional arguments passed to the
+  [`theme_pdf()`](https://m-delem.github.io/aphantasiaWMStrats/reference/theme_pdf.md)
+  function for further customization of the plot theme.
 
 ## Value
 

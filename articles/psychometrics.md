@@ -3,9 +3,7 @@
 Three questionnaires accompany the WM-FTT: the VVIQ (Marks, 1973), the
 OSIVQ (Blazhenkova & Kozhevnikov, 2009) and the NIEQ (Heavey et al.,
 2019). All three feed downstream analyses, and two of them turned out to
-need caveats. This page reports how each behaves in this sample rather
-than citing the reliabilities from their manuals, because one of them
-does not reproduce.
+need caveats. This page reports how each behaves in this sample.
 
 The task’s own reliabilities are on the [task
 validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md)
@@ -105,19 +103,19 @@ participants |>
 VVIQ distribution: a floor spike and a sparse middle {.table}
 
 Roughly a quarter of the sample sits at exactly 16, the scale minimum,
-and the middle of the range is nearly empty. That is why VVIQ is not
-treated as a plain continuous predictor everywhere downstream; [the
+and the middle of the range is sparsely populated. That is why VVIQ is
+not treated as a plain continuous predictor everywhere downstream; [the
 analysis
 strategy](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md)
 page §3 sets out the floor-group form every model uses and the caution
 that comes with it.
 
-## 2. OSIVQ, and a scoring inconsistency worth knowing about
+## 2. OSIVQ
 
 Three subscales: object, spatial, verbal. **Four items are
 reverse-keyed, and they are stored inconsistently across task
 versions.** v1 and v2 store `osivq_q02v`, `osivq_q09v`, `osivq_q41v` and
-`osivq_q42s` unreversed; v3 stores them already reversed. The
+`osivq_q42s` un-reversed; v3 stores them already reversed. The
 `object_mean`, `spatial_mean` and `verbal_mean` columns are correct in
 both cases. Only the raw items in `osivq_items` differ.
 
@@ -163,7 +161,7 @@ Corrected item-total correlations for the four reverse-keyed items
 Negative in v1, positive in v3. The items are the same; only the storage
 convention differs.
 
-The consequence within v1 is silent, so it is worth showing too:
+The consequence within v1:
 
 ``` r
 
@@ -237,11 +235,11 @@ Ten items: five dimensions, each measured by a “frequently” item and a
 “generally” item, scored as the pair’s mean.
 
 **A total across all ten items is meaningless**, since the dimensions
-are not facets of one construct. Someone with frequent inner speech need
-not have frequent imagery. So Cronbach’s alpha over the full instrument
-is not the right statistic, and computing it would produce a number that
-looks like a defect but is not one. The right check is whether each pair
-agrees.
+are different constructs, not facets of a single construct. Someone with
+frequent inner speech need not have frequent imagery. So Cronbach’s
+alpha over the full instrument is not the right statistic, and computing
+it would produce a number that looks like a defect but is not one. The
+right check is whether each pair agrees.
 
 ``` r
 
@@ -291,10 +289,9 @@ instrument’s own validation, and it means sensory focus should not carry
 the same weight as the others wherever NIEQ subscales are used as
 inputs.
 
-Unsymbolised thinking, at 0.73, is adequate. That matters more than it
-might appear: it is the dimension with the clearest theoretical stake in
-this project, and a two-item subscale is exactly the kind of measure
-that can quietly fail to support the weight placed on it.
+Unsymbolised thinking, at 0.73, is adequate. It is the dimension with
+the clearest theoretical stake in this project, so it is important to
+assess whether it can legitimately support the weight placed on it.
 
 ## 4. Summary
 
@@ -331,10 +328,22 @@ dplyr::bind_rows(
 
 All questionnaire scales, v1 {.table}
 
-One scale of nine falls below the threshold. The OSIVQ reverse-coding
-inconsistency does not affect any stored score, but does affect anyone
-recomputing from items. Neither problem is visible without checking,
-which is the argument for this page existing.
+One scale of nine falls below the threshold. Whether the others enter
+the models and how was decided based on our hypotheses on each scale,
+which is detailed further in the
+[composition](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md)
+analyses page.
+
+------------------------------------------------------------------------
+
+**Continuing through the Extended Online Report:** this page follows
+[task
+validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md).
+To keep reading in order, continue to [the
+analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md)
+next, which lays out the bases of all further analyses in this project.
+
+------------------------------------------------------------------------
 
 ## References
 
@@ -352,19 +361,6 @@ Marks, D. F. (1973). Visual imagery differences in the recall of
 pictures. *British Journal of Psychology*, *64*(1), 17–24.
 <https://doi.org/10.1111/j.2044-8295.1973.tb01322.x>
 
-------------------------------------------------------------------------
-
-**Continuing through the Extended Online Report:** this page follows
-[task
-validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md).
-To keep reading in order, continue to [the
-analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md)
-next. Or skip ahead to [the
-analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md),
-which explains what the modelling pages do and why.
-
-------------------------------------------------------------------------
-
     #> ─ Session info ───────────────────────────────────────────────────────────────
     #>  setting  value
     #>  version  R version 4.6.1 (2026-06-24)
@@ -375,13 +371,13 @@ which explains what the modelling pages do and why.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  package            * version date (UTC) lib source
-    #>  aphantasiaWMStrats * 0.1     2026-08-26 [1] local
+    #>  aphantasiaWMStrats * 0.1     2026-08-31 [1] local
     #>  bslib                0.12.0  2026-08-04 [2] CRAN (R 4.6.1)
     #>  cachem               1.1.0   2024-05-16 [2] CRAN (R 4.6.1)
     #>  cli                  3.6.6   2026-04-09 [2] CRAN (R 4.6.1)
@@ -428,7 +424,7 @@ which explains what the modelling pages do and why.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

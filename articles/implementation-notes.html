@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -102,12 +102,10 @@
 
     
     
-<p>The conventions behind every model on this site, collected so they
-can be checked rather than inferred. None of it is a result; all of it
-is the kind of thing that determines whether the results mean what they
-appear to.</p>
+<p>This page gathers the conventions behind every model on this
+site.</p>
 <div class="section level2">
-<h2 id="fitting-defaults">1. Fitting defaults<a class="anchor" aria-label="anchor" href="#fitting-defaults"></a>
+<h2 id="impl-defaults">1. Fitting defaults<a class="anchor" aria-label="anchor" href="#impl-defaults"></a>
 </h2>
 <p>Every model is fitted through <code><a href="../reference/fit_brms_model.html">fit_brms_model()</a></code>, a thin
 wrapper over <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brms::brm()</a></code> that fixes the conventions below
@@ -115,13 +113,13 @@ so they cannot drift between scripts.</p>
 <p>Four chains, 2000 <strong>post-warmup</strong> draws each after 1000
 warmup iterations, so <code>brm()</code> receives
 <code>iter = 3000, warmup = 1000</code> and keeps 8000 draws in total.
-The argument below is named <code>iterations</code> rather than
-<code>iter</code> for exactly that reason: it is draws per chain, not a
-total, and reading it as brms’ <code>iter</code> gives 4000. The joint
-model additionally uses <code>adapt_delta = 0.99</code> and
-<code>max_treedepth = 15</code>, set from the start rather than in
-response to warnings: a model with fifteen correlated random intercepts
-from 86 participants is expected to need them.</p>
+The argument below is named <code>iterations</code> instead of
+<code>iter</code> for that reason: it is draws per chain, not a total,
+and reading it as brms’ <code>iter</code> gives 4000. The joint model
+additionally uses <code>adapt_delta = 0.99</code> and
+<code>max_treedepth = 15</code>, set from the start: a model with
+fifteen correlated random intercepts from 86 participants is expected to
+need them.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/args.html" class="external-link">args</a></span><span class="op">(</span><span class="va">fit_brms_model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; function (..., chains = 4, iterations = 2000, warmup = 1000, </span></span>
@@ -131,7 +129,7 @@ from 86 participants is expected to need them.</p>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="formulas">2. Models are objects, not code<a class="anchor" aria-label="anchor" href="#formulas"></a>
+<h2 id="impl-formulas">2. Models are objects, not code<a class="anchor" aria-label="anchor" href="#impl-formulas"></a>
 </h2>
 <p>Formulas and priors are <strong>exported functions</strong>, not
 written inline in the scripts that fit them.</p>
@@ -143,22 +141,16 @@ written inline in the scripts that fit them.</p>
 <span><span class="co">#&gt; score_word | subset(responded_word) ~ vviq + complete_aphant + parity_rate + (1 | p | id) </span></span>
 <span><span class="co">#&gt; score_angle | subset(responded_angle) ~ vviq + complete_aphant + parity_rate + (1 | p | id) </span></span>
 <span><span class="co">#&gt; score_color | subset(responded_color) ~ vviq + complete_aphant + parity_rate + (1 | p | id)</span></span></code></pre></div>
-<p>This is not tidiness. Documentation pages load fitted models with
+<p>Documentation pages load fitted models with
 <code>file_refit = "never"</code>, and brms then returns the cached fit
 <strong>without checking</strong> that the formula it was handed matches
 the one the model was fitted with. A page that re-typed its formula
 could display something that is not what produced its numbers, silently
 and permanently. Calling the same builder the script called makes that
 impossible.</p>
-<p>The response order matters for the same reason. It determines the
-generated Stan code, so a formula built in a different order is a
-different model as far as caching is concerned. An early version of the
-joint model appended word’s accuracy arm last, an artifact of a
-conditional block; that fit was discarded and refitted in the documented
-order.</p>
 </div>
 <div class="section level2">
-<h2 id="priors">3. Priors are set per coefficient<a class="anchor" aria-label="anchor" href="#priors"></a>
+<h2 id="impl-priors">3. Priors are set per coefficient<a class="anchor" aria-label="anchor" href="#impl-priors"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/response_priors.html">response_priors</a></span><span class="op">(</span><span class="st">"scoreangle"</span><span class="op">)</span></span>
@@ -172,16 +164,16 @@ order.</p>
 <span><span class="co">#&gt;  &lt;NA&gt; &lt;NA&gt;       user</span></span>
 <span><span class="co">#&gt;  &lt;NA&gt; &lt;NA&gt;       user</span></span>
 <span><span class="co">#&gt;  &lt;NA&gt; &lt;NA&gt;       user</span></span></code></pre></div>
-<p>Not per class. On the logit scale a vividness slope acts over a
+<p>… Not per class. On the logit scale a vividness slope acts over a
 64-point range and a binary group offset does not, so a single
 <code>class = "b"</code> prior would treat them as the same quantity. In
 a multivariate model <code>resp</code> is required as well:
 <code>class = "b"</code> alone matches no parameter, and recent brms
 versions reject it outright.</p>
-<p><code>lkj(4)</code> for the joint model’s correlation matrix, against
-<code>lkj(2)</code> elsewhere, because fifteen correlations from 86
-participants need more regularisation than three do. How strong that is
-depends on the dimension, which <code><a href="../reference/lkj_marginal.html">lkj_marginal()</a></code> makes
+<p><code>lkj(4)</code> is used for the joint model’s correlation matrix,
+against <code>lkj(2)</code> elsewhere, because fifteen correlations from
+86 participants need more regularisation than three do. How strong that
+is depends on the dimension, which <code><a href="../reference/lkj_marginal.html">lkj_marginal()</a></code> makes
 checkable:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
@@ -210,11 +202,10 @@ checkable:</p>
 model</a> page carries a <code>moved</code> flag for whether its
 posterior is narrower than that marginal. A correlation that did not
 move off its prior is not a finding. The <a href="performance.html">performance</a> page carries the same flag
-against the <code>lkj(2)</code> marginal, which is the weaker comparison
-of the two.</p>
+against the <code>lkj(2)</code> marginal.</p>
 </div>
 <div class="section level2">
-<h2 id="rope">4. ROPE conventions<a class="anchor" aria-label="anchor" href="#rope"></a>
+<h2 id="impl-rope">4. ROPE conventions<a class="anchor" aria-label="anchor" href="#impl-rope"></a>
 </h2>
 <p>A region of practical equivalence needs a scale. The convention here
 is a tenth of the outcome’s own standard deviation, applied through
@@ -226,7 +217,7 @@ deviations are near 0.09: a ROPE specified in raw units would either
 swallow every effect or none.</p>
 </div>
 <div class="section level2">
-<h2 id="families">5. Response families, per feature<a class="anchor" aria-label="anchor" href="#families"></a>
+<h2 id="impl-families">5. Response families, per feature<a class="anchor" aria-label="anchor" href="#impl-families"></a>
 </h2>
 <p>Three features, three families, each following from what the boundary
 of that scale means rather than from convenience.</p>
@@ -271,7 +262,7 @@ wheel, not behaviour</td>
 </tr>
 </tbody>
 </table>
-<p>The squeeze is Smithson and Verkuilen’s, implemented in
+<p>The squeeze is Smithson and Verkuilen’s <span class="citation">(2006)</span>, implemented in
 <code><a href="../reference/squeeze_boundaries.html">squeeze_boundaries()</a></code>. It moves every value by about one
 ten-thousandth at this sample size, which is the point: enough to make a
 Beta likelihood defined, small enough not to be a modelling decision in
@@ -280,13 +271,12 @@ itself.</p>
 checks that all three describe the data.</p>
 </div>
 <div class="section level2">
-<h2 id="mars">6. The MARS knot pre-check<a class="anchor" aria-label="anchor" href="#mars"></a>
+<h2 id="impl-mars">6. The MARS knot pre-check<a class="anchor" aria-label="anchor" href="#impl-mars"></a>
 </h2>
 <p>Before fitting any segmented model, <code><a href="../reference/mars_knots.html">mars_knots()</a></code> asks
 whether a hinge is identifiable at all, so that a model which would only
 report its own prior is not fitted.</p>
-<p>Two things it has to get right, both of which were got wrong
-first.</p>
+<p>Two things it has to get right:</p>
 <p><strong>Knots come off the pruned model</strong>, not off
 <code>$cuts</code>, which also holds candidate terms the backward pass
 discarded. Reading <code>$cuts</code> whole reported five knots where
@@ -306,7 +296,7 @@ at or below zero describes a fit that does not generalise beyond the
 sample it was found in.</p>
 </div>
 <div class="section level2">
-<h2 id="save-pars">7. What is saved, and what is not<a class="anchor" aria-label="anchor" href="#save-pars"></a>
+<h2 id="impl-save-pars">7. What is saved, and what is not<a class="anchor" aria-label="anchor" href="#impl-save-pars"></a>
 </h2>
 <p>Fitted models are cached to <code>inst/models/</code> and loaded by
 the pages. Three of them are saved with
@@ -326,23 +316,6 @@ performance model, because the shrinkage figure on the <a href="performance.html
 <code><a href="https://mc-stan.org/rstantools/reference/posterior_epred.html" class="external-link">brms::posterior_epred()</a></code> on it at the default
 <code>re_formula</code>, which needs exactly the group-level draws that
 would be discarded.</p>
-</div>
-<div class="section level2">
-<h2 id="hazards">8. Two recurring hazards<a class="anchor" aria-label="anchor" href="#hazards"></a>
-</h2>
-<p>Both bit more than once, and both are silent.</p>
-<p><strong>Column masking inside <code>tibble()</code>.</strong> Later
-expressions see earlier columns. Writing
-<code>participants = nrow(participants)</code> and then referring to
-<code>participants</code> gives the count, not the frame. This produced
-a table of p-values that were all exactly 1, because a Wilcoxon test was
-comparing two group means to each other rather than two samples. It
-never errors when the masked value happens to be a valid input.</p>
-<p><strong>Unanchored column selection.</strong> A pattern like
-<code>score_(word|angle|color)</code> also matches
-<code>score_color_raw</code>, which silently poisoned a set of
-participant means to <code>NA</code>. The selectors in
-<code><a href="../reference/compose_features.html">compose_features()</a></code> are anchored for that reason.</p>
 <hr>
 <p><strong>Continuing through the Extended Online Report:</strong> this
 page follows <a href="model-diagnostics.html">model diagnostics</a>. To
@@ -350,6 +323,17 @@ keep reading in order, continue to <a href="lessons.html">what was tried
 and withdrawn</a> next. Or return to <a href="analysis-strategy.html">the analysis</a> for what the models were
 built to do.</p>
 <hr>
+</div>
+<div class="section level2">
+<h2 id="impl-refs">References<a class="anchor" aria-label="anchor" href="#impl-refs"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-smithsonBetterLemonSqueezer2006" class="csl-entry">
+Smithson, M., &amp; Verkuilen, J. (2006). A better lemon squeezer? <span class="nocase">Maximum-likelihood</span> regression with
+beta-distributed dependent variables. <em>Psychological Methods</em>,
+<em>11</em>, 54–71. <a href="https://doi.org/10.1037/1082-989X.11.1.54" class="external-link">https://doi.org/10.1037/1082-989X.11.1.54</a>
+</div>
+</div>
 <pre><code><span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
 <span><span class="co">#&gt;  version  R version 4.6.1 (2026-06-24)</span></span>
@@ -360,14 +344,14 @@ built to do.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">!</span> <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
 <span><span class="co">#&gt;    abind                1.4-8    <span style="color: #555555;">2024-09-12</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;    backports            1.5.1    <span style="color: #555555;">2026-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bayesplot            1.16.0   <span style="color: #555555;">2026-08-25</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bridgesampling       1.2-1    <span style="color: #555555;">2025-11-19</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -414,11 +398,11 @@ built to do.</p>
 <span><span class="co">#&gt;    ragg                 1.5.2    <span style="color: #555555;">2026-03-23</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    RColorBrewer         1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    Rcpp                 1.1.2    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    RcppParallel         6.2.0    <span style="color: #555555;">2026-07-30</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    RcppParallel         6.2.1    <span style="color: #555555;">2026-08-27</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    renv                 1.0.7    <span style="color: #555555;">2024-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rlang                1.3.0    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rmarkdown            2.31     <span style="color: #555555;">2026-03-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    rstantools           2.7.0    <span style="color: #555555;">2026-07-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    rstantools           2.7.1    <span style="color: #555555;">2026-08-29</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    S7                   0.2.2    <span style="color: #555555;">2026-04-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    sass                 0.4.10   <span style="color: #555555;">2025-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    scales               1.4.0    <span style="color: #555555;">2025-04-24</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -435,7 +419,7 @@ built to do.</p>
 <span><span class="co">#&gt;    xtable               1.8-8    <span style="color: #555555;">2026-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    yaml                 2.3.12   <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt; </span></span>

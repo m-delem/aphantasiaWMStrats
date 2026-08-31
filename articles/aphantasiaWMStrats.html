@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -111,7 +111,7 @@ page and continue through the Extended Online Report. This page is about
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://m-delem.github.io/aphantasiaWMStrats">aphantasiaWMStrats</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="the-data">The data<a class="anchor" aria-label="anchor" href="#the-data"></a>
+<h2 id="start-data">The data<a class="anchor" aria-label="anchor" href="#start-data"></a>
 </h2>
 <p>One built-in dataset, <code>all_data</code>, holds every version of
 the task in one item-level table: one row per presented item, so three
@@ -165,7 +165,7 @@ of them is derived from a defective edit-distance implementation, which
 the <a href="scoring.html">scoring</a> page demonstrates.</p>
 </div>
 <div class="section level2">
-<h2 id="a-first-look">A first look<a class="anchor" aria-label="anchor" href="#a-first-look"></a>
+<h2 id="start-look">A first look<a class="anchor" aria-label="anchor" href="#start-look"></a>
 </h2>
 <p>Experimental blocks only, answered items only:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -209,7 +209,7 @@ the <a href="scoring.html">scoring</a> page demonstrates.</p>
 </table>
 </div>
 <div class="section level2">
-<h2 id="the-scoring-functions">The scoring functions<a class="anchor" aria-label="anchor" href="#the-scoring-functions"></a>
+<h2 id="start-scoring">The scoring functions<a class="anchor" aria-label="anchor" href="#start-scoring"></a>
 </h2>
 <p>The score columns are not read from the raw data; they are computed
 from raw target and response values by <code><a href="../reference/compute_scores.html">compute_scores()</a></code>,
@@ -295,7 +295,7 @@ was wrong for three versions precisely because nothing tested it.</p>
 <span><span class="co">#&gt; [1] "fenetre"</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="beyond-scoring">Beyond scoring<a class="anchor" aria-label="anchor" href="#beyond-scoring"></a>
+<h2 id="start-beyond">Beyond scoring<a class="anchor" aria-label="anchor" href="#start-beyond"></a>
 </h2>
 <p>The package also exports the machinery the analyses run on, so that a
 script and a documentation page compute the same quantity with the same
@@ -373,7 +373,7 @@ choice and not a statistical one.</p>
 <code><a href="../reference/centred_correlations.html">centred_correlations()</a></code> are the estimators behind the
 numbers on the documentation pages.</p>
 <p><strong>Model specifications.</strong> The formulas and priors are
-exported objects, not code buried in a script:</p>
+exported objects:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/joint_formula.html">joint_formula</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; responded_word ~ vviq + complete_aphant + (1 | p | id) </span></span>
@@ -382,12 +382,12 @@ exported objects, not code buried in a script:</p>
 <span><span class="co">#&gt; score_word | subset(responded_word) ~ vviq + complete_aphant + parity_rate + (1 | p | id) </span></span>
 <span><span class="co">#&gt; score_angle | subset(responded_angle) ~ vviq + complete_aphant + parity_rate + (1 | p | id) </span></span>
 <span><span class="co">#&gt; score_color | subset(responded_color) ~ vviq + complete_aphant + parity_rate + (1 | p | id)</span></span></code></pre></div>
-<p>This matters for reproducibility rather than tidiness. Documentation
-pages load fitted models with <code>file_refit = "never"</code>, and
-brms returns a cached fit <strong>without checking</strong> that the
-formula it was handed matches the one the model was fitted with. A page
-that re-typed its formula could display something that is not what
-produced its numbers. Calling the builder makes that impossible.</p>
+<p>This matters for reproducibility. Documentation pages load fitted
+models with <code>file_refit = "never"</code>, and brms returns a cached
+fit <strong>without checking</strong> that the formula it was handed
+matches the one the model was fitted with. A page that re-typed its
+formula could display something that is not what produced its numbers.
+Calling the builder makes that impossible.</p>
 <p><code><a href="../reference/joint_priors.html">joint_priors()</a></code>, <code><a href="../reference/performance_formula.html">performance_formula()</a></code>,
 <code><a href="../reference/composition_formula.html">composition_formula()</a></code> and <code><a href="../reference/fit_brms_model.html">fit_brms_model()</a></code>
 complete the set.</p>
@@ -399,11 +399,11 @@ size; these pages render the same figures at
 <code>base_size = 16</code>.</p>
 </div>
 <div class="section level2">
-<h2 id="where-to-go-next">Where to go next<a class="anchor" aria-label="anchor" href="#where-to-go-next"></a>
+<h2 id="start-next">Where to go next<a class="anchor" aria-label="anchor" href="#start-next"></a>
 </h2>
-<p>The documentation is an <a href="https://m-delem.github.io/aphantasiaWMStrats/">Extended Online
-Report</a>: pages ordered so that no quantity appears before the page
-that defines it.</p>
+<p>The documentation is an Extended Online Report: interlinked pages
+ordered so that no quantity appears before the page that defines it. To
+dive in:</p>
 <ul>
 <li>
 <a href="task-design.html"><strong>Task design</strong></a> for what
@@ -441,14 +441,14 @@ column in <code>all_data</code>.</li>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">!</span> <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
 <span><span class="co">#&gt;    abind                1.4-8    <span style="color: #555555;">2024-09-12</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;    backports            1.5.1    <span style="color: #555555;">2026-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bayesplot            1.16.0   <span style="color: #555555;">2026-08-25</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bridgesampling       1.2-1    <span style="color: #555555;">2025-11-19</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -496,11 +496,11 @@ column in <code>all_data</code>.</li>
 <span><span class="co">#&gt;    ragg                 1.5.2    <span style="color: #555555;">2026-03-23</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    RColorBrewer         1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    Rcpp                 1.1.2    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    RcppParallel         6.2.0    <span style="color: #555555;">2026-07-30</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    RcppParallel         6.2.1    <span style="color: #555555;">2026-08-27</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    renv                 1.0.7    <span style="color: #555555;">2024-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rlang                1.3.0    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rmarkdown            2.31     <span style="color: #555555;">2026-03-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    rstantools           2.7.0    <span style="color: #555555;">2026-07-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    rstantools           2.7.1    <span style="color: #555555;">2026-08-29</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    S7                   0.2.2    <span style="color: #555555;">2026-04-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    sass                 0.4.10   <span style="color: #555555;">2025-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    scales               1.4.0    <span style="color: #555555;">2025-04-24</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -519,7 +519,7 @@ column in <code>all_data</code>.</li>
 <span><span class="co">#&gt;    xtable               1.8-8    <span style="color: #555555;">2026-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    yaml                 2.3.12   <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt; </span></span>

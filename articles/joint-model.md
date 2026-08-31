@@ -1,4 +1,4 @@
-# The joint model: reporting and accuracy together
+# The joint model: propensity and accuracy together
 
 The
 [composition](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md)
@@ -128,8 +128,8 @@ selection_replication <- c(
 have a vividness score: that is the sample every other modelling page
 uses. This one uses all 86 v1 participants with a vividness score,
 thresholds or no. [The
-analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.html#samples)
-sets out the whole chain in one table.
+analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.html#strat-samples)
+sets out the whole decision chain in one table.
 
 The thresholds exist to stop imprecise participant *means* being treated
 as measurements, and this model forms no participant means. More to the
@@ -215,44 +215,28 @@ correlations |>
 Reporting against accuracy, within a feature {.table
 style="width:100%;"}
 
-Neither. It is **feature-specific**: substantial for orientation, absent
-for word and colour.
+… It is neither. It is **feature-specific**: substantial for
+orientation, absent for word and colour.
 
 The `moved` column is the prior check. These correlations are estimated
 under `lkj(4)`, which is informative on a 6×6 matrix, so a posterior no
 narrower than the marginal that prior implies has not learned anything
 from the data. `TRUE` means it did. The [implementation
-notes](https://m-delem.github.io/aphantasiaWMStrats/articles/implementation-notes.html#priors)
+notes](https://m-delem.github.io/aphantasiaWMStrats/articles/implementation-notes.html#impl-priors)
 give the marginal standard deviations the comparison uses.
 
-That is a third case the rule did not anticipate, and it is recorded as
-one rather than filed under whichever branch it resembles. What follows
-from it is narrower and more useful than either branch would have been:
-**responders-only analysis is sound for word and colour, and conditions
-on something real for orientation.** Pages that mix all three features,
-such as the
+That is a third case the rule did not anticipate. What follows from it
+is narrower: **responders-only analysis is sound for word and colour,
+and conditions on something real for orientation.** Pages that mix all
+three features, such as the
 [composition](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md)
-page, inherit a weakened version of the caveat rather than a blanket
-one.
+page, inherit a weakened version of the caveat and can legitimately be
+considered fine.
 
-Two things make the orientation result more credible rather than less.
-It replicates: estimated from orientation alone it is 0.53, and with all
-six responses in the model 0.56, so it is not an artifact of the smaller
-specification. Both are read from the fitted models rather than
-transcribed. (The [analysis
-strategy](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md)
-page gives the orientation-only figure as 0.51:
-[`posterior_correlations()`](https://m-delem.github.io/aphantasiaWMStrats/reference/posterior_correlations.md)
-returns posterior **medians** and
-[`report_rope()`](https://m-delem.github.io/aphantasiaWMStrats/reference/report_rope.md)
-returns **means**, and on this posterior they differ in the second
-digit. Same parameter, two summaries.) And orientation is the one
-feature whose gate is *inferred* rather than observed: an untouched
-widget returns 90 degrees, so genuine 90-degree responses are miscoded
-as non-responses. That miscoding removes guaranteed-wrong items from the
-accuracy of exactly the participants with low measured response rates,
-which pushes the correlation **negative**. Finding it positive despite
-that makes it conservative.
+This orientation result above (0.56), with all six responses in the
+model, replicates the one estimated from a orientation-only model
+(0.53), so it is not an artifact of the smaller specification. Both
+figures are read from the fitted models.
 
 ## 3. Does doing well on one feature cost another?
 
@@ -276,18 +260,6 @@ No. Orientation and colour correlate **positively**, clearly so, and the
 other two pairs are uninformative. Between people, shared ability
 dominates: participants good at one non-verbal feature tend to be good
 at the other.
-
-This settles a question the earlier analyses could not. Working from raw
-proportions, orientation and colour appeared to trade off against each
-other, and the
-[scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
-page shows why that reading was wrong: closure induces negative
-correlation whatever the data says, and the apparent asymmetry was six
-low-engagement participants. Here the parts are not closed, so a
-negative correlation would have meant something. It is positive.
-
-**The trade-off the task imposes is a within-trial constraint, not a
-between-person one.**
 
 ``` r
 
@@ -343,86 +315,27 @@ fixed |>
 
 Floor-group offsets, log-odds {.table}
 
-**On willingness to report, there is no result.** Not a null: no result.
-On the probability scale the orientation gate’s interval runs from about
-0.84 to 0.99, which is consistent with a large difference and with none.
-Non-response is rare, between 7% and 14% of items, and the floor group
-is 20 people. This is the analysis that could in principle have shown
-aphantasic participants declining to report differently, and it does not
-have the precision to.
+**On willingness to report, there is no result** (not evidence for the
+null). On the probability scale the orientation gate’s interval runs
+from about 0.84 to 0.99, which is consistent with a large difference and
+with none. Non-response is rare, between 7% and 14% of items, and the
+floor group is 20 people. This is the analysis that could in principle
+have shown aphantasic participants declining to report differently, and
+it does not have the precision to.
 
-That is worth stating as a design lesson rather than a finding: to
-measure abstention you need a task in which abstention is common.
+This is more a design lesson than a finding: to measure abstention you
+need a task in which abstention is common.
 
-``` r
-
-grid <- tibble::tibble(
-  vviq = seq(16, 80, length.out = 200),
-  complete_aphant = factor("above_floor", levels = c("above_floor", "floor")),
-  parity_rate = stats::median(model_data$parity_rate),
-  responded_word = TRUE, responded_angle = TRUE, responded_color = TRUE
-)
-
-above_floor <- brms::posterior_epred(
-  joint_model, newdata = grid, resp = "respondedangle", re_formula = NA)
-
-floor_row <- grid[1, ]
-floor_row$vviq <- 16
-floor_row$complete_aphant <- factor("floor",
-                                    levels = c("above_floor", "floor"))
-floor_draws <- as.vector(brms::posterior_epred(
-  joint_model, newdata = floor_row, resp = "respondedangle", re_formula = NA))
-
-observed <- model_data |>
-  dplyr::summarise(y = mean(responded_angle), vviq = dplyr::first(vviq),
-                   .by = id)
-
-gate_effect <- brms::fixef(joint_model)["respondedangle_complete_aphantfloor", ]
-
-main_panel <- plot_floor_group(
-  observed = dplyr::transmute(dplyr::filter(observed, vviq > 16),
-                              x = vviq, y = y),
-  fitted = tibble::tibble(
-    x = grid$vviq,
-    estimate = apply(above_floor, 2, stats::median),
-    lower = apply(above_floor, 2, stats::quantile, 0.025),
-    upper = apply(above_floor, 2, stats::quantile, 0.975)
-  ),
-  floor_draws = floor_draws,
-  floor_observed = dplyr::filter(observed, vviq == 16)$y,
-  effect_label = sprintf("%.2f\n[%.2f, %.2f]", gate_effect[["Estimate"]],
-                         gate_effect[["Q2.5"]], gate_effect[["Q97.5"]]),
-  y_lab = "P(reporting the orientation)",
-  caption = "Offset in log-odds. Points coloured by vividness.",
-  base_size = 16, point_size = 2.2
-)
-
-plot_vviq_histogram(observed$vviq, base_size = 16) / main_panel +
-  patchwork::plot_layout(heights = c(1, 4))
-```
-
-![Reporting probability for orientation against imagery vividness, with
-the floor group shown
-separately.](joint-model_files/figure-html/floor-figure-1.png)
-
-The histogram above the panel is the data that motivates the model on
-its own: vividness is a spike at the floor plus an irregular remainder,
-not a smooth continuum. In the panel, the half violin is the floor
-group’s own values, the cross is where the above-floor relationship
-predicts they would be, and the arrow is the gap between them. Here
-there is barely a gap, which is the visual form of the row in the table
-above.
-
-**On accuracy the picture is the one the other pages found.** Word’s
-offset is positive and excludes zero, colour’s is negative and touches
-it, and orientation’s is centred near zero. Word’s accuracy row is
-excluded from individual-differences interpretation on reliability
-grounds ([task
+**On accuracy, the picture is the one the other analyses (compositional
+and performance-based) found.** Word’s offset is positive and excludes
+zero, colour’s is negative and touches it, and orientation’s is centred
+near zero. Word’s accuracy row is excluded from individual-differences
+interpretation on reliability grounds ([task
 validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md)),
-and its **gate** row is not: whether someone answers at all is not a
-low-reliability quantity.
+and its **gate** row is not: whether someone answers at all is a
+reliable quantity.
 
-## 5. The strongest thing in the matrix was not pre-specified
+## 5. The largest correlations were not pre-specified
 
 The nine remaining correlations were reported for completeness. One
 family of them is hard to ignore.
@@ -459,20 +372,20 @@ report is a coherent participant-level trait**, far more consistent
 across features than accuracy is, and the two connect only on
 orientation.
 
-This was **not** in the pre-specified set, so it is exploratory and is
-labelled that way. It is also the clearest evidence available that
-abstention deserved to be modelled rather than filtered: a behaviour
-this consistent within participants is not noise.
+This was **not** in the pre-specified set, so it is exploratory. It is
+also the clearest evidence available that abstention deserved to be
+modelled rather than filtered: a behaviour this consistent within
+participants is not noise.
 
 ## 6. Checks
 
 The simpler models, reported in full on the
 [performance](https://m-delem.github.io/aphantasiaWMStrats/articles/performance.md)
-page, are the same data through a simpler lens, so agreement is a
-robustness check and not independent evidence. They also run on 79
-participants against this model’s 86, so the comparison below is
-approximate by construction. It is matched on specification: both carry
-`parity_rate` on the accuracy arms and neither carries it on a gate.
+page, are the same data through a simpler lens, so agreement with these
+models can be seen as robustness checks. They run on 79 participants
+against this model’s 86, so the comparison below is approximate by
+construction. It is matched on specification: both carry `parity_rate`
+on the accuracy arms and neither carries it on a gate.
 
 ``` r
 
@@ -560,12 +473,10 @@ purrr::map(c("respondedword", "respondedangle", "respondedcolor"), \(r) {
 
 Gate coefficients, with and without the accuracy arms {.table}
 
-The same three numbers appear on the [model
-diagnostics](https://m-delem.github.io/aphantasiaWMStrats/articles/model-diagnostics.html#convergence)
-page, alongside the rest of the convergence check and the posterior
-predictive checks. They are repeated here because a reader should not
-have to leave the page reporting a result to find out whether the model
-that produced it sampled properly.
+The convergence and posterior predictive checks appear alongside the
+rest of the models on the [model
+diagnostics](https://m-delem.github.io/aphantasiaWMStrats/articles/model-diagnostics.html#diag-convergence)
+page. They are repeated here for completeness:
 
 ``` r
 
@@ -610,14 +521,14 @@ for the technical detail behind these models.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  ! package            * version  date (UTC) lib source
     #>    abind                1.4-8    2024-09-12 [2] CRAN (R 4.6.1)
-    #>    aphantasiaWMStrats * 0.1      2026-08-26 [1] local
+    #>    aphantasiaWMStrats * 0.1      2026-08-31 [1] local
     #>    backports            1.5.1    2026-04-03 [2] CRAN (R 4.6.1)
     #>    bayesplot            1.16.0   2026-08-25 [2] CRAN (R 4.6.1)
     #>    bridgesampling       1.2-1    2025-11-19 [2] CRAN (R 4.6.1)
@@ -674,13 +585,13 @@ for the technical detail behind these models.
     #>    ragg                 1.5.2    2026-03-23 [2] CRAN (R 4.6.1)
     #>    RColorBrewer         1.1-3    2022-04-03 [2] CRAN (R 4.6.1)
     #>    Rcpp                 1.1.2    2026-07-05 [2] CRAN (R 4.6.1)
-    #>    RcppParallel         6.2.0    2026-07-30 [2] CRAN (R 4.6.1)
+    #>    RcppParallel         6.2.1    2026-08-27 [2] CRAN (R 4.6.1)
     #>    renv                 1.0.7    2024-04-11 [2] RSPM (R 4.6.1)
     #>    reshape2             1.4.5    2025-11-12 [2] CRAN (R 4.6.1)
     #>    rlang                1.3.0    2026-07-05 [2] CRAN (R 4.6.1)
     #>    rmarkdown            2.31     2026-03-26 [2] CRAN (R 4.6.1)
     #>    rstan                2.32.7   2025-03-10 [2] CRAN (R 4.6.1)
-    #>    rstantools           2.7.0    2026-07-26 [2] CRAN (R 4.6.1)
+    #>    rstantools           2.7.1    2026-08-29 [2] CRAN (R 4.6.1)
     #>    S7                   0.2.2    2026-04-22 [2] CRAN (R 4.6.1)
     #>    sass                 0.4.10   2025-04-11 [2] CRAN (R 4.6.1)
     #>    scales               1.4.0    2025-04-24 [2] CRAN (R 4.6.1)
@@ -697,13 +608,12 @@ for the technical detail behind these models.
     #>    tibble               3.3.1    2026-01-11 [2] CRAN (R 4.6.1)
     #>    tidyselect           1.2.1    2024-03-11 [2] CRAN (R 4.6.1)
     #>    vctrs                0.7.3    2026-04-11 [2] CRAN (R 4.6.1)
-    #>    viridisLite          0.4.3    2026-02-04 [2] CRAN (R 4.6.1)
     #>    withr                3.0.3    2026-06-19 [2] CRAN (R 4.6.1)
     #>    xfun                 0.60     2026-07-09 [2] CRAN (R 4.6.1)
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 

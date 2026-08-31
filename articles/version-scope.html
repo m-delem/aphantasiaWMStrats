@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -107,14 +107,13 @@ the last; the <a href="participants.html">participants</a> page
 describes who took part in each. This page answers a narrower question
 with a consequence for everything after it: <strong>which versions enter
 the inferential analyses.</strong></p>
-<p>The answer is <strong>v1 only</strong>. Every modelling page on this
-site inherits that restriction, so the reasoning belongs somewhere a
-reader can check it rather than in a sentence inside a methods
-section.</p>
-<p>Framed deliberately as <em>v1 is primary</em> rather than <em>v2 and
-v3 are excluded</em>. Both are kept in <code>all_data</code>, described
-here, and available to anyone. The pipeline built on v1 is a template to
-be re-applied when the later versions have the sample to support it.</p>
+<p>As of 2026-09-03, the answer is <strong>v1 only</strong>. Every
+modelling page on this site inherits that restriction, and that rule may
+change (e.g., if v3 ever recruits a bigger sample) so the reasoning
+deserves its own page that can be checked from anywhere. All versions
+are kept in <code>all_data</code>, described in the package, and
+available to anyone. The pipeline built on v1 is a template to be
+re-applied when the later versions have the sample to support it.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">block_trials</span> <span class="op">&lt;-</span> <span class="va">all_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^expe_block"</span>, <span class="va">expe_phase</span><span class="op">)</span><span class="op">)</span></span>
@@ -129,7 +128,7 @@ be re-applied when the later versions have the sample to support it.</p>
 <span>    .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">version</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="the-versions-are-not-interchangeable-samples">1. The versions are not interchangeable samples<a class="anchor" aria-label="anchor" href="#the-versions-are-not-interchangeable-samples"></a>
+<h2 id="ver-samples">1. The versions are not interchangeable samples<a class="anchor" aria-label="anchor" href="#ver-samples"></a>
 </h2>
 <p>Pooling would be reasonable if the three versions were the same task
 run three times. They are not: each changed the task in a way that could
@@ -173,15 +172,17 @@ populations.</p>
 </tbody>
 </table>
 <p><strong>Group balance is the decisive number.</strong> v1 is 31
-aphantasic to 55 typical imagers. v2 is 8 to 1, and v3 is 17 to 4. In v2
-and v3 a group comparison is not merely underpowered: with one and four
-typical imagers respectively, it is structurally impossible. No amount
-of modelling recovers a contrast that the recruitment never sampled.</p>
-<p>The later versions are also aphantasia-heavy <em>because</em>
-recruitment shifted, which matters for the next section.</p>
+aphantasic to 55 typical imagers. v2 is 8 to 1, and v3 is 17 to 4 (as of
+2026-09-03). In v2 and v3 a group comparison is not merely underpowered:
+with one and four typical imagers respectively, it is structurally
+impossible. No amount of modelling recovers a contrast that the
+recruitment never sampled.</p>
+<p>The later versions are also aphantasia-heavy <em>because</em> no
+recruitment in the general population had been conducted yet, only
+targeted communication in aphantasia communities.</p>
 </div>
 <div class="section level2">
-<h2 id="pooling-did-not-just-add-noise-it-manufactured-a-result">2. Pooling did not just add noise, it manufactured a result<a class="anchor" aria-label="anchor" href="#pooling-did-not-just-add-noise-it-manufactured-a-result"></a>
+<h2 id="ver-pooling">2. Pooling can create spurious results<a class="anchor" aria-label="anchor" href="#ver-pooling"></a>
 </h2>
 <p>Non-response differs sharply by version.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -289,14 +290,14 @@ version</caption>
 </tbody>
 </table>
 <p>Pooled, the association looks clear and significant. Within v1, which
-is 74% of the participants with a vividness score, it is absent. The
-pooled estimate is a mixture of strata rather than an effect, and the
-version that drives it is the one with 21 participants.</p>
-<p>This is the concrete reason the scope decision is not bureaucratic.
-Pooling here produced a finding that stratification removed.</p>
+is 74% of the participants, it is absent. The pooled estimate is a
+mixture of strata rather than an effect, and the version that drives it
+is the one with 21 participants.</p>
+<p>This is the concrete reason behind the scoping decision. Pooling here
+produced a finding that stratification removed.</p>
 </div>
 <div class="section level2">
-<h2 id="v1-is-also-the-cleanest-stratum-not-just-the-largest">3. v1 is also the cleanest stratum, not just the largest<a class="anchor" aria-label="anchor" href="#v1-is-also-the-cleanest-stratum-not-just-the-largest"></a>
+<h2 id="ver-v1">3. v1 is also the cleanest sample, not just the largest<a class="anchor" aria-label="anchor" href="#ver-v1"></a>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v1</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">by_participant</span>, <span class="va">version</span> <span class="op">==</span> <span class="st">"v1"</span><span class="op">)</span></span>
@@ -351,12 +352,11 @@ one person answered <strong>zero</strong> orientation items, so they
 have no responders-only mean to correlate. They are not missing at
 random, and the <a href="joint-model.html">joint model</a> is the
 analysis that can see them.</p>
-<p>Analysed on its own, v1 gives an interpretable pattern rather than a
-mixture. The <a href="task-validity.html">task validity</a> page covers
-what those associations do and do not support.</p>
+<p>Analysed on its own, v1 gives an interpretable pattern. The <a href="task-validity.html">task validity</a> page covers what those
+associations do and do not support.</p>
 <p>There is a second, quieter argument. Per-version standardisation
 needs each version to be able to carry its own scale, and v2 cannot.
-Drop one participant at a time, restandardise, and see how far everyone
+Drop one participant at a time, re-standardise, and see how far everyone
 else’s z-score moves:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># How much does one participant's presence move everyone else's z-score?</span></span>
@@ -417,13 +417,13 @@ appreciable fraction of a standard deviation. That is not a scale, and
 it is why standardising within version was abandoned.</p>
 </div>
 <div class="section level2">
-<h2 id="what-this-means-for-every-other-page">4. What this means for every other page<a class="anchor" aria-label="anchor" href="#what-this-means-for-every-other-page"></a>
+<h2 id="ver-scope">4. What this means for every other page<a class="anchor" aria-label="anchor" href="#ver-scope"></a>
 </h2>
 <ul>
 <li>
 <strong>All modelling pages are v1 only.</strong> v1 has 88
 participants; no model uses all of them, because each applies further
-filters for vividness, engagement or questionnaire completeness. <a href="analysis-strategy.html#samples">The analysis</a> lists every
+filters for vividness, engagement or questionnaire completeness. <a href="analysis-strategy.html#strat-samples">The analysis</a> lists every
 resulting sample in one table.</li>
 <li>
 <strong>v2 and v3 are described, not modelled.</strong> They appear
@@ -441,7 +441,7 @@ it is written to be re-run rather than rewritten.</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="what-the-excluded-versions-are-still-for">5. What the excluded versions are still for<a class="anchor" aria-label="anchor" href="#what-the-excluded-versions-are-still-for"></a>
+<h2 id="ver-excluded">5. What the excluded versions are still for<a class="anchor" aria-label="anchor" href="#ver-excluded"></a>
 </h2>
 <p>v3 retains one job it uniquely enables. <strong>v1 has a fixed recall
 order</strong>, word then orientation then colour, so feature
@@ -449,9 +449,9 @@ differences there are confounded with output position. v3 randomised the
 order, and it is the only version that can estimate that effect. Any
 claim about differences between features carries that caveat, and v3 is
 where it can be checked.</p>
-<p>Two costs of the choice are worth stating plainly rather than leaving
-to be discovered. <strong>v1 has no parity penalty</strong>, so the
-distractor there was free, which shapes what the <a href="engagement.html">task engagement</a> page can conclude. And
+<p>The choice of v1 has two costs. <strong>v1 has no parity
+penalty</strong>, so the distractor there was free, which shapes what
+the <a href="engagement.html">task engagement</a> page can conclude. And
 <strong>v1 has the lowest non-response of the three versions</strong>,
 so it is the version where declining to report is least common, which is
 worth remembering when reading how much weight that behaviour
@@ -473,13 +473,13 @@ analysis</a>, which explains what the modelling pages do and why.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;  bslib                0.12.0  <span style="color: #555555;">2026-08-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cachem               1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cli                  3.6.6   <span style="color: #555555;">2026-04-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -530,7 +530,7 @@ analysis</a>, which explains what the modelling pages do and why.</p>
 <span><span class="co">#&gt;  xfun                 0.60    <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  yaml                 2.3.12  <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>

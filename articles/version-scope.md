@@ -8,14 +8,13 @@ page describes who took part in each. This page answers a narrower
 question with a consequence for everything after it: **which versions
 enter the inferential analyses.**
 
-The answer is **v1 only**. Every modelling page on this site inherits
-that restriction, so the reasoning belongs somewhere a reader can check
-it rather than in a sentence inside a methods section.
-
-Framed deliberately as *v1 is primary* rather than *v2 and v3 are
-excluded*. Both are kept in `all_data`, described here, and available to
-anyone. The pipeline built on v1 is a template to be re-applied when the
-later versions have the sample to support it.
+As of 2026-09-03, the answer is **v1 only**. Every modelling page on
+this site inherits that restriction, and that rule may change (e.g., if
+v3 ever recruits a bigger sample) so the reasoning deserves its own page
+that can be checked from anywhere. All versions are kept in `all_data`,
+described in the package, and available to anyone. The pipeline built on
+v1 is a template to be re-applied when the later versions have the
+sample to support it.
 
 ``` r
 
@@ -59,15 +58,17 @@ by_participant |>
 Participants by version and imagery group {.table}
 
 **Group balance is the decisive number.** v1 is 31 aphantasic to 55
-typical imagers. v2 is 8 to 1, and v3 is 17 to 4. In v2 and v3 a group
-comparison is not merely underpowered: with one and four typical imagers
-respectively, it is structurally impossible. No amount of modelling
-recovers a contrast that the recruitment never sampled.
+typical imagers. v2 is 8 to 1, and v3 is 17 to 4 (as of 2026-09-03). In
+v2 and v3 a group comparison is not merely underpowered: with one and
+four typical imagers respectively, it is structurally impossible. No
+amount of modelling recovers a contrast that the recruitment never
+sampled.
 
-The later versions are also aphantasia-heavy *because* recruitment
-shifted, which matters for the next section.
+The later versions are also aphantasia-heavy *because* no recruitment in
+the general population had been conducted yet, only targeted
+communication in aphantasia communities.
 
-## 2. Pooling did not just add noise, it manufactured a result
+## 2. Pooling can create spurious results
 
 Non-response differs sharply by version.
 
@@ -130,14 +131,14 @@ Orientation non-response against VVIQ, pooled and within version
 {.table}
 
 Pooled, the association looks clear and significant. Within v1, which is
-74% of the participants with a vividness score, it is absent. The pooled
-estimate is a mixture of strata rather than an effect, and the version
-that drives it is the one with 21 participants.
+74% of the participants, it is absent. The pooled estimate is a mixture
+of strata rather than an effect, and the version that drives it is the
+one with 21 participants.
 
-This is the concrete reason the scope decision is not bureaucratic.
-Pooling here produced a finding that stratification removed.
+This is the concrete reason behind the scoping decision. Pooling here
+produced a finding that stratification removed.
 
-## 3. v1 is also the cleanest stratum, not just the largest
+## 3. v1 is also the cleanest sample, not just the largest
 
 ``` r
 
@@ -176,14 +177,13 @@ the [joint
 model](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md)
 is the analysis that can see them.
 
-Analysed on its own, v1 gives an interpretable pattern rather than a
-mixture. The [task
+Analysed on its own, v1 gives an interpretable pattern. The [task
 validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md)
 page covers what those associations do and do not support.
 
 There is a second, quieter argument. Per-version standardisation needs
 each version to be able to carry its own scale, and v2 cannot. Drop one
-participant at a time, restandardise, and see how far everyone else’s
+participant at a time, re-standardise, and see how far everyone else’s
 z-score moves:
 
 ``` r
@@ -231,7 +231,7 @@ it is why standardising within version was abandoned.
 - **All modelling pages are v1 only.** v1 has 88 participants; no model
   uses all of them, because each applies further filters for vividness,
   engagement or questionnaire completeness. [The
-  analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.html#samples)
+  analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.html#strat-samples)
   lists every resulting sample in one table.
 - **v2 and v3 are described, not modelled.** They appear in `all_data`,
   in the
@@ -253,9 +253,8 @@ confounded with output position. v3 randomised the order, and it is the
 only version that can estimate that effect. Any claim about differences
 between features carries that caveat, and v3 is where it can be checked.
 
-Two costs of the choice are worth stating plainly rather than leaving to
-be discovered. **v1 has no parity penalty**, so the distractor there was
-free, which shapes what the [task
+The choice of v1 has two costs. **v1 has no parity penalty**, so the
+distractor there was free, which shapes what the [task
 engagement](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.md)
 page can conclude. And **v1 has the lowest non-response of the three
 versions**, so it is the version where declining to report is least
@@ -285,13 +284,13 @@ which explains what the modelling pages do and why.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  package            * version date (UTC) lib source
-    #>  aphantasiaWMStrats * 0.1     2026-08-26 [1] local
+    #>  aphantasiaWMStrats * 0.1     2026-08-31 [1] local
     #>  bslib                0.12.0  2026-08-04 [2] CRAN (R 4.6.1)
     #>  cachem               1.1.0   2024-05-16 [2] CRAN (R 4.6.1)
     #>  cli                  3.6.6   2026-04-09 [2] CRAN (R 4.6.1)
@@ -342,7 +341,7 @@ which explains what the modelling pages do and why.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

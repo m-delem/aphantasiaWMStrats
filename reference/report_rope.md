@@ -10,9 +10,9 @@ Kruschke's 0.1 SD convention, which is what
 [`bayestestR::rope_range()`](https://easystats.github.io/bayestestR/reference/rope_range.html)
 applies to a Gaussian model. Stating "no effect established" through the
 proportion of the posterior inside a region of practical equivalence is
-more honest than a non-significant p-value, and matters here because
-several of this study's models are fitted at sample sizes where that is
-the likely outcome.
+more informative than a non-significant p-value, and matters here
+because several of this study's models are fitted at sample sizes where
+that is the likely outcome.
 
 ## Usage
 

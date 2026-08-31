@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -105,9 +105,7 @@
 <p>Three questionnaires accompany the WM-FTT: the VVIQ <span class="citation">(Marks, 1973)</span>, the OSIVQ <span class="citation">(Blazhenkova &amp; Kozhevnikov, 2009)</span> and the
 NIEQ <span class="citation">(Heavey et al., 2019)</span>. All three feed
 downstream analyses, and two of them turned out to need caveats. This
-page reports how each behaves in this sample rather than citing the
-reliabilities from their manuals, because one of them does not
-reproduce.</p>
+page reports how each behaves in this sample.</p>
 <p>The task’s own reliabilities are on the <a href="task-validity.html">task validity</a> page, where the split-half
 machinery lives. Everything below is computed when this page is
 built.</p>
@@ -137,7 +135,7 @@ claim below rests on the other versions, it says so.</p>
 <span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map_dbl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">items</span><span class="op">)</span>, \<span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">items</span><span class="op">[[</span><span class="va">item</span><span class="op">]</span><span class="op">]</span>, <span class="va">total</span> <span class="op">-</span> <span class="va">items</span><span class="op">[[</span><span class="va">item</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="vviq">1. VVIQ<a class="anchor" aria-label="anchor" href="#vviq"></a>
+<h2 id="psy-vviq">1. VVIQ<a class="anchor" aria-label="anchor" href="#psy-vviq"></a>
 </h2>
 <p>Sixteen items, no reverse-keyed items, single dimension.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -180,7 +178,7 @@ than the reliability does:</p>
 <span>  <span class="fu">geom_histogram</span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">4</span>, boundary <span class="op">=</span> <span class="fl">16</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"VVIQ total score"</span>, y <span class="op">=</span> <span class="st">"Participants"</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"VVIQ is close to bimodal in v1"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="psychometrics_files/figure-html/vviq-distribution-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="psychometrics_files/figure-html/vviq-distribution-1.png" class="r-plt" alt="" width="768"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">participants</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vviq_total_score</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -217,20 +215,21 @@ than the reliability does:</p>
 </tbody>
 </table>
 <p>Roughly a quarter of the sample sits at exactly 16, the scale
-minimum, and the middle of the range is nearly empty. That is why VVIQ
-is not treated as a plain continuous predictor everywhere downstream; <a href="analysis-strategy.html">the analysis strategy</a> page §3 sets out
-the floor-group form every model uses and the caution that comes with
-it.</p>
+minimum, and the middle of the range is sparsely populated. That is why
+VVIQ is not treated as a plain continuous predictor everywhere
+downstream; <a href="analysis-strategy.html">the analysis strategy</a>
+page §3 sets out the floor-group form every model uses and the caution
+that comes with it.</p>
 </div>
 <div class="section level2">
-<h2 id="osivq-and-a-scoring-inconsistency-worth-knowing-about">2. OSIVQ, and a scoring inconsistency worth knowing about<a class="anchor" aria-label="anchor" href="#osivq-and-a-scoring-inconsistency-worth-knowing-about"></a>
+<h2 id="psy-osivq">2. OSIVQ<a class="anchor" aria-label="anchor" href="#psy-osivq"></a>
 </h2>
 <p>Three subscales: object, spatial, verbal. <strong>Four items are
 reverse-keyed, and they are stored inconsistently across task
 versions.</strong> v1 and v2 store <code>osivq_q02v</code>,
 <code>osivq_q09v</code>, <code>osivq_q41v</code> and
-<code>osivq_q42s</code> unreversed; v3 stores them already reversed. The
-<code>object_mean</code>, <code>spatial_mean</code> and
+<code>osivq_q42s</code> un-reversed; v3 stores them already reversed.
+The <code>object_mean</code>, <code>spatial_mean</code> and
 <code>verbal_mean</code> columns are correct in both cases. Only the raw
 items in <code>osivq_items</code> differ.</p>
 <p>That claim spans versions while the rest of this page is v1, so it is
@@ -291,7 +290,7 @@ items</caption>
 </table>
 <p>Negative in v1, positive in v3. The items are the same; only the
 storage convention differs.</p>
-<p>The consequence within v1 is silent, so it is worth showing too:</p>
+<p>The consequence within v1:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">osivq_raw</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="va">participants</span><span class="op">$</span><span class="va">osivq_items</span><span class="op">)</span></span>
 <span><span class="va">osivq_fixed</span> <span class="op">&lt;-</span> <span class="va">osivq_raw</span></span>
@@ -404,16 +403,16 @@ reverse those four for v1 and v2, and not for v3. The subscale mean
 columns already handle it.</p>
 </div>
 <div class="section level2">
-<h2 id="nieq">3. NIEQ<a class="anchor" aria-label="anchor" href="#nieq"></a>
+<h2 id="psy-nieq">3. NIEQ<a class="anchor" aria-label="anchor" href="#psy-nieq"></a>
 </h2>
 <p>Ten items: five dimensions, each measured by a “frequently” item and
 a “generally” item, scored as the pair’s mean.</p>
 <p><strong>A total across all ten items is meaningless</strong>, since
-the dimensions are not facets of one construct. Someone with frequent
-inner speech need not have frequent imagery. So Cronbach’s alpha over
-the full instrument is not the right statistic, and computing it would
-produce a number that looks like a defect but is not one. The right
-check is whether each pair agrees.</p>
+the dimensions are different constructs, not facets of a single
+construct. Someone with frequent inner speech need not have frequent
+imagery. So Cronbach’s alpha over the full instrument is not the right
+statistic, and computing it would produce a number that looks like a
+defect but is not one. The right check is whether each pair agrees.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nieq_items</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="va">participants</span><span class="op">$</span><span class="va">nieq_items</span><span class="op">)</span></span>
 <span></span>
@@ -483,13 +482,12 @@ That is consistent with sensory awareness being the weakest dimension in
 the instrument’s own validation, and it means sensory focus should not
 carry the same weight as the others wherever NIEQ subscales are used as
 inputs.</p>
-<p>Unsymbolised thinking, at 0.73, is adequate. That matters more than
-it might appear: it is the dimension with the clearest theoretical stake
-in this project, and a two-item subscale is exactly the kind of measure
-that can quietly fail to support the weight placed on it.</p>
+<p>Unsymbolised thinking, at 0.73, is adequate. It is the dimension with
+the clearest theoretical stake in this project, so it is important to
+assess whether it can legitimately support the weight placed on it.</p>
 </div>
 <div class="section level2">
-<h2 id="summary">4. Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+<h2 id="psy-summary">4. Summary<a class="anchor" aria-label="anchor" href="#psy-summary"></a>
 </h2>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
@@ -589,13 +587,19 @@ that can quietly fail to support the weight placed on it.</p>
 </tr>
 </tbody>
 </table>
-<p>One scale of nine falls below the threshold. The OSIVQ reverse-coding
-inconsistency does not affect any stored score, but does affect anyone
-recomputing from items. Neither problem is visible without checking,
-which is the argument for this page existing.</p>
+<p>One scale of nine falls below the threshold. Whether the others enter
+the models and how was decided based on our hypotheses on each scale,
+which is detailed further in the <a href="composition.html">composition</a> analyses page.</p>
+<hr>
+<p><strong>Continuing through the Extended Online Report:</strong> this
+page follows <a href="task-validity.html">task validity</a>. To keep
+reading in order, continue to <a href="analysis-strategy.html">the
+analysis</a> next, which lays out the bases of all further analyses in
+this project.</p>
+<hr>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 id="psy-refs">References<a class="anchor" aria-label="anchor" href="#psy-refs"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
 <div id="ref-blazhenkovaNewObjectSpatialVerbal2009" class="csl-entry">
@@ -616,13 +620,6 @@ pictures. <em>British Journal of Psychology</em>, <em>64</em>(1), 17–24.
 <a href="https://doi.org/10.1111/j.2044-8295.1973.tb01322.x" class="external-link">https://doi.org/10.1111/j.2044-8295.1973.tb01322.x</a>
 </div>
 </div>
-<hr>
-<p><strong>Continuing through the Extended Online Report:</strong> this
-page follows <a href="task-validity.html">task validity</a>. To keep
-reading in order, continue to <a href="analysis-strategy.html">the
-analysis</a> next. Or skip ahead to <a href="analysis-strategy.html">the
-analysis</a>, which explains what the modelling pages do and why.</p>
-<hr>
 <pre><code><span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
 <span><span class="co">#&gt;  version  R version 4.6.1 (2026-06-24)</span></span>
@@ -633,13 +630,13 @@ analysis</a>, which explains what the modelling pages do and why.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;  bslib                0.12.0  <span style="color: #555555;">2026-08-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cachem               1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cli                  3.6.6   <span style="color: #555555;">2026-04-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -686,7 +683,7 @@ analysis</a>, which explains what the modelling pages do and why.</p>
 <span><span class="co">#&gt;  xfun                 0.60    <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  yaml                 2.3.12  <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>

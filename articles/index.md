@@ -5,14 +5,14 @@
 The paradigm, and how a response becomes a number. Everything after this
 depends on it.
 
-- [The participants: who took
-  part](https://m-delem.github.io/aphantasiaWMStrats/articles/participants.md):
 - [Task design: the story of a paradigm that kept correcting
   itself](https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.md):
+- [The participants: who took
+  part](https://m-delem.github.io/aphantasiaWMStrats/articles/participants.md):
 - [Scoring the WM-FTT: what the numbers are, and what they
   support](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md):
-- [Task engagement: two ways of not doing the
-  task](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.md):
+- [Task engagement: two ways to ease the
+  difficulty](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.md):
 
 ### Scope
 
@@ -37,13 +37,13 @@ have to hold before an association between them means anything.
 Imagery groups fixed in advance. The strategy page says what is modelled
 and why before any results appear.
 
-- [The analysis: what is modelled, and
+- [Analysis plan: what is modelled, and
   why](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md):
 - [Composition: how effort is divided, independently of how much there
   is](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md):
 - [Performance: how well each feature is
   recalled](https://m-delem.github.io/aphantasiaWMStrats/articles/performance.md):
-- [The joint model: reporting and accuracy
+- [The joint model: propensity and accuracy
   together](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md):
 
 ### Exploratory

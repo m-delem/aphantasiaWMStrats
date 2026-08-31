@@ -38,8 +38,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -94,42 +94,43 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>aphantasiaWMStrats is a data analysis project and an <em>Extended Online Report</em> (see below) wrapped in an R package for reproducibility<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;The R package structure was chosen to facilitate the sharing of the code and data with the scientific community, and to make it easy to reproduce the analyses. It is not intended to be a general-purpose package, but rather a collection of functions and data specific to this study. The package development workflow (see &lt;a href="https://r-pkgs.org/" target="_blank" class="external-link"&gt;this reference book&lt;/a&gt;) is also a good way to ensure that the code is well-documented and tested, which matters for reproducibility in scientific research.&lt;/p&gt;'><sup>1</sup></a>. It contains the data and code for the <strong>Working Memory Feature Trade-off Task (WM-FTT)</strong>, an original paradigm built to ask which kind of mental representation people actually rely on when remembering, rather than asking them to report it. The project is archived on the Open Science Framework <a href="https://osf.io/3649s/" target="_blank" class="external-link">here</a>.</p>
+<!-- badges: end -->
+<p>aphantasiaWMStrats is a data analysis project and an <em>Extended Online Report</em> (see below) wrapped in an R package for reproducibility<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;The R package structure was chosen to facilitate the sharing of the code and data with the scientific community, and to make it easy to reproduce the analyses. It is not intended to be a general-purpose package, but rather a collection of functions and data specific to this study. The package development workflow (see &lt;a href="https://r-pkgs.org/" target="_blank" class="external-link"&gt;this reference book&lt;/a&gt;) is also a good way to ensure that the code is well-documented and tested, which matters for reproducibility in scientific research.&lt;/p&gt;'><sup>1</sup></a>. It contains the data and code for the <strong>Working Memory Feature Trade-off Task (WM-FTT)</strong>, an original paradigm built to ask which kind of mental representation people actually rely on the most when remembering and find behavioural correlates to their subjective reports. The project is archived on the Open Science Framework <a href="https://osf.io/3649s/" target="_blank" class="external-link">here</a>.</p>
 <div class="section level2">
 <h2 id="the-question-and-the-task-built-to-answer-it">The question, and the task built to answer it<a class="anchor" aria-label="anchor" href="#the-question-and-the-task-built-to-answer-it"></a>
 </h2>
-<p>Aphantasic individuals perform about as well as typical imagers on visual working memory tasks despite reporting no voluntary visual imagery, and they say they compensate with verbal or spatial strategies instead. That self-report is exactly the thing under suspicion. WM-FTT was designed to surface the trade-off <em>behaviourally</em>: every stimulus carries three features at once, a <strong>word</strong>, an <strong>orientation</strong> and a <strong>colour</strong>, scoring gives partial credit per feature, and participants are told to maximise their score. If effort has to be divided, where it goes is a measurement rather than a claim.</p>
+<p>Aphantasic individuals perform about as well as typical imagers on visual working memory tasks despite reporting no voluntary visual imagery, and they say they compensate with verbal or spatial strategies instead. That self-report is lacking objective evidence associated with it. WM-FTT was designed to surface the trade-off <em>behaviourally</em>: every stimulus carries three features at once, a <strong>word</strong>, an <strong>orientation</strong> and a <strong>colour</strong>, scoring gives partial credit per feature, and participants are told to maximise their score. If effort has to be divided, where it goes is a measurement rather than a claim.</p>
 <p><img src="reference/figures/cfa_wm_trial_overview_v3.png" alt="Diagram of one WM-FTT trial, from encoding through recall to feedback." width="100%"></p>
-<p>The task ran in three versions, and the differences between them are not incidental. Each version exists because the previous one’s own data showed a specific way the design was undermining its own validity. That story is told in full on the <a href="https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.html">task design</a> page.</p>
+<p>The task ran in three versions, which successively changed small features of the task to adjust the incentive mechanisms. Each version exists because the previous one’s own data showed a specific way the design was undermining its own measures. That story is told in full on the <a href="https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.html">task design</a> page.</p>
 </div>
 <div class="section level2">
 <h2 id="what-is-in-this-package">What is in this package<a class="anchor" aria-label="anchor" href="#what-is-in-this-package"></a>
 </h2>
 <p>The package ships the pooled dataset as a built-in table, <code>all_data</code>: one row per presented stimulus across all three task versions, with recall responses, scores, questionnaire scores and raw questionnaire items. It also contains the scoring functions that produce those scores from the raw responses, and the scripts and vignettes that document how every number was arrived at.</p>
 <p>Beyond any eventual article, this project is documented as an <strong>Extended Online Report (EOR)</strong>: a structure of interlinked, executable pages that go past what a Methods section can carry, including the reasoning behind each measurement choice and the problems found along the way.</p>
-<p>The pages are ordered so that <strong>no quantity appears before the page that defines it</strong>. Everything from <em>Scope</em> onward is conditional on the version decision, so it all runs on v1. Pages still being written are listed without a link.</p>
+<p>The pages are ordered so that <strong>no quantity appears before the page that defines it</strong>. Everything from <em>Scope</em> onward is conditional on the version decision, which currently all runs on v1.</p>
 <p><strong>What was measured</strong></p>
 <ul>
 <li>
-<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/participants.html"><strong>The participants</strong></a>: who took part, and the recruitment difference between task versions that constrains every analysis after it.</li>
-<li>
 <a href="https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.html"><strong>Task design</strong></a>: what participants actually did, screen by screen, and why the task changed twice. The points-per-feature incentive introduced here is what makes the later analyses interpretable.</li>
+<li>
+<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/participants.html"><strong>The participants</strong></a>: who took part, and the recruitment differences between task versions.</li>
 <li>
 <a href="https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.html"><strong>Scoring</strong></a>: how raw responses become the scores in <code>all_data</code>, why the task’s own in-browser scores are not used, and what the resulting measures will and will not support.</li>
 <li>
-<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.html"><strong>Task engagement</strong></a>: the two independent ways participants declined to do the task, and why neither is a nuisance to control away. Declining to report a feature turns out to be an allocation decision rather than missing data, which is the premise the main model rests on.</li>
+<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.html"><strong>Task engagement</strong></a>: the two independent ways participants could ignore parts of the task, and why neither is a nuisance to control away. Declining to report a feature turns out to be an allocation decision rather than missing data, which is the premise one of the models rests on.</li>
 </ul>
 <p><strong>Scope</strong></p>
 <ul>
 <li>
-<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/version-scope.html"><strong>Versions</strong></a>: which of the three task versions enter the analyses, and why the others are described rather than modelled. Includes the case where pooling produced an association that stratification removed.</li>
+<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/version-scope.html"><strong>Versions</strong></a>: which of the three task versions enter the analyses, and why the others are described rather than modelled.</li>
 </ul>
 <p><strong>Does anything here measure anything?</strong></p>
 <ul>
 <li>
 <a href="https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.html"><strong>Task validity</strong></a>: split-half reliability per feature and the stability of the compositional coordinates. One of the three features does not survive as an individual-differences measure, which constrains how every later result may be read.</li>
 <li>
-<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/psychometrics.html"><strong>Questionnaire psychometrics</strong></a>: how the VVIQ, OSIVQ and NIEQ behave in this sample, including one scale that does not hold together and one scoring inconsistency worth knowing about.</li>
+<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/psychometrics.html"><strong>Questionnaire psychometrics</strong></a>: how the VVIQ (visual imagery), OSIVQ (cognitive styles) and NIEQ (inner experience) behave in this sample.</li>
 </ul>
 <p><strong>Confirmatory modelling</strong></p>
 <p>Imagery groups fixed in advance.</p>
@@ -139,15 +140,15 @@
 <li>
 <a href="https://m-delem.github.io/aphantasiaWMStrats/articles/composition.html"><strong>Composition</strong></a>: <strong>the primary analysis.</strong> Relative allocation across the three features, independently of overall performance. Participants at the imagery floor divide effort differently; cognitive style does not predict it, one dimension of inner experience does, and participants’ own accounts of what they were doing converge with the behaviour.</li>
 <li>
-<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/performance.html"><strong>Performance</strong></a>: the same data read as absolute per-feature accuracy. Includes the clearest picture of why one of the three features cannot carry an individual-differences claim.</li>
+<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/performance.html"><strong>Performance</strong></a>: the same data read as absolute per-feature accuracy.</li>
 <li>
-<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.html"><strong>The joint model</strong></a>: whether the primary analysis was entitled to condition on responded trials, plus two findings no other page can reach — willingness to report is a strong individual trait, and there is no between-person trade-off between features.</li>
+<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.html"><strong>The joint model</strong></a>: whether the primary analysis was entitled to condition on responded trials, plus two findings no other page can reach: willingness to report is a strong individual trait, and there is no between-person trade-off between features.</li>
 </ul>
 <p><strong>Exploratory modelling</strong></p>
 <p>Groups not fixed in advance, and labelled exploratory throughout.</p>
 <ul>
 <li>
-<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/beyond-vividness.html"><strong>Beyond vividness</strong></a>: whether the questionnaires contain structure the imagery split misses. As a group structure, no. On one dimension, yes: reported <em>unsymbolised thinking</em> rises steadily as imagery vividness falls, across the whole range rather than at the floor. That is a claim about what low-vividness experience is rather than what it lacks — and a gradient, not a property of aphantasia specifically.</li>
+<a href="https://m-delem.github.io/aphantasiaWMStrats/articles/beyond-vividness.html"><strong>Beyond vividness</strong></a>: whether the questionnaires contain structure the imagery split misses. As a group structure, no. On one dimension, yes: reported <em>unsymbolised thinking</em> rises steadily as imagery vividness falls, across the whole range rather than at the floor. That is a claim about what low-vividness experience <em>is</em> rather than what it lacks — and a gradient, not a property of complete aphantasia specifically.</li>
 </ul>
 <p><strong>Technical</strong></p>
 <ul>
@@ -221,7 +222,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://osf.io/3649s/" target="_blank" class="external-link"><img src="https://img.shields.io/badge/OSF-https://osf.io/3649s/-337AB7?logo=osf" alt="OSF badge"></a></li>
-<li><a href="https://m-delem.github.io/aphantasiaWMStrats/" target="_blank"><img alt="Docs badge" src="https://img.shields.io/badge/Documentation-website-009e73?style=flat&amp;logo=Google%20Docs&amp;logoColor=009e73&amp;logoSize=auto"></a></li>
+<li><a href="https://m-delem.github.io/aphantasiaWMStrats/" target="_blank"><img src="https://img.shields.io/badge/Documentation-website-009e73?style=flat&amp;logo=Google%20Docs&amp;logoColor=009e73&amp;logoSize=auto" alt="Docs badge"></a></li>
 <li><a href="https://app.codecov.io/gh/m-delem/aphantasiaWMStrats" class="external-link"><img src="https://codecov.io/gh/m-delem/aphantasiaWMStrats/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>

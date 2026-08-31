@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Task engagement: two ways of not doing the task • aphantasiaWMStrats</title>
+<title>Task engagement: two ways to ease the difficulty • aphantasiaWMStrats</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Montserrat-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/DM_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Task engagement: two ways of not doing the task">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Task engagement: two ways to ease the difficulty">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -93,7 +93,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Task engagement: two ways of not doing the task</h1>
+      <h1>Task engagement: two ways to ease the difficulty</h1>
             
       
 
@@ -102,17 +102,16 @@
 
     
     
-<p>Participants could decline to do the WM-FTT in two places: the
-parity-judgement distractor between encoding and recall, and the recall
-responses themselves. This page establishes what each of those variables
-measures, shows that they are <strong>separate behaviours</strong>, and
-argues that neither is a nuisance to be controlled away.</p>
+<p>Participants sometimes chose to refuse to do some parts of the WM-FTT
+to mitigate the difficulty: the parity-judgement distractor between
+encoding and recall, and some of the recall responses themselves. This
+page establishes what each of those variables measures, shows that they
+are <strong>separate behaviours</strong>, and argues that neither is a
+nuisance to be controlled away.</p>
 <p>The second claim is the one the modelling pages depend on. Under a
 points-per-feature incentive with optional recall, <strong>declining to
 report a feature is an allocation decision</strong>, not missing
 data.</p>
-<p>It is descriptive groundwork. The models that build on it live
-elsewhere.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">block_trials</span> <span class="op">&lt;-</span> <span class="va">all_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^expe_block"</span>, <span class="va">expe_phase</span><span class="op">)</span>, <span class="va">version</span> <span class="op">==</span> <span class="st">"v1"</span><span class="op">)</span></span>
@@ -146,49 +145,22 @@ elsewhere.</p>
 <span><span class="co"># hard-coded so they cannot drift with the sample. The task validity page</span></span>
 <span><span class="co"># derives them.</span></span>
 <span><span class="va">engaged</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/engaged_ids.html">engaged_ids</a></span><span class="op">(</span><span class="va">block_trials</span><span class="op">)</span></span></code></pre></div>
-<p>Two of those objects are used before the page that defines them, so
-they are stated here rather than left implicit.
-<code><a href="../reference/engaged_ids.html">engaged_ids()</a></code> keeps the participants who answered at least
-32 word, 22 orientation and 29 colour items of the 63 presented. The <a href="task-validity.html">task validity</a> page derives those numbers
-and explains what they are for; here they serve only to separate
-<em>abandoning the distractor</em> from <em>abandoning the
-task</em>.</p>
+<p><code><a href="../reference/engaged_ids.html">engaged_ids()</a></code> keeps only the participants who answered
+at least 32 word, 22 orientation and 29 colour items of the 63
+presented. The <a href="task-validity.html">task validity</a> page
+derives those numbers and explains what they are for; here they serve
+only to separate abandoning the <em>distractor</em> from abandoning the
+<em>task</em>.</p>
 <div class="section level2">
-<h2 id="the-parity-task-had-no-consequence-in-v1">1. The parity task had no consequence in v1<a class="anchor" aria-label="anchor" href="#the-parity-task-had-no-consequence-in-v1"></a>
+<h2 id="eng-parity">1. The parity task had no consequence in v1<a class="anchor" aria-label="anchor" href="#eng-parity"></a>
 </h2>
-<p>The scoring design was meant to make the distractor cost something:
-an incorrect parity judgement deducts from the trial score. That penalty
-was added in v2. <strong>In v1 it is absent</strong>, and since v1 is
-the primary analysis sample, the distractor there was free.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">block_trials</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    feature_scores_summed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">feedback_score_word</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">feedback_score_angle</span><span class="op">)</span> <span class="op">+</span></span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">feedback_score_color</span><span class="op">)</span>,</span>
-<span>    trial_score_shown <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">(</span><span class="va">feedback_trial_score</span><span class="op">)</span>,</span>
-<span>    .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">expe_phase</span>, <span class="va">trial_number</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    trials <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    trials_where_they_match <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">feature_scores_summed</span> <span class="op">-</span> <span class="va">trial_score_shown</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-9</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"v1: the trial score is exactly the sum of the three feature scores"</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<caption>v1: the trial score is exactly the sum of the three feature
-scores</caption>
-<thead><tr class="header">
-<th align="right">trials</th>
-<th align="right">trials_where_they_match</th>
-</tr></thead>
-<tbody><tr class="odd">
-<td align="right">1848</td>
-<td align="right">1848</td>
-</tr></tbody>
-</table>
-<p>Every trial. No deduction was ever applied, so a participant who
-worked out that parity did not count lost nothing by ignoring it.</p>
+<p>The parity was meant to increase the cognitive load of the
+participants, however, as of v1, not doing it did not cost them any
+points in the final score (the penalty for not doing the parity was
+added in v2). No deduction was ever applied, so a participant who worked
+out that parity did not count lost nothing by ignoring it.</p>
 <p>Some of them worked it out.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">optout</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">by_participant</span>, <span class="va">parity_rate</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
@@ -219,16 +191,16 @@ worked out that parity did not count lost nothing by ignoring it.</p>
 all</strong>, and 23 of those clear the per-feature engagement
 thresholds on the recall task. That is not withdrawal. Under v1’s
 incentives, abandoning a consequence-free secondary task while keeping
-recall performance intact is the rational move.</p>
+recall performance intact was the rational move.</p>
 </div>
 <div class="section level2">
-<h2 id="what-the-parity-accuracy-column-actually-measures">2. What the parity accuracy column actually measures<a class="anchor" aria-label="anchor" href="#what-the-parity-accuracy-column-actually-measures"></a>
+<h2 id="eng-parity-column">2. What the parity accuracy column actually measures<a class="anchor" aria-label="anchor" href="#eng-parity-column"></a>
 </h2>
 <p><code>parity_1_acc</code> and <code>parity_2_acc</code> score an
 <strong>unanswered</strong> probe as 0, the same convention the recall
 scores use. That makes a zero ambiguous, and in v1 the ambiguity is
 close to total.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
 <span>  zeros <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">block_trials</span><span class="op">$</span><span class="va">parity_1_acc</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  unanswered <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">block_trials</span><span class="op">$</span><span class="va">parity_1_acc</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">&amp;</span> <span class="op">!</span><span class="va">block_trials</span><span class="op">$</span><span class="va">responded_parity_1</span><span class="op">)</span>,</span>
@@ -251,7 +223,7 @@ close to total.</p>
 <p>Most of them are probes nobody answered. A participant mean of that
 column is therefore not an accuracy measure. Split into its two
 components, the two barely relate to each other:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">components</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">by_participant</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">parity_accuracy_given_response</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
@@ -289,7 +261,7 @@ components, the two barely relate to each other:</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
 <span>  pair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Naive mean vs proportion answered"</span>,</span>
@@ -325,11 +297,10 @@ components, the two barely relate to each other:</p>
 </table>
 <p>The naive column is almost perfectly correlated with the proportion
 of probes answered, and weakly with accuracy among those answered. It is
-a response-rate variable wearing an accuracy name, and that is the whole
-explanation for its bimodality. Meanwhile the two real components are
-close to orthogonal, so collapsing them does not blur two related
-quantities: it discards one.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+a response-rate variable wearing an accuracy name. Meanwhile the two
+real components are close to orthogonal, so collapsing them does not
+blur two related quantities: it discards one.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">by_participant</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">parity_rate</span>, <span class="va">parity_accuracy_given_response</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="op">-</span><span class="va">id</span>, names_to <span class="op">=</span> <span class="st">"quantity"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -353,18 +324,18 @@ quantities: it discards one.</p>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="st">"Participants"</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"The two components behave completely differently"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Dashed line marks chance on the parity judgement."</span><span class="op">)</span></span></code></pre></div>
-<p><img src="engagement_files/figure-html/parity-distribution-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="engagement_files/figure-html/parity-distribution-1.png" class="r-plt" alt="" width="768"></p>
 <p>Whether someone did the distractor is bimodal, with a hard spike at
 zero. How well they did it, among those who did, is unimodal and well
 above the chance line. Only the second is an accuracy variable.</p>
 <div class="section level3">
-<h3 id="the-claim-this-section-used-to-make">The claim this section used to make<a class="anchor" aria-label="anchor" href="#the-claim-this-section-used-to-make"></a>
+<h3 id="eng-false-claim">The false claim that might have emerged<a class="anchor" aria-label="anchor" href="#eng-false-claim"></a>
 </h3>
 <p>An earlier version of this page reported a correlation between the
 naive column and VVIQ and concluded that it was “the finding that stops
 parity accuracy being usable as a nuisance covariate”. Both halves of
 that were too strong.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">usable</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">by_participant</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vviq</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">naive_vviq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/correlation_test.html">correlation_test</a></span><span class="op">(</span><span class="va">usable</span><span class="op">$</span><span class="va">parity_accuracy_naive</span>, <span class="va">usable</span><span class="op">$</span><span class="va">vviq</span><span class="op">)</span></span>
@@ -412,17 +383,17 @@ that were too strong.</p>
 evidence for a direction, and it came from a variable that measures
 willingness rather than accuracy. Neither corrected component does any
 better. <strong>Parity engagement is not related to imagery vividness in
-this sample.</strong></p>
+the v1 sample.</strong></p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="the-second-signal-declining-to-report-a-feature">3. The second signal: declining to report a feature<a class="anchor" aria-label="anchor" href="#the-second-signal-declining-to-report-a-feature"></a>
+<h2 id="eng-nonresponse">3. The second signal: declining to report a feature<a class="anchor" aria-label="anchor" href="#eng-nonresponse"></a>
 </h2>
 <p>Between 6.7% and 13.6% of v1 recall items receive no response at all.
 The task encodes these with sentinels rather than missing values, and
 the <a href="scoring.html">Scoring</a> page covers how they are
 handled.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">by_participant</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"non_response_"</span><span class="op">)</span>,</span>
 <span>                      names_to <span class="op">=</span> <span class="st">"feature"</span>, values_to <span class="op">=</span> <span class="st">"rate"</span>,</span>
@@ -433,14 +404,14 @@ handled.</p>
 <span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">feature</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Non-response rate"</span>, y <span class="op">=</span> <span class="st">"Participants"</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Most participants answer nearly everything; a few answer almost nothing"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="engagement_files/figure-html/nonresponse-distribution-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="engagement_files/figure-html/nonresponse-distribution-1.png" class="r-plt" alt="" width="768"></p>
 </div>
 <div class="section level2">
-<h2 id="the-two-are-not-the-same-behaviour">4. The two are not the same behaviour<a class="anchor" aria-label="anchor" href="#the-two-are-not-the-same-behaviour"></a>
+<h2 id="eng-distinct">4. The two are not the same behaviour<a class="anchor" aria-label="anchor" href="#eng-distinct"></a>
 </h2>
 <p>The natural assumption is that both are effort withdrawal, in which
 case one variable would do. They are not.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">by_participant</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"non_response_"</span><span class="op">)</span>,</span>
 <span>                      names_to <span class="op">=</span> <span class="st">"feature"</span>, values_to <span class="op">=</span> <span class="st">"non_response"</span>,</span>
@@ -482,16 +453,15 @@ case one variable would do. They are not.</p>
 <p>The correlations are near zero and inconsistent in sign. Ignoring the
 distractor tells you essentially nothing about whether someone will
 answer a recall prompt, which is what a shared-disengagement account
-would need. <strong>Two behaviours, not one.</strong></p>
-<p>That has a practical consequence. A single “engagement” covariate
-would average two unrelated things and control for neither.</p>
+would need. Parity and non-response variables reflect <strong>two
+behaviours</strong>, not one.</p>
 </div>
 <div class="section level2">
-<h2 id="what-this-means-downstream">5. What this means downstream<a class="anchor" aria-label="anchor" href="#what-this-means-downstream"></a>
+<h2 id="eng-downstream">5. What this means downstream<a class="anchor" aria-label="anchor" href="#eng-downstream"></a>
 </h2>
 <p><strong>Parity engagement is not a confound.</strong> It does not
 differ by imagery group:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">floor_split</span> <span class="op">&lt;-</span> <span class="va">by_participant</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vviq</span><span class="op">)</span>, <span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">engaged</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>floor <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">vviq</span> <span class="op">==</span> <span class="fl">16</span>, <span class="st">"VVIQ floor"</span>, <span class="st">"Above floor"</span><span class="op">)</span><span class="op">)</span></span>
@@ -524,7 +494,7 @@ differ by imagery group:</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test</a></span><span class="op">(</span><span class="va">parity_rate</span> <span class="op">~</span> <span class="va">floor</span>, data <span class="op">=</span> <span class="va">floor_split</span>, exact <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Wilcoxon rank sum test with continuity correction</span></span>
@@ -543,15 +513,14 @@ at all.</p>
 <p><strong>Non-response is the substantive one.</strong> It is folded
 into the recall scores as zeros, so any analysis of accuracy that
 ignores the <code>responded_*</code> flags is measuring a blend of
-accuracy and willingness to answer. The <a href="scoring.html">Scoring</a> page quantifies how much difference that
-makes.</p>
-<p>More than that: under a points-per-feature incentive with optional
-recall, choosing not to report a feature <strong>is</strong> an
-allocation decision, and arguably a more direct one than how accurately
-a reported feature was recalled. Treating it as missing data discards
-the clearest strategic signal the task produces. That is why the <a href="joint-model.html">joint model</a> fits whether a feature was
-reported and how well it was reported together, rather than conditioning
-on the first and analysing only the second.</p>
+accuracy and willingness to answer. Under a points-per-feature incentive
+with optional recall, choosing not to report a feature
+<strong>is</strong> an allocation decision, and arguably a more direct
+one than how accurately a reported feature was recalled. Treating it as
+missing data discards the clearest strategic signal the task produces.
+That is why the <a href="joint-model.html">joint model</a> fits whether
+a feature was reported and how well it was reported together, rather
+than conditioning on the first and analysing only the second.</p>
 <hr>
 <p><strong>Continuing through the Extended Online Report:</strong> this
 page follows <a href="scoring.html">scoring</a>. To keep reading in
@@ -569,13 +538,13 @@ explains what the modelling pages do and why.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;  bslib                0.12.0  <span style="color: #555555;">2026-08-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cachem               1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cli                  3.6.6   <span style="color: #555555;">2026-04-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -629,7 +598,7 @@ explains what the modelling pages do and why.</p>
 <span><span class="co">#&gt;  xfun                 0.60    <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  yaml                 2.3.12  <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>

@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -109,10 +109,11 @@ performance removed.</strong></p>
 <p>This is the study’s <strong>primary analysis</strong>, and the one it
 was designed around. A composition is a different object from an
 accuracy score, with its own geometry, and it answers the question the
-task was built to ask: not <em>how well</em>, but <em>where</em>.</p>
-<p>It is also where the strands meet. Imagery vividness, inner
-experience and participants’ own accounts of what they were doing all
-bear on the same coordinate, in sections 4 to 6.</p>
+task was built to ask: not <em>how well people performed</em>, but
+<em>where did their effort go to</em>.</p>
+<p>It is also where the strands meet. Imagery vividness, cognitive
+style, inner experience and participants’ own accounts of what they were
+doing all bear on the same coordinate, in sections 4 to 6.</p>
 <p>Everything here is v1 (<a href="version-scope.html">version
 scope</a>) and uses responded items only, which carries a caveat set out
 in section 8.</p>
@@ -150,14 +151,12 @@ in section 8.</p>
 <span>    <span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="co"># Three frames, named separately rather than one object reassigned. Each</span></span>
-<span><span class="co"># section states which it uses, and each is the frame the corresponding</span></span>
-<span><span class="co"># script fitted on. A single reassigned `model_data` is how a page ends up</span></span>
-<span><span class="co"># describing one sample and displaying another.</span></span>
+<span><span class="co"># Three frames, named separately. Each section states which it uses, </span></span>
+<span><span class="co"># and each is the frame the corresponding script fitted on.</span></span>
 <span><span class="co">#</span></span>
 <span><span class="co"># Section 6 needs a composition and a strategy report and nothing else, so</span></span>
 <span><span class="co"># it keeps every engaged participant, with or without a vividness score.</span></span>
-<span><span class="co"># `inst/scripts/14-strategy-convergence.R` does the same, deliberately.</span></span>
+<span><span class="co"># `inst/scripts/14-strategy-convergence.R` does the same.</span></span>
 <span><span class="va">reported</span> <span class="op">&lt;-</span> <span class="fu">add_coordinates</span><span class="op">(</span><span class="va">engaged_parts</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Sections 4, 7 and 8 additionally need vividness. This is the frame</span></span>
@@ -225,17 +224,16 @@ in section 8.</p>
 </tbody>
 </table>
 <div class="section level2">
-<h2 id="what-a-composition-is-and-why-proportions-will-not-do">1. What a composition is, and why proportions will not do<a class="anchor" aria-label="anchor" href="#what-a-composition-is-and-why-proportions-will-not-do"></a>
+<h2 id="comp-what">1. What a composition is, and why proportions will not do<a class="anchor" aria-label="anchor" href="#comp-what"></a>
 </h2>
 <p>Each participant has three responders-only mean scores. Divide each
 by their sum and you have a <strong>composition</strong>: three parts
 that sum to one, carrying only relative information.</p>
-<p>That closure is not a technicality. Three proportions summing to a
-constant cannot vary independently, so a rise in one forces a fall in
-the others, and ordinary correlations between them are not
-interpretable. The <a href="scoring.html">scoring</a> page shows what
-that does in practice: residualising three parts on their own mean
-induces a correlation of about -0.5 whatever the data says.</p>
+<p>Three proportions summing to a constant cannot vary independently, so
+a rise in one forces a fall in the others, and ordinary correlations
+between them are not interpretable. The <a href="scoring.html">scoring</a> page shows what that does in practice:
+residualising three parts on their own mean induces a correlation of
+about -0.5 whatever the data says.</p>
 <p>The standard solution is to leave the simplex.
 <code><a href="../reference/ilr_coords.html">ilr_coords()</a></code> applies an isometric log-ratio transform,
 turning three constrained parts into two unconstrained coordinates:</p>
@@ -286,7 +284,7 @@ orientations and colours, the verbal versus non-verbal balance.</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="the-partition-is-a-substantive-choice-not-a-statistical-one">2. The partition is a substantive choice, not a statistical one<a class="anchor" aria-label="anchor" href="#the-partition-is-a-substantive-choice-not-a-statistical-one"></a>
+<h2 id="comp-partition">2. The partition is a substantive choice, not a statistical one<a class="anchor" aria-label="anchor" href="#comp-partition"></a>
 </h2>
 <p>Any two-coordinate log-ratio basis is a rotation of the same
 geometry. The total variance, the distances between participants and the
@@ -385,7 +383,7 @@ and choosing a partition on that basis would have meant choosing it on
 an artifact.</p>
 </div>
 <div class="section level2">
-<h2 id="the-composition-barely-varies">3. The composition barely varies<a class="anchor" aria-label="anchor" href="#the-composition-barely-varies"></a>
+<h2 id="comp-variation">3. The composition barely varies<a class="anchor" aria-label="anchor" href="#comp-variation"></a>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/composition_summary.html">composition_summary</a></span><span class="op">(</span><span class="va">engaged_parts</span>, <span class="st">"Clearing thresholds"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -443,10 +441,10 @@ finds, it finds inside that range.</p>
 <span>  point_size <span class="op">=</span> <span class="fl">2.5</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Centred and scaled: the raw spread is very small."</span><span class="op">)</span></span></code></pre></div>
-<p><img src="composition_files/figure-html/ternary-1.png" class="r-plt" alt="Ternary diagram of the three-part composition, coloured by imagery group." width="100%"></p>
+<p><img src="composition_files/figure-html/ternary-1.png" class="r-plt" alt="Ternary diagram of the three-part composition, coloured by imagery group." width="768"></p>
 </div>
 <div class="section level2">
-<h2 id="does-imagery-predict-allocation">4. Does imagery predict allocation?<a class="anchor" aria-label="anchor" href="#does-imagery-predict-allocation"></a>
+<h2 id="comp-imagery">4. Does imagery predict allocation?<a class="anchor" aria-label="anchor" href="#comp-imagery"></a>
 </h2>
 <p>Both coordinates are modelled together, with the residual correlation
 between them estimated. That is not cosmetic: the invariance in section
@@ -627,34 +625,65 @@ verbal coordinate.</strong> The offset is 0.093, with 95% of the
 posterior in [0.025, 0.161], a standardised effect of 1.05 outcome SD,
 and 99.3% of the posterior above the ROPE. In interpretable terms, their
 ratio of word allocation to the geometric mean of the two non-verbal
-features is roughly 12% higher.</p>
+features is roughly 12% higher. Let’s represent this result
+graphically:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>  vviq <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">16</span>, <span class="fl">80</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>,</span>
+<span>  complete_aphant <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"above_floor"</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"above_floor"</span>, <span class="st">"floor"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  parity_rate <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">model_data</span><span class="op">$</span><span class="va">parity_rate</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">above_floor</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_epred.html" class="external-link">posterior_epred</a></span><span class="op">(</span><span class="va">composition_model</span>, newdata <span class="op">=</span> <span class="va">grid</span>, resp <span class="op">=</span> <span class="st">"ilr1"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">floor_row</span> <span class="op">&lt;-</span> <span class="va">grid</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span></span>
+<span><span class="va">floor_row</span><span class="op">$</span><span class="va">complete_aphant</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"floor"</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"above_floor"</span>, <span class="st">"floor"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">floor_draws</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/rstantools/reference/posterior_epred.html" class="external-link">posterior_epred</a></span><span class="op">(</span></span>
+<span>  <span class="va">composition_model</span>, newdata <span class="op">=</span> <span class="va">floor_row</span>, resp <span class="op">=</span> <span class="st">"ilr1"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">effect</span> <span class="op">&lt;-</span> <span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/fixed.effects.html" class="external-link">fixef</a></span><span class="op">(</span><span class="va">composition_model</span><span class="op">)</span><span class="op">[</span><span class="st">"ilr1_complete_aphantfloor"</span>, <span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/plot_floor_group.html">plot_floor_group</a></span><span class="op">(</span></span>
+<span>  observed <span class="op">=</span> </span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">model_data</span>, <span class="va">vviq</span> <span class="op">&gt;</span> <span class="fl">16</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/transmute.html" class="external-link">transmute</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">vviq</span>, y <span class="op">=</span> <span class="va">ilr1</span><span class="op">)</span>,</span>
+<span>  fitted <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="va">grid</span><span class="op">$</span><span class="va">vviq</span>,</span>
+<span>    estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">above_floor</span>, <span class="fl">2</span>, <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">)</span>,</span>
+<span>    lower <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">above_floor</span>, <span class="fl">2</span>, <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span>, <span class="fl">0.025</span><span class="op">)</span>,</span>
+<span>    upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">above_floor</span>, <span class="fl">2</span>, <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span>, <span class="fl">0.975</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  floor_draws <span class="op">=</span> <span class="va">floor_draws</span>,</span>
+<span>  floor_observed <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">model_data</span>, <span class="va">vviq</span> <span class="op">==</span> <span class="fl">16</span><span class="op">)</span><span class="op">$</span><span class="va">ilr1</span>,</span>
+<span>  effect_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%.2f\n[%.2f, %.2f]"</span>, <span class="va">effect</span><span class="op">[[</span><span class="st">"Estimate"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>                         <span class="va">effect</span><span class="op">[[</span><span class="st">"Q2.5"</span><span class="op">]</span><span class="op">]</span>, <span class="va">effect</span><span class="op">[[</span><span class="st">"Q97.5"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  y_lab <span class="op">=</span> <span class="st">"Share of effort on WORDS,\nrelative to colour and orientation"</span>,</span>
+<span>  base_size <span class="op">=</span> <span class="fl">16</span>, point_size <span class="op">=</span> <span class="fl">2.2</span>,</span>
+<span>  left_expansion <span class="op">=</span> <span class="fl">0.09</span>, arrow_nudge <span class="op">=</span> <span class="op">-</span><span class="fl">5.5</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="composition_files/figure-html/floor-plot-1.png" class="r-plt" alt="" width="768"></p>
 <p><strong>Vividness above the floor does nothing at all.</strong> Its
 slope lies entirely inside the ROPE on both coordinates. Whatever is
 happening is a property of the floor group rather than a gradient.</p>
 <p><strong>On the colour versus orientation coordinate there is no
-result</strong>, and it is worth being precise about which kind of no
-result. The floor offset has 52% of its posterior below the ROPE, 19%
-inside and 30% above. That is not evidence of absence, it is an
-uninformative posterior, and it should be reported as such.</p>
+result</strong>. The floor offset has 52% of its posterior below the
+ROPE, 19% inside and 30% above. That is an uninformative posterior, not
+evidence of absence.</p>
 </div>
 <div class="section level2">
-<h2 id="is-it-imagery-or-is-it-cognitive-style">5. Is it imagery, or is it cognitive style?<a class="anchor" aria-label="anchor" href="#is-it-imagery-or-is-it-cognitive-style"></a>
+<h2 id="comp-style">5. Is it imagery, or is it cognitive style?<a class="anchor" aria-label="anchor" href="#comp-style"></a>
 </h2>
 <p>The study was designed around a prediction from the
 Object-Spatial-Verbal framework: that allocation should track
-<strong>cognitive style</strong>, and not imagery vividness alone. A
+<strong>cognitive style</strong> <span class="citation">(Blazhenkova
+&amp; Kozhevnikov, 2009)</span>, and not imagery vividness alone. A
 verbaliser should protect the word feature, a spatialiser the
 orientation.</p>
-<p>Section 4 tests only the vividness axis, which is the one the
-prediction names as insufficient. This section tests the prediction
-itself.</p>
+<p>Section 4 tests only the vividness axis. This section tests the
+cognitive style axis.</p>
 <p>This section runs on 78 participants rather than the 79 of section 4:
 it needs the questionnaire scales, and the 1 participant dropped here
-has NIEQ scores but no OSIVQ ones. Section 4’s result is unaffected,
-being fitted on the larger frame.</p>
-<p>The step before that one is worth naming too, because both are easy
-to conflate. 81 participants clear the engagement thresholds; 2 of them
-have no VVIQ score, which is what takes section 4 to 79.</p>
+has NIEQ scores but no OSIVQ ones.</p>
 <p><strong>The predictor set was chosen from the questionnaires
 alone</strong>, never from how any of them relates to allocation, which
 is what keeps the choice independent of the result. Two rules, both
@@ -662,7 +691,7 @@ fixed before any allocation model was fitted: a scale correlating above
 0.6 with VVIQ is excluded as re-entering vividness under another name,
 and a scale with no hypothesis attached is excluded whatever its
 correlation.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/questionnaire_scales.html">questionnaire_scales</a></span><span class="op">(</span><span class="va">all_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">id</span>, <span class="op">-</span><span class="va">version</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="op">(</span>\<span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
@@ -753,7 +782,7 @@ least redundant with imagery. <code>nieq_unsymbolised</code> is kept
 despite a substantial correlation with VVIQ, because a hypothesis
 attaches to it and the model can show what it contributes rather than
 having that settled in advance.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">style_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_brms_model.html">fit_brms_model</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="fu"><a href="../reference/composition_formula.html">composition_formula</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"vviq + complete_aphant + parity_rate +"</span>,</span>
@@ -879,7 +908,7 @@ experience</caption>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">style_draws</span> <span class="op">&lt;-</span> <span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_df.html" class="external-link">as_draws_df</a></span><span class="op">(</span><span class="va">style_model</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">style_rope</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
@@ -947,7 +976,7 @@ verbal coordinate is 0.006 with 54% of its posterior inside the ROPE;
 OSIVQ spatial on the colour-orientation coordinate is -0.004 with 52%
 inside. A verbaliser does not measurably protect words, and a
 spatialiser does not measurably protect orientations.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The same parameter from both fits, each against its own frame's outcome</span></span>
 <span><span class="co"># SD, so the ROPE means the same thing in both rows.</span></span>
 <span><span class="va">floor_offsets</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
@@ -1019,9 +1048,9 @@ floor-group offset is 0.097 [0.029, 0.164] here against 0.093 [0.025,
 Whatever drives allocation, it is not a style effect wearing a vividness
 label — which is the outcome that would have required every result on
 this site to be reread.</p>
-<p><strong>One predictor does something, and the prediction did not name
-it.</strong></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p><strong>One predictor does something that was not
+predicted:</strong></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">draws</span> <span class="op">&lt;-</span> <span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_df.html" class="external-link">as_draws_df</a></span><span class="op">(</span><span class="va">style_model</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
@@ -1086,23 +1115,16 @@ coordinate</caption>
 verbal coordinate at the same evidential standard the floor group
 clears, and in the opposite direction to the obvious guess: more inner
 speech goes with <strong>less</strong> allocation to words.</p>
-<p>One reading, offered as a hypothesis rather than a conclusion:
-someone whose inner speech is habitually occupied may have less
-phonological capacity free for the memoranda, which would make this a
-competition effect rather than a style effect. It is
-<strong>exploratory</strong> — the thesis’s own inner-experience
-prediction is labelled exploratory in the strict sense, since the sample
-was not sized for it.</p>
 <p><strong>Unsymbolised thinking, by contrast, contributes nothing
-here</strong>, and that is informative rather than empty. It correlates
+here</strong>, and that is more informative than it looks. It correlates
 -0.43 with VVIQ and 0.38 with the floor indicator, so once vividness is
 in the model it has nothing left to explain. It was kept in deliberately
 so the model could show that rather than have it assumed. Note what this
 does <em>not</em> say: unsymbolised is related to allocation marginally,
 and the <a href="beyond-vividness.html">beyond vividness</a> page shows
-it declining steadily across the vividness range. Redundancy given
-vividness is a different claim from no relationship.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+it declining steadily across the vividness range. “Redundancy given
+vividness” is a different claim from “no relationship”.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">allocation_loo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"results"</span>, <span class="st">"allocation-loo.rds"</span>, package <span class="op">=</span> <span class="va">pkg</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"model"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">allocation_loo</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -1135,23 +1157,23 @@ vividness is a different claim from no relationship.</p>
 </tbody>
 </table>
 <p>Comparing the two predictor sets formally leans toward one of them
-without settling it: the elpd difference is smaller than its own
-standard error. At that separation the data do not distinguish them,
-which is what 78 participants and four extra predictors should be
-expected to produce.</p>
+without settling it: the elpd difference is close to its own standard
+error. At that separation the data do not distinguish them, which is
+what 78 participants and four extra predictors should be expected to
+produce.</p>
 </div>
 <div class="section level2">
-<h2 id="does-the-behaviour-agree-with-what-participants-report">6. Does the behaviour agree with what participants report?<a class="anchor" aria-label="anchor" href="#does-the-behaviour-agree-with-what-participants-report"></a>
+<h2 id="comp-convergence">6. Does the behaviour agree with what participants report?<a class="anchor" aria-label="anchor" href="#comp-convergence"></a>
 </h2>
 <p>Everything above is behaviour. After the task, participants were
-asked which features they had tried to keep for points — a question
-about what they were doing, not about what it felt like.</p>
+asked which features they had tried to keep for points; a question about
+what they were doing, not about what it felt like.</p>
 <p>A strategy is by definition what someone takes themselves to be
 doing, so no behavioural pattern can overrule their own account of it.
 What the composition can offer is <strong>convergence</strong>: an
 independent measurement that either tracks the same distinctions or does
 not.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">participants</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"v1"</span><span class="op">)</span>, <span class="va">id</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">prioritisation</span> <span class="op">&lt;-</span></span>
@@ -1203,7 +1225,7 @@ did</caption>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/correlation_test.html">correlation_test</a></span><span class="op">(</span><span class="va">convergence</span><span class="op">$</span><span class="va">ilr1</span>, <span class="va">convergence</span><span class="op">$</span><span class="va">kept</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">4</span>, caption <span class="op">=</span> <span class="st">"Spearman correlation"</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -1231,15 +1253,15 @@ measuring what it claims. No amount of internal reliability could
 establish that.</p>
 <p>It also bears on a worry about the whole enterprise. If self-report
 about one’s own cognition were simply unreliable here, this is where it
-would show. It does not — though note what was asked: <em>which features
+would show. It does not. Though note what was asked: <em>which features
 did you try to keep</em> is a question about behaviour, which people can
 answer.</p>
 <p>The same questionnaire asked something harder. For each feature,
 <em>how did you memorise it</em>, with mental imagery among the options.
 Naming imagery there is a claim about <strong>experience</strong>, not
-about behaviour, and it is the kind of report aphantasia research treats
-as least trustworthy.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+about behaviour, and it is the kind of self-report aphantasia research
+treats as least trustworthy.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">strategy_profile</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"v1"</span><span class="op">)</span>, <span class="va">id</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">strategy_items</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1382,19 +1404,17 @@ either being right, and nothing here reaches the stronger claim. No
 model is fitted either: one cell is a structural zero, so a logistic
 model of the group contrast would not converge, and the table already
 says what the data support.</p>
-<p>Two further things in that table, neither about imagery. On
-orientation, <strong>44% of the floor group named no strategy at
-all</strong>, against 7% above it — orientation is the feature they
-abandon, which converges with its being the feature with the highest
-non-response rate (<a href="engagement.html">task engagement</a>). And
-they named body-centred spatial strategies <strong>less</strong> often
-than typical imagers, 33% against 54%, which cuts against a simple
-compensation account in which the missing visual strategy is replaced by
-a spatial one.</p>
+<p>Two further things in that table. On orientation, <strong>44% of the
+floor group named no strategy at all</strong>, against 7% above it:
+orientation is the feature they abandon, which converges with its being
+the feature with the highest non-response rate (<a href="engagement.html">task engagement</a>). And they named body-centred
+spatial strategies <strong>less</strong> often than typical imagers, 33%
+against 54%, which cuts against a simple compensation account in which
+the missing visual strategy is replaced by a spatial one.</p>
 <p><strong>The agreement holds on the parts, not only on the summary
 coordinate.</strong> The one contrast with enough participants to look
 at is words alone against words-and-colours:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">priorities</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"v1"</span><span class="op">)</span>, <span class="va">id</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">priority_set</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">priorities</span><span class="op">$</span><span class="va">strategy_items</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1445,7 +1465,7 @@ did</caption>
 <p><strong>And prioritisation is unrelated to imagery group</strong>,
 which is what makes the report an independent measurement rather than a
 restatement of section 4:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">reported</span>, <span class="va">prioritisation</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">kept</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">imagery_group</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">imagery_group</span>, <span class="va">kept</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1477,10 +1497,10 @@ restatement of section 4:</p>
 </table>
 </div>
 <div class="section level2">
-<h2 id="what-the-coordinate-cannot-tell-you">7. What the coordinate cannot tell you<a class="anchor" aria-label="anchor" href="#what-the-coordinate-cannot-tell-you"></a>
+<h2 id="comp-limits">7. What the coordinate cannot tell you<a class="anchor" aria-label="anchor" href="#comp-limits"></a>
 </h2>
 <p>A ratio moved. It cannot say which part moved it.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">complete_aphant</span> <span class="op">==</span> <span class="st">"floor"</span>,</span>
 <span>                                       <span class="st">"At the VVIQ floor"</span>, <span class="st">"Above floor"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1518,31 +1538,31 @@ restatement of section 4:</p>
 </tr>
 </tbody>
 </table>
-<p>In levels, the floor group is marginally better on words and clearly
-worse on orientations and colours. <strong>The balance shifts toward
-words because the non-verbal side falls, not because the verbal side
-rises.</strong></p>
-<p>That distinction matters more than it might appear. “Aphantasic
-participants rely more on verbal encoding” and “aphantasic participants
-are worse at the non-verbal features” predict the same compositional
-result, and this analysis cannot separate them. Doing so needs the
-absolute accuracy models, which is exactly why the two framings are
-complementary rather than competing.</p>
+<p>In levels, the floor group is marginally better on words and worse on
+orientations and colours. <strong>The balance shifts toward words more
+due to the non-verbal side falling than to the verbal side
+rising.</strong></p>
+<p>That distinction matters. “Aphantasic participants rely more on
+verbal encoding” and “aphantasic participants are worse at the
+non-verbal features” predict the same compositional result, and this
+analysis cannot separate them. Doing so needs the absolute accuracy
+models, which is exactly why the two framings (composition and
+performance) are complementary rather than competing.</p>
 <p>One further caution. <code>ilr1</code> rests partly on word, and the
 <a href="task-validity.html">task validity</a> page shows word does not
-function as an individual-differences measure. The <em>ratio</em> is
-stable where the <em>level</em> is not, which is not a contradiction,
+function well as an individual-differences measure. The <em>ratio</em>
+is stable where the <em>level</em> is not, which is not a contradiction,
 but no claim here may treat word as a well-measured quantity.
 Measurement noise in an outcome widens intervals rather than biasing
 estimates, so if anything this result is conservative.</p>
 </div>
 <div class="section level2">
-<h2 id="two-checks-and-one-caveat-that-is-still-open">8. Two checks, and one caveat that is still open<a class="anchor" aria-label="anchor" href="#two-checks-and-one-caveat-that-is-still-open"></a>
+<h2 id="comp-checks">8. Two checks, and one caveat<a class="anchor" aria-label="anchor" href="#comp-checks"></a>
 </h2>
-<p><strong>The functional form was not assumed.</strong> Five ways of
+<p><strong>1) The functional form was not assumed.</strong> Five ways of
 entering imagery were compared, with the floor-group form pre-declared
-as primary regardless of which won.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+as primary in case of equal model performances.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"results"</span>, <span class="st">"comp-loo.rds"</span>, package <span class="op">=</span> <span class="va">pkg</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"model"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">)</span>, <span class="st">"model"</span><span class="op">)</span></span>
@@ -1585,17 +1605,17 @@ as primary regardless of which won.</p>
 </tr>
 </tbody>
 </table>
-<p>The forms with a discontinuity sit above those without one, by
-roughly one to one and a half standard errors. That is weak, it was
-predicted to be weak in advance, and it is reported rather than
-converted into a claim.</p>
-<p><strong>The result survives at trial level.</strong> Each trial is
+<p>The forms with a discontinuity (floor-group and segmented) sit above
+those without one, by roughly one to one and a half standard errors.
+That is weak and cannot be converted into a claim, so the floor-group
+model was selected based on pre-declaration.</p>
+<p><strong>2) The result survives at trial level.</strong> Each trial is
 itself a composition, so the same question can be asked with
 within-person noise separated from between-person signal rather than
 averaged into it. Whether that is possible at all is an empirical
 question about zeros, since a log-ratio transform needs every part
 strictly positive:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trial_parts</span> <span class="op">&lt;-</span> <span class="va">v1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">model_data</span><span class="op">$</span><span class="va">id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>trial_uid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">expe_phase</span>, <span class="va">trial_number</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1607,10 +1627,6 @@ strictly positive:</p>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">if_all</a></span><span class="op">(</span><span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"part_"</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Counted before the tibble, not inside it: `usable = nrow(usable)` makes</span></span>
-<span><span class="co"># every later expression see the count instead of the frame, which is the</span></span>
-<span><span class="co"># masking hazard the implementation notes describe. It produced an empty</span></span>
-<span><span class="co"># table here rather than an error.</span></span>
 <span><span class="va">n_compositions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">trial_parts</span><span class="op">)</span></span>
 <span><span class="va">n_usable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">usable</span><span class="op">)</span></span>
 <span></span>
@@ -1638,7 +1654,7 @@ replacement</caption>
 <p>Dropped rather than imputed: there is no zero-replacement strategy
 worth defending for that share of rows, and an unbalanced multilevel
 model handles the loss natively.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trial_data</span> <span class="op">&lt;-</span> <span class="va">usable</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_cols.html" class="external-link">bind_cols</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="../reference/ilr_coords.html">ilr_coords</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">usable</span>, <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"part_"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -1746,7 +1762,7 @@ mean is not the mean of the log-ratios. Agreement between them is
 convergence rather than replication.</p>
 <p>That model also gives a reliability estimate from the same fit as the
 effects:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"results"</span>, <span class="st">"comp-icc.rds"</span>, package <span class="op">=</span> <span class="va">pkg</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span>, caption <span class="op">=</span> <span class="st">"Between-person share of trial-level variance"</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -1779,19 +1795,15 @@ validity</a> page finds by split-half. They are consistent, not
 contradictory.</p>
 <p><strong>The caveat, now resolved and narrower than expected.</strong>
 Every composition here is built from items a participant chose to
-answer, which conditions on a selected subsample. The <a href="joint-model.html">joint model</a> tested whether that mattered,
-and the answer is <strong>feature-specific</strong>: willingness and
-accuracy are related on orientation and unrelated on word and
-colour.</p>
-<p>So one of the three parts is built on a selected subsample and the
+answer, which conditions on a selected sub-sample. The <a href="joint-model.html">joint model</a> tested whether that mattered,
+and the answer is <strong>feature-specific</strong>: willingness to
+respond and accuracy are related on orientation, and unrelated on word
+and colour.</p>
+<p>So one of the three parts is built on a selected sub-sample and the
 other two are not. Both coordinates mix all three parts, so both carry
-the caveat, but through one part rather than three. That is weaker than
-the blanket warning this section used to carry, and it is a constraint
-on interpretation rather than a reason to discount the result.</p>
-<p>The same model also settles the question §1 raised about closure:
-between people, accuracy on orientation and colour correlates
-<strong>positively</strong>, so there is no between-person trade-off for
-closure to have been hiding.</p>
+the caveat, but through one part rather than three. That is small, and
+it is a constraint on interpretation rather than a reason to discount
+the result.</p>
 <hr>
 <p><strong>Continuing through the Extended Online Report:</strong> this
 page follows <a href="analysis-strategy.html">the analysis</a>. To keep
@@ -1800,6 +1812,17 @@ next. Or see <a href="model-diagnostics.html">model diagnostics</a> and
 <a href="implementation-notes.html">implementation notes</a> for the
 technical detail behind these models.</p>
 <hr>
+</div>
+<div class="section level2">
+<h2 id="comp-refs">References<a class="anchor" aria-label="anchor" href="#comp-refs"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-blazhenkovaNewObjectSpatialVerbal2009" class="csl-entry">
+Blazhenkova, O., &amp; Kozhevnikov, M. (2009). The new
+object-spatial-verbal cognitive style model: Theory and measurement.
+<em>Applied Cognitive Psychology</em>, <em>23</em>(5), 638–663. <a href="https://doi.org/10.1002/acp.1473" class="external-link">https://doi.org/10.1002/acp.1473</a>
+</div>
+</div>
 <pre><code><span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
 <span><span class="co">#&gt;  version  R version 4.6.1 (2026-06-24)</span></span>
@@ -1810,14 +1833,14 @@ technical detail behind these models.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">!</span> <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
 <span><span class="co">#&gt;    abind                1.4-8    <span style="color: #555555;">2024-09-12</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;    backports            1.5.1    <span style="color: #555555;">2026-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bayesplot            1.16.0   <span style="color: #555555;">2026-08-25</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bridgesampling       1.2-1    <span style="color: #555555;">2025-11-19</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -1874,12 +1897,12 @@ technical detail behind these models.</p>
 <span><span class="co">#&gt;    ragg                 1.5.2    <span style="color: #555555;">2026-03-23</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    RColorBrewer         1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    Rcpp                 1.1.2    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    RcppParallel         6.2.0    <span style="color: #555555;">2026-07-30</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    RcppParallel         6.2.1    <span style="color: #555555;">2026-08-27</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    renv                 1.0.7    <span style="color: #555555;">2024-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rlang                1.3.0    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rmarkdown            2.31     <span style="color: #555555;">2026-03-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rstan                2.32.7   <span style="color: #555555;">2025-03-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    rstantools           2.7.0    <span style="color: #555555;">2026-07-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    rstantools           2.7.1    <span style="color: #555555;">2026-08-29</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    S7                   0.2.2    <span style="color: #555555;">2026-04-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    sass                 0.4.10   <span style="color: #555555;">2025-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    scales               1.4.0    <span style="color: #555555;">2025-04-24</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -1897,12 +1920,13 @@ technical detail behind these models.</p>
 <span><span class="co">#&gt;    tidyr                1.3.2    <span style="color: #555555;">2025-12-19</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    tidyselect           1.2.1    <span style="color: #555555;">2024-03-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    vctrs                0.7.3    <span style="color: #555555;">2026-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    viridisLite          0.4.3    <span style="color: #555555;">2026-02-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    withr                3.0.3    <span style="color: #555555;">2026-06-19</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    xfun                 0.60     <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    xtable               1.8-8    <span style="color: #555555;">2026-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    yaml                 2.3.12   <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt; </span></span>

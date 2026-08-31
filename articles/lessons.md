@@ -1,15 +1,10 @@
 # What was tried and withdrawn
 
 Several findings on this site were reported at some point and are no
-longer claimed. This page says what they were and what removed them,
-because an Extended Online Report that only shows what survived is a
-longer methods section rather than a more honest one.
+longer claimed. This page says what they were and what removed them.
 
 Three of them were caught by the same move: **check whether a pooled
-result holds within each stratum before reporting it.** The other two
-are different in kind, and are included because a page of near-misses
-that all share one cause would misrepresent how the errors actually
-arrived.
+result holds within each version before reporting it.**
 
 ## 1. A two-way trade-off between colour and orientation
 
@@ -128,11 +123,6 @@ The pooled estimate is driven by v3, which is both heavily aphantasic —
 17 of its 21 participants — and by far the highest in non-response, so
 pooling manufactured an association that neither version contains.
 
-This one did more than get withdrawn: it is the concrete reason the
-[version
-scope](https://m-delem.github.io/aphantasiaWMStrats/articles/version-scope.md)
-decision is not bureaucratic.
-
 ## 3. Parity accuracy predicts imagery vividness
 
 **Claimed**, on an earlier version of the [task
@@ -169,34 +159,8 @@ participant’s estimate collapsing to nearly the same value.
 
 Word’s coefficients are still reported, because a group contrast is a
 different estimand and measurement error widens intervals rather than
-biasing them. But no individual-differences claim about word is made
-anywhere, whatever its coefficients say.
-
-## 5. Two claims about this project’s own history
-
-**A published clustering study was described here as circular in
-design.** It was not: it included a genuine held-out validation attempt
-that returned a null. What went wrong was the framing, which oversold a
-descriptive result under co-author pressure. Recording it accurately
-matters more than recording it harshly.
-
-**A claim about a mislabelled sample was itself wrong.** An earlier
-version of the parity analysis asserted that the engagement page
-computed a pooled correlation while labelling it v1. It did not: the
-page filtered to v1 correctly, and the claim came from reading one
-function call without reading the object it consumed. The planning
-documents keep the retraction rather than deleting it.
-
-## What these have in common
-
-Four of the five were produced by the same thing: **a statistic computed
-on one sample and interpreted as though it applied to another.** Pooled
-across versions, pooled across engagement levels, or pooled across a
-distinction the variable’s name concealed.
-
-The habit that catches it is cheap. Before reporting an association,
-compute it again within each stratum you have, and see whether it
-survives.
+biasing them. But no strong individual-differences claim about word
+should be made, whatever its coefficients say.
 
 ------------------------------------------------------------------------
 
@@ -221,13 +185,13 @@ for what the models were built to do.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  package            * version date (UTC) lib source
-    #>  aphantasiaWMStrats * 0.1     2026-08-26 [1] local
+    #>  aphantasiaWMStrats * 0.1     2026-08-31 [1] local
     #>  bslib                0.12.0  2026-08-04 [2] CRAN (R 4.6.1)
     #>  cachem               1.1.0   2024-05-16 [2] CRAN (R 4.6.1)
     #>  cli                  3.6.6   2026-04-09 [2] CRAN (R 4.6.1)
@@ -268,7 +232,7 @@ for what the models were built to do.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

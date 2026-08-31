@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -103,16 +103,12 @@
     
     
 <p>Several findings on this site were reported at some point and are no
-longer claimed. This page says what they were and what removed them,
-because an Extended Online Report that only shows what survived is a
-longer methods section rather than a more honest one.</p>
+longer claimed. This page says what they were and what removed them.</p>
 <p>Three of them were caught by the same move: <strong>check whether a
-pooled result holds within each stratum before reporting it.</strong>
-The other two are different in kind, and are included because a page of
-near-misses that all share one cause would misrepresent how the errors
-actually arrived.</p>
+pooled result holds within each version before reporting
+it.</strong></p>
 <div class="section level2">
-<h2 id="a-two-way-trade-off-between-colour-and-orientation">1. A two-way trade-off between colour and orientation<a class="anchor" aria-label="anchor" href="#a-two-way-trade-off-between-colour-and-orientation"></a>
+<h2 id="less-tradeoff">1. A two-way trade-off between colour and orientation<a class="anchor" aria-label="anchor" href="#less-tradeoff"></a>
 </h2>
 <p><strong>Claimed:</strong> the task was designed to force a three-way
 trade-off but achieves a two-way one, because word is easy enough that
@@ -213,7 +209,7 @@ colour accuracy correlate <strong>positively</strong>. There is no
 between-person trade-off for closure to have been hiding.</p>
 </div>
 <div class="section level2">
-<h2 id="reporting-propensity-is-related-to-imagery-vividness">2. Reporting propensity is related to imagery vividness<a class="anchor" aria-label="anchor" href="#reporting-propensity-is-related-to-imagery-vividness"></a>
+<h2 id="less-propensity">2. Reporting propensity is related to imagery vividness<a class="anchor" aria-label="anchor" href="#less-propensity"></a>
 </h2>
 <p><strong>Claimed:</strong> participants with lower imagery vividness
 decline to report features more often, with a pooled correlation around
@@ -283,12 +279,9 @@ nothing. The pooled estimate is driven by v3, which is both heavily
 aphantasic — 17 of its 21 participants — and by far the highest in
 non-response, so pooling manufactured an association that neither
 version contains.</p>
-<p>This one did more than get withdrawn: it is the concrete reason the
-<a href="version-scope.html">version scope</a> decision is not
-bureaucratic.</p>
 </div>
 <div class="section level2">
-<h2 id="parity-accuracy-predicts-imagery-vividness">3. Parity accuracy predicts imagery vividness<a class="anchor" aria-label="anchor" href="#parity-accuracy-predicts-imagery-vividness"></a>
+<h2 id="less-parity">3. Parity accuracy predicts imagery vividness<a class="anchor" aria-label="anchor" href="#less-parity"></a>
 </h2>
 <p><strong>Claimed</strong>, on an earlier version of the <a href="engagement.html">task engagement</a> page: parity engagement is
 not independent of imagery, and this is what stops parity accuracy being
@@ -306,7 +299,7 @@ with accuracy among those answered.</p>
 shows the conflation rather than inheriting it.</p>
 </div>
 <div class="section level2">
-<h2 id="word-recall-as-an-individual-differences-measure">4. Word recall as an individual-differences measure<a class="anchor" aria-label="anchor" href="#word-recall-as-an-individual-differences-measure"></a>
+<h2 id="less-word">4. Word recall as an individual-differences measure<a class="anchor" aria-label="anchor" href="#less-word"></a>
 </h2>
 <p>Not withdrawn so much as <strong>demoted</strong>, and it constrains
 every page that reports a word coefficient.</p>
@@ -318,35 +311,8 @@ from the model’s side, with every participant’s estimate collapsing to
 nearly the same value.</p>
 <p>Word’s coefficients are still reported, because a group contrast is a
 different estimand and measurement error widens intervals rather than
-biasing them. But no individual-differences claim about word is made
-anywhere, whatever its coefficients say.</p>
-</div>
-<div class="section level2">
-<h2 id="two-claims-about-this-projects-own-history">5. Two claims about this project’s own history<a class="anchor" aria-label="anchor" href="#two-claims-about-this-projects-own-history"></a>
-</h2>
-<p><strong>A published clustering study was described here as circular
-in design.</strong> It was not: it included a genuine held-out
-validation attempt that returned a null. What went wrong was the
-framing, which oversold a descriptive result under co-author pressure.
-Recording it accurately matters more than recording it harshly.</p>
-<p><strong>A claim about a mislabelled sample was itself wrong.</strong>
-An earlier version of the parity analysis asserted that the engagement
-page computed a pooled correlation while labelling it v1. It did not:
-the page filtered to v1 correctly, and the claim came from reading one
-function call without reading the object it consumed. The planning
-documents keep the retraction rather than deleting it.</p>
-</div>
-<div class="section level2">
-<h2 id="what-these-have-in-common">What these have in common<a class="anchor" aria-label="anchor" href="#what-these-have-in-common"></a>
-</h2>
-<p>Four of the five were produced by the same thing: <strong>a statistic
-computed on one sample and interpreted as though it applied to
-another.</strong> Pooled across versions, pooled across engagement
-levels, or pooled across a distinction the variable’s name
-concealed.</p>
-<p>The habit that catches it is cheap. Before reporting an association,
-compute it again within each stratum you have, and see whether it
-survives.</p>
+biasing them. But no strong individual-differences claim about word
+should be made, whatever its coefficients say.</p>
 <hr>
 <p><strong>Continuing through the Extended Online Report:</strong> this
 page follows <a href="implementation-notes.html">implementation
@@ -364,13 +330,13 @@ models were built to do.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;  bslib                0.12.0  <span style="color: #555555;">2026-08-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cachem               1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cli                  3.6.6   <span style="color: #555555;">2026-04-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -411,7 +377,7 @@ models were built to do.</p>
 <span><span class="co">#&gt;  xfun                 0.60    <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  yaml                 2.3.12  <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>

@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -102,8 +102,6 @@
 
     
     
-<p>Who these participants are, and one thing about how they were
-recruited that constrains what any analysis here can claim.</p>
 <p>This page describes <strong>all 117 people who took part across the
 three task versions</strong>. The behavioural analyses use v1 alone and
 the questionnaire analyses pool all three; section 3 is where that split
@@ -111,8 +109,8 @@ comes from.</p>
 <p>One caveat about counting, because two totals circulate on this site
 and both are correct. <strong>One participant completed the task twice,
 once in v1 and once in v3</strong>, so there are 117 people and 118
-person-sessions. Anything about a <em>person</em> — age, gender,
-education, imagery group — is counted per person below. Anything about a
+person-sessions. Anything about a <em>person</em> (age, gender,
+education, imagery group) is counted per person below. Anything about a
 <em>version</em> is counted per session, because that participant did
 two different versions of the task and each one is a separate
 observation of the design.</p>
@@ -140,7 +138,7 @@ observation of the design.</p>
 <span></span>
 <span><span class="va">extra</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">participants</span><span class="op">$</span><span class="va">extra_demographics</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="overall">1. Overall<a class="anchor" aria-label="anchor" href="#overall"></a>
+<h2 id="part-overall">1. Overall<a class="anchor" aria-label="anchor" href="#part-overall"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Named `n_participants`, not `participants`: inside tibble() later</span></span>
@@ -258,7 +256,7 @@ online volunteer studies of this kind.</p>
 </table>
 </div>
 <div class="section level2">
-<h2 id="by-imagery-group">2. By imagery group<a class="anchor" aria-label="anchor" href="#by-imagery-group"></a>
+<h2 id="part-groups">2. By imagery group<a class="anchor" aria-label="anchor" href="#part-groups"></a>
 </h2>
 <p>Imagery vividness is measured by the VVIQ <span class="citation">(Marks, 1973)</span>, whose sixteen items give a total
 between 16 and 80. <strong>Three different groupings of that score
@@ -358,10 +356,8 @@ side of the floor.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_vviq_histogram.html">plot_vviq_histogram</a></span><span class="op">(</span><span class="va">participants</span><span class="op">$</span><span class="va">vviq_total_score</span>, base_size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"VVIQ total score"</span>,</span>
-<span>       caption <span class="op">=</span> <span class="st">"The floor group is coloured separately."</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span><span class="op">)</span>, axis.ticks.x <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>        axis.line.x <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="participants_files/figure-html/vviq-distribution-1.png" class="r-plt" alt="Distribution of VVIQ scores, with the floor group highlighted." width="100%"></p>
+<span>       caption <span class="op">=</span> <span class="st">"The floor group is coloured separately."</span><span class="op">)</span></span></code></pre></div>
+<p><img src="participants_files/figure-html/vviq-distribution-1.png" class="r-plt" alt="Distribution of VVIQ scores, with the floor group highlighted." width="768"></p>
 <p>The distribution is the reason the modelling pages treat vividness
 the way they do. It is not a smooth continuum with a low tail: it is a
 sharp, isolated spike at the scale minimum plus an irregular remainder
@@ -369,9 +365,9 @@ above it. A model fitting one slope through all of it would describe
 neither part.</p>
 </div>
 <div class="section level2">
-<h2 id="recruitment-and-why-the-versions-are-not-interchangeable">3. Recruitment, and why the versions are not interchangeable<a class="anchor" aria-label="anchor" href="#recruitment-and-why-the-versions-are-not-interchangeable"></a>
+<h2 id="part-recruitment">3. Recruitment, and why the versions are not interchangeable<a class="anchor" aria-label="anchor" href="#part-recruitment"></a>
 </h2>
-<p>This is the constraint worth carrying into every other page.</p>
+<p>This is a constraint carried into every other page.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sessions</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
@@ -449,16 +445,17 @@ That decision is checked rather than assumed on the <a href="beyond-vividness.ht
 that its reliabilities describe the sample the modelling pages use.</p>
 </div>
 <div class="section level2">
-<h2 id="what-was-administered">4. What was administered<a class="anchor" aria-label="anchor" href="#what-was-administered"></a>
+<h2 id="part-measures">4. What was administered<a class="anchor" aria-label="anchor" href="#part-measures"></a>
 </h2>
 <p>Every participant completed the same battery in the same session: the
-WM-FTT itself, then the VVIQ, the OSIVQ and the NIEQ. The <a href="psychometrics.html">psychometrics</a> page reports how those
+VVIQ, the OSIVQ, the NIEQ, then the WM-FTT itself. The <a href="psychometrics.html">psychometrics</a> page reports how those
 instruments behave in this sample, including one subscale that does not
 reach its reliability threshold and one scoring inconsistency between
 versions.</p>
 <p>Field of study, occupation and recruitment route are recorded in
 <code>extra_demographics</code> and are not analysed anywhere: they were
-collected for description rather than as variables.</p>
+collected for description and possible exploratory analyses (not
+conducted yet).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">extra</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">field</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -502,9 +499,10 @@ collected for description rather than as variables.</p>
 </table>
 <hr>
 <p><strong>Continuing through the Extended Online Report:</strong> this
-is the first page of the report. To keep reading in order, continue to
-<a href="task-design.html">task design</a> next. Or skip ahead to <a href="analysis-strategy.html">the analysis</a>, which explains what the
-modelling pages do and why.</p>
+page follows <a href="task-design.html">task design</a>. To keep reading
+in order, continue to <a href="scoring.html">scoring</a> next. Or skip
+ahead to <a href="analysis-strategy.html">the analysis</a>, which
+explains what the modelling pages do and why.</p>
 <hr>
 <pre><code><span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
@@ -516,13 +514,13 @@ modelling pages do and why.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;  bslib                0.12.0  <span style="color: #555555;">2026-08-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cachem               1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cli                  3.6.6   <span style="color: #555555;">2026-04-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -573,7 +571,7 @@ modelling pages do and why.</p>
 <span><span class="co">#&gt;  xfun                 0.60    <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  yaml                 2.3.12  <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>

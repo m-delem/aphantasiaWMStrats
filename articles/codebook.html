@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -127,7 +127,7 @@ computed the same way) see the codebook that ships alongside
 <code>all_data_surveys</code> and <code>all_data_full</code> on <a href="https://osf.io/3649s/files/osfstorage" class="external-link">OSF</a>, the two flat
 exports built for sharing this data outside the package.</p>
 <div class="section level2">
-<h2 id="identifiers-and-version">Identifiers and version<a class="anchor" aria-label="anchor" href="#identifiers-and-version"></a>
+<h2 id="code-identifiers">Identifiers and version<a class="anchor" aria-label="anchor" href="#code-identifiers"></a>
 </h2>
 <table style="width:100%;" class="table">
 <colgroup>
@@ -172,7 +172,7 @@ front-end infrastructure).</td>
 </table>
 </div>
 <div class="section level2">
-<h2 id="trial-and-item-structure">Trial and item structure<a class="anchor" aria-label="anchor" href="#trial-and-item-structure"></a>
+<h2 id="code-structure">Trial and item structure<a class="anchor" aria-label="anchor" href="#code-structure"></a>
 </h2>
 <table class="table">
 <colgroup>
@@ -233,7 +233,7 @@ tutorial</td>
 </table>
 </div>
 <div class="section level2">
-<h2 id="stimulus-content-and-response">Stimulus content and response<a class="anchor" aria-label="anchor" href="#stimulus-content-and-response"></a>
+<h2 id="code-stimulus">Stimulus content and response<a class="anchor" aria-label="anchor" href="#code-stimulus"></a>
 </h2>
 <table class="table">
 <colgroup>
@@ -554,7 +554,7 @@ parity columns exist for v1 too, but the penalty was not applied at
 recall.</p>
 </div>
 <div class="section level2">
-<h2 id="recall-scores">Recall scores<a class="anchor" aria-label="anchor" href="#recall-scores"></a>
+<h2 id="code-scores">Recall scores<a class="anchor" aria-label="anchor" href="#code-scores"></a>
 </h2>
 <p>These are the analysis variables. They are computed in R from the raw
 target and response values by <code><a href="../reference/compute_scores.html">compute_scores()</a></code>, not derived
@@ -672,7 +672,7 @@ Non-response appears in the raw data as
 </table>
 </div>
 <div class="section level2">
-<h2 id="live-feedback-from-the-task-display">Live feedback from the task display<a class="anchor" aria-label="anchor" href="#live-feedback-from-the-task-display"></a>
+<h2 id="code-feedback">Live feedback from the task display<a class="anchor" aria-label="anchor" href="#code-feedback"></a>
 </h2>
 <p><strong>Not analysis variables.</strong> These drove the feedback
 screen participants saw between trials, and are kept for provenance and
@@ -803,7 +803,7 @@ optimising, but it is not a performance measure.</td>
 participant did.</p>
 </div>
 <div class="section level2">
-<h2 id="questionnaire-scores">Questionnaire scores<a class="anchor" aria-label="anchor" href="#questionnaire-scores"></a>
+<h2 id="code-questionnaires">Questionnaire scores<a class="anchor" aria-label="anchor" href="#code-questionnaires"></a>
 </h2>
 <p>Raw questionnaire items are in the nested list-columns described at
 the end of this page, not here: these are the derived,
@@ -915,7 +915,7 @@ OSIVQ, and NIEQ item text is copyrighted by their respective authors -
 see <span class="citation">Marks (1973)</span>, <span class="citation">Blazhenkova &amp; Kozhevnikov (2009)</span>, and <span class="citation">Heavey et al. (2019)</span> for the original items.</p>
 </div>
 <div class="section level2">
-<h2 id="demographics">Demographics<a class="anchor" aria-label="anchor" href="#demographics"></a>
+<h2 id="code-demographics">Demographics<a class="anchor" aria-label="anchor" href="#code-demographics"></a>
 </h2>
 <table class="table">
 <colgroup>
@@ -1043,7 +1043,7 @@ above lists the observed values as-is rather than collapsing them into
 fixed categories.</p>
 </div>
 <div class="section level2">
-<h2 id="nested-item-list-columns">Nested item list-columns<a class="anchor" aria-label="anchor" href="#nested-item-list-columns"></a>
+<h2 id="code-nested">Nested item list-columns<a class="anchor" aria-label="anchor" href="#code-nested"></a>
 </h2>
 <p>Five list-columns hold the raw questionnaire and strategy-report
 items, kept nested rather than forced into a common wide schema, because
@@ -1113,7 +1113,7 @@ page</a>.</p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 id="code-refs">References<a class="anchor" aria-label="anchor" href="#code-refs"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
 <div id="ref-blazhenkovaNewObjectSpatialVerbal2009" class="csl-entry">
@@ -1151,13 +1151,13 @@ pictures. <em>British Journal of Psychology</em>, <em>64</em>(1), 17–24.
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;  bslib                0.12.0  <span style="color: #555555;">2026-08-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cachem               1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cli                  3.6.6   <span style="color: #555555;">2026-04-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -1198,7 +1198,7 @@ pictures. <em>British Journal of Psychology</em>, <em>64</em>(1), 17–24.
 <span><span class="co">#&gt;  xfun                 0.60    <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  yaml                 2.3.12  <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>

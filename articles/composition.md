@@ -8,11 +8,11 @@ performance removed.**
 This is the study’s **primary analysis**, and the one it was designed
 around. A composition is a different object from an accuracy score, with
 its own geometry, and it answers the question the task was built to ask:
-not *how well*, but *where*.
+not *how well people performed*, but *where did their effort go to*.
 
-It is also where the strands meet. Imagery vividness, inner experience
-and participants’ own accounts of what they were doing all bear on the
-same coordinate, in sections 4 to 6.
+It is also where the strands meet. Imagery vividness, cognitive style,
+inner experience and participants’ own accounts of what they were doing
+all bear on the same coordinate, in sections 4 to 6.
 
 Everything here is v1 ([version
 scope](https://m-delem.github.io/aphantasiaWMStrats/articles/version-scope.md))
@@ -54,14 +54,12 @@ add_coordinates <- function(parts) {
     )
 }
 
-# Three frames, named separately rather than one object reassigned. Each
-# section states which it uses, and each is the frame the corresponding
-# script fitted on. A single reassigned `model_data` is how a page ends up
-# describing one sample and displaying another.
+# Three frames, named separately. Each section states which it uses, 
+# and each is the frame the corresponding script fitted on.
 #
 # Section 6 needs a composition and a strategy report and nothing else, so
 # it keeps every engaged participant, with or without a vividness score.
-# `inst/scripts/14-strategy-convergence.R` does the same, deliberately.
+# `inst/scripts/14-strategy-convergence.R` does the same.
 reported <- add_coordinates(engaged_parts)
 
 # Sections 4, 7 and 8 additionally need vividness. This is the frame
@@ -118,10 +116,9 @@ Each participant has three responders-only mean scores. Divide each by
 their sum and you have a **composition**: three parts that sum to one,
 carrying only relative information.
 
-That closure is not a technicality. Three proportions summing to a
-constant cannot vary independently, so a rise in one forces a fall in
-the others, and ordinary correlations between them are not
-interpretable. The
+Three proportions summing to a constant cannot vary independently, so a
+rise in one forces a fall in the others, and ordinary correlations
+between them are not interpretable. The
 [scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
 page shows what that does in practice: residualising three parts on
 their own mean induces a correlation of about -0.5 whatever the data
@@ -313,36 +310,69 @@ coordinate.** The offset is 0.093, with 95% of the posterior in \[0.025,
 0.161\], a standardised effect of 1.05 outcome SD, and 99.3% of the
 posterior above the ROPE. In interpretable terms, their ratio of word
 allocation to the geometric mean of the two non-verbal features is
-roughly 12% higher.
+roughly 12% higher. Let’s represent this result graphically:
+
+``` r
+
+grid <- tibble::tibble(
+  vviq = seq(16, 80, length.out = 200),
+  complete_aphant = factor("above_floor", levels = c("above_floor", "floor")),
+  parity_rate = stats::median(model_data$parity_rate)
+)
+above_floor <- 
+  brms::posterior_epred(composition_model, newdata = grid, resp = "ilr1")
+
+floor_row <- grid[1, ]
+floor_row$complete_aphant <- 
+  factor("floor", levels = c("above_floor", "floor"))
+floor_draws <- as.vector(brms::posterior_epred(
+  composition_model, newdata = floor_row, resp = "ilr1"))
+effect <- brms::fixef(composition_model)["ilr1_complete_aphantfloor", ]
+
+plot_floor_group(
+  observed = 
+    dplyr::filter(model_data, vviq > 16) |> 
+    dplyr::transmute(x = vviq, y = ilr1),
+  fitted = tibble::tibble(
+    x = grid$vviq,
+    estimate = apply(above_floor, 2, stats::median),
+    lower = apply(above_floor, 2, stats::quantile, 0.025),
+    upper = apply(above_floor, 2, stats::quantile, 0.975)
+  ),
+  floor_draws = floor_draws,
+  floor_observed = dplyr::filter(model_data, vviq == 16)$ilr1,
+  effect_label = sprintf("%.2f\n[%.2f, %.2f]", effect[["Estimate"]],
+                         effect[["Q2.5"]], effect[["Q97.5"]]),
+  y_lab = "Share of effort on WORDS,\nrelative to colour and orientation",
+  base_size = 16, point_size = 2.2,
+  left_expansion = 0.09, arrow_nudge = -5.5
+)
+```
+
+![](composition_files/figure-html/floor-plot-1.png)
 
 **Vividness above the floor does nothing at all.** Its slope lies
 entirely inside the ROPE on both coordinates. Whatever is happening is a
 property of the floor group rather than a gradient.
 
-**On the colour versus orientation coordinate there is no result**, and
-it is worth being precise about which kind of no result. The floor
-offset has 52% of its posterior below the ROPE, 19% inside and 30%
-above. That is not evidence of absence, it is an uninformative
-posterior, and it should be reported as such.
+**On the colour versus orientation coordinate there is no result**. The
+floor offset has 52% of its posterior below the ROPE, 19% inside and 30%
+above. That is an uninformative posterior, not evidence of absence.
 
 ## 5. Is it imagery, or is it cognitive style?
 
 The study was designed around a prediction from the
 Object-Spatial-Verbal framework: that allocation should track
-**cognitive style**, and not imagery vividness alone. A verbaliser
-should protect the word feature, a spatialiser the orientation.
+**cognitive style** (Blazhenkova & Kozhevnikov, 2009), and not imagery
+vividness alone. A verbaliser should protect the word feature, a
+spatialiser the orientation.
 
-Section 4 tests only the vividness axis, which is the one the prediction
-names as insufficient. This section tests the prediction itself.
+Section 4 tests only the vividness axis. This section tests the
+cognitive style axis.
 
 This section runs on 78 participants rather than the 79 of section 4: it
 needs the questionnaire scales, and the 1 participant dropped here has
-NIEQ scores but no OSIVQ ones. Section 4’s result is unaffected, being
-fitted on the larger frame.
-
-The step before that one is worth naming too, because both are easy to
-conflate. 81 participants clear the engagement thresholds; 2 of them
-have no VVIQ score, which is what takes section 4 to 79.
+NIEQ scores but no OSIVQ ones.
 
 **The predictor set was chosen from the questionnaires alone**, never
 from how any of them relates to allocation, which is what keeps the
@@ -506,7 +536,7 @@ allocation, it is not a style effect wearing a vividness label — which
 is the outcome that would have required every result on this site to be
 reread.
 
-**One predictor does something, and the prediction did not name it.**
+**One predictor does something that was not predicted:**
 
 ``` r
 
@@ -539,22 +569,15 @@ at the same evidential standard the floor group clears, and in the
 opposite direction to the obvious guess: more inner speech goes with
 **less** allocation to words.
 
-One reading, offered as a hypothesis rather than a conclusion: someone
-whose inner speech is habitually occupied may have less phonological
-capacity free for the memoranda, which would make this a competition
-effect rather than a style effect. It is **exploratory** — the thesis’s
-own inner-experience prediction is labelled exploratory in the strict
-sense, since the sample was not sized for it.
-
 **Unsymbolised thinking, by contrast, contributes nothing here**, and
-that is informative rather than empty. It correlates -0.43 with VVIQ and
-0.38 with the floor indicator, so once vividness is in the model it has
-nothing left to explain. It was kept in deliberately so the model could
-show that rather than have it assumed. Note what this does *not* say:
-unsymbolised is related to allocation marginally, and the [beyond
+that is more informative than it looks. It correlates -0.43 with VVIQ
+and 0.38 with the floor indicator, so once vividness is in the model it
+has nothing left to explain. It was kept in deliberately so the model
+could show that rather than have it assumed. Note what this does *not*
+say: unsymbolised is related to allocation marginally, and the [beyond
 vividness](https://m-delem.github.io/aphantasiaWMStrats/articles/beyond-vividness.md)
-page shows it declining steadily across the vividness range. Redundancy
-given vividness is a different claim from no relationship.
+page shows it declining steadily across the vividness range. “Redundancy
+given vividness” is a different claim from “no relationship”.
 
 ``` r
 
@@ -579,15 +602,15 @@ allocation_loo |>
 Vividness alone against the fuller predictor set {.table}
 
 Comparing the two predictor sets formally leans toward one of them
-without settling it: the elpd difference is smaller than its own
-standard error. At that separation the data do not distinguish them,
-which is what 78 participants and four extra predictors should be
-expected to produce.
+without settling it: the elpd difference is close to its own standard
+error. At that separation the data do not distinguish them, which is
+what 78 participants and four extra predictors should be expected to
+produce.
 
 ## 6. Does the behaviour agree with what participants report?
 
 Everything above is behaviour. After the task, participants were asked
-which features they had tried to keep for points — a question about what
+which features they had tried to keep for points; a question about what
 they were doing, not about what it felt like.
 
 A strategy is by definition what someone takes themselves to be doing,
@@ -656,14 +679,13 @@ amount of internal reliability could establish that.
 
 It also bears on a worry about the whole enterprise. If self-report
 about one’s own cognition were simply unreliable here, this is where it
-would show. It does not — though note what was asked: *which features
-did you try to keep* is a question about behaviour, which people can
-answer.
+would show. It does not. Though note what was asked: *which features did
+you try to keep* is a question about behaviour, which people can answer.
 
 The same questionnaire asked something harder. For each feature, *how
 did you memorise it*, with mental imagery among the options. Naming
 imagery there is a claim about **experience**, not about behaviour, and
-it is the kind of report aphantasia research treats as least
+it is the kind of self-report aphantasia research treats as least
 trustworthy.
 
 ``` r
@@ -743,10 +765,10 @@ either: one cell is a structural zero, so a logistic model of the group
 contrast would not converge, and the table already says what the data
 support.
 
-Two further things in that table, neither about imagery. On orientation,
-**44% of the floor group named no strategy at all**, against 7% above it
-— orientation is the feature they abandon, which converges with its
-being the feature with the highest non-response rate ([task
+Two further things in that table. On orientation, **44% of the floor
+group named no strategy at all**, against 7% above it: orientation is
+the feature they abandon, which converges with its being the feature
+with the highest non-response rate ([task
 engagement](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.md)).
 And they named body-centred spatial strategies **less** often than
 typical imagers, 33% against 54%, which cuts against a simple
@@ -835,30 +857,30 @@ model_data |>
 
 Raw responders-only accuracy, not shares {.table}
 
-In levels, the floor group is marginally better on words and clearly
-worse on orientations and colours. **The balance shifts toward words
-because the non-verbal side falls, not because the verbal side rises.**
+In levels, the floor group is marginally better on words and worse on
+orientations and colours. **The balance shifts toward words more due to
+the non-verbal side falling than to the verbal side rising.**
 
-That distinction matters more than it might appear. “Aphantasic
-participants rely more on verbal encoding” and “aphantasic participants
-are worse at the non-verbal features” predict the same compositional
-result, and this analysis cannot separate them. Doing so needs the
-absolute accuracy models, which is exactly why the two framings are
+That distinction matters. “Aphantasic participants rely more on verbal
+encoding” and “aphantasic participants are worse at the non-verbal
+features” predict the same compositional result, and this analysis
+cannot separate them. Doing so needs the absolute accuracy models, which
+is exactly why the two framings (composition and performance) are
 complementary rather than competing.
 
 One further caution. `ilr1` rests partly on word, and the [task
 validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md)
-page shows word does not function as an individual-differences measure.
-The *ratio* is stable where the *level* is not, which is not a
+page shows word does not function well as an individual-differences
+measure. The *ratio* is stable where the *level* is not, which is not a
 contradiction, but no claim here may treat word as a well-measured
 quantity. Measurement noise in an outcome widens intervals rather than
 biasing estimates, so if anything this result is conservative.
 
-## 8. Two checks, and one caveat that is still open
+## 8. Two checks, and one caveat
 
-**The functional form was not assumed.** Five ways of entering imagery
-were compared, with the floor-group form pre-declared as primary
-regardless of which won.
+**1) The functional form was not assumed.** Five ways of entering
+imagery were compared, with the floor-group form pre-declared as primary
+in case of equal model performances.
 
 ``` r
 
@@ -881,12 +903,12 @@ comparison |>
 
 Model comparison, first coordinate {.table}
 
-The forms with a discontinuity sit above those without one, by roughly
-one to one and a half standard errors. That is weak, it was predicted to
-be weak in advance, and it is reported rather than converted into a
-claim.
+The forms with a discontinuity (floor-group and segmented) sit above
+those without one, by roughly one to one and a half standard errors.
+That is weak and cannot be converted into a claim, so the floor-group
+model was selected based on pre-declaration.
 
-**The result survives at trial level.** Each trial is itself a
+**2) The result survives at trial level.** Each trial is itself a
 composition, so the same question can be asked with within-person noise
 separated from between-person signal rather than averaged into it.
 Whether that is possible at all is an empirical question about zeros,
@@ -905,10 +927,6 @@ usable <- trial_parts |>
     dplyr::if_all(tidyselect::starts_with("part_"), \(x) x > 0)
   )
 
-# Counted before the tibble, not inside it: `usable = nrow(usable)` makes
-# every later expression see the count instead of the frame, which is the
-# masking hazard the implementation notes describe. It produced an empty
-# table here rather than an error.
 n_compositions <- nrow(trial_parts)
 n_usable <- nrow(usable)
 
@@ -1009,22 +1027,17 @@ page finds by split-half. They are consistent, not contradictory.
 
 **The caveat, now resolved and narrower than expected.** Every
 composition here is built from items a participant chose to answer,
-which conditions on a selected subsample. The [joint
+which conditions on a selected sub-sample. The [joint
 model](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md)
 tested whether that mattered, and the answer is **feature-specific**:
-willingness and accuracy are related on orientation and unrelated on
-word and colour.
+willingness to respond and accuracy are related on orientation, and
+unrelated on word and colour.
 
-So one of the three parts is built on a selected subsample and the other
-two are not. Both coordinates mix all three parts, so both carry the
-caveat, but through one part rather than three. That is weaker than the
-blanket warning this section used to carry, and it is a constraint on
-interpretation rather than a reason to discount the result.
-
-The same model also settles the question §1 raised about closure:
-between people, accuracy on orientation and colour correlates
-**positively**, so there is no between-person trade-off for closure to
-have been hiding.
+So one of the three parts is built on a selected sub-sample and the
+other two are not. Both coordinates mix all three parts, so both carry
+the caveat, but through one part rather than three. That is small, and
+it is a constraint on interpretation rather than a reason to discount
+the result.
 
 ------------------------------------------------------------------------
 
@@ -1041,6 +1054,12 @@ for the technical detail behind these models.
 
 ------------------------------------------------------------------------
 
+## References
+
+Blazhenkova, O., & Kozhevnikov, M. (2009). The new object-spatial-verbal
+cognitive style model: Theory and measurement. *Applied Cognitive
+Psychology*, *23*(5), 638–663. <https://doi.org/10.1002/acp.1473>
+
     #> ─ Session info ───────────────────────────────────────────────────────────────
     #>  setting  value
     #>  version  R version 4.6.1 (2026-06-24)
@@ -1051,14 +1070,14 @@ for the technical detail behind these models.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  ! package            * version  date (UTC) lib source
     #>    abind                1.4-8    2024-09-12 [2] CRAN (R 4.6.1)
-    #>    aphantasiaWMStrats * 0.1      2026-08-26 [1] local
+    #>    aphantasiaWMStrats * 0.1      2026-08-31 [1] local
     #>    backports            1.5.1    2026-04-03 [2] CRAN (R 4.6.1)
     #>    bayesplot            1.16.0   2026-08-25 [2] CRAN (R 4.6.1)
     #>    bridgesampling       1.2-1    2025-11-19 [2] CRAN (R 4.6.1)
@@ -1115,12 +1134,12 @@ for the technical detail behind these models.
     #>    ragg                 1.5.2    2026-03-23 [2] CRAN (R 4.6.1)
     #>    RColorBrewer         1.1-3    2022-04-03 [2] CRAN (R 4.6.1)
     #>    Rcpp                 1.1.2    2026-07-05 [2] CRAN (R 4.6.1)
-    #>    RcppParallel         6.2.0    2026-07-30 [2] CRAN (R 4.6.1)
+    #>    RcppParallel         6.2.1    2026-08-27 [2] CRAN (R 4.6.1)
     #>    renv                 1.0.7    2024-04-11 [2] RSPM (R 4.6.1)
     #>    rlang                1.3.0    2026-07-05 [2] CRAN (R 4.6.1)
     #>    rmarkdown            2.31     2026-03-26 [2] CRAN (R 4.6.1)
     #>    rstan                2.32.7   2025-03-10 [2] CRAN (R 4.6.1)
-    #>    rstantools           2.7.0    2026-07-26 [2] CRAN (R 4.6.1)
+    #>    rstantools           2.7.1    2026-08-29 [2] CRAN (R 4.6.1)
     #>    S7                   0.2.2    2026-04-22 [2] CRAN (R 4.6.1)
     #>    sass                 0.4.10   2025-04-11 [2] CRAN (R 4.6.1)
     #>    scales               1.4.0    2025-04-24 [2] CRAN (R 4.6.1)
@@ -1138,12 +1157,13 @@ for the technical detail behind these models.
     #>    tidyr                1.3.2    2025-12-19 [2] CRAN (R 4.6.1)
     #>    tidyselect           1.2.1    2024-03-11 [2] CRAN (R 4.6.1)
     #>    vctrs                0.7.3    2026-04-11 [2] CRAN (R 4.6.1)
+    #>    viridisLite          0.4.3    2026-02-04 [2] CRAN (R 4.6.1)
     #>    withr                3.0.3    2026-06-19 [2] CRAN (R 4.6.1)
     #>    xfun                 0.60     2026-07-09 [2] CRAN (R 4.6.1)
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 

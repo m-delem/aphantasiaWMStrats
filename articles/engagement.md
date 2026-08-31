@@ -1,17 +1,15 @@
-# Task engagement: two ways of not doing the task
+# Task engagement: two ways to ease the difficulty
 
-Participants could decline to do the WM-FTT in two places: the
-parity-judgement distractor between encoding and recall, and the recall
-responses themselves. This page establishes what each of those variables
-measures, shows that they are **separate behaviours**, and argues that
-neither is a nuisance to be controlled away.
+Participants sometimes chose to refuse to do some parts of the WM-FTT to
+mitigate the difficulty: the parity-judgement distractor between
+encoding and recall, and some of the recall responses themselves. This
+page establishes what each of those variables measures, shows that they
+are **separate behaviours**, and argues that neither is a nuisance to be
+controlled away.
 
 The second claim is the one the modelling pages depend on. Under a
 points-per-feature incentive with optional recall, **declining to report
 a feature is an allocation decision**, not missing data.
-
-It is descriptive groundwork. The models that build on it live
-elsewhere.
 
 ``` r
 
@@ -49,48 +47,21 @@ by_participant <- block_trials |>
 engaged <- engaged_ids(block_trials)
 ```
 
-Two of those objects are used before the page that defines them, so they
-are stated here rather than left implicit.
 [`engaged_ids()`](https://m-delem.github.io/aphantasiaWMStrats/reference/engaged_ids.md)
-keeps the participants who answered at least 32 word, 22 orientation and
-29 colour items of the 63 presented. The [task
+keeps only the participants who answered at least 32 word, 22
+orientation and 29 colour items of the 63 presented. The [task
 validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md)
 page derives those numbers and explains what they are for; here they
-serve only to separate *abandoning the distractor* from *abandoning the
-task*.
+serve only to separate abandoning the *distractor* from abandoning the
+*task*.
 
 ## 1. The parity task had no consequence in v1
 
-The scoring design was meant to make the distractor cost something: an
-incorrect parity judgement deducts from the trial score. That penalty
-was added in v2. **In v1 it is absent**, and since v1 is the primary
-analysis sample, the distractor there was free.
-
-``` r
-
-block_trials |>
-  dplyr::summarise(
-    feature_scores_summed = sum(feedback_score_word) + sum(feedback_score_angle) +
-      sum(feedback_score_color),
-    trial_score_shown = dplyr::first(feedback_trial_score),
-    .by = c(id, expe_phase, trial_number)
-  ) |>
-  dplyr::summarise(
-    trials = dplyr::n(),
-    trials_where_they_match = sum(abs(feature_scores_summed - trial_score_shown) < 1e-9)
-  ) |>
-  knitr::kable(caption = "v1: the trial score is exactly the sum of the three feature scores")
-```
-
-| trials | trials_where_they_match |
-|-------:|------------------------:|
-|   1848 |                    1848 |
-
-v1: the trial score is exactly the sum of the three feature scores
-{.table}
-
-Every trial. No deduction was ever applied, so a participant who worked
-out that parity did not count lost nothing by ignoring it.
+The parity was meant to increase the cognitive load of the participants,
+however, as of v1, not doing it did not cost them any points in the
+final score (the penalty for not doing the parity was added in v2). No
+deduction was ever applied, so a participant who worked out that parity
+did not count lost nothing by ignoring it.
 
 Some of them worked it out.
 
@@ -116,7 +87,7 @@ Participants who ignored the distractor entirely, v1 {.table}
 those clear the per-feature engagement thresholds on the recall task.
 That is not withdrawal. Under v1’s incentives, abandoning a
 consequence-free secondary task while keeping recall performance intact
-is the rational move.
+was the rational move.
 
 ## 2. What the parity accuracy column actually measures
 
@@ -194,10 +165,9 @@ What the naive column is made of {.table}
 
 The naive column is almost perfectly correlated with the proportion of
 probes answered, and weakly with accuracy among those answered. It is a
-response-rate variable wearing an accuracy name, and that is the whole
-explanation for its bimodality. Meanwhile the two real components are
-close to orthogonal, so collapsing them does not blur two related
-quantities: it discards one.
+response-rate variable wearing an accuracy name. Meanwhile the two real
+components are close to orthogonal, so collapsing them does not blur two
+related quantities: it discards one.
 
 ``` r
 
@@ -232,7 +202,7 @@ Whether someone did the distractor is bimodal, with a hard spike at
 zero. How well they did it, among those who did, is unimodal and well
 above the chance line. Only the second is an accuracy variable.
 
-### The claim this section used to make
+### The false claim that might have emerged
 
 An earlier version of this page reported a correlation between the naive
 column and VVIQ and concluded that it was “the finding that stops parity
@@ -268,8 +238,8 @@ Parity against VVIQ, v1 {.table}
 The original figure was rho = -0.154 with p = 0.157, which is not
 evidence for a direction, and it came from a variable that measures
 willingness rather than accuracy. Neither corrected component does any
-better. **Parity engagement is not related to imagery vividness in this
-sample.**
+better. **Parity engagement is not related to imagery vividness in the
+v1 sample.**
 
 ## 3. The second signal: declining to report a feature
 
@@ -328,10 +298,8 @@ Feature non-response against parity engagement, v1 {.table}
 The correlations are near zero and inconsistent in sign. Ignoring the
 distractor tells you essentially nothing about whether someone will
 answer a recall prompt, which is what a shared-disengagement account
-would need. **Two behaviours, not one.**
-
-That has a practical consequence. A single “engagement” covariate would
-average two unrelated things and control for neither.
+would need. Parity and non-response variables reflect **two
+behaviours**, not one.
 
 ## 5. What this means downstream
 
@@ -388,15 +356,11 @@ recalled at all.
 **Non-response is the substantive one.** It is folded into the recall
 scores as zeros, so any analysis of accuracy that ignores the
 `responded_*` flags is measuring a blend of accuracy and willingness to
-answer. The
-[Scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
-page quantifies how much difference that makes.
-
-More than that: under a points-per-feature incentive with optional
-recall, choosing not to report a feature **is** an allocation decision,
-and arguably a more direct one than how accurately a reported feature
-was recalled. Treating it as missing data discards the clearest
-strategic signal the task produces. That is why the [joint
+answer. Under a points-per-feature incentive with optional recall,
+choosing not to report a feature **is** an allocation decision, and
+arguably a more direct one than how accurately a reported feature was
+recalled. Treating it as missing data discards the clearest strategic
+signal the task produces. That is why the [joint
 model](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md)
 fits whether a feature was reported and how well it was reported
 together, rather than conditioning on the first and analysing only the
@@ -424,13 +388,13 @@ which explains what the modelling pages do and why.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  package            * version date (UTC) lib source
-    #>  aphantasiaWMStrats * 0.1     2026-08-26 [1] local
+    #>  aphantasiaWMStrats * 0.1     2026-08-31 [1] local
     #>  bslib                0.12.0  2026-08-04 [2] CRAN (R 4.6.1)
     #>  cachem               1.1.0   2024-05-16 [2] CRAN (R 4.6.1)
     #>  cli                  3.6.6   2026-04-09 [2] CRAN (R 4.6.1)
@@ -484,7 +448,7 @@ which explains what the modelling pages do and why.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

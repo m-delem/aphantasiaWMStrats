@@ -295,9 +295,8 @@ How far participants move between the two periods {.table}
 
 Using 360 for orientation would score a perpendicular error, the most
 wrong an orientation can be, as 0.5 rather than 0, and no response could
-score 0 at all. The choice is structural rather than empirical, but it
-is not cosmetic: participant rankings move by up to 21 places out of 88
-between the two conventions.
+score 0 at all. The choice is not cosmetic: participant rankings move by
+up to 21 places out of 88 between the two conventions.
 
 ## 3. What counts as a response
 
@@ -326,7 +325,7 @@ Between 6.7% and 13.6% of v1 items are non-responses. These are scored 0
 and flagged, rather than set to `NA`.
 
 `NA` would be the more cautious-looking choice and is the worse one.
-Non-response here is unlikely to be missing-at-random, so listwise
+Non-response here is unlikely to be missing-at-random, so list-wise
 deletion would silently drop a non-random subset. Scoring 0 produces a
 visible distortion in the distribution instead of an invisible one in
 the inference. The `responded_*` flags then let any analysis separate
@@ -416,16 +415,17 @@ either boundary at all. Word is not: 90.7% of responded word items are
 exact matches, and 3.2% are exact misses. Colour has a trace of mass at
 one and none at zero.
 
-**Those three patterns need three different treatments**, and each
-choice follows from what the boundary means rather than from
-convenience.
+**Those three patterns need three different treatments**, i.e. different
+**distributional families** to model the responses, and each choice
+follows from what the boundary means rather than from convenience.
 
 - **Word’s boundaries are real.** A recalled word either matches the
   target or it does not, so the pile at one is a genuine point mass, and
   the zeros here are wrong answers rather than absent ones: this table
   is already conditional on responding. Both earn an inflation
-  component, so word is modelled with a zero-one-inflated Beta.
-- **Orientation needs nothing.** Plain Beta.
+  component, so word is modelled with a zero-one-inflated Beta
+  distribution.
+- **Orientation needs nothing.** Plain Beta distribution.
 - **Colour’s mass at one is an artifact.** Colour score is cosine
   similarity on a continuous wheel, so an exact 1 is an error of exactly
   zero degrees, which is pixel resolution rather than a behaviour.
@@ -440,56 +440,6 @@ columns is non-response, which is a different quantity again and is
 modelled as such: see [task
 engagement](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.md).
 
-## 6. Reliability, and what these scores support
-
-Both questions have moved to their own page: [task
-validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md).
-It covers the trial-level split-half procedure, the derived engagement
-thresholds, the finding that word does not function as an
-individual-differences measure in this sample, and the stability of the
-compositional coordinates.
-
-The short version: orientation and colour clear the conventional marks
-for individual-level interpretation, word does not, and no downstream
-model should make an individual-differences claim about word whatever
-its coefficients say.
-
-## 7. For a future version of the task
-
-The design goal was a three-way trade-off. Correlations between the
-three features, after removing each participant’s overall level, once
-looked like a **two-way** one: orientation and colour trading off
-against each other while word sat out at ceiling. That reading is
-withdrawn. It was six participants who answered very few orientation
-items, and the [what was tried and
-withdrawn](https://m-delem.github.io/aphantasiaWMStrats/articles/lessons.md)
-page owns that withdrawal and shows both tables side by side.
-
-What survives is weaker and still worth acting on: word is far too easy,
-with 90.7% of responded items at ceiling and a reliability that does not
-support individual-differences use, so it cannot be carrying much of a
-trade-off whatever the correlations say.
-
-Three changes would address what this analysis could not:
-
-- **Make word harder**, with longer words, more items per trial, or
-  shorter exposure, so the verbal feature enters the trade-off and
-  discriminates.
-- **Distinguish abstention from a default**, via an explicit “I don’t
-  know” control, separate from an untouched widget, and a confidence
-  rating. Abstention is currently far faster than responding, which
-  rules out effortful-but-failed search but cannot separate “nothing to
-  report” from “not worth the effort”.
-- **Vary the points per feature**, since strategic abstention should
-  respond to incentive and representational absence should not.
-
-## References
-
-Gonthier, C. (2022). An easy way to improve scoring of memory span
-tasks: The edit distance, beyond “correct recall in the correct serial
-position.” *Behavior Research Methods*, *55*(4).
-<https://doi.org/10.3758/s13428-022-01908-2>
-
 ------------------------------------------------------------------------
 
 **Continuing through the Extended Online Report:** this page follows
@@ -503,6 +453,13 @@ which explains what the modelling pages do and why.
 
 ------------------------------------------------------------------------
 
+## References
+
+Gonthier, C. (2022). An easy way to improve scoring of memory span
+tasks: The edit distance, beyond “correct recall in the correct serial
+position.” *Behavior Research Methods*, *55*(4).
+<https://doi.org/10.3758/s13428-022-01908-2>
+
     #> ─ Session info ───────────────────────────────────────────────────────────────
     #>  setting  value
     #>  version  R version 4.6.1 (2026-06-24)
@@ -513,13 +470,13 @@ which explains what the modelling pages do and why.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  package            * version date (UTC) lib source
-    #>  aphantasiaWMStrats * 0.1     2026-08-26 [1] local
+    #>  aphantasiaWMStrats * 0.1     2026-08-31 [1] local
     #>  bslib                0.12.0  2026-08-04 [2] CRAN (R 4.6.1)
     #>  cachem               1.1.0   2024-05-16 [2] CRAN (R 4.6.1)
     #>  cli                  3.6.6   2026-04-09 [2] CRAN (R 4.6.1)
@@ -568,7 +525,7 @@ which explains what the modelling pages do and why.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

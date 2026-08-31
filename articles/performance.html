@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -103,17 +103,14 @@
     
     
 <p>How accurately is each feature recalled, and does imagery vividness
-predict it? This is the question the study started from, and it is no
-longer the main event: the <a href="composition.html">composition</a>
-page reports the primary result, because <em>where</em> effort goes is
-what the task was built to measure and absolute accuracy cannot separate
-a deliberate choice from an inability.</p>
+predict it? Although interesting, this question was only secondary and
+complementary to the <a href="composition.html">composition</a>
+analysis: <em>where</em> effort goes is what the task was built to
+measure, and absolute accuracy cannot separate a deliberate choice from
+an inability.</p>
 <p>This page is the same data read the other way. Like the composition
-it conditions on responded items, and whether that is innocent is tested
-on the <a href="joint-model.html">joint model</a> page.</p>
-<p>Same data through a simpler lens, so agreement with the joint model
-is not independent evidence. It is still worth having, because a result
-that appears only under the more complex model deserves suspicion.</p>
+it conditions on responded items, and whether that choice is innocent is
+tested on the <a href="joint-model.html">joint model</a> page.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">v1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"v1"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^expe_block"</span>, <span class="va">expe_phase</span><span class="op">)</span><span class="op">)</span></span>
@@ -145,20 +142,16 @@ that appears only under the more complex model deserves suspicion.</p>
 <span><span class="va">feature_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"Word"</span>, angle <span class="op">=</span> <span class="st">"Orientation"</span>, color <span class="op">=</span> <span class="st">"Colour"</span><span class="op">)</span></span></code></pre></div>
 <p>This page uses the 79 participants who clear the engagement
 thresholds of the <a href="task-validity.html">task validity</a> page
-<strong>and</strong> have a vividness score, not the 86 the <a href="joint-model.html">joint model</a> uses. The 81 who clear the
-thresholds include two with no VVIQ, and every page that reports a
-floor-group offset needs one; <a href="analysis-strategy.html#samples">the analysis</a> sets out the
-whole chain. The thresholds are there to stop imprecise participant
-means being treated as measurements, and unlike the joint model this
-analysis does form them.</p>
+<strong>and</strong> have a vividness score. The thresholds are there to
+stop imprecise participant means being treated as measurements.</p>
 <div class="section level2">
-<h2 id="three-features-three-response-families">1. Three features, three response families<a class="anchor" aria-label="anchor" href="#three-features-three-response-families"></a>
+<h2 id="perf-families">1. Three features, three response families<a class="anchor" aria-label="anchor" href="#perf-families"></a>
 </h2>
 <p>Nothing about these scores makes a single response family
 appropriate, and the <a href="scoring.html">scoring</a> page shows why:
 on responded items, word piles at 1, orientation has no boundary mass at
-all, and colour has a trace of mass at 1 that is pixel resolution rather
-than behaviour.</p>
+all, and colour has a trace of mass at 1 that is more about pixel
+resolution than behaviour.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/performance_formula.html">performance_formula</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; score_word | subset(responded_word) ~ vviq + complete_aphant + parity_rate + (1 | p | id) </span></span>
@@ -170,14 +163,15 @@ variable in its own right rather than a control for something it does
 not predict. The <a href="joint-model.html">joint model</a> puts it on
 its accuracy arms and not on its gates, for the same reason, so the two
 pages estimate the same quantity.</p>
-<p>Word takes a zero-one-inflated Beta because its ceiling is a real
-point mass, orientation a plain Beta, and colour a Beta after a
-Smithson-Verkuilen squeeze. <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code> restricts each arm to
-the items that feature was reported on, which is what lets one row carry
-three responses with independent non-response.</p>
+<p>Word takes a zero-one-inflated Beta family because its ceiling is a
+real point mass, orientation a plain Beta family, and colour a Beta
+family after a Smithson-Verkuilen squeeze. <code><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset()</a></code>
+restricts each arm to the items that feature was reported on, which is
+what lets one row carry three responses with independent
+non-response.</p>
 </div>
 <div class="section level2">
-<h2 id="modelling-the-features-separately-is-the-wrong-thing-to-do">2. Modelling the features separately is the wrong thing to do<a class="anchor" aria-label="anchor" href="#modelling-the-features-separately-is-the-wrong-thing-to-do"></a>
+<h2 id="perf-separate">2. Modelling the features separately?<a class="anchor" aria-label="anchor" href="#perf-separate"></a>
 </h2>
 <p>Start with what looks obvious: fit each feature on its own.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -209,14 +203,14 @@ three responses with independent non-response.</p>
 <span>  Orientation <span class="op">=</span> <span class="fu">fit_feature</span><span class="op">(</span><span class="st">"angle"</span>, <span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://paulbuerkner.com/brms/reference/brmsfamily.html" class="external-link">Beta</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"perf-a-angle.rds"</span><span class="op">)</span>,</span>
 <span>  Colour <span class="op">=</span> <span class="fu">fit_feature</span><span class="op">(</span><span class="st">"color"</span>, <span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://paulbuerkner.com/brms/reference/brmsfamily.html" class="external-link">Beta</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"perf-a-color.rds"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The task makes that false by construction. Points are traded across
-features within a trial, so a participant who does well on one has spent
-effort they could not spend elsewhere. Three independent models cannot
-represent that, and more importantly they cannot
+<p>The task makes that misleading by construction. Points are traded
+across features within a trial, so a participant who does well on one
+has spent effort they could not spend elsewhere. Three independent
+models cannot represent that, and more importantly they cannot
 <strong>measure</strong> it.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># lkj(2) mildly favours the identity, so the cross-feature correlations</span></span>
-<span><span class="co"># have to be earned from the data rather than assumed. It is passed here</span></span>
+<span><span class="co"># have to be earned from the data. It is passed here</span></span>
 <span><span class="co"># rather than left to brms' default lkj(1), because section 3 reads the</span></span>
 <span><span class="co"># posteriors against this prior and a different one would make that read</span></span>
 <span><span class="co"># wrong.</span></span>
@@ -238,8 +232,8 @@ represent that, and more importantly they cannot
 <p>The correlated model adds <code>(1 | p | id)</code>, which gives the
 three features a shared participant-level correlation matrix. That is
 the whole difference, and it buys two things: a dependency structure the
-design implies, and three named correlations that are themselves the
-quantity of interest.</p>
+design implies, and three named correlations that are themselves
+quantities of interest.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">offsets</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/imap.html" class="external-link">imap</a></span><span class="op">(</span><span class="va">independent</span>, \<span class="op">(</span><span class="va">model</span>, <span class="va">feature</span><span class="op">)</span> <span class="op">{</span></span>
@@ -266,15 +260,14 @@ quantity of interest.</p>
 <span>  <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palette.html" class="external-link">palette.colors</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, name <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Floor-group offset, log-odds"</span>, y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"The same quantity, estimated two ways."</span><span class="op">)</span></span></code></pre></div>
-<p><img src="performance_files/figure-html/contrast-1.png" class="r-plt" alt="Floor-group offsets from independent and correlated models." width="100%"></p>
-<p><strong>The coefficients barely move.</strong> That is worth saying
-plainly rather than implying the simpler model was misleading: on these
-data, respecting the dependency structure changes the floor-group
-estimates very little. What it adds is not a correction but a
-measurement.</p>
+<p><img src="performance_files/figure-html/contrast-1.png" class="r-plt" alt="Floor-group offsets from independent and correlated models." width="768"></p>
+<p><strong>The coefficients barely move.</strong> On these data,
+respecting the dependency structure changes the floor-group estimates
+very little. What it adds is not a correction but a measurement: the
+correlations between features.</p>
 </div>
 <div class="section level2">
-<h2 id="what-the-correlations-say">3. What the correlations say<a class="anchor" aria-label="anchor" href="#what-the-correlations-say"></a>
+<h2 id="perf-correlations">3. What the correlations say<a class="anchor" aria-label="anchor" href="#perf-correlations"></a>
 </h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/posterior_correlations.html">posterior_correlations</a></span><span class="op">(</span><span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/posterior/reference/draws_df.html" class="external-link">as_draws_df</a></span><span class="op">(</span><span class="va">correlated</span><span class="op">)</span>, lkj <span class="op">=</span> <span class="fl">2</span>, dimension <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -324,17 +317,12 @@ measurement.</p>
 <p>Orientation and colour correlate <strong>positively</strong>, and
 clearly. Between people, doing well on one non-verbal feature goes with
 doing well on the other: shared ability, not a trade-off.</p>
-<p>This matters because the raw data suggests the opposite. Working from
-proportions, orientation and colour appear to trade off, and the <a href="scoring.html">scoring</a> page shows why that reading is an
-artifact: residualising three parts on their own mean induces negative
-correlation whatever the data says. Here the parts are not closed, so a
-negative correlation would have meant something. It is positive.</p>
 <p><strong>The trade-off the task imposes is a within-trial constraint,
 not a between-person one.</strong> The <a href="joint-model.html">joint
 model</a> reaches the same conclusion with the gates in place.</p>
 </div>
 <div class="section level2">
-<h2 id="how-imagery-enters">4. How imagery enters<a class="anchor" aria-label="anchor" href="#how-imagery-enters"></a>
+<h2 id="perf-imagery">4. How imagery enters<a class="anchor" aria-label="anchor" href="#perf-imagery"></a>
 </h2>
 <p>Vividness is not a smoothly continuous predictor here, so rather than
 assume a form, several were compared on orientation, which is the
@@ -413,10 +401,9 @@ it is reported rather than converted into a claim: at this sample size,
 with this outcome, a comparison of four models was never going to be
 decisive.</p>
 <p>The floor-group form remains primary because it was declared so
-before fitting, not because it won. Its justification is structural:
-participants at the scale floor have no vividness variance among
-themselves, so a slope cannot be estimated for them, while an offset
-can.</p>
+before fitting. Its justification is structural: participants at the
+scale floor have no vividness variance among themselves, so a slope
+cannot be estimated for them, while an offset can.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">orientation</span> <span class="op">&lt;-</span> <span class="va">independent</span><span class="op">$</span><span class="va">Orientation</span></span>
 <span></span>
@@ -458,19 +445,19 @@ can.</p>
 <span>                         <span class="va">effect</span><span class="op">[[</span><span class="st">"Q2.5"</span><span class="op">]</span><span class="op">]</span>, <span class="va">effect</span><span class="op">[[</span><span class="st">"Q97.5"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>  y_lab <span class="op">=</span> <span class="st">"Orientation recall accuracy"</span>,</span>
 <span>  caption <span class="op">=</span> <span class="st">"Offset in log-odds. Points coloured by vividness."</span>,</span>
-<span>  base_size <span class="op">=</span> <span class="fl">16</span>, point_size <span class="op">=</span> <span class="fl">2.2</span>, left_expansion <span class="op">=</span> <span class="fl">0.15</span>,</span>
+<span>  base_size <span class="op">=</span> <span class="fl">16</span>, point_size <span class="op">=</span> <span class="fl">2.2</span>, left_expansion <span class="op">=</span> <span class="fl">0.09</span>,</span>
 <span>  arrow_nudge <span class="op">=</span> <span class="op">-</span><span class="fl">5.5</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plot_vviq_histogram.html">plot_vviq_histogram</a></span><span class="op">(</span><span class="va">observed</span><span class="op">$</span><span class="va">vviq</span>, base_size <span class="op">=</span> <span class="fl">16</span>, left_expansion <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span> <span class="op">/</span></span>
 <span>  <span class="va">main_panel</span> <span class="op">+</span> <span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="performance_files/figure-html/floor-figure-1.png" class="r-plt" alt="Orientation accuracy against imagery vividness, with the floor group shown separately." width="100%"></p>
+<p><img src="performance_files/figure-html/floor-figure-1.png" class="r-plt" alt="Orientation accuracy against imagery vividness, with the floor group shown separately." width="768"></p>
 <p>The histogram is the argument for the model: vividness is a spike at
 the floor plus an irregular remainder, not a continuum. In the panel the
 arrow has almost nothing to span, which is the result.</p>
 </div>
 <div class="section level2">
-<h2 id="where-the-floor-group-does-and-does-not-differ">5. Where the floor group does and does not differ<a class="anchor" aria-label="anchor" href="#where-the-floor-group-does-and-does-not-differ"></a>
+<h2 id="perf-floor">5. Where the floor group does and does not differ<a class="anchor" aria-label="anchor" href="#perf-floor"></a>
 </h2>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">feature_labels</span><span class="op">)</span>, \<span class="op">(</span><span class="va">feature</span><span class="op">)</span> <span class="op">{</span></span>
@@ -523,11 +510,11 @@ this page is not where that claim should be made, and the <a href="composition.h
 through a quantity that does clear its reliability gate.</p>
 </div>
 <div class="section level2">
-<h2 id="partial-pooling-made-visible">6. Partial pooling, made visible<a class="anchor" aria-label="anchor" href="#partial-pooling-made-visible"></a>
+<h2 id="perf-pooling">6. Partial pooling<a class="anchor" aria-label="anchor" href="#perf-pooling"></a>
 </h2>
 <p>A multilevel model does not take each participant’s mean at face
-value: it pulls imprecise estimates toward the group. Worth seeing
-rather than asserting, because on one feature it is dramatic.</p>
+value: it pulls imprecise estimates toward the group. On one feature,
+this pull is dramatic:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">observed_means</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compose_features.html">compose_features</a></span><span class="op">(</span><span class="va">model_data</span>, <span class="va">id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"mean_"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -556,7 +543,7 @@ rather than asserting, because on one feature it is dramatic.</p>
 <span>  <span class="fu"><a href="../reference/scale_discrete_feature.html">scale_discrete_feature</a></span><span class="op">(</span>aesthetics <span class="op">=</span> <span class="st">"colour"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Observed mean, responded items"</span>, y <span class="op">=</span> <span class="st">"Model-implied mean"</span>,</span>
 <span>       caption <span class="op">=</span> <span class="st">"Points off the diagonal have been pulled toward the group."</span><span class="op">)</span></span></code></pre></div>
-<p><img src="performance_files/figure-html/shrinkage-1.png" class="r-plt" alt="Observed against model-implied participant means for the three features." width="100%"></p>
+<p><img src="performance_files/figure-html/shrinkage-1.png" class="r-plt" alt="Observed against model-implied participant means for the three features." width="768"></p>
 <p>Orientation and colour track the diagonal with modest shrinkage,
 which is what partial pooling normally looks like.</p>
 <p><strong>Word does not track it at all.</strong> Observed means run
@@ -585,14 +572,14 @@ technical detail behind these models.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">!</span> <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
 <span><span class="co">#&gt;    abind                1.4-8    <span style="color: #555555;">2024-09-12</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;    aphantasiaWMStrats * 0.1      <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;    backports            1.5.1    <span style="color: #555555;">2026-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bayesplot            1.16.0   <span style="color: #555555;">2026-08-25</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    bridgesampling       1.2-1    <span style="color: #555555;">2025-11-19</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -648,12 +635,12 @@ technical detail behind these models.</p>
 <span><span class="co">#&gt;    ragg                 1.5.2    <span style="color: #555555;">2026-03-23</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    RColorBrewer         1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    Rcpp                 1.1.2    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    RcppParallel         6.2.0    <span style="color: #555555;">2026-07-30</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    RcppParallel         6.2.1    <span style="color: #555555;">2026-08-27</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    renv                 1.0.7    <span style="color: #555555;">2024-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rlang                1.3.0    <span style="color: #555555;">2026-07-05</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rmarkdown            2.31     <span style="color: #555555;">2026-03-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    rstan                2.32.7   <span style="color: #555555;">2025-03-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
-<span><span class="co">#&gt;    rstantools           2.7.0    <span style="color: #555555;">2026-07-26</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
+<span><span class="co">#&gt;    rstantools           2.7.1    <span style="color: #555555;">2026-08-29</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    S7                   0.2.2    <span style="color: #555555;">2026-04-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    sass                 0.4.10   <span style="color: #555555;">2025-04-11</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    scales               1.4.0    <span style="color: #555555;">2025-04-24</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -677,7 +664,7 @@ technical detail behind these models.</p>
 <span><span class="co">#&gt;    xtable               1.8-8    <span style="color: #555555;">2026-02-22</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;    yaml                 2.3.12   <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt; </span></span>

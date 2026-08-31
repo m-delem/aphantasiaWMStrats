@@ -214,8 +214,7 @@ and
 [`centred_correlations()`](https://m-delem.github.io/aphantasiaWMStrats/reference/centred_correlations.md)
 are the estimators behind the numbers on the documentation pages.
 
-**Model specifications.** The formulas and priors are exported objects,
-not code buried in a script:
+**Model specifications.** The formulas and priors are exported objects:
 
 ``` r
 
@@ -228,12 +227,12 @@ joint_formula()
 #> score_color | subset(responded_color) ~ vviq + complete_aphant + parity_rate + (1 | p | id)
 ```
 
-This matters for reproducibility rather than tidiness. Documentation
-pages load fitted models with `file_refit = "never"`, and brms returns a
-cached fit **without checking** that the formula it was handed matches
-the one the model was fitted with. A page that re-typed its formula
-could display something that is not what produced its numbers. Calling
-the builder makes that impossible.
+This matters for reproducibility. Documentation pages load fitted models
+with `file_refit = "never"`, and brms returns a cached fit **without
+checking** that the formula it was handed matches the one the model was
+fitted with. A page that re-typed its formula could display something
+that is not what produced its numbers. Calling the builder makes that
+impossible.
 
 [`joint_priors()`](https://m-delem.github.io/aphantasiaWMStrats/reference/joint_priors.md),
 [`performance_formula()`](https://m-delem.github.io/aphantasiaWMStrats/reference/performance_formula.md),
@@ -251,9 +250,9 @@ pages render the same figures at `base_size = 16`.
 
 ## Where to go next
 
-The documentation is an [Extended Online
-Report](https://m-delem.github.io/aphantasiaWMStrats/): pages ordered so
-that no quantity appears before the page that defines it.
+The documentation is an Extended Online Report: interlinked pages
+ordered so that no quantity appears before the page that defines it. To
+dive in:
 
 - [**Task
   design**](https://m-delem.github.io/aphantasiaWMStrats/articles/task-design.md)
@@ -288,14 +287,14 @@ that no quantity appears before the page that defines it.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  ! package            * version  date (UTC) lib source
     #>    abind                1.4-8    2024-09-12 [2] CRAN (R 4.6.1)
-    #>    aphantasiaWMStrats * 0.1      2026-08-26 [1] local
+    #>    aphantasiaWMStrats * 0.1      2026-08-31 [1] local
     #>    backports            1.5.1    2026-04-03 [2] CRAN (R 4.6.1)
     #>    bayesplot            1.16.0   2026-08-25 [2] CRAN (R 4.6.1)
     #>    bridgesampling       1.2-1    2025-11-19 [2] CRAN (R 4.6.1)
@@ -343,11 +342,11 @@ that no quantity appears before the page that defines it.
     #>    ragg                 1.5.2    2026-03-23 [2] CRAN (R 4.6.1)
     #>    RColorBrewer         1.1-3    2022-04-03 [2] CRAN (R 4.6.1)
     #>    Rcpp                 1.1.2    2026-07-05 [2] CRAN (R 4.6.1)
-    #>    RcppParallel         6.2.0    2026-07-30 [2] CRAN (R 4.6.1)
+    #>    RcppParallel         6.2.1    2026-08-27 [2] CRAN (R 4.6.1)
     #>    renv                 1.0.7    2024-04-11 [2] RSPM (R 4.6.1)
     #>    rlang                1.3.0    2026-07-05 [2] CRAN (R 4.6.1)
     #>    rmarkdown            2.31     2026-03-26 [2] CRAN (R 4.6.1)
-    #>    rstantools           2.7.0    2026-07-26 [2] CRAN (R 4.6.1)
+    #>    rstantools           2.7.1    2026-08-29 [2] CRAN (R 4.6.1)
     #>    S7                   0.2.2    2026-04-22 [2] CRAN (R 4.6.1)
     #>    sass                 0.4.10   2025-04-11 [2] CRAN (R 4.6.1)
     #>    scales               1.4.0    2025-04-24 [2] CRAN (R 4.6.1)
@@ -366,7 +365,7 @@ that no quantity appears before the page that defines it.
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 

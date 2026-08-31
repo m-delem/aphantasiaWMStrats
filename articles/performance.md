@@ -1,22 +1,17 @@
 # Performance: how well each feature is recalled
 
 How accurately is each feature recalled, and does imagery vividness
-predict it? This is the question the study started from, and it is no
-longer the main event: the
+predict it? Although interesting, this question was only secondary and
+complementary to the
 [composition](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md)
-page reports the primary result, because *where* effort goes is what the
-task was built to measure and absolute accuracy cannot separate a
-deliberate choice from an inability.
+analysis: *where* effort goes is what the task was built to measure, and
+absolute accuracy cannot separate a deliberate choice from an inability.
 
 This page is the same data read the other way. Like the composition it
-conditions on responded items, and whether that is innocent is tested on
-the [joint
+conditions on responded items, and whether that choice is innocent is
+tested on the [joint
 model](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md)
 page.
-
-Same data through a simpler lens, so agreement with the joint model is
-not independent evidence. It is still worth having, because a result
-that appears only under the more complex model deserves suspicion.
 
 ``` r
 
@@ -53,14 +48,8 @@ feature_labels <- c(word = "Word", angle = "Orientation", color = "Colour")
 This page uses the 79 participants who clear the engagement thresholds
 of the [task
 validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md)
-page **and** have a vividness score, not the 86 the [joint
-model](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md)
-uses. The 81 who clear the thresholds include two with no VVIQ, and
-every page that reports a floor-group offset needs one; [the
-analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.html#samples)
-sets out the whole chain. The thresholds are there to stop imprecise
-participant means being treated as measurements, and unlike the joint
-model this analysis does form them.
+page **and** have a vividness score. The thresholds are there to stop
+imprecise participant means being treated as measurements.
 
 ## 1. Three features, three response families
 
@@ -68,8 +57,8 @@ Nothing about these scores makes a single response family appropriate,
 and the
 [scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
 page shows why: on responded items, word piles at 1, orientation has no
-boundary mass at all, and colour has a trace of mass at 1 that is pixel
-resolution rather than behaviour.
+boundary mass at all, and colour has a trace of mass at 1 that is more
+about pixel resolution than behaviour.
 
 ``` r
 
@@ -88,14 +77,14 @@ model](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md)
 puts it on its accuracy arms and not on its gates, for the same reason,
 so the two pages estimate the same quantity.
 
-Word takes a zero-one-inflated Beta because its ceiling is a real point
-mass, orientation a plain Beta, and colour a Beta after a
-Smithson-Verkuilen squeeze.
+Word takes a zero-one-inflated Beta family because its ceiling is a real
+point mass, orientation a plain Beta family, and colour a Beta family
+after a Smithson-Verkuilen squeeze.
 [`subset()`](https://rdrr.io/r/base/subset.html) restricts each arm to
 the items that feature was reported on, which is what lets one row carry
 three responses with independent non-response.
 
-## 2. Modelling the features separately is the wrong thing to do
+## 2. Modelling the features separately?
 
 Start with what looks obvious: fit each feature on its own.
 
@@ -131,7 +120,7 @@ independent <- list(
 )
 ```
 
-The task makes that false by construction. Points are traded across
+The task makes that misleading by construction. Points are traded across
 features within a trial, so a participant who does well on one has spent
 effort they could not spend elsewhere. Three independent models cannot
 represent that, and more importantly they cannot **measure** it.
@@ -139,7 +128,7 @@ represent that, and more importantly they cannot **measure** it.
 ``` r
 
 # lkj(2) mildly favours the identity, so the cross-feature correlations
-# have to be earned from the data rather than assumed. It is passed here
+# have to be earned from the data. It is passed here
 # rather than left to brms' default lkj(1), because section 3 reads the
 # posteriors against this prior and a different one would make that read
 # wrong.
@@ -163,8 +152,8 @@ correlated <- fit_brms_model(
 The correlated model adds `(1 | p | id)`, which gives the three features
 a shared participant-level correlation matrix. That is the whole
 difference, and it buys two things: a dependency structure the design
-implies, and three named correlations that are themselves the quantity
-of interest.
+implies, and three named correlations that are themselves quantities of
+interest.
 
 ``` r
 
@@ -198,10 +187,10 @@ ggplot(offsets, aes(x = estimate, y = feature, colour = model)) +
 ![Floor-group offsets from independent and correlated
 models.](performance_files/figure-html/contrast-1.png)
 
-**The coefficients barely move.** That is worth saying plainly rather
-than implying the simpler model was misleading: on these data,
-respecting the dependency structure changes the floor-group estimates
-very little. What it adds is not a correction but a measurement.
+**The coefficients barely move.** On these data, respecting the
+dependency structure changes the floor-group estimates very little. What
+it adds is not a correction but a measurement: the correlations between
+features.
 
 ## 3. What the correlations say
 
@@ -227,14 +216,6 @@ Participant-level correlations between features {.table}
 Orientation and colour correlate **positively**, and clearly. Between
 people, doing well on one non-verbal feature goes with doing well on the
 other: shared ability, not a trade-off.
-
-This matters because the raw data suggests the opposite. Working from
-proportions, orientation and colour appear to trade off, and the
-[scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
-page shows why that reading is an artifact: residualising three parts on
-their own mean induces negative correlation whatever the data says. Here
-the parts are not closed, so a negative correlation would have meant
-something. It is positive.
 
 **The trade-off the task imposes is a within-trial constraint, not a
 between-person one.** The [joint
@@ -304,10 +285,9 @@ this outcome, a comparison of four models was never going to be
 decisive.
 
 The floor-group form remains primary because it was declared so before
-fitting, not because it won. Its justification is structural:
-participants at the scale floor have no vividness variance among
-themselves, so a slope cannot be estimated for them, while an offset
-can.
+fitting. Its justification is structural: participants at the scale
+floor have no vividness variance among themselves, so a slope cannot be
+estimated for them, while an offset can.
 
 ``` r
 
@@ -351,7 +331,7 @@ main_panel <- plot_floor_group(
                          effect[["Q2.5"]], effect[["Q97.5"]]),
   y_lab = "Orientation recall accuracy",
   caption = "Offset in log-odds. Points coloured by vividness.",
-  base_size = 16, point_size = 2.2, left_expansion = 0.15,
+  base_size = 16, point_size = 2.2, left_expansion = 0.09,
   arrow_nudge = -5.5
 )
 
@@ -404,11 +384,11 @@ But this page is not where that claim should be made, and the
 page reaches the same conclusion through a quantity that does clear its
 reliability gate.
 
-## 6. Partial pooling, made visible
+## 6. Partial pooling
 
 A multilevel model does not take each participant’s mean at face value:
-it pulls imprecise estimates toward the group. Worth seeing rather than
-asserting, because on one feature it is dramatic.
+it pulls imprecise estimates toward the group. On one feature, this pull
+is dramatic:
 
 ``` r
 
@@ -479,14 +459,14 @@ for the technical detail behind these models.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  ! package            * version  date (UTC) lib source
     #>    abind                1.4-8    2024-09-12 [2] CRAN (R 4.6.1)
-    #>    aphantasiaWMStrats * 0.1      2026-08-26 [1] local
+    #>    aphantasiaWMStrats * 0.1      2026-08-31 [1] local
     #>    backports            1.5.1    2026-04-03 [2] CRAN (R 4.6.1)
     #>    bayesplot            1.16.0   2026-08-25 [2] CRAN (R 4.6.1)
     #>    bridgesampling       1.2-1    2025-11-19 [2] CRAN (R 4.6.1)
@@ -542,12 +522,12 @@ for the technical detail behind these models.
     #>    ragg                 1.5.2    2026-03-23 [2] CRAN (R 4.6.1)
     #>    RColorBrewer         1.1-3    2022-04-03 [2] CRAN (R 4.6.1)
     #>    Rcpp                 1.1.2    2026-07-05 [2] CRAN (R 4.6.1)
-    #>    RcppParallel         6.2.0    2026-07-30 [2] CRAN (R 4.6.1)
+    #>    RcppParallel         6.2.1    2026-08-27 [2] CRAN (R 4.6.1)
     #>    renv                 1.0.7    2024-04-11 [2] RSPM (R 4.6.1)
     #>    rlang                1.3.0    2026-07-05 [2] CRAN (R 4.6.1)
     #>    rmarkdown            2.31     2026-03-26 [2] CRAN (R 4.6.1)
     #>    rstan                2.32.7   2025-03-10 [2] CRAN (R 4.6.1)
-    #>    rstantools           2.7.0    2026-07-26 [2] CRAN (R 4.6.1)
+    #>    rstantools           2.7.1    2026-08-29 [2] CRAN (R 4.6.1)
     #>    S7                   0.2.2    2026-04-22 [2] CRAN (R 4.6.1)
     #>    sass                 0.4.10   2025-04-11 [2] CRAN (R 4.6.1)
     #>    scales               1.4.0    2025-04-24 [2] CRAN (R 4.6.1)
@@ -571,7 +551,7 @@ for the technical detail behind these models.
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 

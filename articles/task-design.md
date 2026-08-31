@@ -1,11 +1,11 @@
 # Task design: the story of a paradigm that kept correcting itself
 
 Underneath the WM-FTT’s aim of studying individual differences in mental
-representation is a narrower and more awkward question: does an original
-paradigm actually measure what it was built to measure? The task ran in
-three versions. The differences between them are not incidental fixes.
-Each version exists because the previous one’s own data showed a
-specific way the design was undermining its own validity.
+representation is a narrower question: does an original paradigm
+actually measure what it was built to measure? The task ran in three
+versions. The differences between them are not incidental fixes. Each
+version exists because the previous one’s own data showed a specific way
+the design was undermining its own purpose.
 
 This page tells that story, and shows the task as participants met it.
 
@@ -27,9 +27,10 @@ those are different claims about the same number.
 WM-FTT is built to separate them, and to offer the reports something to
 converge with. Every stimulus carries three features at once, and
 scoring gives partial credit for each, so a participant who divides
-effort unevenly across features leaves a trace in the pattern of their
-scores rather than in any one of them. The question stops being “which
-strategy do you use” and becomes “where did the effort go”.
+effort unevenly across features may leave a trace in the pattern of
+their three scores rather than in any one of them. Its purpose is to try
+to relate the response to “which strategy do you use” with the
+behavioural allocation of “where did the effort go”.
 
 ## 2. What a trial looks like
 
@@ -63,8 +64,8 @@ on.](figures/cfa_wm_screen_colorwheel.png)
 
 Scoring is feature by feature with partial credit, and participants are
 told to aim for the highest score. That instruction is the manipulation.
-A points-per-feature incentive is what turns uniform effort into a
-suboptimal strategy and makes the trade-off worth measuring.
+A points-per-feature incentive is what is meant to turn uniform effort
+into a suboptimal strategy and make the trade-off worth measuring.
 
 Twenty-one experimental trials in three blocks of seven, preceded by
 three training trials. **Each trial presents three items**, and each
@@ -121,33 +122,15 @@ v1: the trial score is exactly the sum of the three feature scores
 
 Every trial. No deduction was ever applied.
 
-The consequence was not that the distractor did nothing. It was that it
-was not experienced uniformly: some participants carried a dual-task
+The consequence was **not** that the distractor did nothing. It was that
+it was not experienced uniformly: some participants carried a dual-task
 load throughout and others carried none, and nothing in the design
-records which. That is a problem for any group comparison drawn from v1,
-because the two subgroups were doing materially different tasks. The
-[task
+records which (besides raw parity engagement). That is a problem for any
+group comparison drawn from v1, because the two “parity subgroups” were
+doing materially different tasks. The [task
 engagement](https://m-delem.github.io/aphantasiaWMStrats/articles/engagement.md)
 page shows that abandoning parity is not a proxy for disengaging from
-the task as a whole, which is why v2 added the penalty rather than
-excluding anyone.
-
-**Self-reported priority and measured allocation are not the same
-measurement.** Asked afterwards which features they had tried to keep
-for points, v1 participants named **words** far more than anything else:
-78 of 88 named words first, against three for colours and one for
-orientations. Words are also the feature they scored highest on, so the
-report and the behaviour are not in conflict here — the
-[composition](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md)
-page shows the two converging.
-
-What does not follow is that the report can stand in for the behaviour.
-*Which* feature someone named barely moves their behavioural
-composition, and the [task
-validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md)
-page tabulates that directly. The two measures agree in aggregate and
-are not interchangeable at the level of an individual, which is the
-reason the task exists at all.
+the task as a whole, which is why v2 added the penalty.
 
 ## 4. v2: fixing the incentive, not the order
 
@@ -156,9 +139,8 @@ judgement subtracts 0.5 points from the trial’s running score, floored
 at zero so parity errors alone cannot make a trial negative. Recall
 order stayed fixed.
 
-v2 is a genuine partial fix. It closes the gap between engaged and
-disengaged participants that drove the imagery-group inconsistency, and
-it leaves the order confound untouched. Its own sample is small.
+v2 is a partial fix. It closes the gap between parity-engaged and
+disengaged participants, but its own sample is small.
 
 ## 5. Why v2 stopped
 
@@ -180,8 +162,8 @@ and data collection became self-contained.
 
 v3 carries the parity penalty over from v2 and adds **response-order
 randomisation**: one of the six possible orderings of word, orientation
-and colour is drawn per trial. This does not target the parity split,
-which v2 already addressed. It removes recall order as a fixed
+and colour is drawn per trial. This is added to the parity incentive
+fix, which v2 already addressed. It removes recall order as a fixed
 structural feature, and with it a class of confounds that any
 order-related finding would otherwise have to rule out.
 
@@ -223,7 +205,7 @@ identified, data-supported reasons to affect performance and strategy
 measures, so version has to be treated as a structural feature of the
 design rather than a nuisance covariate.
 
-In practice this project goes further. **v1 is the primary analysis
+For the time being (as of 2026-09-03), **v1 is the primary analysis
 sample**, and v2 and v3 are described rather than modelled. v1 is the
 only version with a usable imagery-group split, and pooling the three
 actively produced a false result: an apparent association between
@@ -262,14 +244,8 @@ tibble::tibble(
 
 Non-response against imagery vividness, pooled and within v1 {.table}
 
-The pooled figure looks like a finding. It is an artefact of mixing
-three samples that differ in both composition and behaviour, and it is
-the clearest argument in this project for the position the version
-history had already arrived at on other grounds.
-
-v3 keeps one job that only it can do: it is the only version with
-randomised recall order, so it is the only data that can estimate how
-much the fixed order in v1 confounds feature comparisons.
+The pooled figure looks like a finding. It is actually an artefact of
+mixing three samples that differ in both composition and behaviour.
 
 ## 8. What the task achieved, and what it did not
 
@@ -305,8 +281,7 @@ through the whole project: **word barely discriminates between
 participants**, so the verbal arm of the compositional analysis rests on
 the least informative of the three measures. The [task
 validity](https://m-delem.github.io/aphantasiaWMStrats/articles/task-validity.md)
-page puts a number on that with split-half reliability, computed there
-rather than quoted here, and the
+page puts a number on that with split-half reliability, and the
 [scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
 page works through what it does and does not permit.
 
@@ -319,11 +294,9 @@ representation.
 
 ------------------------------------------------------------------------
 
-**Continuing through the Extended Online Report:** this page follows
-[the
-participants](https://m-delem.github.io/aphantasiaWMStrats/articles/participants.md).
-To keep reading in order, continue to
-[scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
+**Continuing through the Extended Online Report:** this is the first
+page of the report. To keep reading in order, continue to [the
+participants](https://m-delem.github.io/aphantasiaWMStrats/articles/participants.md)
 next. Or skip ahead to [the
 analysis](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md),
 which explains what the modelling pages do and why.
@@ -340,13 +313,13 @@ which explains what the modelling pages do and why.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  package            * version date (UTC) lib source
-    #>  aphantasiaWMStrats * 0.1     2026-08-26 [1] local
+    #>  aphantasiaWMStrats * 0.1     2026-08-31 [1] local
     #>  bslib                0.12.0  2026-08-04 [2] CRAN (R 4.6.1)
     #>  cachem               1.1.0   2024-05-16 [2] CRAN (R 4.6.1)
     #>  cli                  3.6.6   2026-04-09 [2] CRAN (R 4.6.1)
@@ -393,7 +366,7 @@ which explains what the modelling pages do and why.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

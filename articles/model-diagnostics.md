@@ -2,9 +2,11 @@
 
 The modelling pages report estimates. This page asks whether the models
 producing them sampled properly and whether their response families
-describe the data. Both questions are usually answered in a sentence;
-here they get the space to be checked, because three of the family
-choices are not obvious.
+describe the data. Both questions get the space to be checked, because
+three of the family choices are not obvious. The most complex model in
+the project, the [joint
+model](https://m-delem.github.io/aphantasiaWMStrats/articles/joint-model.md),
+is checked first.
 
 ``` r
 
@@ -45,16 +47,17 @@ joint_model <- fit_brms_model(
 
 ## 1. Convergence
 
-Four chains, 3000 iterations each with the first 1000 discarded as
-warmup, giving 2000 kept per chain and 8000 draws in total.
+The model was fitted with four chains, 3000 iterations each with the
+first 1000 discarded as warmup, giving 2000 kept per chain and 8000
+draws in total.
 [`fit_brms_model()`](https://m-delem.github.io/aphantasiaWMStrats/reference/fit_brms_model.md)’s
 `iterations` argument is post-warmup draws per chain rather than a
 total, which is why the call reads `iterations = 2000, warmup = 1000`.
 
 Those draws cover every parameter in the fitted object, which is the
 count the table below reports. Most of them are the per-participant
-deviations; the model’s *structural* size is the 54 parameters section 4
-refers to — the population-level coefficients, the standard deviations
+deviations; the joint model’s *structural* size is the 54 main
+parameters: the population-level coefficients, the standard deviations
 and the fifteen correlations.
 
 ``` r
@@ -80,10 +83,9 @@ tibble::tibble(
 
 The joint model {.table}
 
-Nothing to report, which is the point of reporting it. R-hat below 1.004
-everywhere, no divergent transitions, no saturated treedepths, and the
-worst-sampled parameter still has an effective sample size ratio above
-0.12.
+R-hat below 1.004 everywhere, no divergent transitions, no saturated
+treedepths, and the worst-sampled parameter still has an effective
+sample size ratio above 0.12.
 
 That was not guaranteed. A six-response model with fifteen correlated
 random intercepts estimated from 86 participants is the kind of model
@@ -109,11 +111,11 @@ parameters.](model-diagnostics_files/figure-html/rhat-spread-1.png)
 The three recall features get three different response families, and the
 [scoring](https://m-delem.github.io/aphantasiaWMStrats/articles/scoring.md)
 page argues for each from what the boundary of that feature’s scale
-means. An argument is not a check.
+means.
 
 A posterior predictive check draws replicate datasets from the fitted
-model and compares them to the real one. If the family is wrong, the
-replicates look wrong in a visible way.
+model and compares them to the real one. If the chosen family is wrong,
+the replicates look wrong in a visible way.
 
 ``` r
 
@@ -250,33 +252,11 @@ patchwork::wrap_plots(
 ![Posterior predictive checks for both ILR
 coordinates.](model-diagnostics_files/figure-html/ppc-composition-1.png)
 
-Gaussian is appropriate here for a reason worth stating: log-ratio
-coordinates are unbounded by construction. That is the whole point of
-leaving the simplex, and it is why the
+Gaussian is appropriate here: log-ratio coordinates are unbounded by
+construction. That is the whole point of leaving the simplex, and it is
+why the
 [composition](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md)
 page can use an ordinary linear model where the accuracy pages cannot.
-
-## 4. What is not checked here
-
-**Prior sensitivity.** The joint model’s priors were chosen per
-coefficient and are documented on the [analysis
-strategy](https://m-delem.github.io/aphantasiaWMStrats/articles/analysis-strategy.md)
-page, but no alternative-prior refit was run. For the correlations there
-is a partial substitute: each posterior is compared against the marginal
-implied by the `lkj(4)` prior, and a posterior no narrower than its
-prior is flagged rather than reported.
-
-**Cross-validation of the joint model.** Model comparison was run on
-functional form for one feature
-([performance](https://m-delem.github.io/aphantasiaWMStrats/articles/performance.md)
-§4) and on the compositional coordinates
-([composition](https://m-delem.github.io/aphantasiaWMStrats/articles/composition.md)
-§5 and §8), not on the joint model as a whole. With 54 parameters and 86
-participants, a LOO comparison against alternatives would mostly report
-its own uncertainty.
-
-Both are limitations of scope rather than oversights, and both are the
-kind of thing a larger sample would make worth doing.
 
 ------------------------------------------------------------------------
 
@@ -301,14 +281,14 @@ for what the models were built to do.
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-26
+    #>  date     2026-08-31
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
     #> ─ Packages ───────────────────────────────────────────────────────────────────
     #>  ! package            * version  date (UTC) lib source
     #>    abind                1.4-8    2024-09-12 [2] CRAN (R 4.6.1)
-    #>    aphantasiaWMStrats * 0.1      2026-08-26 [1] local
+    #>    aphantasiaWMStrats * 0.1      2026-08-31 [1] local
     #>    backports            1.5.1    2026-04-03 [2] CRAN (R 4.6.1)
     #>    bayesplot            1.16.0   2026-08-25 [2] CRAN (R 4.6.1)
     #>    bridgesampling       1.2-1    2025-11-19 [2] CRAN (R 4.6.1)
@@ -365,13 +345,13 @@ for what the models were built to do.
     #>    ragg                 1.5.2    2026-03-23 [2] CRAN (R 4.6.1)
     #>    RColorBrewer         1.1-3    2022-04-03 [2] CRAN (R 4.6.1)
     #>    Rcpp                 1.1.2    2026-07-05 [2] CRAN (R 4.6.1)
-    #>    RcppParallel         6.2.0    2026-07-30 [2] CRAN (R 4.6.1)
+    #>    RcppParallel         6.2.1    2026-08-27 [2] CRAN (R 4.6.1)
     #>    renv                 1.0.7    2024-04-11 [2] RSPM (R 4.6.1)
     #>    reshape2             1.4.5    2025-11-12 [2] CRAN (R 4.6.1)
     #>    rlang                1.3.0    2026-07-05 [2] CRAN (R 4.6.1)
     #>    rmarkdown            2.31     2026-03-26 [2] CRAN (R 4.6.1)
     #>    rstan                2.32.7   2025-03-10 [2] CRAN (R 4.6.1)
-    #>    rstantools           2.7.0    2026-07-26 [2] CRAN (R 4.6.1)
+    #>    rstantools           2.7.1    2026-08-29 [2] CRAN (R 4.6.1)
     #>    S7                   0.2.2    2026-04-22 [2] CRAN (R 4.6.1)
     #>    sass                 0.4.10   2025-04-11 [2] CRAN (R 4.6.1)
     #>    scales               1.4.0    2025-04-24 [2] CRAN (R 4.6.1)
@@ -394,7 +374,7 @@ for what the models were built to do.
     #>    xtable               1.8-8    2026-02-22 [2] CRAN (R 4.6.1)
     #>    yaml                 2.3.12   2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05
+    #>  [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #> 

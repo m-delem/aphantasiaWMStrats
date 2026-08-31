@@ -36,8 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-extended-online-report" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Extended Online Report</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-extended-online-report">
 <li><h6 class="dropdown-header" data-toc-skip>What was measured</h6></li>
-    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/task-design.html">Task design</a></li>
+    <li><a class="dropdown-item" href="../articles/participants.html">The participants</a></li>
     <li><a class="dropdown-item" href="../articles/scoring.html">Scoring</a></li>
     <li><a class="dropdown-item" href="../articles/engagement.html">Task engagement</a></li>
     <li><hr class="dropdown-divider"></li>
@@ -119,7 +119,7 @@ no, and that is a fact about the task rather than about the metric. The
 the same question of the instruments.</p>
 <p>Everything here is v1 only, per the <a href="version-scope.html">version scope</a> page.</p>
 <div class="section level2">
-<h2 id="the-data-this-page-works-from">The data this page works from<a class="anchor" aria-label="anchor" href="#the-data-this-page-works-from"></a>
+<h2 id="valid-data">The data this page works from<a class="anchor" aria-label="anchor" href="#valid-data"></a>
 </h2>
 <p>The same frames the scoring page builds, reproduced so this page
 stands alone.</p>
@@ -263,7 +263,7 @@ stands alone.</p>
 </table>
 </div>
 <div class="section level2">
-<h2 id="reliability">1. Reliability<a class="anchor" aria-label="anchor" href="#reliability"></a>
+<h2 id="valid-reliability">1. Reliability<a class="anchor" aria-label="anchor" href="#valid-reliability"></a>
 </h2>
 <p>Splits are drawn over trials rather than items, because items within
 a trial share an encoding episode and there is a within-trial primacy
@@ -401,7 +401,7 @@ applies is <code><a href="../reference/engaged_ids.html">engaged_ids()</a></code
 <span><span class="co">#&gt;    32    22    29</span></span></code></pre></div>
 <p>They agree today. They are hard-coded deliberately, because the rule
 was fixed before any contact with VVIQ and must not drift with the
-sample it is applied to — so if this page’s recomputation ever diverges
+sample it is applied to. If this page’s re-computation ever diverges
 from that vector, the vector is what the analyses used, and the
 divergence is the finding.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -482,7 +482,7 @@ divergence is the finding.</p>
 </table>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_split_half.html">plot_split_half</a></span><span class="op">(</span><span class="va">split_half_draws</span>, base_size <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></code></pre></div>
-<p><img src="task-validity_files/figure-html/reliability-figure-1.png" class="r-plt" alt="Split-half reliability distributions for the three recall features." width="100%"></p>
+<p><img src="task-validity_files/figure-html/reliability-figure-1.png" class="r-plt" alt="Split-half reliability distributions for the three recall features." width="768"></p>
 <p>Orientation (0.82) and colour (0.83) clear the conventional 0.80 mark
 for individual-level interpretation. Word (0.45) does not clear the 0.70
 floor for group-level use. That is the same fact as the threshold
@@ -564,7 +564,7 @@ on word, and its interpretation should not lean on word as a
 well-measured quantity.</p>
 </div>
 <div class="section level2">
-<h2 id="what-this-supports">2. What this supports<a class="anchor" aria-label="anchor" href="#what-this-supports"></a>
+<h2 id="valid-supports">2. What this supports<a class="anchor" aria-label="anchor" href="#valid-supports"></a>
 </h2>
 <p>Orientation and colour scores support individual-differences
 analysis. Word scores do not, and should be reported with the
@@ -643,10 +643,11 @@ construct:</p>
 </tbody>
 </table>
 <p>Behavioural compositions barely differ between participants who named
-different priorities. This table is the evidence behind <a href="task-design.html">task design</a> §3’s claim that the report and
-the behaviour are not interchangeable per person. This is a dissociation
-to report, not a validity failure. But “preference” language should not
-be used as though the two measures were interchangeable.</p>
+different priorities, showing that the report and the behaviour are not
+interchangeable per person. This is not a validity failure in itself,
+but this dissociation shows that the behaviour and self-report reflect
+“preferences” in different ways and cannot be used as substitutes for
+each other yet.</p>
 <hr>
 <p><strong>Continuing through the Extended Online Report:</strong> this
 page follows <a href="version-scope.html">versions</a>. To keep reading
@@ -664,13 +665,13 @@ modelling pages do and why.</p>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2026-08-26</span></span>
+<span><span class="co">#&gt;  date     2026-08-31</span></span>
 <span><span class="co">#&gt;  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)</span></span>
 <span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package           </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  aphantasiaWMStrats * 0.1     <span style="color: #555555;">2026-08-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
 <span><span class="co">#&gt;  bslib                0.12.0  <span style="color: #555555;">2026-08-04</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cachem               1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  cli                  3.6.6   <span style="color: #555555;">2026-04-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
@@ -722,7 +723,7 @@ modelling pages do and why.</p>
 <span><span class="co">#&gt;  xfun                 0.60    <span style="color: #555555;">2026-07-09</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt;  yaml                 2.3.12  <span style="color: #555555;">2025-12-10</span> <span style="color: #555555;">[2]</span> <span style="color: #555555;">CRAN (R 4.6.1)</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpN0ePCc/temp_libpath84682c529b05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [1] /tmp/RtmpTZJzeG/temp_libpath83f725132ca2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>
