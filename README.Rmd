@@ -55,7 +55,7 @@ the trade-off *behaviourally*: every stimulus carries three features at once, a
 feature, and participants are told to maximise their score. If effort has to be
 divided, where it goes is a measurement rather than a claim.
 
-```{r trial-overview, fig.alt="Diagram of one WM-FTT trial, from encoding through recall to feedback.", echo=FALSE}
+```{r trial-overview, fig.alt="Diagram of one WM-FTT trial for v1, from encoding through recall to feedback.", echo=FALSE}
 knitr::include_graphics("man/figures/cfa_wm_trial_overview_v3.png")
 ```
 

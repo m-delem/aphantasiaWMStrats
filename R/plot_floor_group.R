@@ -49,8 +49,6 @@
 #'   the offset and its interval. The caller formats it, so this function
 #'   stays independent of any model class.
 #' @param x_lab,y_lab,caption Labels.
-#' @param base_size Passed to [theme_pdf()]. Scripts use the 7pt default,
-#'   pkgdown pages use 16.
 #' @param point_size,point_alpha Aesthetics for the observed points.
 #' @param gradient Continuous colour scale for vividness, or `NULL` for
 #'   plain points.
@@ -74,6 +72,10 @@
 #' @param left_expansion Fraction of the x range added on the left, for the
 #'   violin and the arrow. Share it with [plot_vviq_histogram()] so stacked
 #'   panels align.
+#' @param base_size Passed to [theme_pdf()]. Scripts use the 7pt default,
+#'   pkgdown pages use 16.
+#' @param ... Additional arguments passed to the [theme_pdf()] function for
+#' further customization of the plot theme.
 #'
 #' @returns A ggplot object.
 #' @export
@@ -84,10 +86,9 @@ plot_floor_group <- function(
     floor_observed = NULL,
     floor_x = 16,
     effect_label = NULL,
-    x_lab = "VVIQ total score",
+    x_lab = "VVIQ score",
     y_lab = NULL,
     caption = NULL,
-    base_size = 7,
     point_size = 1.2,
     point_alpha = 0.6,
     gradient = ggplot2::scale_colour_viridis_c(option = "viridis",
@@ -104,7 +105,9 @@ plot_floor_group <- function(
     label_colour = "grey45",
     label_angle = 90,
     label_lineheight = 0.9,
-    left_expansion = 0.09
+    left_expansion = 0.09,
+    base_size = 7,
+    ...
 ) {
   rlang::check_installed("ggplot2", reason = "to draw figures.")
 
@@ -172,18 +175,6 @@ plot_floor_group <- function(
     )
   }
 
-  plot <- plot +
-    ggplot2::geom_point(
-      data = at_floor, ggplot2::aes(x = .data$x, y = .data$estimate),
-      shape = 4, size = base_size * 0.28, stroke = 0.7
-    ) +
-    ggplot2::geom_pointrange(
-      data = floor_summary,
-      ggplot2::aes(x = .data$x, y = .data$estimate,
-                   ymin = .data$lower, ymax = .data$upper),
-      colour = floor_colour, size = base_size * 0.045, linewidth = 0.5
-    )
-
   arrow_x <- floor_x + arrow_nudge
   plot <- plot +
     ggplot2::annotate(
@@ -202,6 +193,18 @@ plot_floor_group <- function(
       linewidth = 0.35, colour = "grey25",
       arrow = ggplot2::arrow(ends = "both",
                              length = grid::unit(base_size * 0.35, "pt"))
+    )
+
+  plot <- plot +
+    ggplot2::geom_point(
+      data = at_floor, ggplot2::aes(x = .data$x, y = .data$estimate),
+      shape = 4, size = base_size * 0.28, stroke = 0.7
+    ) +
+    ggplot2::geom_pointrange(
+      data = floor_summary,
+      ggplot2::aes(x = .data$x, y = .data$estimate,
+                   ymin = .data$lower, ymax = .data$upper),
+      colour = floor_colour, size = base_size * 0.045, linewidth = 0.5
     )
 
   if (!is.null(effect_label)) {
@@ -226,7 +229,7 @@ plot_floor_group <- function(
     scale_x_vviq(
       expand = ggplot2::expansion(mult = c(left_expansion, 0.02))) +
     ggplot2::labs(x = x_lab, y = y_lab, caption = caption) +
-    theme_pdf(base_size = base_size)
+    theme_pdf(...)
 }
 
 #' Marginal histogram of imagery vividness
@@ -256,6 +259,7 @@ plot_floor_group <- function(
 #'   by bin midpoint, or `NULL` for a plain fill.
 #' @param left_expansion Fraction of the x range added on the left. Share
 #'   it with [plot_floor_group()] so stacked panels align.
+#' @param y_lab Label for the y axis.
 #' @param ... Additional arguments passed to the [theme_pdf()] function for
 #' further customization of the plot theme.
 #'
@@ -271,6 +275,7 @@ plot_vviq_histogram <- function(
     gradient = ggplot2::scale_fill_viridis_c(option = "viridis",
                                              guide = "none"),
     left_expansion = 0.09,
+    y_lab = "n",
     ...
 ) {
   rlang::check_installed("ggplot2", reason = "to draw figures.")
@@ -305,6 +310,6 @@ plot_vviq_histogram <- function(
     ) +
     scale_x_vviq(
       expand = ggplot2::expansion(mult = c(left_expansion, 0.02))) +
-    ggplot2::labs(x = NULL, y = "n") +
+    ggplot2::labs(x = NULL, y = y_lab) +
     theme_pdf(...)
 }

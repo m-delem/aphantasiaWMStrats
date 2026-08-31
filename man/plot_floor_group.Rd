@@ -11,10 +11,9 @@ plot_floor_group(
   floor_observed = NULL,
   floor_x = 16,
   effect_label = NULL,
-  x_lab = "VVIQ total score",
+  x_lab = "VVIQ score",
   y_lab = NULL,
   caption = NULL,
-  base_size = 7,
   point_size = 1.2,
   point_alpha = 0.6,
   gradient = ggplot2::scale_colour_viridis_c(option = "viridis", guide = "none"),
@@ -30,7 +29,9 @@ plot_floor_group(
   label_colour = "grey45",
   label_angle = 90,
   label_lineheight = 0.9,
-  left_expansion = 0.09
+  left_expansion = 0.09,
+  base_size = 7,
+  ...
 )
 }
 \arguments{
@@ -53,9 +54,6 @@ the offset and its interval. The caller formats it, so this function
 stays independent of any model class.}
 
 \item{x_lab, y_lab, caption}{Labels.}
-
-\item{base_size}{Passed to \code{\link[=theme_pdf]{theme_pdf()}}. Scripts use the 7pt default,
-pkgdown pages use 16.}
 
 \item{point_size, point_alpha}{Aesthetics for the observed points.}
 
@@ -91,6 +89,12 @@ the gap between the estimate and its interval.}
 \item{left_expansion}{Fraction of the x range added on the left, for the
 violin and the arrow. Share it with \code{\link[=plot_vviq_histogram]{plot_vviq_histogram()}} so stacked
 panels align.}
+
+\item{base_size}{Passed to \code{\link[=theme_pdf]{theme_pdf()}}. Scripts use the 7pt default,
+pkgdown pages use 16.}
+
+\item{...}{Additional arguments passed to the \code{\link[=theme_pdf]{theme_pdf()}} function for
+further customization of the plot theme.}
 }
 \value{
 A ggplot object.
