@@ -19,8 +19,7 @@ knitr::opts_chunk$set(
   message = FALSE,
   error = FALSE
 )
-# library(aphantasiaWMStrats)
-devtools::load_all()
+library(aphantasiaWMStrats)
 library(ggplot2)
 theme_set(theme_pdf(base_size = 16))
 ```
@@ -112,7 +111,7 @@ of that score appear on this site**, and they are not interchangeable, so they
 are set out together here.
 
 | Grouping | Column | Definition |
-|----|----|----|
+|---------------------------|---------------------------|---------------------------|
 | Four-way, used below | `vviq_group_4` | aphantasia = 16 (the scale floor), hypophantasia 17–32, typical 33–74, hyperphantasia ≥ 75 |
 | Two-way, descriptive | `vviq_group_2` | aphantasia ≤ 32, typical ≥ 33 |
 | Floor split, used by every model | not stored | at the floor (16) against everyone above it |
