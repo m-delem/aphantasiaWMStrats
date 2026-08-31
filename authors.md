@@ -7,14 +7,16 @@
 
 ## Citation
 
-Delem M (2026). *aphantasiaWMStrats: Data Analysis for a Working Memory
-Strategies Study on Aphantasia*. R package version 0.1,
-<https://m-delem.github.io/aphantasiaWMStrats>.
+Source:
+[`inst/CITATION`](https://github.com/m-delem/aphantasiaWMStrats/blob/main/inst/CITATION)
 
-    @Manual{,
-      title = {aphantasiaWMStrats: Data Analysis for a Working Memory Strategies Study on Aphantasia},
+Delem M (2026). “Extended Online Report for the Working Memory Feature
+Trade-Off Task.”
+[doi:10.17605/OSF.IO/3649S](https://doi.org/10.17605/OSF.IO/3649S).
+
+    @Misc{,
+      title = {Extended Online Report for the Working Memory Feature Trade-Off Task},
       author = {Maël Delem},
       year = {2026},
-      note = {R package version 0.1},
-      url = {https://m-delem.github.io/aphantasiaWMStrats},
+      doi = {https://doi.org/10.17605/OSF.IO/3649S},
     }

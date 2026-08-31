@@ -10,7 +10,7 @@ Useful links:
 
 - <https://m-delem.github.io/aphantasiaWMStrats>
 
-- <https://m-delem.github.io/aphantasiaWMStrats>
+- <https://github.com/m-delem/aphantasiaWMStrats>
 
 ## Author
 
