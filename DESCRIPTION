@@ -1,5 +1,5 @@
 Package: aphantasiaWMStrats
-Title: Data Analysis for a Working Memory Strategies Study on Aphantasia
+Title: Extended Online Report for the Working Memory Feature Trade-Off Task
 Version: 0.1
 Authors@R: c(
     person("Maël", "Delem", , "mael.delem@pm.me", role = c("aut", "cre"),
@@ -7,8 +7,8 @@ Authors@R: c(
     )
 Description: This package contains the data and code
     to reproduce the analyses associated with an online study on a
-    complex working memory task investigating non-visual working
-    memory strategies in aphantasia.
+    complex working memory task investigating working memory strategies in
+    aphantasia.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -68,4 +68,4 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr
 LazyData: true
 Config/roxygen2/version: 8.1.0
-URL: https://m-delem.github.io/aphantasiaWMStrats, https://m-delem.github.io/aphantasiaWMStrats
+URL: https://m-delem.github.io/aphantasiaWMStrats, https://github.com/m-delem/aphantasiaWMStrats

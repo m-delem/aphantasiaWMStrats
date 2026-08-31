@@ -12,7 +12,7 @@ This package contains the data and code to reproduce the analyses associated wit
 Useful links:
 \itemize{
   \item \url{https://m-delem.github.io/aphantasiaWMStrats}
-  \item \url{https://m-delem.github.io/aphantasiaWMStrats}
+  \item \url{https://github.com/m-delem/aphantasiaWMStrats}
 }
 
 }
