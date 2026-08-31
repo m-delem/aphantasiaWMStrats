@@ -49,10 +49,9 @@ plot_floor_group(
   floor_observed = NULL,
   floor_x = 16,
   effect_label = NULL,
-  x_lab = "VVIQ total score",
+  x_lab = "VVIQ score",
   y_lab = NULL,
   caption = NULL,
-  base_size = 7,
   point_size = 1.2,
   point_alpha = 0.6,
   gradient = ggplot2::scale_colour_viridis_c(option = "viridis", guide = "none"),
@@ -68,7 +67,9 @@ plot_floor_group(
   label_colour = "grey45",
   label_angle = 90,
   label_lineheight = 0.9,
-  left_expansion = 0.09
+  left_expansion = 0.09,
+  base_size = 7,
+  ...
 )
 ```
 
@@ -107,12 +108,6 @@ plot_floor_group(
 - x_lab, y_lab, caption:
 
   Labels.
-
-- base_size:
-
-  Passed to
-  [`theme_pdf()`](https://m-delem.github.io/aphantasiaWMStrats/reference/theme_pdf.md).
-  Scripts use the 7pt default, pkgdown pages use 16.
 
 - point_size, point_alpha:
 
@@ -171,6 +166,18 @@ plot_floor_group(
   arrow. Share it with
   [`plot_vviq_histogram()`](https://m-delem.github.io/aphantasiaWMStrats/reference/plot_vviq_histogram.md)
   so stacked panels align.
+
+- base_size:
+
+  Passed to
+  [`theme_pdf()`](https://m-delem.github.io/aphantasiaWMStrats/reference/theme_pdf.md).
+  Scripts use the 7pt default, pkgdown pages use 16.
+
+- ...:
+
+  Additional arguments passed to the
+  [`theme_pdf()`](https://m-delem.github.io/aphantasiaWMStrats/reference/theme_pdf.md)
+  function for further customization of the plot theme.
 
 ## Value
 

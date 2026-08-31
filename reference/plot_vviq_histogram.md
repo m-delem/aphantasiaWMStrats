@@ -27,6 +27,7 @@ plot_vviq_histogram(
   floor_alpha = 0.5,
   gradient = ggplot2::scale_fill_viridis_c(option = "viridis", guide = "none"),
   left_expansion = 0.09,
+  y_lab = "n",
   ...
 )
 ```
@@ -62,6 +63,10 @@ plot_vviq_histogram(
   Fraction of the x range added on the left. Share it with
   [`plot_floor_group()`](https://m-delem.github.io/aphantasiaWMStrats/reference/plot_floor_group.md)
   so stacked panels align.
+
+- y_lab:
+
+  Label for the y axis.
 
 - ...:
 

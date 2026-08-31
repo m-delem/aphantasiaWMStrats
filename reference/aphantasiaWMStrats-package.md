@@ -1,8 +1,8 @@
-# aphantasiaWMStrats: Data Analysis for a Working Memory Strategies Study on Aphantasia
+# aphantasiaWMStrats: Extended Online Report for the Working Memory Feature Trade-Off Task
 
 This package contains the data and code to reproduce the analyses
 associated with an online study on a complex working memory task
-investigating non-visual working memory strategies in aphantasia.
+investigating working memory strategies in aphantasia.
 
 ## See also
 

@@ -20,7 +20,7 @@ and a **colour**, scoring gives partial credit per feature, and
 participants are told to maximise their score. If effort has to be
 divided, where it goes is a measurement rather than a claim.
 
-![Diagram of one WM-FTT trial, from encoding through recall to
+![Diagram of one WM-FTT trial for v1, from encoding through recall to
 feedback.](reference/figures/cfa_wm_trial_overview_v3.png)
 
 The task ran in three versions, which successively changed small
