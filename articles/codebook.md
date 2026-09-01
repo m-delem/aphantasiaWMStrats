@@ -93,7 +93,7 @@ page computes all three and is where those figures live.
 
 | Variable | Description | Type | Range / levels | N missing |
 |:---|:---|:---|:---|---:|
-| score_word | Word recall similarity, 1 = exact match. Edit-distance scoring (Gonthier, 2022): Damerau-Levenshtein distance capped at the target’s length, subtracted from it and divided by it. See the reliability caveat above. | float | 0-1 | 0 |
+| score_word | Word recall similarity, 1 = exact match. Edit-distance scoring (**gonthierEasyWayImprove2022?**): Damerau-Levenshtein distance capped at the target’s length, subtracted from it and divided by it. See the reliability caveat above. | float | 0-1 | 0 |
 | score_angle | Orientation recall similarity, 1 = exact match. Cosine of the angular error on a 180-degree period, since a rectangle’s tilt is symmetric under 180-degree rotation. | float | 0-1 | 0 |
 | score_color | Colour recall similarity, 1 = exact match. Cosine of the angular error on the 360-degree hue wheel. Reliability 0.83. | float | 0-1 | 0 |
 | score_word_z | `score_word`, z-scored within task version using experimental-block rows only. Retained for provenance: no analysis in this package uses it, since the compositional coordinates handle cross-feature comparison and per-version standardisation is unstable in v2 (see the version scope page). | float | -2.58-0.6 | 0 |
@@ -222,11 +222,6 @@ Blazhenkova, O., & Kozhevnikov, M. (2009). The new object-spatial-verbal
 cognitive style model: Theory and measurement. *Applied Cognitive
 Psychology*, *23*(5), 638–663. <https://doi.org/10.1002/acp.1473>
 
-Gonthier, C. (2022). An easy way to improve scoring of memory span
-tasks: The edit distance, beyond “correct recall in the correct serial
-position.” *Behavior Research Methods*, *55*(4).
-<https://doi.org/10.3758/s13428-022-01908-2>
-
 Heavey, C. L., Moynihan, S. A., Brouwers, V. P., Lapping-Carr, L.,
 Krumm, A. E., Kelsey, J. M., Turner, D. K., & Hurlburt, R. T. (2019).
 Measuring the frequency of inner-experience characteristics by
@@ -296,7 +291,7 @@ pictures. *British Journal of Psychology*, *64*(1), 17–24.
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/Rtmp71i6jb/temp_libpath868c7c39749d
+    #>  [1] /tmp/RtmpBySS6f/temp_libpath83f676124fdd
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.

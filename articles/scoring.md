@@ -200,10 +200,10 @@ values in R rather than transformed from the front end’s output.
 
 ## 2. The three metrics
 
-**Word** uses the edit-distance scoring of Gonthier (2022):
-Damerau-Levenshtein distance, capped at the target’s length, subtracted
-from that length and divided by it. Bounded on \[0, 1\] and floored at 0
-by construction.
+**Word** uses the edit-distance scoring of
+(**gonthierEasyWayImprove2022?**): Damerau-Levenshtein distance, capped
+at the target’s length, subtracted from that length and divided by it.
+Bounded on \[0, 1\] and floored at 0 by construction.
 
 Decomposing that formula against a naive normalised distance, one design
 choice at a time:
@@ -455,11 +455,6 @@ which explains what the modelling pages do and why.
 
 ## References
 
-Gonthier, C. (2022). An easy way to improve scoring of memory span
-tasks: The edit distance, beyond “correct recall in the correct serial
-position.” *Behavior Research Methods*, *55*(4).
-<https://doi.org/10.3758/s13428-022-01908-2>
-
     #> ─ Session info ───────────────────────────────────────────────────────────────
     #>  setting  value
     #>  version  R version 4.6.1 (2026-06-24)
@@ -470,7 +465,7 @@ position.” *Behavior Research Methods*, *55*(4).
     #>  collate  C.UTF-8
     #>  ctype    C.UTF-8
     #>  tz       UTC
-    #>  date     2026-08-31
+    #>  date     2026-09-01
     #>  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
     #>  quarto   NA
     #> 
@@ -525,7 +520,7 @@ position.” *Behavior Research Methods*, *55*(4).
     #>  xfun                 0.60    2026-07-09 [2] CRAN (R 4.6.1)
     #>  yaml                 2.3.12  2025-12-10 [2] CRAN (R 4.6.1)
     #> 
-    #>  [1] /tmp/Rtmp71i6jb/temp_libpath868c7c39749d
+    #>  [1] /tmp/RtmpBySS6f/temp_libpath83f676124fdd
     #>  [2] /home/runner/.cache/R/renv/library/aphantasiaWMStrats-f7ce8556/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu
     #>  [3] /home/runner/.cache/R/renv/sandbox/linux-ubuntu-jammy/R-4.6/x86_64-pc-linux-gnu/e7c0fad7
     #>  * ── Packages attached to the search path.
